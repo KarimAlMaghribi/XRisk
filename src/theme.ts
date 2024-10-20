@@ -12,11 +12,30 @@ export const theme = createTheme({
     },
     components: {
         MuiButton: {
+            defaultProps: {
+                disableElevation: true,
+            },
             styleOverrides: {
                 root: {
-                    borderRadius: 28,
+                    borderRadius: 5,
+                    textTransform: 'none',
+                    fontWeight: 'normal',
+
                 },
             },
         },
+        MuiTypography: {
+            styleOverrides: {
+                root: {
+                    fontFamily: 'Roboto, "Helvetica Neue", Arial, sans-serif',
+                },
+            },
+        },
+    },
+    typography: {
+        fontFamily: [
+            'Roboto',
+            'sans-serif'
+        ].join(','),
     },
 });

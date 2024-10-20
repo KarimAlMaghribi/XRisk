@@ -1,21 +1,25 @@
 import React from 'react';
 
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import {Button, ThemeProvider} from "@mui/material";
-import {theme} from "./theme";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import {Landing} from "./pages/landing/landing";
+import {SignIn} from "./pages/authentication/sign-in";
+import {SignUp} from "./pages/authentication/sign-up";
+import {ForgotPassword} from "./pages/authentication/forgot-password";
 
 
 function App() {
     return (
-        <ThemeProvider theme={theme}>
-            <div className="App">
-                <Button variant="contained">Test</Button>
-                <h1>Online</h1>
-            </div>
-        </ThemeProvider>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Landing/>}/>
+                <Route path="/sign-in" element={<SignIn/>}/>
+                <Route path="/sign-up" element={<SignUp/>}/>
+                <Route path="/forgot-password" element={<ForgotPassword/>}/>
+
+                <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+
+        </BrowserRouter>
     );
 }
 
