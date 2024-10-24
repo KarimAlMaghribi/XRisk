@@ -1,10 +1,11 @@
-import {Button, Card, TextField, Typography} from "@mui/material";
+import {Button, Card, Container, Divider, TextField, Typography} from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import React from "react";
 // @ts-ignore
 import Logo from "../../assests/imgs/logo_white.png";
 import "./style.scss";
 import {theme} from "../../theme";
+import GoogleIcon from '@mui/icons-material/Google';
 
 export const SignIn = () => {
     const [email, setEmail] = React.useState<string>("");
@@ -33,31 +34,48 @@ export const SignIn = () => {
                             </Grid>
 
                             <Grid size={12} textAlign="center">
-                                <Typography variant="caption">Nutze deine Email Adresse zur Erstellung</Typography>
+                                <Typography variant="caption">Nutze deine Email zur Kontoerstellung</Typography>
                             </Grid>
 
-                            <Grid size={12} textAlign="center">
-                                <TextField
-                                    InputProps={{
-                                        style: {
-                                            fontSize: '14px'
-                                        },
-                                    }}
-                                    placeholder="max.mustermann@email.de"
-                                    variant="outlined"
-                                    name="Email"
-                                    size="small"
-                                    style={{marginTop: "20px"}}
-                                    value={email}
-                                    onChange={(event) => setEmail(event.target.value)}
-                                />
-                            </Grid>
+                            <Container style={{maxWidth: "400px"}}>
+                                <Grid size={12} textAlign="center">
+                                    <TextField
+                                        InputProps={{
+                                            style: {
+                                                fontSize: '14px'
+                                            },
+                                        }}
+                                        placeholder="max.mustermann@email.de"
+                                        variant="outlined"
+                                        name="Email"
+                                        size="small"
+                                        style={{marginTop: "20px"}}
+                                        value={email}
+                                        onChange={(event) => setEmail(event.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
 
-                            <Grid size={12} textAlign="center">
-                                <Button variant="contained" style={{color: "white", marginTop: "10px"}}>
-                                    Sign up with email
+                                <Grid size={12} textAlign="center">
+                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth>
+                                        Registrierung Email
+                                    </Button>
+                                </Grid>
+
+                                <Divider style={{marginTop: "10px", marginBottom: "10px"}}><Typography
+                                    variant="subtitle2" color="textSecondary">ODER REGISTRIERE DICH
+                                    MIT</Typography></Divider>
+
+                                <Button variant="outlined" startIcon={<GoogleIcon/>} fullWidth>
+                                    Google
                                 </Button>
-                            </Grid>
+
+                                <Typography variant="subtitle2" style={{textAlign: "center", marginTop: "10px"}}>
+                                    Durch Registrierung, stimmst du automatisch unseren <a href="">AGBs</a> und
+                                    unseren <a href="">Datenschutzrichtlinien</a> zu.
+                                </Typography>
+
+                            </Container>
 
 
                         </Grid>
