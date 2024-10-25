@@ -10,7 +10,8 @@ import {store} from "./store/store";
 import {Provider} from "react-redux";
 import {theme} from "./theme";
 import {ThemeProvider} from "@mui/material";
-
+import "./index.scss";
+import {BrowserRouter} from "react-router-dom";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -18,7 +19,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
         <ThemeProvider theme={theme}>
-            <App/>
+            <BrowserRouter>
+                <App/>
+            </BrowserRouter>
         </ThemeProvider>
     </Provider>
 );

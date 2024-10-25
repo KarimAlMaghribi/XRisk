@@ -1,0 +1,16 @@
+export const ROUTES = {
+    SIGN_IN: 'sign-in',
+    SIGN_UP: 'sign-up',
+    FORGOT_PASSWORD: 'forgot-password',
+    ABOUT: 'about',
+    CHAT: 'chat',
+    PROFILE: 'profile',
+    SETTINGS: 'settings',
+    CATAGLOG: 'catalog',
+    INVESTORS: 'investors',
+    RISK_OVERVIEW: 'risk-overview',
+    LEGAL: 'legal',
+    PRIVACY: 'privacy',
+    ACCOUNT: 'account',
+    IMPRINT: 'imprint',
+}

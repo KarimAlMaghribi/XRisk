@@ -6,9 +6,14 @@ import Logo from "../../assests/imgs/logo_white.png";
 import "./style.scss";
 import {theme} from "../../theme";
 import GoogleIcon from '@mui/icons-material/Google';
+import {Link, useNavigate} from "react-router-dom";
+import {ROUTES} from "../../routing/routes";
+import {signInWithEmail, signInWithGoogle} from "../../firebase/firebase-service";
 
 export const SignIn = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = React.useState<string>("");
+    const [password, setPassword] = React.useState<string>("");
 
     return (
         <div className="sign-in-card">
@@ -26,7 +31,7 @@ export const SignIn = () => {
                     <Grid size={6} style={{padding: "20px"}}>
                         <Grid container>
                             <Grid size={12} textAlign="right">
-                                <Button style={{color: "black"}}>Sign In</Button>
+                                <Button style={{color: "black"}} onClick={() => navigate(`/${ROUTES.SIGN_UP}`)}>Registrieren</Button>
                             </Grid>
 
                             <Grid size={12} textAlign="center">
@@ -45,6 +50,7 @@ export const SignIn = () => {
                                                 fontSize: '14px'
                                             },
                                         }}
+                                        autoComplete="email"
                                         placeholder="max.mustermann@email.de"
                                         variant="outlined"
                                         name="Email"
@@ -57,22 +63,41 @@ export const SignIn = () => {
                                 </Grid>
 
                                 <Grid size={12} textAlign="center">
-                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth>
-                                        Registrierung Email
+                                    <TextField
+                                        InputProps={{
+                                            style: {
+                                                fontSize: '14px'
+                                            },
+                                        }}
+                                        autoComplete="current-password"
+                                        variant="outlined"
+                                        name="Passwort"
+                                        size="small"
+                                        type="password"
+                                        style={{marginTop: "20px"}}
+                                        value={password}
+                                        onChange={(event) => setPassword(event.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+
+                                <Grid size={12} textAlign="center">
+                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth onClick={() => signInWithEmail(email, password)}>
+                                        Log in
                                     </Button>
                                 </Grid>
 
                                 <Divider style={{marginTop: "10px", marginBottom: "10px"}}><Typography
-                                    variant="subtitle2" color="textSecondary">ODER REGISTRIERE DICH
+                                    variant="subtitle2" color="textSecondary">ODER LOGGE DICH EIN
                                     MIT</Typography></Divider>
 
-                                <Button variant="outlined" startIcon={<GoogleIcon/>} fullWidth>
+                                <Button variant="outlined" startIcon={<GoogleIcon/>} fullWidth onClick={signInWithGoogle}>
                                     Google
                                 </Button>
 
                                 <Typography variant="subtitle2" style={{textAlign: "center", marginTop: "10px"}}>
-                                    Durch Registrierung, stimmst du automatisch unseren <a href="">AGBs</a> und
-                                    unseren <a href="">Datenschutzrichtlinien</a> zu.
+                                    Durch Registrierung, stimmst du automatisch unseren <Link to={`/${ROUTES.LEGAL}`}>AGBs</Link> und
+                                    unseren <Link to={`/${ROUTES.PRIVACY}`}>Datenschutzrichtlinien</Link> zu.
                                 </Typography>
 
                             </Container>
