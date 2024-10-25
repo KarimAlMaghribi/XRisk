@@ -14,7 +14,6 @@ import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
 import {useNavigate} from "react-router-dom";
 import {Page, pages} from "./pages";
-import {useEffect} from "react";
 
 const settings = ['Profil', 'Konto', 'Einstellungen', 'Ausloggen'];
 

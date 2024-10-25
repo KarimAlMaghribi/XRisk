@@ -19,7 +19,7 @@ export const SignIn = () => {
         <div className="sign-in-card">
             <Card>
                 <Grid container>
-                    <Grid size={6} style={{backgroundColor: theme.palette.primary.main}}>
+                    <Grid size={6} style={{backgroundColor: "#1F271B"}}>
                         <div style={{display: "flex", alignItems: "center", padding: "20px"}}>
                             <img src={Logo} alt="logo" style={{height: "30px", width: "39px", marginRight: "20px"}}/>
                             <Typography variant="body1" style={{color: "white"}}>
