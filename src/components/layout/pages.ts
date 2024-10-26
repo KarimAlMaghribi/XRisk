@@ -17,6 +17,8 @@ export const pages: Page[] = [
 ];
 
 export const settings: Page[] = [
+    { name: 'Meine Risiken', route: ROUTES.MY_RISKS },
+    { name: 'Meine Gebote', route: ROUTES.MY_BIDS },
     { name: 'Profil', route: ROUTES.PROFILE },
     { name: 'Konto', route: ROUTES.ACCOUNT },
     { name: 'Einstellungen', route: ROUTES.SETTINGS },

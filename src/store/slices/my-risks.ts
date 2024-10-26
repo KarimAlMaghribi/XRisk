@@ -1,15 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface CounterState {
+export interface MyRisksState {
     value: number;
 }
 
-const initialState: CounterState = {
+const initialState: MyRisksState = {
     value: 0,
 };
 
-export const counterSlice = createSlice({
-    name: "counter",
+export const myRisksSlice = createSlice({
+    name: "myRisks",
     initialState: initialState,
     reducers: {
         increment: (state) => {
@@ -21,6 +21,6 @@ export const counterSlice = createSlice({
     },
 });
 
-export const { increment, decrement } = counterSlice.actions;
+export const { increment, decrement } = myRisksSlice.actions;
 
-export default counterSlice.reducer;
+export default myRisksSlice.reducer;

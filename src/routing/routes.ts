@@ -13,4 +13,6 @@ export const ROUTES = {
     PRIVACY: 'privacy',
     ACCOUNT: 'account',
     IMPRINT: 'imprint',
+    MY_RISKS: 'my-risks',
+    MY_BIDS: 'my-bids',
 }
