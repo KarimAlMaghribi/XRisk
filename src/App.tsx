@@ -19,6 +19,8 @@ import {Profile} from "./pages/profile/profile";
 import {Settings} from "@mui/icons-material";
 import {ROUTES} from "./routing/routes";
 import {PrivateRoute} from "./routing/private-route";
+import {MyRisks} from "./pages/my-risks/my-risks";
+import {MyBids} from "./pages/my-bids/my-bids";
 
 function App() {
     return (
@@ -39,6 +41,8 @@ function App() {
                 <Route path={`/${ROUTES.LEGAL}`} element={<Legal />}/>
                 <Route path={`/${ROUTES.PRIVACY}`} element={<Privacy />}/>
                 <Route path={`/${ROUTES.IMPRINT}`} element={<Imprint />}/>
+                <Route path={`/${ROUTES.MY_RISKS}`} element={<PrivateRoute><MyRisks /></PrivateRoute>}/>
+                <Route path={`/${ROUTES.MY_BIDS}`} element={<PrivateRoute><MyBids /></PrivateRoute>}/>
 
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>

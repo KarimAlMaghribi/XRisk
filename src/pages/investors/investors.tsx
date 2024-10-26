@@ -1,7 +1,7 @@
+import {Typography} from "@mui/material";
+
 export const Investors = () => {
     return (
-        <div>
-            Investors
-        </div>
+        <Typography variant="h1">xrisks für Investoren</Typography>
     )
 }
