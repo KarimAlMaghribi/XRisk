@@ -18,6 +18,7 @@ import {Chat} from "./pages/chat/chat";
 import {Profile} from "./pages/profile/profile";
 import {Settings} from "@mui/icons-material";
 import {ROUTES} from "./routing/routes";
+import {PrivateRoute} from "./routing/private-route";
 
 function App() {
     return (
@@ -28,13 +29,13 @@ function App() {
                 <Route path={`/${ROUTES.SIGN_UP}`} element={<SignUp/>}/>
                 <Route path={`/${ROUTES.FORGOT_PASSWORD}`} element={<ForgotPassword/>}/>
                 <Route path={`/${ROUTES.ABOUT}`} element={<About />}/>
-                <Route path={`/${ROUTES.CHAT}`} element={<Chat />}/>
-                <Route path={`/${ROUTES.CATAGLOG}`} element={<Catalog />}/>
-                <Route path={`/${ROUTES.PROFILE}`} element={<Profile />}/>
-                <Route path={`/${ROUTES.ACCOUNT}`} element={<Account />}/>
-                <Route path={`/${ROUTES.SETTINGS}`} element={<Settings />}/>
+                <Route path={`/${ROUTES.CHAT}`} element={<PrivateRoute><Chat /></PrivateRoute>}/>
+                <Route path={`/${ROUTES.CATALOG}`} element={<Catalog />}/>
+                <Route path={`/${ROUTES.PROFILE}`} element={<PrivateRoute><Profile /></PrivateRoute>}/>
+                <Route path={`/${ROUTES.ACCOUNT}`} element={<PrivateRoute><Account /></PrivateRoute>}/>
+                <Route path={`/${ROUTES.SETTINGS}`} element={<PrivateRoute><Settings /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.INVESTORS}`} element={<Investors />}/>
-                <Route path={`/${ROUTES.RISK_OVERVIEW}`} element={<RiskOverview />}/>
+                <Route path={`/${ROUTES.RISK_OVERVIEW}`} element={<PrivateRoute><RiskOverview /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.LEGAL}`} element={<Legal />}/>
                 <Route path={`/${ROUTES.PRIVACY}`} element={<Privacy />}/>
                 <Route path={`/${ROUTES.IMPRINT}`} element={<Imprint />}/>

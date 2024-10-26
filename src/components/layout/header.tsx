@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,18 +14,28 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
 import {useNavigate} from "react-router-dom";
-import {Page, pages} from "./pages";
-
-const settings = ['Profil', 'Konto', 'Einstellungen', 'Ausloggen'];
-
+import {Page, pages, settings} from "./pages";
+import {auth} from "../../firebase_config";
+import {signOutUser} from "../../firebase/firebase-service";
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import {ROUTES} from "../../routing/routes";
 
 export function Header() {
     const navigate = useNavigate();
-    const isAuthenticated = false;
 
+    const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const [activePage, setActivePage] = React.useState<string | null>(pages[0].name);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
+            setIsLoggedIn(!!user);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -39,8 +50,9 @@ export function Header() {
         navigate(page.route);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (setting: Page) => {
         setAnchorElUser(null);
+        navigate(setting.route)
     };
 
     return (
@@ -78,6 +90,7 @@ export function Header() {
                             open={Boolean(anchorElNav)}
                             onClose={() => setAnchorElNav(null)}
                             sx={{display: {xs: 'block', md: 'none'}}}>
+
                             {pages.map((page) => (
                                 <MenuItem key={page.name} onClick={() => handleCloseNavMenu(page)}>
                                     <Typography sx={{textAlign: 'center'}}>{page.name}</Typography>
@@ -117,7 +130,7 @@ export function Header() {
                         ))}
                     </Box>
 
-                    {isAuthenticated ? (
+                    {isLoggedIn ? (
                         <Box sx={{flexGrow: 0}}>
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
@@ -140,14 +153,17 @@ export function Header() {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}>
                                 {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography sx={{textAlign: 'center'}}>{setting}</Typography>
+                                    <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting)}>
+                                        <Typography sx={{textAlign: 'center'}}>{setting.name}</Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>
+                            <IconButton style={{color: "white", marginLeft: "20px"}}
+                                        onClick={() => signOutUser()}><LogoutIcon/></IconButton>
                         </Box>
                     ) : (
-                        <Button style={{color: "white"}} onClick={() => navigate("/sign-in")}>Log in</Button>
+                        <IconButton style={{color: "white"}}
+                                    onClick={() => navigate("/sign-in")}><LoginIcon/></IconButton>
                     )}
                 </Toolbar>
             </Container>

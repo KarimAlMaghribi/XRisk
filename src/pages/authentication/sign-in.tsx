@@ -2,9 +2,8 @@ import {Button, Card, Container, Divider, TextField, Typography} from "@mui/mate
 import Grid from '@mui/material/Grid2';
 import React from "react";
 // @ts-ignore
-import Logo from "../../assests/imgs/logo_white.png";
+import Logo from "../../assests/imgs/logo.png";
 import "./style.scss";
-import {theme} from "../../theme";
 import GoogleIcon from '@mui/icons-material/Google';
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
@@ -14,6 +13,14 @@ export const SignIn = () => {
     const navigate = useNavigate();
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
+
+    const signIn = async () => {
+        const user = await signInWithEmail(email, password);
+
+        if (user?.refreshToken) {
+            navigate(`/${ROUTES.RISK_OVERVIEW}`);
+        }
+    }
 
     return (
         <div className="sign-in-card">
@@ -31,7 +38,8 @@ export const SignIn = () => {
                     <Grid size={6} style={{padding: "20px"}}>
                         <Grid container>
                             <Grid size={12} textAlign="right">
-                                <Button style={{color: "black"}} onClick={() => navigate(`/${ROUTES.SIGN_UP}`)}>Registrieren</Button>
+                                <Button style={{color: "black"}}
+                                        onClick={() => navigate(`/${ROUTES.SIGN_UP}`)}>Registrieren</Button>
                             </Grid>
 
                             <Grid size={12} textAlign="center">
@@ -82,7 +90,8 @@ export const SignIn = () => {
                                 </Grid>
 
                                 <Grid size={12} textAlign="center">
-                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth onClick={() => signInWithEmail(email, password)}>
+                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth
+                                            onClick={signIn}>
                                         Log in
                                     </Button>
                                 </Grid>
@@ -91,12 +100,14 @@ export const SignIn = () => {
                                     variant="subtitle2" color="textSecondary">ODER LOGGE DICH EIN
                                     MIT</Typography></Divider>
 
-                                <Button variant="outlined" startIcon={<GoogleIcon/>} fullWidth onClick={signInWithGoogle}>
+                                <Button variant="outlined" startIcon={<GoogleIcon/>} fullWidth
+                                        onClick={signInWithGoogle}>
                                     Google
                                 </Button>
 
                                 <Typography variant="subtitle2" style={{textAlign: "center", marginTop: "10px"}}>
-                                    Durch Registrierung, stimmst du automatisch unseren <Link to={`/${ROUTES.LEGAL}`}>AGBs</Link> und
+                                    Durch Registrierung, stimmst du automatisch unseren <Link
+                                    to={`/${ROUTES.LEGAL}`}>AGBs</Link> und
                                     unseren <Link to={`/${ROUTES.PRIVACY}`}>Datenschutzrichtlinien</Link> zu.
                                 </Typography>
 

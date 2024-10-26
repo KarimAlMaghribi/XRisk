@@ -6,7 +6,7 @@ export const ROUTES = {
     CHAT: 'chat',
     PROFILE: 'profile',
     SETTINGS: 'settings',
-    CATAGLOG: 'catalog',
+    CATALOG: 'catalog',
     INVESTORS: 'investors',
     RISK_OVERVIEW: 'risk-overview',
     LEGAL: 'legal',

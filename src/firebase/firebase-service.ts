@@ -6,7 +6,13 @@ export const signInWithGoogle = async () => {
 };
 
 export const signOutUser = async () => {
-    return await signOut(auth);
+    try {
+        const signOutObject = await signOut(auth);
+        return signOutObject;
+    } catch (error) {
+        console.error(error);
+        alert(error)
+    }
 };
 
 export const signUpWithEmail = async (email: string, password: string) => {
@@ -23,7 +29,8 @@ export const signUpWithEmail = async (email: string, password: string) => {
 
 export const signInWithEmail = async (email: string, password: string) => {
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        return userCredential.user;
     } catch (error) {
         console.error(error);
         alert(error)
