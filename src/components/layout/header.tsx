@@ -19,7 +19,6 @@ import {auth} from "../../firebase_config";
 import {signOutUser} from "../../firebase/firebase-service";
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
-import {ROUTES} from "../../routing/routes";
 
 export function Header() {
     const navigate = useNavigate();
@@ -62,8 +61,7 @@ export function Header() {
                     <Box
                         component="img"
                         sx={{maxWidth: '50px', display: {xs: 'none', md: 'flex'}, mr: 6, cursor: 'pointer'}}
-                        src={Logo}
-                    />
+                        src={Logo}/>
 
                     <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
                         <IconButton
@@ -98,6 +96,7 @@ export function Header() {
                             ))}
                         </Menu>
                     </Box>
+
                     <Typography
                         variant="h5"
                         noWrap
@@ -114,6 +113,7 @@ export function Header() {
                             textDecoration: 'none',
                         }}>
                     </Typography>
+
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
                             <Button
@@ -158,12 +158,18 @@ export function Header() {
                                     </MenuItem>
                                 ))}
                             </Menu>
-                            <IconButton style={{color: "white", marginLeft: "20px"}}
-                                        onClick={() => signOutUser()}><LogoutIcon/></IconButton>
+                            <IconButton
+                                style={{color: "white", marginLeft: "20px"}}
+                                onClick={() => signOutUser()}>
+                                <LogoutIcon/>
+                            </IconButton>
                         </Box>
                     ) : (
-                        <IconButton style={{color: "white"}}
-                                    onClick={() => navigate("/sign-in")}><LoginIcon/></IconButton>
+                        <IconButton
+                            style={{color: "white"}}
+                            onClick={() => navigate("/sign-in")}>
+                            <LoginIcon/>
+                        </IconButton>
                     )}
                 </Toolbar>
             </Container>
