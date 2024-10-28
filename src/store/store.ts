@@ -1,14 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./slices/counter";
 import myRisksReducer from "./slices/my-risks";
 import myBidsReducer from "./slices/my-bids";
+import riskOverviewReducer from "./slices/risk-overview";
 
 export const store = configureStore({
     reducer: {
-        counter: counterReducer,
         myRisks: myRisksReducer,
         myBids: myBidsReducer,
+        riskOverview: riskOverviewReducer
     },
+    devTools: true
 });
 
 export type RootState = ReturnType<typeof store.getState>;

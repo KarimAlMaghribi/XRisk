@@ -1,26 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {Risk} from "../../models/Risk";
 
 export interface MyRisksState {
-    value: number;
+    risks: Risk[];
 }
 
 const initialState: MyRisksState = {
-    value: 0,
+    risks: [],
 };
 
 export const myRisksSlice = createSlice({
     name: "myRisks",
     initialState: initialState,
     reducers: {
-        increment: (state) => {
-            state.value += 1;
-        },
-        decrement: (state) => {
-            state.value -= 1;
-        },
+        createRisk: (state, action) => {
+
+        }
     },
 });
 
-export const { increment, decrement } = myRisksSlice.actions;
+export const { createRisk } = myRisksSlice.actions;
 
 export default myRisksSlice.reducer;

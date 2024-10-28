@@ -15,7 +15,7 @@ export const RiskOverviewHeader = () => {
     return (
         <Grid container>
             <Grid size={2} style={{padding: "20px 0 20px 0", textAlign: "center", backgroundColor: backgroundColor}}>
-                <Button variant="outlined">Risiko erstellen</Button>
+
             </Grid>
 
             <Grid size={10} style={{backgroundColor: backgroundColor, paddingTop: "20px", paddingBottom: "20px"}}>
