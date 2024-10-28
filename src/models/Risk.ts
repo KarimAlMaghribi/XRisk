@@ -4,8 +4,7 @@ export interface Risk {
     description: string;
     type: string;
     value: number;
-    publisher: string;
-    offerer: string;
+    publisher: any; // image
     declinationDate: string;
     published: boolean;
     createdAt: string;
@@ -14,4 +13,5 @@ export interface Risk {
     riskStatus: string;
     riskCategory: string;
     riskProbability: number;
+    offerer?: string;
 }
