@@ -6,7 +6,7 @@ import {RiskOverviewFilter} from "../../components/risk/risk-overview-filter";
 import {selectRisks, selectStatus} from "../../store/slices/risk-overview";
 import {Risk} from "../../models/Risk";
 import {useSelector} from "react-redux";
-import {FetchStatus} from "../../models/FetchStatus";
+import {FetchStatus} from "../../types/FetchStatus";
 
 export const RiskOverview = () => {
     const risks: Risk[] = useSelector(selectRisks);

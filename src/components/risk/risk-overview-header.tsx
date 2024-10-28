@@ -7,8 +7,8 @@ import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {selectSorts, sortRisks} from "../../store/slices/risk-overview";
 import {RiskOverviewSort} from "../../models/RiskOverviewSort";
-import {RiskOverviewHeaderEnum} from "../../models/RiskOverviewHeader.enum";
-import {SortDirectionEnum} from "../../models/SortDirection.enum";
+import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
+import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 
 export const RiskOverviewHeader = () => {
     const dispatch: AppDispatch = useDispatch();

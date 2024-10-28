@@ -1,5 +1,5 @@
-import {RiskOverviewHeaderEnum} from "./RiskOverviewHeader.enum";
-import {SortDirectionEnum} from "./SortDirection.enum";
+import {RiskOverviewHeaderEnum} from "../enums/RiskOverviewHeader.enum";
+import {SortDirectionEnum} from "../enums/SortDirection.enum";
 
 export interface RiskOverviewSort {
     name: RiskOverviewHeaderEnum;

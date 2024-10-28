@@ -9,7 +9,6 @@ import {signUpWithEmail} from "../../firebase/firebase-service";
 
 export const SignUp = () => {
     const navigate = useNavigate();
-    const [error, setError] = React.useState<false>(false);
     const [formData, setFormData] = React.useState({
         fullName: '',
         email: '',
@@ -38,7 +37,7 @@ export const SignUp = () => {
         <div style={{justifyContent: "center", alignItems: "center", marginTop: "25vh"}}>
             <Box sx={{
                 maxWidth: 400,
-                mx: 'auto', // Centers the box
+                mx: 'auto',
                 p: 3,
                 boxShadow: 3,
                 borderRadius: 2,
@@ -76,7 +75,7 @@ export const SignUp = () => {
                     />
                     <FormControlLabel
                         control={<Checkbox checked={formData.receiveUpdates} onChange={handleChange} name="receiveUpdates" />}
-                        label="I want to receive updates via email."
+                        label="Ich möchte updates per Email erhalten."
                         sx={{ mb: 2 }}
                     />
                     <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>

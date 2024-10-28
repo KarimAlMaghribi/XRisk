@@ -1,10 +1,10 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Risk} from "../../models/Risk";
 import {RiskAPI} from "../../apis/risk-api";
-import {FetchStatus} from "../../models/FetchStatus";
+import {FetchStatus} from "../../types/FetchStatus";
 import {RiskOverviewSort} from "../../models/RiskOverviewSort";
-import {RiskOverviewHeaderEnum} from "../../models/RiskOverviewHeader.enum";
-import {SortDirectionEnum} from "../../models/SortDirection.enum";
+import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
+import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 
 const mockRisks: Risk[] = [
     {

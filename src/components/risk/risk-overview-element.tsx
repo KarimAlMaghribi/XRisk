@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/
 import Grid from "@mui/material/Grid2";
 import React from "react";
 import {Risk} from "../../models/Risk";
-import {FetchStatus} from "../../models/FetchStatus";
+import {FetchStatus} from "../../types/FetchStatus";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 
