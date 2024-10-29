@@ -6,6 +6,8 @@ import {Risk} from "../../models/Risk";
 import {FetchStatus} from "../../types/FetchStatus";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import Button from "@mui/material/Button";
+import ModeIcon from '@mui/icons-material/Mode';
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -33,18 +35,18 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                             id={`panel-header-${risk.id}`}>
                             <Grid container size={12} spacing={2} alignItems="center">
                                 <Grid size={5}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        {risk.type}
+                                    <Typography variant="body1" sx={{ cursor: 'pointer'}}>
+                                        <b>{risk.type}</b>
                                     </Typography>
                                 </Grid>
                                 <Grid size={3} sx={{marginLeft: "20px"}}>
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        {risk.value.toLocaleString()}€
+                                        <b>{risk.value.toLocaleString()}€</b>
                                     </Typography>
                                 </Grid>
                                 <Grid size={2}>
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        {new Date(risk.declinationDate).toLocaleDateString()}
+                                        <b>{new Date(risk.declinationDate).toLocaleDateString()}</b>
                                     </Typography>
                                 </Grid>
                                 <Grid display="flex" justifyContent="center" alignItems="center" size={1}>
@@ -57,9 +59,40 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                             </Grid>
                         </AccordionSummary>
                         <AccordionDetails>
-                            <Typography>
-                                Weitere Informationen...
-                            </Typography>
+                            <Grid container>
+                                <Grid size={8}>
+                                    <Typography>
+                                        <b>Kurzbeschreibung: </b>{risk.description}
+                                    </Typography>
+                                    {
+                                        risk.createdAt &&
+                                        <Grid container>
+                                            <Grid size={6}>
+                                                <Typography>
+                                                    <b>Verfügbar seit: </b> {new Date(risk.createdAt).toLocaleDateString()}
+                                                </Typography>
+                                            </Grid>
+                                            <Grid>
+                                                <Typography>
+                                                    <b>Verfügbar bis: </b> {new Date(risk.declinationDate).toLocaleDateString()}
+                                                </Typography>
+                                            </Grid>
+                                        </Grid>
+                                    }
+                                    <Typography>
+                                        <b>Anbieter: </b> {risk.publisher}
+                                    </Typography>
+                                    <Typography>
+                                        <b>Wohnort: </b> {risk.publisherAddress}
+                                    </Typography>
+                                </Grid>
+                                <Grid size={4} style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
+                                    <Button variant="contained" endIcon={<ModeIcon />} style={{maxHeight: "40px", height: "40px"}}>
+                                        Jetzt verhandeln
+                                    </Button>
+                                </Grid>
+                            </Grid>
+
                         </AccordionDetails>
                     </Accordion>
                 ))

@@ -1,10 +1,12 @@
 import React, {useState} from "react";
-import {Checkbox, FormControlLabel, FormGroup, Paper, Typography} from "@mui/material";
+import {Checkbox, Divider, FormControlLabel, FormGroup, Paper, Typography} from "@mui/material";
 import Slider from '@mui/material/Slider';
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {AppDispatch} from "../../store/store";
-import {changeFilterValue, changeRemainingTerm, setFilterType} from "../../store/slices/risk-overview";
+import {changeFilterValue, changeRemainingTerm, clearFilters, setFilterType} from "../../store/slices/risk-overview";
 import {useDispatch} from "react-redux";
+import Grid from "@mui/material/Grid2";
+import Button from "@mui/material/Button";
 
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
@@ -16,39 +18,33 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
         dispatch(setFilterType(type));
     };
 
-    const adjustSliderValue = (newValue: number[]) => {
-        if (newValue[0] < newValue[1] - 1) {
-            return newValue;
-        }
-        return newValue[0] >= newValue[1] ? [newValue[1] - 1, newValue[1]] : [newValue[0], newValue[0] + 1];
-    };
-
     const handleValueChange = (event: any, newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
-            setSliderValue(adjustSliderValue(newValue));
+            setSliderValue(newValue);
         }
     };
 
     const handleValueChangeCommitted = (event: any, newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
-            dispatch(changeFilterValue(adjustSliderValue(newValue)));
+            dispatch(changeFilterValue(newValue));
         }
     };
 
     const handleTermChange = (event: any, newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
-            setTermValue(adjustSliderValue(newValue));
+            setTermValue(newValue);
         }
     };
 
     const handleTermChangeCommitted = (event: any, newValue: number | number[]) => {
         if (Array.isArray(newValue)) {
-            dispatch(changeRemainingTerm(adjustSliderValue(newValue)));
+            dispatch(changeRemainingTerm(newValue));
         }
     };
 
     return (
-        <Paper square={false} style={{margin: "10px", padding: "30px", marginTop: "10px"}} elevation={4}>
+        <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={2}>
+            <Typography variant="h6">Filter</Typography>
             <Typography variant="button">Risikoart</Typography>
             <FormGroup>
                 {props.types.map((type, index) => (
@@ -65,8 +61,14 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 onChange={handleValueChange}
                 onChangeCommitted={handleValueChangeCommitted}
                 min={0}
-                max={100000}
-                marks={[{value: 0, label: '0€'}, {value: 25000, label: '25.000€'}, {value: 100000, label: '100.000€'}]}
+                max={200000}
+                step={1}
+                marks={[
+                    {value: 0, label: '0€'},
+                    {value: 75000, label: '75.000€'},
+                    {value: 135000, label: '135.000€'},
+                    {value: 200000, label: '200.000€'}
+                ]}
                 valueLabelDisplay="auto"
             />
             <Typography variant="button">Restlaufzeit</Typography>
@@ -78,11 +80,12 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 min={1}
                 max={24}
                 marks={[
-                    {value: 3, label: '3 Monate'},
+                    {value: 1, label: '< 1 Monat'},
                     {value: 12, label: '1 Jahr'},
-                    {value: 24, label: '2 Jahre'},
+                    {value: 24, label: '> 2 Jahre'},
                 ]}
             />
+            <Button variant="outlined" fullWidth onClick={() => dispatch(clearFilters())}>Zurücksetzen</Button>
         </Paper>
     )
 }

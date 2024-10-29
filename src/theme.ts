@@ -16,7 +16,7 @@ export const theme = createTheme({
             },
             styleOverrides: {
                 root: {
-                    borderRadius: 5,
+                    borderRadius: 25,
                     textTransform: 'none',
                     fontWeight: 'normal',
 
@@ -30,6 +30,13 @@ export const theme = createTheme({
                 },
             },
         },
+        MuiSlider: {
+            styleOverrides: {
+                markLabel: {
+                    fontSize: "10px",
+                },
+            },
+        }
     },
     typography: {
         fontFamily: [

@@ -1,0 +1,203 @@
+import React, {useEffect, useState} from "react";
+import {
+    Autocomplete,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    TextField
+} from "@mui/material";
+import Button from "@mui/material/Button";
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import dayjs, {Dayjs} from "dayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {types} from "../../store/slices/risk-overview";
+import {NumericFormat} from 'react-number-format';
+import {useDispatch} from "react-redux";
+import {AppDispatch} from "../../store/store";
+import {Risk} from "../../models/Risk";
+import {v4 as uuidv4} from 'uuid';
+import {createRisk} from "../../store/slices/my-risks";
+import {useNavigate} from "react-router-dom";
+import {ROUTES} from "../../routing/routes";
+import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
+
+export interface RiskCreationDialogProps {
+    open: boolean;
+    handleClose: () => void;
+}
+
+const EuroNumberFormat = (props: any) => {
+    const {inputRef, onChange, ...other} = props;
+    return (
+        <NumericFormat
+            {...other}
+            getInputRef={inputRef}
+            onValueChange={(values: any) => {
+                onChange({
+                    target: {
+                        value: values.value,
+                        name: props.name
+                    }
+                });
+            }}
+            thousandSeparator="."
+            decimalSeparator=","
+            prefix="€ "
+        />
+    );
+};
+
+export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
+    const navigate = useNavigate();
+    const dispatch: AppDispatch = useDispatch();
+    const [date, setDate] = useState<Dayjs | null>(dayjs());
+    const [riskType, setRiskType] = useState<string | null>(null);
+    const [inputValue, setInputValue] = useState<string>('');
+    const [value, setValue] = useState<number>(0);
+    const [title, setTitle] = useState<string>('');
+    const [description, setDescription] = useState<string>('');
+    const [nameRequiredError, setNameRequiredError] = useState<boolean>(false);
+
+    useEffect(() => {
+       if (!title && !nameRequiredError) {
+           setNameRequiredError(true);
+       }
+
+       if (title && nameRequiredError) {
+           setNameRequiredError(false);
+       }
+    }, [title]);
+
+    const handleValueChange = (newValue: number) => {
+        if (!isNaN(newValue)) {
+            setValue(newValue);
+        }
+    }
+
+    const handleClose = () => {
+        setTitle('');
+        setDescription('');
+        setRiskType(null);
+        setValue(0);
+        setDate(dayjs());
+        props.handleClose();
+    }
+
+    const handleCreateRisk = () => {
+        if (!title) {
+            setNameRequiredError(true);
+            return;
+        }
+
+        const newRisk: Risk = {
+            id: uuidv4(),
+            createdAt: new Date().toLocaleDateString(),
+            name: title,
+            description: description,
+            status: RiskStatusEnum.DRAFT,
+            type: riskType,
+            value: value,
+            declinationDate: date?.toDate().toLocaleDateString() || new Date().toLocaleDateString(),
+        }
+
+        dispatch(createRisk(newRisk));
+        navigate(`/${ROUTES.MY_RISKS}`);
+        handleClose();
+    }
+
+    return (
+
+        <Dialog
+            open={props.open}
+            onClose={props.handleClose}>
+            <DialogTitle>Risiko erstellen</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Erstelle dein eignes Risiko, dass du später veröffentlichen kannst!
+                </DialogContentText>
+
+                <br/>
+
+                <TextField
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="title"
+                    name="title"
+                    label="Titel"
+                    fullWidth
+                />
+                <TextField
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    margin="dense"
+                    fullWidth
+                    id="description"
+                    label="Kurzbeschreibung"
+                    multiline
+                    rows={4}
+                />
+                {/* Risikoarten werden zukünftig zentral von allen angelegt und gespeichert und hier abgerufen*/}
+                <Autocomplete
+                    value={riskType}
+                    onChange={(event: any, newValue: string | null) => {
+                        setRiskType(newValue);
+                    }}
+                    inputValue={inputValue}
+                    onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                    }}
+                    disablePortal={false}
+                    options={types}
+                    renderInput={(params) =>
+                        <TextField
+                            {...params}
+                            label="Risikoart"
+                            fullWidth
+                            margin="dense"
+                        />}
+                />
+                <TextField
+                    margin="dense"
+                    fullWidth
+                    label="Absicherungssumme"
+                    value={value}
+                    onChange={(event) => handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}  // Entfernen des Euro-Symbols und Tausendertrennzeichen für die korrekte numerische Verarbeitung
+                    name="value"
+                    id="value"
+                    InputProps={{
+                        inputComponent: EuroNumberFormat,
+                    }}
+                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                        sx={{marginTop: "10px", width: "100%"}}
+                        format="DD.MM.YYYY"
+                        label="Laufzeitende"
+                        value={date}
+                        onChange={(newValue) => setDate(newValue)}
+                    />
+                </LocalizationProvider>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={handleClose}
+                    variant="outlined">
+                    Abbrechen
+                </Button>
+                <Button
+                    disabled={nameRequiredError}
+                    variant="contained"
+                    onClick={handleCreateRisk}>
+                    Erstellen
+                </Button>
+            </DialogActions>
+        </Dialog>
+    )
+
+}

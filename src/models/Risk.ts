@@ -1,17 +1,19 @@
+import {RiskStatus} from "../types/RiskStatus";
+
 export interface Risk {
     id: string;
-    name: string;
+    name: string; // title
     description: string;
-    type: string;
+    type: string | null;
     value: number;
-    publisher: any; // image
+    publisher?: any; // image
+    publisherAddress?: string;
     declinationDate: string;
-    published: boolean;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    riskStatus: string;
-    riskCategory: string;
-    riskProbability: number;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+    status?: string;
+    riskCategory?: string;
+    riskProbability?: number;
     offerer?: string;
 }

@@ -37,11 +37,6 @@ export const SignIn = () => {
 
                     <Grid size={6} style={{padding: "20px"}}>
                         <Grid container>
-                            <Grid size={12} textAlign="right">
-                                <Button style={{color: "black"}}
-                                        onClick={() => navigate(`/${ROUTES.SIGN_UP}`)}>Registrieren</Button>
-                            </Grid>
-
                             <Grid size={12} textAlign="center">
                                 <Typography variant="h6">Erstelle ein Konto</Typography>
                             </Grid>
@@ -92,7 +87,7 @@ export const SignIn = () => {
                                 <Grid size={12} textAlign="center">
                                     <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth
                                             onClick={signIn}>
-                                        Log in
+                                        Log In
                                     </Button>
                                 </Grid>
 

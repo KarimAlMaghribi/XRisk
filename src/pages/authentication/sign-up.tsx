@@ -47,7 +47,7 @@ export const SignUp = () => {
                     <TextField
                         size="small"
                         fullWidth
-                        label="Full name"
+                        label="Name"
                         name="fullName"
                         value={formData.fullName}
                         onChange={handleChange}
@@ -66,7 +66,7 @@ export const SignUp = () => {
                     <TextField
                         fullWidth
                         size="small"
-                        label="Password"
+                        label="Passwort"
                         name="password"
                         type="password"
                         value={formData.password}
@@ -75,14 +75,14 @@ export const SignUp = () => {
                     />
                     <FormControlLabel
                         control={<Checkbox checked={formData.receiveUpdates} onChange={handleChange} name="receiveUpdates" />}
-                        label="Ich möchte updates per Email erhalten."
+                        label="Ich möchte Updates per Email erhalten."
                         sx={{ mb: 2 }}
                     />
                     <Button type="submit" fullWidth variant="contained" sx={{ mb: 2 }}>
-                        Sign up
+                        Registrieren
                     </Button>
                     <Typography textAlign="center" sx={{ mb: 1 }} variant="subtitle1">
-                        Ich habe bereits einen Account? <Link to={`/${ROUTES.SIGN_IN}`}>Log in</Link>
+                        Ich habe bereits einen Account? <Link to={`/${ROUTES.SIGN_IN}`}>Log In</Link>
                     </Typography>
                 </form>
             </Box>

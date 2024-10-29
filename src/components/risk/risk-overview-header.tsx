@@ -29,7 +29,7 @@ export const RiskOverviewHeader = () => {
             </Grid>
             <Grid size={3} sx={{display: 'flex', alignItems: 'center'}}>
                 <Tooltip title="Die Höhe, mit der das Risiko...">
-                    <Typography style={{cursor: "pointer"}} variant="button">Nennwert</Typography>
+                    <Typography style={{cursor: "pointer"}} variant="button">Absicherungssumme</Typography>
                 </Tooltip>
                 <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.VALUE)?.direction === SortDirectionEnum.ASC ? 'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.VALUE)}/>
             </Grid>

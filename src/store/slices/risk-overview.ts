@@ -7,7 +7,7 @@ import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
 import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 
-const types: string[] = [
+export const types: string[] = [
     "Reise",
     "Cyber",
     "Landwirtschaft",
@@ -23,177 +23,177 @@ const types: string[] = [
 export const riskTypes = types.map(type => ({
     name: type,
     label: type,
-    checked: false
+    checked: true
 }));
 
 const mockRisks: Risk[] = [
     {
         id: "1",
         name: "Sicherheit auf dem Weg zum internationalen Kongress",
-        description: "Deckung von Risiken während der Reise zu und von einem internationalen Kongress, einschließlich Transportmittel und Aufenthalt.",
+        description: "Umfassender Versicherungsschutz für Risiken, die mit der Reise zu und von internationalen Kongressen verbunden sind, einschließlich Flug-, Zug- und lokalem Transport sowie Hotelunterkünften.",
         type: "Reise",
-        value: 500000,
-        publisher: "Global Congress Security",
+        value: 50000,
+        publisher: "Hans Müller",
+        publisherAddress: "Musterstraße 5, 04107 Leipzig, Deutschland",
         offerer: "TravelGuard Insurance",
         declinationDate: "2024-12-31",
-        published: true,
         createdAt: "2024-01-15",
         updatedAt: "2024-01-20",
         publishedAt: "2024-01-20",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "business",
         riskProbability: 0.05
     },
     {
         id: "2",
         name: "Cyberangriff auf Finanzsysteme",
-        description: "Versicherungsschutz gegen Schäden durch Cyberangriffe auf unternehmenseigene Finanzsysteme und Datenbanken.",
+        description: "Versicherungsschutz gegen umfassende Cyberangriffe auf unternehmenseigene Finanzsysteme, einschließlich Datenverlust und -beschädigung durch Hackerangriffe.",
         type: "Cyber",
-        value: 2000000,
-        publisher: "TechSecure",
+        value: 200000,
+        publisher: "Julia Becker",
+        publisherAddress: "Goethestraße 34, 20095 Hamburg, Deutschland",
         offerer: "CyberPro Insure",
         declinationDate: "2025-01-01",
-        published: true,
         createdAt: "2024-02-01",
         updatedAt: "2024-02-05",
         publishedAt: "2024-02-05",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "corporate",
         riskProbability: 0.20
     },
     {
         id: "3",
         name: "Absicherung von Ernteausfällen",
-        description: "Versicherung gegen Ernteausfall durch unerwartete klimatische Bedingungen wie Dürre oder Überschwemmung.",
+        description: "Schutz gegen finanzielle Verluste durch Ernteausfälle infolge unvorhergesehener Wetterereignisse wie Dürreperioden oder Überschwemmungen, die landwirtschaftliche Flächen betreffen.",
         type: "Landwirtschaft",
-        value: 1000000,
-        publisher: "AgriCover",
+        value: 100000,
+        publisher: "Friedrich Scholz",
+        publisherAddress: "Bauernweg 12, 38100 Braunschweig, Deutschland",
         offerer: "FarmSecure",
         declinationDate: "2024-12-31",
-        published: true,
         createdAt: "2024-03-10",
         updatedAt: "2024-03-15",
         publishedAt: "2024-03-15",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "agriculture",
         riskProbability: 0.25
     },
     {
         id: "4",
         name: "Versicherung von Luxusyachten gegen Piraterie",
-        description: "Deckung gegen Piraterieangriffe und die daraus resultierenden Schäden während internationaler Fahrten.",
+        description: "Versicherungsschutz für Luxusyachten gegen Piraterieangriffe und resultierende Schäden während der Fahrt durch internationale Gewässer.",
         type: "Maritim",
-        value: 3000000,
-        publisher: "MarineGuard",
+        value: 300000,
+        publisher: "Michael Krause",
+        publisherAddress: "Hafenstraße 3, 28217 Bremen, Deutschland",
         offerer: "Oceanic Insurers",
         declinationDate: "2025-02-28",
-        published: true,
         createdAt: "2024-04-20",
         updatedAt: "2024-04-25",
         publishedAt: "2024-04-25",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "marine",
         riskProbability: 0.10
     },
     {
         id: "5",
         name: "Absicherung gegen Ausfälle von Großveranstaltungen",
-        description: "Versicherung gegen finanzielle Verluste aus der Absage von Großveranstaltungen aufgrund von Wetterbedingungen, politischen Unruhen oder Pandemien.",
+        description: "Bietet finanziellen Schutz bei der Absage von Großveranstaltungen aufgrund von Wetterkatastrophen, politischen Unruhen oder Gesundheitskrisen.",
         type: "Event",
-        value: 4000000,
-        publisher: "EventShield",
+        value: 400000,
+        publisher: "Laura Schmidt",
+        publisherAddress: "Eventplatz 8, 50679 Köln, Deutschland",
         offerer: "MajorEvent Insurance",
         declinationDate: "2024-10-01",
-        published: true,
         createdAt: "2024-05-05",
         updatedAt: "2024-05-10",
         publishedAt: "2024-05-10",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "entertainment",
         riskProbability: 0.15
     },
     {
         id: "6",
         name: "Kreditversicherung für Start-ups",
-        description: "Schutz vor dem Ausfall von Kreditrückzahlungen junger Unternehmen in der Frühphase ihrer Entwicklung.",
+        description: "Versicherungsschutz für das Risiko von Kreditausfällen bei Start-ups in der kritischen Anfangsphase ihrer Geschäftstätigkeit.",
         type: "Finanz",
-        value: 1500000,
-        publisher: "StartupSecure",
+        value: 150000,
+        publisher: "Thomas Lehmann",
+        publisherAddress: "Startupallee 22, 80331 München, Deutschland",
         offerer: "InnovateInsure",
         declinationDate: "2024-11-30",
-        published: true,
         createdAt: "2024-06-01",
         updatedAt: "2024-06-05",
         publishedAt: "2024-06-05",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "financial",
         riskProbability: 0.30
     },
     {
         id: "7",
         name: "Haftpflichtversicherung für Roboterchirurgen",
-        description: "Versicherungsschutz gegen Haftungsansprüche im Falle eines Fehlers bei chirurgischen Eingriffen durch Roboter.",
+        description: "Versicherungsschutz für Haftungsansprüche im Falle eines chirurgischen Fehlers bei Eingriffen, die von robotergesteuerten Chirurgiegeräten durchgeführt werden.",
         type: "Medizinisch",
-        value: 5000000,
-        publisher: "MediTech Safety",
+        value: 500000,
+        publisher: "Dr. Anna Fischer",
+        publisherAddress: "Klinikstraße 1, 10117 Berlin, Deutschland",
         offerer: "HealthShield",
         declinationDate: "2024-12-31",
-        published: true,
         createdAt: "2024-07-15",
         updatedAt: "2024-07-20",
         publishedAt: "2024-07-20",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "healthcare",
         riskProbability: 0.05
     },
     {
         id: "8",
         name: "Versicherung von Satelliten gegen Weltraumschrott",
-        description: "Schutz von Satelliten im Orbit gegen Kollisionen mit Weltraumschrott und anderen orbitalen Gefahren.",
+        description: "Schutz für Satelliten, die sich im Erdorbit befinden, gegen die Gefahren von Kollisionen mit Weltraumschrott und anderen Objekten im Orbit.",
         type: "Weltraum",
-        value: 7500000,
-        publisher: "SpaceGuard",
+        value: 75000,
+        publisher: "Dr. Stefan Weber",
+        publisherAddress: "Raumfahrtzentrum 4, 85077 Manching, Deutschland",
         offerer: "AstroInsure",
         declinationDate: "2025-03-31",
-        published: true,
         createdAt: "2024-08-30",
         updatedAt: "2024-09-04",
         publishedAt: "2024-09-04",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "space",
         riskProbability: 0.07
     },
     {
         id: "9",
         name: "Rückrufversicherung für Automobilhersteller",
-        description: "Deckung der Kosten im Falle eines Rückrufs von Fahrzeugen aufgrund von Fertigungsfehlern oder Sicherheitsmängeln.",
+        description: "Versicherungsschutz für Automobilhersteller gegen die Kosten von Rückrufaktionen aufgrund von Mängeln in der Produktion oder sicherheitsrelevanten Bedenken.",
         type: "Automobil",
-        value: 6000000,
-        publisher: "AutoCover",
+        value: 60000,
+        publisher: "Christoph Lang",
+        publisherAddress: "Industrieweg 7, 70469 Stuttgart, Deutschland",
         offerer: "VehicleSafe",
         declinationDate: "2024-09-30",
-        published: true,
         createdAt: "2024-10-10",
         updatedAt: "2024-10-15",
         publishedAt: "2024-10-15",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "automotive",
         riskProbability: 0.20
     },
     {
         id: "10",
         name: "Versicherung gegen Rechtsstreitigkeiten bei internationalen Geschäften",
-        description: "Schutz vor den Kosten und dem Risiko von Rechtsstreitigkeiten bei internationalen Handels- und Geschäftsaktivitäten.",
+        description: "Absicherung gegen die finanziellen Belastungen und das Risiko von Rechtsstreitigkeiten bei internationalen Handels- und Geschäftsaktivitäten.",
         type: "Rechtlich",
-        value: 2500000,
-        publisher: "GlobalTrade Insurance",
+        value: 25000,
+        publisher: "Sabine Werner",
+        publisherAddress: "Handelsplatz 3, 40213 Düsseldorf, Deutschland",
         offerer: "CommerceProtect",
         declinationDate: "2024-12-31",
-        published: true,
         createdAt: "2024-11-05",
         updatedAt: "2024-11-10",
         publishedAt: "2024-11-10",
-        riskStatus: "active",
+        status: "PUBLISHED",
         riskCategory: "legal",
         riskProbability: 0.10
     }
@@ -201,6 +201,7 @@ const mockRisks: Risk[] = [
 
 export interface RiskOverviewState {
     risks: Risk[];
+    filteredRisks: Risk[];
     filters: RiskOverviewFilterType;
     sorts: RiskOverviewSort[];
     loading: FetchStatus;
@@ -209,10 +210,11 @@ export interface RiskOverviewState {
 
 const initialState: RiskOverviewState = {
     risks: mockRisks,
+    filteredRisks: mockRisks,
     filters: {
         types: riskTypes,
-        value: [0, 1],
-        remainingTerm: [3, 6] // months
+        value: [0, 200000],
+        remainingTerm: [0, 24] // months
     },
     sorts: [
         {
@@ -253,7 +255,7 @@ export const riskOverviewSlice = createSlice({
                 sort.direction = sort.direction === SortDirectionEnum.ASC ? SortDirectionEnum.DESC : SortDirectionEnum.ASC;
             }
 
-            state.risks.sort((a, b) => {
+            state.filteredRisks.sort((a, b) => {
                 if (!sort) return 0;
                 if (sort.direction === SortDirectionEnum.ASC) {
                     return a[sort.name] > b[sort.name] ? 1 : -1;
@@ -267,12 +269,33 @@ export const riskOverviewSlice = createSlice({
             if (filter) {
                 filter.checked = !filter.checked;
             }
+
+            state.filteredRisks = state.risks.filter(risk => {
+                return state.filters.types.find(t => t.name === risk.type)?.checked === true;
+            })
         },
         changeFilterValue: (state, action: PayloadAction<number[]>) => {
             state.filters.value = action.payload;
+
+            state.filteredRisks = state.risks.filter(risk => {
+                return risk.value >= action.payload[0] && risk.value <= action.payload[1];
+            });
         },
         changeRemainingTerm: (state, action: PayloadAction<number[]>) => {
             state.filters.remainingTerm = action.payload;
+
+            state.filteredRisks = state.risks.filter(risk => {
+                const declinationDate = new Date(risk.declinationDate);
+                const currentDate = new Date();
+                const remainingMonths = (declinationDate.getFullYear() - currentDate.getFullYear()) * 12 + declinationDate.getMonth() - currentDate.getMonth();
+                return remainingMonths >= action.payload[0] && remainingMonths <= action.payload[1];
+            });
+        },
+        clearFilters: (state) => {
+            state.filters.types.forEach(type => type.checked = true);
+            state.filters.value = [0, 1];
+            state.filters.remainingTerm = [3, 6];
+            state.filteredRisks = state.risks;
         }
     },
     extraReducers: (builder) => {
@@ -292,12 +315,13 @@ export const riskOverviewSlice = createSlice({
 });
 
 export const selectRisks = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.risks;
+export const selectFilteredRisks = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filteredRisks;
 export const selectStatus = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.loading;
 export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.sorts;
 export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
 export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
 export const selectRemainingTerm = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.remainingTerm;
 
-export const { sortRisks, setFilterType, changeFilterValue, changeRemainingTerm } = riskOverviewSlice.actions;
+export const { sortRisks, setFilterType, changeFilterValue, changeRemainingTerm, clearFilters } = riskOverviewSlice.actions;
 
 export default riskOverviewSlice.reducer;

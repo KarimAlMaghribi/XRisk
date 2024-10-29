@@ -13,14 +13,17 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import {Page, pages, settings} from "./pages";
 import {auth} from "../../firebase_config";
 import {signOutUser} from "../../firebase/firebase-service";
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
+import West from '@mui/icons-material/West';
+import East from '@mui/icons-material/East';
+import Grid from "@mui/material/Grid2";
+import { ROUTES } from '../../routing/routes';
 
 export function Header() {
+    const location = useLocation();
     const navigate = useNavigate();
 
     const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
@@ -35,6 +38,15 @@ export function Header() {
 
         return () => unsubscribe();
     }, []);
+
+    useEffect(() => {
+        if (location.pathname === "/")
+            setActivePage(pages[0].name);
+        else {
+            const currentPage = pages.find(page => location.pathname === `/${page.route}`);
+            setActivePage(currentPage ? currentPage.name : null);
+        }
+    }, [location]);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -59,6 +71,7 @@ export function Header() {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box
+                        onClick={() => navigate('/')}
                         component="img"
                         sx={{maxWidth: '50px', display: {xs: 'none', md: 'flex'}, mr: 6, cursor: 'pointer'}}
                         src={Logo}/>
@@ -123,7 +136,8 @@ export function Header() {
                                     my: 2,
                                     color: 'white',
                                     display: 'block',
-                                    bgcolor: activePage === page.name ? 'primary.main' : 'inherit',
+                                    textDecoration: activePage === page.name ? 'underline' : 'none',
+                                    textDecorationColor: 'white'
                                 }}>
                                 {page.name}
                             </Button>
@@ -132,9 +146,9 @@ export function Header() {
 
                     {isLoggedIn ? (
                         <Box sx={{flexGrow: 0}}>
-                            <Tooltip title="Open settings">
+                            <Tooltip title="Profilmenü">
                                 <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+                                    <Avatar src="https://i.pravatar.cc/150?img=12"/>
                                 </IconButton>
                             </Tooltip>
                             <Menu
@@ -158,18 +172,35 @@ export function Header() {
                                     </MenuItem>
                                 ))}
                             </Menu>
-                            <IconButton
-                                style={{color: "white", marginLeft: "20px"}}
-                                onClick={() => signOutUser()}>
-                                <LogoutIcon/>
-                            </IconButton>
+                            <Button
+                                onClick={() => signOutUser()}
+                                variant="outlined"
+                                style={{color: "white", borderColor: "white", marginLeft: "20px"}}
+                                startIcon={<West />}>
+                                Log Out
+                            </Button>
                         </Box>
                     ) : (
-                        <IconButton
-                            style={{color: "white"}}
-                            onClick={() => navigate("/sign-in")}>
-                            <LoginIcon/>
-                        </IconButton>
+                        <Grid container>
+                            <Grid size={6}>
+                                <Button
+                                    onClick={() => navigate(ROUTES.SIGN_IN)}
+                                    variant="outlined"
+                                    style={{color: "white", borderColor: "white", minWidth: "100px"}}
+                                    endIcon={<East />}>
+                                    Log In
+                                </Button>
+                            </Grid>
+                            <Grid size={6}>
+                                <Button
+                                    onClick={() => navigate(ROUTES.SIGN_UP)}
+                                    variant="contained"
+                                    style={{minWidth: "100px"}}
+                                    endIcon={<East />}>
+                                    Registrieren
+                                </Button>
+                            </Grid>
+                        </Grid>
                     )}
                 </Toolbar>
             </Container>
