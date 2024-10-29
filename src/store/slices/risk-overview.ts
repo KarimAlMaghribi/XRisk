@@ -5,6 +5,26 @@ import {FetchStatus} from "../../types/FetchStatus";
 import {RiskOverviewSort} from "../../models/RiskOverviewSort";
 import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
 import {SortDirectionEnum} from "../../enums/SortDirection.enum";
+import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
+
+const types: string[] = [
+    "Reise",
+    "Cyber",
+    "Landwirtschaft",
+    "Maritim",
+    "Event",
+    "Finanz",
+    "Medizinisch",
+    "Weltraum",
+    "Automobil",
+    "Rechtlich"
+];
+
+export const riskTypes = types.map(type => ({
+    name: type,
+    label: type,
+    checked: false
+}));
 
 const mockRisks: Risk[] = [
     {
@@ -181,7 +201,7 @@ const mockRisks: Risk[] = [
 
 export interface RiskOverviewState {
     risks: Risk[];
-    filters: any;
+    filters: RiskOverviewFilterType;
     sorts: RiskOverviewSort[];
     loading: FetchStatus;
     error?: string;
@@ -189,7 +209,11 @@ export interface RiskOverviewState {
 
 const initialState: RiskOverviewState = {
     risks: mockRisks,
-    filters: null,
+    filters: {
+        types: riskTypes,
+        value: [0, 1],
+        remainingTerm: [3, 6] // months
+    },
     sorts: [
         {
             name: RiskOverviewHeaderEnum.TYPE,
@@ -238,8 +262,17 @@ export const riskOverviewSlice = createSlice({
                 }
             });
         },
-        filterRisks: (state, action) => {
-            state.filters = action.payload;
+        setFilterType: (state, action: PayloadAction<string>) => {
+            const filter = state.filters.types.find(t => t.name === action.payload);
+            if (filter) {
+                filter.checked = !filter.checked;
+            }
+        },
+        changeFilterValue: (state, action: PayloadAction<number[]>) => {
+            state.filters.value = action.payload;
+        },
+        changeRemainingTerm: (state, action: PayloadAction<number[]>) => {
+            state.filters.remainingTerm = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -261,7 +294,10 @@ export const riskOverviewSlice = createSlice({
 export const selectRisks = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.risks;
 export const selectStatus = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.loading;
 export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.sorts;
+export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
+export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
+export const selectRemainingTerm = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.remainingTerm;
 
-export const { sortRisks, filterRisks } = riskOverviewSlice.actions;
+export const { sortRisks, setFilterType, changeFilterValue, changeRemainingTerm } = riskOverviewSlice.actions;
 
 export default riskOverviewSlice.reducer;
