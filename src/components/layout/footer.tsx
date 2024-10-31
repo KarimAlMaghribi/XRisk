@@ -2,13 +2,15 @@ import React from "react";
 import Grid from "@mui/material/Grid2";
 import Logo from "../../assests/imgs/logo.png";
 import {Chip, Divider, Typography} from "@mui/material";
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import XIcon from '@mui/icons-material/X';
 
 export const Footer = () => {
     return (
         <React.Fragment>
-            <Grid container style={{backgroundColor: "#1F271B", padding: "60px 80px 400px 80px"}}>
+            <Grid container style={{backgroundColor: "#1F271B", padding: "60px 80px 100px 80px"}}>
                 <Grid size={2}>
-                    <img src={Logo} style={{width: "60px", height: "60px"}}/>
+                    <img src={Logo} style={{width: "60px", height: "50px"}}/>
                 </Grid>
                 <Grid size={2}>
                     <Typography variant="h6" color="white">Product</Typography>
@@ -69,8 +71,24 @@ export const Footer = () => {
                     <br />
                     <Typography color="white" variant="body2">Request Demo</Typography>
                 </Grid>
+                <Grid size={12} style={{marginTop: "50px"}}>
+                    <Divider color="white"/>
+                </Grid>
+                <Grid size={6} style={{marginTop: "20px"}}>
+                    <Typography color="white">© {new Date().getFullYear()} XRISK AG. All rights reserved</Typography>
+                </Grid>
+                <Grid size={6} display="flex" justifyContent="right" style={{marginTop: "20px"}}>
+                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Imprint</Typography>
+                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Terms</Typography>
+                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Privacy</Typography>
+                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Support</Typography>
+                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>About</Typography>
+                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Contact</Typography>
+                    <LinkedInIcon style={{color: "white", marginLeft: "10px", marginRight: "10px"}}/>
+                    <XIcon style={{color: "white", marginLeft: "10px", marginRight: "10px"}}/>
+                </Grid>
             </Grid>
-            <Divider color="primary"/>
+
         </React.Fragment>
 
     )
