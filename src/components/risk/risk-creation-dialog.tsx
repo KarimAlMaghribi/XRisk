@@ -113,10 +113,10 @@ export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
         <Dialog
             open={props.open}
             onClose={props.handleClose}>
-            <DialogTitle>Risiko erstellen</DialogTitle>
+            <DialogTitle>Risiko definieren</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    Erstelle dein eignes Risiko, dass du später veröffentlichen kannst!
+                    Definiere dein eignes Risiko, dass du später veröffentlichen kannst!
                 </DialogContentText>
 
                 <br/>

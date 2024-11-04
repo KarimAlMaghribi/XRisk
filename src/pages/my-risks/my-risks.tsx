@@ -42,7 +42,7 @@ export const MyRisks = () => {
                         fullWidth
                         variant="outlined"
                         startIcon={<AddIcon />}>
-                        Risiko erstellen
+                        Risiko definieren
                     </Button>
                 </Grid>
                 <Grid size={10}>

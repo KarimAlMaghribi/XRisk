@@ -1,7 +1,19 @@
-import {Typography} from "@mui/material";
+import React from "react";
+import {Banner} from "../../components/landing/banner";
+import {RiskCarousel} from "../../components/landing/risk-carousel";
+import MarketingStats from "../../components/landing/marketing-stats";
+import {FAQs} from "../../components/landing/faqs";
 
 export const Landing = () => {
+
+
     return (
-        <Typography variant="h1">Landing</Typography>
+        <React.Fragment>
+            <Banner/>
+            <RiskCarousel/>
+            <MarketingStats />
+            <FAQs />
+            <div style={{height: "200px"}}></div>
+        </React.Fragment>
     )
 }
