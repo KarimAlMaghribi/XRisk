@@ -1,11 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Grid from "@mui/material/Grid2";
 import {Card, CardActions, CardContent, Typography} from "@mui/material";
 import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteRisk, selectMyRisks} from "../../store/slices/my-risks";
+import {deleteRisk, fetchMyRisks, selectMyRisks} from "../../store/slices/my-risks";
 import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
 import {RiskCreationDialog} from "../../components/risk/risk-creation-dialog";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -15,18 +14,15 @@ import UndoIcon from '@mui/icons-material/Undo';
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {AppDispatch} from "../../store/store";
 
-const bull = (
-    <Box
-        component="span"
-        sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}>
-        •
-    </Box>
-);
 
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
     const myRisks: Risk[] = useSelector(selectMyRisks);
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
+
+    useEffect(() => {
+        dispatch(fetchMyRisks());
+    }, []);
 
     const handleCloseDialog = () => {
         setOpenRiskCreationDialog(false);
@@ -35,13 +31,14 @@ export const MyRisks = () => {
     return (
         <React.Fragment>
             <Grid container>
-                <Grid size={2} style={{display: 'flex', alignItems: 'center', justifyContent: 'center', padding: "10px"}}>
+                <Grid size={2}
+                      style={{display: 'flex', alignItems: 'center', justifyContent: 'center', padding: "10px"}}>
                     <Button
                         onClick={() => setOpenRiskCreationDialog(true)}
                         style={{borderRadius: "4px"}}
                         fullWidth
                         variant="outlined"
-                        startIcon={<AddIcon />}>
+                        startIcon={<AddIcon/>}>
                         Risiko definieren
                     </Button>
                 </Grid>
@@ -55,7 +52,7 @@ export const MyRisks = () => {
                                 <CardContent>
                                     <Grid container>
                                         <Grid size={7}>
-                                            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                                            <Typography gutterBottom sx={{color: 'text.secondary', fontSize: 14}}>
                                                 {risk.createdAt}
                                             </Typography>
                                         </Grid>
@@ -67,7 +64,7 @@ export const MyRisks = () => {
                                                         variant="outlined"
                                                         size="small"
                                                         color="warning"
-                                                        startIcon={<UndoIcon />}>
+                                                        startIcon={<UndoIcon/>}>
                                                         Zurückziehen
                                                     </Button>
                                                 ) : (
@@ -76,7 +73,7 @@ export const MyRisks = () => {
                                                         variant="outlined"
                                                         size="small"
                                                         color="success"
-                                                        startIcon={<SendIcon />}>
+                                                        startIcon={<SendIcon/>}>
                                                         Veröffentlichen
                                                     </Button>
                                                 )
@@ -86,7 +83,7 @@ export const MyRisks = () => {
                                     <Typography variant="h5" component="div">
                                         {risk.name}
                                     </Typography>
-                                    <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
+                                    <Typography sx={{color: 'text.secondary', mb: 1.5}}>
                                         {risk.value} €
                                     </Typography>
                                     <Typography variant="body2">
@@ -96,14 +93,14 @@ export const MyRisks = () => {
                                 <CardActions>
                                     <Button
                                         size="small"
-                                        startIcon={<EditIcon />}>
+                                        startIcon={<EditIcon/>}>
                                         Bearbeiten
                                     </Button>
                                     <Button
                                         onClick={() => dispatch(deleteRisk(risk.id))}
                                         size="small"
                                         color="error"
-                                        startIcon={<DeleteIcon />}>
+                                        startIcon={<DeleteIcon/>}>
                                         Löschen
                                     </Button>
                                 </CardActions>

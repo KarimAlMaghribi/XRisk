@@ -19,7 +19,7 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {Risk} from "../../models/Risk";
 import {v4 as uuidv4} from 'uuid';
-import {createRisk} from "../../store/slices/my-risks";
+import {addRisk} from "../../store/slices/my-risks";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
@@ -103,7 +103,7 @@ export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
             declinationDate: date?.toDate().toLocaleDateString() || new Date().toLocaleDateString(),
         }
 
-        dispatch(createRisk(newRisk));
+        dispatch(addRisk(newRisk));
         navigate(`/${ROUTES.MY_RISKS}`);
         handleClose();
     }

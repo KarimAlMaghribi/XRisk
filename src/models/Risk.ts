@@ -16,4 +16,5 @@ export interface Risk {
     riskCategory?: string;
     riskProbability?: number;
     offerer?: string;
+    deleted?: boolean;
 }

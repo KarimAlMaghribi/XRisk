@@ -6,6 +6,7 @@ import {RiskOverviewSort} from "../../models/RiskOverviewSort";
 import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
 import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
+import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 
 export const types: string[] = [
     "Reise",
@@ -204,7 +205,7 @@ export interface RiskOverviewState {
     filteredRisks: Risk[];
     filters: RiskOverviewFilterType;
     sorts: RiskOverviewSort[];
-    loading: FetchStatus;
+    status: FetchStatus;
     error?: string;
 }
 
@@ -234,7 +235,7 @@ const initialState: RiskOverviewState = {
             direction: SortDirectionEnum.ASC
         }
     ],
-    loading: 'idle'
+    status: FetchStatusEnum.IDLE
 };
 
 export const fetchRisks = createAsyncThunk(
@@ -301,22 +302,22 @@ export const riskOverviewSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchRisks.pending, (state) => {
-                state.loading = "pending";
+                state.status = FetchStatusEnum.PENDING;
             })
             .addCase(fetchRisks.fulfilled, (state, action) => {
                 state.risks = action.payload;
-                state.loading = "succeeded";
+                state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(fetchRisks.rejected, (state, action) => {
                 state.error = action.error.message;
-                state.loading = "failed";
+                state.status = FetchStatusEnum.FAILED;
             });
     }
 });
 
 export const selectRisks = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.risks;
 export const selectFilteredRisks = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filteredRisks;
-export const selectStatus = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.loading;
+export const selectStatus = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.status;
 export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.sorts;
 export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
 export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
