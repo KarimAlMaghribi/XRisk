@@ -182,11 +182,17 @@ export function Header() {
                         </Box>
                     ) : (
                         <Grid container>
+
                             <Grid size={6}>
                                 <Button
                                     onClick={() => navigate(ROUTES.SIGN_IN)}
                                     variant="outlined"
-                                    style={{color: "white", borderColor: "white", minWidth: "100px"}}
+                                    style={{
+                                        color: "white",
+                                        borderColor: "white",
+                                        minWidth: "100px",
+                                        visibility: location.pathname === `/${ROUTES.SIGN_IN}` ? "hidden" : "visible"
+                                    }}
                                     endIcon={<East />}>
                                     Log In
                                 </Button>
@@ -195,7 +201,10 @@ export function Header() {
                                 <Button
                                     onClick={() => navigate(ROUTES.SIGN_UP)}
                                     variant="contained"
-                                    style={{minWidth: "100px"}}
+                                    style={{
+                                        minWidth: "100px",
+                                        visibility: location.pathname === `/${ROUTES.SIGN_UP}` ? "hidden" : "visible"
+                                    }}
                                     endIcon={<East />}>
                                     Registrieren
                                 </Button>
