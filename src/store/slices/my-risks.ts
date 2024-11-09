@@ -1,9 +1,16 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Risk} from "../../models/Risk";
-import { collection, getDocs, query, where, addDoc, doc, deleteDoc, getDoc } from "firebase/firestore";
+import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FetchStatus} from "../../types/FetchStatus";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {auth, db} from "../../firebase_config";
+
+enum ActionTypes {
+    FETCH_MY_RISKS = "myRisks/fetchMyRisks",
+    ADD_RISK = "myRisks/addRisk",
+    DELETE_RISK = "myRisks/deleteRisk",
+    UPDATE_RISK = "myRisks/updateRisk"
+}
 
 export interface MyRisksState {
     risks: Risk[];
@@ -18,8 +25,8 @@ const initialState: MyRisksState = {
 };
 
 export const fetchMyRisks = createAsyncThunk(
-    "myRisks/fetchMyRisks",
-    async (_, { rejectWithValue }) => {
+    ActionTypes.FETCH_MY_RISKS,
+    async (_, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
 
@@ -45,8 +52,8 @@ export const fetchMyRisks = createAsyncThunk(
 );
 
 export const addRisk = createAsyncThunk(
-    "myRisks/addRisk",
-    async (newRisk: Omit<Risk, "id">, { rejectWithValue }) => {
+    ActionTypes.ADD_RISK,
+    async (newRisk: Omit<Risk, "id">, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
             if (!user) {
@@ -57,9 +64,10 @@ export const addRisk = createAsyncThunk(
             const docRef = await addDoc(risksCollection, {
                 ...newRisk,
                 uid: user.uid,
+                createdAt: new Date().toISOString()
             });
 
-            return { id: docRef.id, ...newRisk } as Risk;
+            return {id: docRef.id, ...newRisk} as Risk;
         } catch (error) {
             console.error("Error adding risk: ", error);
             return rejectWithValue("Failed to add risk");
@@ -67,9 +75,45 @@ export const addRisk = createAsyncThunk(
     }
 );
 
+export const updateRisk = createAsyncThunk(
+    ActionTypes.UPDATE_RISK,
+    async (risk: Risk, {rejectWithValue}) => {
+        try {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const risksCollection = collection(db, "myRisks");
+            const riskQuery = query(
+                risksCollection,
+                where("uid", "==", user.uid),
+                where("id", "==", risk.id)
+            );
+
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return rejectWithValue("Risk not found");
+            }
+
+            const riskDocRef = riskDocs.docs[0].ref;
+            await updateDoc(riskDocRef, {...risk, uid: user.uid, updatedAt: new Date().toISOString()});
+
+            return risk;
+        } catch (error) {
+            console.error("Error updating risk:", error);
+            return rejectWithValue(
+                "Failed to update risk due to permissions or other error"
+            );
+        }
+    }
+);
+
 export const deleteRisk = createAsyncThunk(
-    "myRisks/deleteRisk",
-    async (riskId: string, { rejectWithValue }) => {
+    ActionTypes.DELETE_RISK,
+    async (riskId: string, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
 
@@ -128,6 +172,10 @@ export const myRisksSlice = createSlice({
                 state.status = FetchStatusEnum.PENDING;
             })
             .addCase(addRisk.fulfilled, (state, action) => {
+                if (state.risks.some(risk => risk.id === action.payload.id)) {
+                    return;
+                }
+
                 state.risks.push(action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
@@ -152,6 +200,6 @@ export const myRisksSlice = createSlice({
 
 export const selectMyRisks = (state: { myRisks: MyRisksState }) => state.myRisks.risks;
 
-export const { } = myRisksSlice.actions;
+export const {} = myRisksSlice.actions;
 
 export default myRisksSlice.reducer;

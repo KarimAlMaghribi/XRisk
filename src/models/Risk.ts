@@ -1,4 +1,5 @@
 import {RiskStatus} from "../types/RiskStatus";
+import {Publisher} from "./Publisher";
 
 export interface Risk {
     id: string;
@@ -6,15 +7,12 @@ export interface Risk {
     description: string;
     type: string | null;
     value: number;
-    publisher?: any; // image
-    publisherAddress?: string;
+    publisher?: Publisher;
     declinationDate: string;
     createdAt?: string;
     updatedAt?: string;
     publishedAt?: string;
-    status?: string;
+    status?: RiskStatus;
     riskCategory?: string;
     riskProbability?: number;
-    offerer?: string;
-    deleted?: boolean;
 }

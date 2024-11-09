@@ -7,6 +7,7 @@ import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
 import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
+import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 
 export const types: string[] = [
     "Reise",
@@ -34,14 +35,12 @@ const mockRisks: Risk[] = [
         description: "Umfassender Versicherungsschutz für Risiken, die mit der Reise zu und von internationalen Kongressen verbunden sind, einschließlich Flug-, Zug- und lokalem Transport sowie Hotelunterkünften.",
         type: "Reise",
         value: 50000,
-        publisher: "Hans Müller",
-        publisherAddress: "Musterstraße 5, 04107 Leipzig, Deutschland",
-        offerer: "TravelGuard Insurance",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-12-31",
         createdAt: "2024-01-15",
         updatedAt: "2024-01-20",
         publishedAt: "2024-01-20",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "business",
         riskProbability: 0.05
     },
@@ -51,14 +50,12 @@ const mockRisks: Risk[] = [
         description: "Versicherungsschutz gegen umfassende Cyberangriffe auf unternehmenseigene Finanzsysteme, einschließlich Datenverlust und -beschädigung durch Hackerangriffe.",
         type: "Cyber",
         value: 200000,
-        publisher: "Julia Becker",
-        publisherAddress: "Goethestraße 34, 20095 Hamburg, Deutschland",
-        offerer: "CyberPro Insure",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2025-01-01",
         createdAt: "2024-02-01",
         updatedAt: "2024-02-05",
         publishedAt: "2024-02-05",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "corporate",
         riskProbability: 0.20
     },
@@ -68,14 +65,12 @@ const mockRisks: Risk[] = [
         description: "Schutz gegen finanzielle Verluste durch Ernteausfälle infolge unvorhergesehener Wetterereignisse wie Dürreperioden oder Überschwemmungen, die landwirtschaftliche Flächen betreffen.",
         type: "Landwirtschaft",
         value: 100000,
-        publisher: "Friedrich Scholz",
-        publisherAddress: "Bauernweg 12, 38100 Braunschweig, Deutschland",
-        offerer: "FarmSecure",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-12-31",
         createdAt: "2024-03-10",
         updatedAt: "2024-03-15",
         publishedAt: "2024-03-15",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "agriculture",
         riskProbability: 0.25
     },
@@ -85,14 +80,12 @@ const mockRisks: Risk[] = [
         description: "Versicherungsschutz für Luxusyachten gegen Piraterieangriffe und resultierende Schäden während der Fahrt durch internationale Gewässer.",
         type: "Maritim",
         value: 300000,
-        publisher: "Michael Krause",
-        publisherAddress: "Hafenstraße 3, 28217 Bremen, Deutschland",
-        offerer: "Oceanic Insurers",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2025-02-28",
         createdAt: "2024-04-20",
         updatedAt: "2024-04-25",
         publishedAt: "2024-04-25",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "marine",
         riskProbability: 0.10
     },
@@ -102,14 +95,12 @@ const mockRisks: Risk[] = [
         description: "Bietet finanziellen Schutz bei der Absage von Großveranstaltungen aufgrund von Wetterkatastrophen, politischen Unruhen oder Gesundheitskrisen.",
         type: "Event",
         value: 400000,
-        publisher: "Laura Schmidt",
-        publisherAddress: "Eventplatz 8, 50679 Köln, Deutschland",
-        offerer: "MajorEvent Insurance",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-10-01",
         createdAt: "2024-05-05",
         updatedAt: "2024-05-10",
         publishedAt: "2024-05-10",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "entertainment",
         riskProbability: 0.15
     },
@@ -119,14 +110,12 @@ const mockRisks: Risk[] = [
         description: "Versicherungsschutz für das Risiko von Kreditausfällen bei Start-ups in der kritischen Anfangsphase ihrer Geschäftstätigkeit.",
         type: "Finanz",
         value: 150000,
-        publisher: "Thomas Lehmann",
-        publisherAddress: "Startupallee 22, 80331 München, Deutschland",
-        offerer: "InnovateInsure",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-11-30",
         createdAt: "2024-06-01",
         updatedAt: "2024-06-05",
         publishedAt: "2024-06-05",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "financial",
         riskProbability: 0.30
     },
@@ -136,14 +125,12 @@ const mockRisks: Risk[] = [
         description: "Versicherungsschutz für Haftungsansprüche im Falle eines chirurgischen Fehlers bei Eingriffen, die von robotergesteuerten Chirurgiegeräten durchgeführt werden.",
         type: "Medizinisch",
         value: 500000,
-        publisher: "Dr. Anna Fischer",
-        publisherAddress: "Klinikstraße 1, 10117 Berlin, Deutschland",
-        offerer: "HealthShield",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-12-31",
         createdAt: "2024-07-15",
         updatedAt: "2024-07-20",
         publishedAt: "2024-07-20",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "healthcare",
         riskProbability: 0.05
     },
@@ -153,14 +140,12 @@ const mockRisks: Risk[] = [
         description: "Schutz für Satelliten, die sich im Erdorbit befinden, gegen die Gefahren von Kollisionen mit Weltraumschrott und anderen Objekten im Orbit.",
         type: "Weltraum",
         value: 75000,
-        publisher: "Dr. Stefan Weber",
-        publisherAddress: "Raumfahrtzentrum 4, 85077 Manching, Deutschland",
-        offerer: "AstroInsure",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2025-03-31",
         createdAt: "2024-08-30",
         updatedAt: "2024-09-04",
         publishedAt: "2024-09-04",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "space",
         riskProbability: 0.07
     },
@@ -170,14 +155,12 @@ const mockRisks: Risk[] = [
         description: "Versicherungsschutz für Automobilhersteller gegen die Kosten von Rückrufaktionen aufgrund von Mängeln in der Produktion oder sicherheitsrelevanten Bedenken.",
         type: "Automobil",
         value: 60000,
-        publisher: "Christoph Lang",
-        publisherAddress: "Industrieweg 7, 70469 Stuttgart, Deutschland",
-        offerer: "VehicleSafe",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-09-30",
         createdAt: "2024-10-10",
         updatedAt: "2024-10-15",
         publishedAt: "2024-10-15",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "automotive",
         riskProbability: 0.20
     },
@@ -187,14 +170,12 @@ const mockRisks: Risk[] = [
         description: "Absicherung gegen die finanziellen Belastungen und das Risiko von Rechtsstreitigkeiten bei internationalen Handels- und Geschäftsaktivitäten.",
         type: "Rechtlich",
         value: 25000,
-        publisher: "Sabine Werner",
-        publisherAddress: "Handelsplatz 3, 40213 Düsseldorf, Deutschland",
-        offerer: "CommerceProtect",
+        publisher: {name: "Hans Müller", address: "Musterstraße 5, 04107 Leipzig, Deutschland"},
         declinationDate: "2024-12-31",
         createdAt: "2024-11-05",
         updatedAt: "2024-11-10",
         publishedAt: "2024-11-10",
-        status: "PUBLISHED",
+        status: RiskStatusEnum.PUBLISHED,
         riskCategory: "legal",
         riskProbability: 0.10
     }
@@ -258,10 +239,18 @@ export const riskOverviewSlice = createSlice({
 
             state.filteredRisks.sort((a, b) => {
                 if (!sort) return 0;
-                if (sort.direction === SortDirectionEnum.ASC) {
-                    return a[sort.name] > b[sort.name] ? 1 : -1;
+
+                if (sort.name === RiskOverviewHeaderEnum.PUBLISHER) {
+                    if (!a.publisher || !b.publisher) return 0;
+                    return a.publisher.name > b.publisher.name ? 1 : -1;
                 } else {
-                    return a[sort.name] < b[sort.name] ? 1 : -1;
+                    if (sort.direction === SortDirectionEnum.ASC) {
+                        // @ts-ignore
+                        return a[sort.name] > b[sort.name] ? 1 : -1;
+                    } else {
+                        // @ts-ignore
+                        return a[sort.name] < b[sort.name] ? 1 : -1;
+                    }
                 }
             });
         },

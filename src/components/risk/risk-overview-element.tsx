@@ -52,7 +52,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                 <Grid display="flex" justifyContent="center" alignItems="center" size={1}>
                                     {/* src wird durch eine Service funktion ersetzt, die das Bild des nutzers aus der
                                     Nutzerdatenbank lädt */}
-                                    <Tooltip title={risk.publisher}>
+                                    <Tooltip title={risk.publisher && risk.publisher.name}>
                                         <Avatar src={`https://i.pravatar.cc/150?img=${risk.id}`}/>
                                     </Tooltip>
                                 </Grid>
@@ -80,10 +80,10 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         </Grid>
                                     }
                                     <Typography>
-                                        <b>Anbieter: </b> {risk.publisher}
+                                        <b>Anbieter: </b> {risk.publisher && risk.publisher.name}
                                     </Typography>
                                     <Typography>
-                                        <b>Wohnort: </b> {risk.publisherAddress}
+                                        <b>Wohnort: </b> {risk.publisher && risk.publisher.address}
                                     </Typography>
                                 </Grid>
                                 <Grid size={4} style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>

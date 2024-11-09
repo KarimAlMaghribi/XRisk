@@ -3,4 +3,5 @@ export enum RiskStatusEnum {
     PUBLISHED = "published",
     DEAL = "deal",
     AGREEMENT = "agreement",
+    WITHDRAWN = "withdrawn",
 }

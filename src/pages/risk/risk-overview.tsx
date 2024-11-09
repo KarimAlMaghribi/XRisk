@@ -36,7 +36,7 @@ export const RiskOverview = () => {
                 <Grid size={{xs: 12, md: 2}}>
                     <Grid style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: "63px", margin: '5px'}}>
                         <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)}>
-                            Risiko definieren!
+                            RISIKO DEFINIEREN!
                         </Button>
                     </Grid>
 

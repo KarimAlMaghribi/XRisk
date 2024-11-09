@@ -29,12 +29,12 @@ export interface RiskCreationDialogProps {
     handleClose: () => void;
 }
 
-const EuroNumberFormat = (props: any) => {
-    const {inputRef, onChange, ...other} = props;
+const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, ref) {
+    const { onChange, ...other } = props;
     return (
         <NumericFormat
             {...other}
-            getInputRef={inputRef}
+            getInputRef={ref}
             onValueChange={(values: any) => {
                 onChange({
                     target: {
@@ -48,7 +48,7 @@ const EuroNumberFormat = (props: any) => {
             prefix="€ "
         />
     );
-};
+});
 
 export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
     const navigate = useNavigate();
@@ -109,7 +109,6 @@ export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
     }
 
     return (
-
         <Dialog
             open={props.open}
             onClose={props.handleClose}>
@@ -186,15 +185,15 @@ export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button
-                    onClick={handleClose}
-                    variant="outlined">
-                    Abbrechen
-                </Button>
-                <Button
                     disabled={nameRequiredError}
                     variant="contained"
                     onClick={handleCreateRisk}>
-                    Erstellen
+                    Definieren
+                </Button>
+                <Button
+                    onClick={handleClose}
+                    variant="outlined">
+                    Abbrechen
                 </Button>
             </DialogActions>
         </Dialog>

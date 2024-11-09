@@ -1,18 +1,14 @@
 import React, {useEffect} from "react";
 import Grid from "@mui/material/Grid2";
-import {Card, CardActions, CardContent, Typography} from "@mui/material";
+import {Typography} from "@mui/material";
 import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
-import {deleteRisk, fetchMyRisks, selectMyRisks} from "../../store/slices/my-risks";
+import {fetchMyRisks, selectMyRisks} from "../../store/slices/my-risks";
 import Button from "@mui/material/Button";
 import {RiskCreationDialog} from "../../components/risk/risk-creation-dialog";
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SendIcon from '@mui/icons-material/Send';
-import UndoIcon from '@mui/icons-material/Undo';
-import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {AppDispatch} from "../../store/store";
+import {MyRiskElement} from "../../components/my-risks/my-risk-element";
 
 
 export const MyRisks = () => {
@@ -47,65 +43,7 @@ export const MyRisks = () => {
                 </Grid>
                 {
                     myRisks && myRisks.map((risk: Risk) => (
-                        <Grid size={{xs: 12, sm: 6, md: 3, lg: 2, xl: 2}} spacing={4} margin="10px">
-                            <Card elevation={2}>
-                                <CardContent>
-                                    <Grid container>
-                                        <Grid size={7}>
-                                            <Typography gutterBottom sx={{color: 'text.secondary', fontSize: 14}}>
-                                                {risk.createdAt}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid size={5}>
-                                            {   // TODO: Enhance correct status check and button display
-                                                risk.status === RiskStatusEnum.PUBLISHED ? (
-                                                    <Button
-                                                        style={{borderRadius: "4px"}}
-                                                        variant="outlined"
-                                                        size="small"
-                                                        color="warning"
-                                                        startIcon={<UndoIcon/>}>
-                                                        Zurückziehen
-                                                    </Button>
-                                                ) : (
-                                                    <Button
-                                                        style={{borderRadius: "4px"}}
-                                                        variant="outlined"
-                                                        size="small"
-                                                        color="success"
-                                                        startIcon={<SendIcon/>}>
-                                                        Veröffentlichen
-                                                    </Button>
-                                                )
-                                            }
-                                        </Grid>
-                                    </Grid>
-                                    <Typography variant="h5" component="div">
-                                        {risk.name}
-                                    </Typography>
-                                    <Typography sx={{color: 'text.secondary', mb: 1.5}}>
-                                        {risk.value} €
-                                    </Typography>
-                                    <Typography variant="body2">
-                                        {risk.description}
-                                    </Typography>
-                                </CardContent>
-                                <CardActions>
-                                    <Button
-                                        size="small"
-                                        startIcon={<EditIcon/>}>
-                                        Bearbeiten
-                                    </Button>
-                                    <Button
-                                        onClick={() => dispatch(deleteRisk(risk.id))}
-                                        size="small"
-                                        color="error"
-                                        startIcon={<DeleteIcon/>}>
-                                        Löschen
-                                    </Button>
-                                </CardActions>
-                            </Card>
-                        </Grid>
+                        <MyRiskElement key={risk.id} risk={risk}/>
                     ))
                 }
             </Grid>
@@ -114,7 +52,5 @@ export const MyRisks = () => {
                 handleClose={handleCloseDialog}
             />
         </React.Fragment>
-
-
     );
 }
