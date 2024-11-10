@@ -1,5 +1,11 @@
 import { auth, googleAuthProvider } from '../firebase_config';
-import { signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+    signInWithPopup,
+    signOut,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+
+} from "firebase/auth";
 
 export const signInWithGoogle = async () => {
     // TODO: Handle authenticated close pop-up window

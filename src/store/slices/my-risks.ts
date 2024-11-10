@@ -70,7 +70,7 @@ export const addRisk = createAsyncThunk(
             return {id: docRef.id, ...newRisk} as Risk;
         } catch (error) {
             console.error("Error adding risk: ", error);
-            return rejectWithValue("Failed to add risk");
+            return rejectWithValue(error);
         }
     }
 );

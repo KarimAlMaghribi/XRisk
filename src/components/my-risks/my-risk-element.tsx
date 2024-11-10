@@ -11,7 +11,7 @@ import React from "react";
 import {Risk} from "../../models/Risk";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
-import {MyRiskEditDialog} from "./my-risk-edit-dialog";
+import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 
 export interface MyRiskElementProps {
     risk: Risk;
