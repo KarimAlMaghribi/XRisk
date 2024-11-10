@@ -1,13 +1,5 @@
 import React, {useEffect} from "react";
-import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle, FormControl,
-    FormHelperText, OutlinedInput, TextField,
-    useFormControl
-} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {AppDispatch} from "../../../store/store";
 import {useDispatch} from "react-redux";
@@ -36,14 +28,22 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
 
     return (
         <Dialog
+            fullWidth
             open={props.open}
             onClose={() => props.setOpen(false)}>
             <DialogTitle>Risiko bearbeiten</DialogTitle>
-            <DialogContent>
+            <DialogContent style={{padding: "10px", margin: "10px"}}>
                 <TextField
+                    disabled
+                    fullWidth
                     label="ID"
                     defaultValue={risk.id}
                     slotProps={{input: {readOnly: true}}}/>
+                <TextField
+                    fullWidth
+                    label="Name"
+                    value={risk.name}
+                    onChange={(event) => setRisk({...risk, name: event.target.value})}/>
             </DialogContent>
             <DialogActions>
                 <Button

@@ -3,7 +3,7 @@ import {auth, db} from "../../firebase_config";
 import {addDoc, collection, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FetchStatus} from "../../types/FetchStatus";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
-import {Risk} from "../../models/Risk";
+import {FirebaseCollectionEnum} from "../../enums/FirebaseCollection.enum";
 
 enum ActionTypes {
     FETCH_PROFILE = "userProfile/fetchProfile",
@@ -33,6 +33,7 @@ export interface ProfileInformation {
         occupation?: string;
         education?: string;
     };
+    receiveUpdates?: boolean;
 }
 
 export interface UserProfile {
@@ -64,7 +65,7 @@ export const fetchUserProfile = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, "userProfils");
+            const userProfilesCollection = collection(db, FirebaseCollectionEnum.USER_PROFILES);
             const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
 
             const userProfileDocs = await getDocs(userProfileQuery);
@@ -92,7 +93,7 @@ export const addProfile = createAsyncThunk(
                 throw new Error("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, "userProfils");
+            const userProfilesCollection = collection(db, FirebaseCollectionEnum.USER_PROFILES);
             await addDoc(userProfilesCollection, {
                 id: user.uid,
                 profile: profile,
@@ -122,7 +123,7 @@ export const updateProfile = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, "userProfils");
+            const userProfilesCollection = collection(db, FirebaseCollectionEnum.USER_PROFILES);
             const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
 
             const userProfileDocs = await getDocs(userProfileQuery);
@@ -133,10 +134,11 @@ export const updateProfile = createAsyncThunk(
 
             const userProfileDocRef = userProfileDocs.docs[0].ref;
             await updateDoc(userProfileDocRef, {
-                id: user.uid,
-                profile: profile,
-                uid: user.uid,
-                updatedAt: new Date().toISOString()}
+                    id: user.uid,
+                    profile: profile,
+                    uid: user.uid,
+                    updatedAt: new Date().toISOString()
+                }
             );
 
             return {
@@ -145,66 +147,67 @@ export const updateProfile = createAsyncThunk(
                 updatedAt: new Date().toISOString()
             };
         } catch (error) {
-        console.error("Error updating risk:", error);
-        return rejectWithValue(error);
+            console.error("Error updating risk:", error);
+            return rejectWithValue(error);
         }
     }
 );
 
 export const userProfileSlice = createSlice({
-    name: "myBids",
-    initialState: initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(addProfile.pending, (state) => {
-                state.profile = {name: "", email: ""};
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(addProfile.fulfilled, (state, action) => {
-                state.id = action.payload.id;
-                state.profile = action.payload.profile;
-                state.createdAt = action.payload.createdAt;
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(addProfile.rejected, (state, action) => {
-                state.profile = {name: "", email: ""};
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-            .addCase(updateProfile.pending, (state) => {
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(updateProfile.fulfilled, (state, action) => {
-                state.profile = action.payload.profile;
-                state.updatedAt = action.payload.updatedAt;
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(updateProfile.rejected, (state, action) => {
-                state.profile = {name: "", email: ""};
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-            .addCase(fetchUserProfile.pending, (state) => {
-                state.profile = {name: "", email: ""};
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(fetchUserProfile.fulfilled, (state, action) => {
-                state.profile = action.payload.profile;
-                state.id = action.payload.id;
-                state.createdAt = action.payload.createdAt;
-                state.updatedAt = action.payload.updatedAt;
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(fetchUserProfile.rejected, (state, action) => {
-                state.profile = {name: "", email: ""};
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-    }}
+        name: "userProfile",
+        initialState: initialState,
+        reducers: {},
+        extraReducers: (builder) => {
+            builder
+                .addCase(addProfile.pending, (state) => {
+                    state.profile = {name: "", email: ""};
+                    state.error = undefined;
+                    state.status = FetchStatusEnum.PENDING;
+                })
+                .addCase(addProfile.fulfilled, (state, action) => {
+                    state.id = action.payload.id;
+                    state.profile = action.payload.profile;
+                    state.createdAt = action.payload.createdAt;
+                    state.status = FetchStatusEnum.SUCCEEDED;
+                })
+                .addCase(addProfile.rejected, (state, action) => {
+                    state.profile = {name: "", email: ""};
+                    state.error = action.payload as string;
+                    state.status = FetchStatusEnum.FAILED;
+                })
+                .addCase(updateProfile.pending, (state) => {
+                    state.error = undefined;
+                    state.status = FetchStatusEnum.PENDING;
+                })
+                .addCase(updateProfile.fulfilled, (state, action) => {
+                    state.profile = action.payload.profile;
+                    state.updatedAt = action.payload.updatedAt;
+                    state.status = FetchStatusEnum.SUCCEEDED;
+                })
+                .addCase(updateProfile.rejected, (state, action) => {
+                    state.profile = {name: "", email: ""};
+                    state.error = action.payload as string;
+                    state.status = FetchStatusEnum.FAILED;
+                })
+                .addCase(fetchUserProfile.pending, (state) => {
+                    state.profile = {name: "", email: ""};
+                    state.error = undefined;
+                    state.status = FetchStatusEnum.PENDING;
+                })
+                .addCase(fetchUserProfile.fulfilled, (state, action) => {
+                    state.profile = action.payload.profile;
+                    state.id = action.payload.id;
+                    state.createdAt = action.payload.createdAt;
+                    state.updatedAt = action.payload.updatedAt ? action.payload.updatedAt : undefined;
+                    state.status = FetchStatusEnum.SUCCEEDED;
+                })
+                .addCase(fetchUserProfile.rejected, (state, action) => {
+                    state.profile = {name: "", email: ""};
+                    state.error = action.payload as string;
+                    state.status = FetchStatusEnum.FAILED;
+                })
+        }
+    }
 );
 
 export const {} = userProfileSlice.actions;

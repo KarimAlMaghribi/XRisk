@@ -7,8 +7,12 @@ import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {signUpWithEmail} from "../../firebase/firebase-service";
 import "./style.scss";
+import {AppDispatch} from "../../store/store";
+import {useDispatch} from "react-redux";
+import {addProfile, ProfileInformation} from "../../store/slices/user-profile";
 
 export const SignUp = () => {
+    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = React.useState({
         fullName: '',
@@ -19,20 +23,38 @@ export const SignUp = () => {
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value, type, checked} = event.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        setFormData(prev => ({...prev, [name]: type === 'checkbox' ? checked : value}));
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const error = signUpWithEmail(formData.email, formData.password);
-        if (!error) {
-            navigate(`/${ROUTES.SIGN_IN}`);
+
+
+        const error = await signUpWithEmail(formData.email, formData.password);
+
+        try {
+            saveProfileInformation();
+        } catch (error) {
+            console.error('Error saving profile information', error);
+            return;
         }
 
+        if (!error) {
+            navigate(`/${ROUTES.MY_RISKS}`);
+        } else {
+            alert('Error signing up')
+        }
     };
+
+    const saveProfileInformation = () => {
+        const newProfile: ProfileInformation = {
+            name: formData.fullName,
+            email: formData.email,
+            receiveUpdates: formData.receiveUpdates
+        };
+
+        dispatch(addProfile(newProfile));
+    }
 
     return (
         <div className="sign-up-card">
@@ -46,6 +68,7 @@ export const SignUp = () => {
                 <Typography variant="h6" sx={{mb: 2}}>Registrieren</Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
+                        required
                         size="small"
                         fullWidth
                         label="Name"
@@ -75,12 +98,16 @@ export const SignUp = () => {
                         margin="normal"
                     />
                     <FormControlLabel
-                        control={<Checkbox checked={formData.receiveUpdates} onChange={handleChange}
-                                           name="receiveUpdates"/>}
+                        control={<Checkbox checked={formData.receiveUpdates} onChange={handleChange} name="receiveUpdates"/>}
                         label="Ich möchte Updates per Email erhalten."
                         sx={{mb: 2}}
                     />
-                    <Button type="submit" fullWidth variant="contained" sx={{mb: 2}}>
+                    <Button
+                        disabled={!formData.email || !formData.password || !formData.fullName}
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        sx={{mb: 2}}>
                         Registrieren
                     </Button>
                     <Typography textAlign="center" sx={{mb: 1}} variant="subtitle1">

@@ -18,7 +18,7 @@ export const SignIn = () => {
         const user = await signInWithEmail(email, password);
 
         if (user?.refreshToken) {
-            navigate(`/${ROUTES.RISK_OVERVIEW}`);
+            navigate(`/${ROUTES.MY_RISKS}`);
         }
     }
 

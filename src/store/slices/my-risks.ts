@@ -4,6 +4,7 @@ import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "f
 import {FetchStatus} from "../../types/FetchStatus";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {auth, db} from "../../firebase_config";
+import {FirebaseCollectionEnum} from "../../enums/FirebaseCollection.enum";
 
 enum ActionTypes {
     FETCH_MY_RISKS = "myRisks/fetchMyRisks",
@@ -34,7 +35,7 @@ export const fetchMyRisks = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, "myRisks");
+            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
             const risksQuery = query(risksCollection, where("uid", "==", user.uid));
             const riskDocs = await getDocs(risksQuery);
 
@@ -60,7 +61,7 @@ export const addRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, "myRisks");
+            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
             const docRef = await addDoc(risksCollection, {
                 ...newRisk,
                 uid: user.uid,
@@ -85,7 +86,7 @@ export const updateRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, "myRisks");
+            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
             const riskQuery = query(
                 risksCollection,
                 where("uid", "==", user.uid),
