@@ -63,6 +63,7 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             }
             renderInput={(params) => (
                 <TextField
+                    required
                     {...params}
                     variant="outlined"
                     label="Typ"

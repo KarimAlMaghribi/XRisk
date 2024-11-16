@@ -23,6 +23,7 @@ import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {RiskTypeSelector} from "./risk-type-selector";
+import {type} from "os";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -99,7 +100,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
             status: RiskStatusEnum.DRAFT,
             type: riskType,
             value: value,
-            declinationDate: date?.toDate().toLocaleDateString() || new Date().toLocaleDateString(),
+            declinationDate: date?.toISOString() || 'kein Ablaufdatum',
         }
 
         dispatch(addMyRisk(newRisk));
@@ -144,32 +145,12 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     value={riskType}
                     setValue={setRiskType}
                 />
-                {/*/!* Risikoarten werden zukünftig zentral von allen angelegt und gespeichert und hier abgerufen*!/*/}
-                {/*<Autocomplete*/}
-                {/*    value={riskType}*/}
-                {/*    onChange={(event: any, newValue: string | null) => {*/}
-                {/*        setRiskType(newValue);*/}
-                {/*    }}*/}
-                {/*    inputValue={inputValue}*/}
-                {/*    onInputChange={(event, newInputValue) => {*/}
-                {/*        setInputValue(newInputValue);*/}
-                {/*    }}*/}
-                {/*    disablePortal={false}*/}
-                {/*    options={types}*/}
-                {/*    renderInput={(params) =>*/}
-                {/*        <TextField*/}
-                {/*            {...params}*/}
-                {/*            label="Risikoart"*/}
-                {/*            fullWidth*/}
-                {/*            margin="dense"*/}
-                {/*        />}*/}
-                {/*/>*/}
                 <TextField
                     margin="dense"
                     fullWidth
                     label="Absicherungssumme"
                     value={value}
-                    onChange={(event) => handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}  // Entfernen des Euro-Symbols und Tausendertrennzeichen für die korrekte numerische Verarbeitung
+                    onChange={(event) => handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
                     name="value"
                     id="value"
                     InputProps={{
@@ -188,7 +169,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button
-                    disabled={nameRequiredError}
+                    disabled={nameRequiredError || riskType.length === 0}
                     variant="contained"
                     onClick={handleCreateRisk}>
                     Definieren
