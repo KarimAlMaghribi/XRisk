@@ -36,15 +36,15 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
     }
 
     const handleWithdraw = (): void => {
-        if (props.risk.status === RiskStatusEnum.PUBLISHED){
-           const riskToWithdraw: Risk = {
-               ...props.risk,
-               status: RiskStatusEnum.WITHDRAWN,
-               withdrawnAt: new Date().toISOString()
-           }
+        if (props.risk.status === RiskStatusEnum.PUBLISHED) {
+            const riskToWithdraw: Risk = {
+                ...props.risk,
+                status: RiskStatusEnum.WITHDRAWN,
+                withdrawnAt: new Date().toISOString()
+            }
 
-           dispatch(updateMyRisk(riskToWithdraw));
-           dispatch(deleteRisk(riskToWithdraw.id));
+            dispatch(updateMyRisk(riskToWithdraw));
+            dispatch(deleteRisk(riskToWithdraw.id));
         }
     }
 

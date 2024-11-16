@@ -10,7 +10,6 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, where} from "firebase/firestore";
 import {auth, db} from "../../firebase_config";
 import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
-import {updateMyRisk} from "./my-risks";
 
 enum ActionTypes {
     FETCH_RISKS = "risks/fetchRisks",

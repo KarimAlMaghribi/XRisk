@@ -1,5 +1,5 @@
 import {Autocomplete, Chip, TextField} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {addRiskType, fetchRiskTypes, selectStatus, selectTypes} from "../../store/slices/risks";
@@ -40,7 +40,7 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
 
     return (
         <Autocomplete
-            sx={{ marginTop: "10px" }}
+            sx={{marginTop: "10px"}}
             multiple
             freeSolo
             options={types}
@@ -50,7 +50,7 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             getOptionLabel={(option: any) => (typeof option === "string" ? option : option?.label || "")}
             renderTags={(value: readonly string[], getTypeProps) =>
                 value.map((option: string, index: number) => {
-                    const { key, ...tagProps } = getTypeProps({ index });
+                    const {key, ...tagProps} = getTypeProps({index});
                     return (
                         <Chip
                             key={index}

@@ -1,13 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {
-    Autocomplete,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    TextField
-} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
@@ -23,7 +15,6 @@ import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {RiskTypeSelector} from "./risk-type-selector";
-import {type} from "os";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -31,7 +22,7 @@ export interface RiskCreationDialogProps {
 }
 
 const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, ref) {
-    const { onChange, ...other } = props;
+    const {onChange, ...other} = props;
     return (
         <NumericFormat
             {...other}
@@ -62,13 +53,13 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [nameRequiredError, setNameRequiredError] = useState<boolean>(false);
 
     useEffect(() => {
-       if (!title && !nameRequiredError) {
-           setNameRequiredError(true);
-       }
+        if (!title && !nameRequiredError) {
+            setNameRequiredError(true);
+        }
 
-       if (title && nameRequiredError) {
-           setNameRequiredError(false);
-       }
+        if (title && nameRequiredError) {
+            setNameRequiredError(false);
+        }
     }, [title]);
 
     const handleValueChange = (newValue: number) => {
