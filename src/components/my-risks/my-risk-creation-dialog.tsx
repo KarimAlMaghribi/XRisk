@@ -141,9 +141,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     multiline
                     rows={4}
                 />
-                <RiskTypeSelector
-                    riskType={riskType}
-                    setRiskType={setRiskType}/>
+                <RiskTypeSelector />
                 {/*/!* Risikoarten werden zukünftig zentral von allen angelegt und gespeichert und hier abgerufen*!/*/}
                 {/*<Autocomplete*/}
                 {/*    value={riskType}*/}

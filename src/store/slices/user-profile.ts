@@ -3,7 +3,7 @@ import {auth, db} from "../../firebase_config";
 import {addDoc, collection, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FetchStatus} from "../../types/FetchStatus";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
-import {FirebaseCollectionEnum} from "../../enums/FirebaseCollection.enum";
+import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
 
 enum ActionTypes {
     FETCH_PROFILE = "userProfile/fetchProfile",
@@ -65,7 +65,7 @@ export const fetchUserProfile = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, FirebaseCollectionEnum.USER_PROFILES);
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
             const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
 
             const userProfileDocs = await getDocs(userProfileQuery);
@@ -93,7 +93,7 @@ export const addProfile = createAsyncThunk(
                 throw new Error("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, FirebaseCollectionEnum.USER_PROFILES);
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
             await addDoc(userProfilesCollection, {
                 id: user.uid,
                 profile: profile,
@@ -123,7 +123,7 @@ export const updateProfile = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, FirebaseCollectionEnum.USER_PROFILES);
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
             const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
 
             const userProfileDocs = await getDocs(userProfileQuery);

@@ -9,13 +9,15 @@ import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {collection, query, where, onSnapshot, addDoc, getDocs, deleteDoc} from "firebase/firestore";
 import {auth, db} from "../../firebase_config";
-import {FirebaseCollectionEnum} from "../../enums/FirebaseCollection.enum";
+import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
 import {deleteMyRisk} from "./my-risks";
 
 enum ActionTypes {
     FETCH_RISKS = "risks/fetchRisks",
     ADD_RISK = "risks/addRisk",
-    DELETE_RISK = "risk/deleteRisk"
+    DELETE_RISK = "risk/deleteRisk",
+    FETCH_RISK_TYPES = "risks/fetchRiskTypes",
+    ADD_RISK_TYPE = "risks/addRiskType"
 }
 
 export const types: string[] = [
@@ -40,7 +42,7 @@ export const riskTypes = types.map(type => ({
 export interface RiskOverviewState {
     risks: Risk[];
     filteredRisks: Risk[];
-    riskTypes: string[];
+    types: string[];
     filters: RiskOverviewFilterType;
     sorts: RiskOverviewSort[];
     status: FetchStatus;
@@ -50,7 +52,7 @@ export interface RiskOverviewState {
 const initialState: RiskOverviewState = {
     risks: [],
     filteredRisks: [],
-    riskTypes: [],
+    types: [],
     filters: {
         types: riskTypes,
         value: [0, 200000],
@@ -81,7 +83,7 @@ export const fetchRisks = createAsyncThunk(
     ActionTypes.FETCH_RISKS,
     async (_, thunkAPI) => {
         try {
-            const risksCollection = collection(db, FirebaseCollectionEnum.RISKS);
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
 
             const publishedRisksQuery = query(
                 risksCollection,
@@ -114,6 +116,46 @@ export const fetchRisks = createAsyncThunk(
     }
 );
 
+export const fetchRiskTypes = createAsyncThunk(
+    ActionTypes.FETCH_RISK_TYPES,
+    async (_, thunkAPI) => {
+        try {
+            const riskTypesCollection = collection(db, FirestoreCollectionEnum.RISK_TYPES);
+
+            const snapshot = await getDocs(riskTypesCollection);
+
+            const riskTypes = snapshot.docs.map(doc => doc.data().name as string);
+
+            return riskTypes;
+        } catch (error) {
+            console.error("Error fetching risk types:", error);
+            return thunkAPI.rejectWithValue("Failed to fetch risk types");
+        }
+    }
+)
+
+export const addRiskType = createAsyncThunk(
+    ActionTypes.ADD_RISK_TYPE,
+    async (newType: string, thunkAPI) => {
+        try {
+            const user = auth.currentUser;
+            const riskTypesCollection = collection(db, FirestoreCollectionEnum.RISK_TYPES);
+
+            const docRef = await addDoc(riskTypesCollection, {
+                name: newType,
+                createdAt: new Date().toISOString(),
+                creator: user ? user : undefined
+            });
+
+            console.log("Added risk type:", docRef.id);
+            return newType; // Rückgabe des neuen Typs
+        } catch (error) {
+            console.error("Error adding risk type:", error);
+            return thunkAPI.rejectWithValue("Failed to add risk type");
+        }
+    }
+);
+
 export const addRisk = createAsyncThunk(
     ActionTypes.ADD_RISK,
     async (riskToPublish: Omit<Risk, "id">, {rejectWithValue}) => {
@@ -123,7 +165,7 @@ export const addRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated")
             }
 
-            const risksCollection = collection(db, FirebaseCollectionEnum.RISKS);
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
             const docRef = await addDoc(risksCollection, {
                 ...riskToPublish,
                 publishedAt: new Date().toISOString(),
@@ -149,7 +191,7 @@ export const deleteRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, FirebaseCollectionEnum.RISKS);
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
             const riskQuery = query(
                 risksCollection,
                 where("uid", "==", user.uid),
@@ -179,7 +221,7 @@ export const deleteRisk = createAsyncThunk(
 );
 
 export const riskOverviewSlice = createSlice({
-    name: FirebaseCollectionEnum.RISKS,
+    name: FirestoreCollectionEnum.RISKS,
     initialState: initialState,
     reducers: {
         sortRisks: (state, action: PayloadAction<RiskOverviewHeaderEnum>) => {
@@ -283,6 +325,10 @@ export const riskOverviewSlice = createSlice({
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
+            .addCase(fetchRiskTypes.pending, (state, action) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
     }
 });
 
@@ -292,7 +338,7 @@ export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state
 export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
 export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
 export const selectRemainingTerm = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.remainingTerm;
-export const selectRiskTypes = (state: {riskOverview: RiskOverviewState}) => state.riskOverview.riskTypes;
+export const selecttypes = (state: {riskOverview: RiskOverviewState}) => state.riskOverview.types;
 
 export const { sortRisks, setFilterType, changeFilterValue, changeRemainingTerm, clearFilters } = riskOverviewSlice.actions;
 

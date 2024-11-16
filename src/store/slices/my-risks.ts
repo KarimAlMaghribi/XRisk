@@ -4,7 +4,7 @@ import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "f
 import {FetchStatus} from "../../types/FetchStatus";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {auth, db} from "../../firebase_config";
-import {FirebaseCollectionEnum} from "../../enums/FirebaseCollection.enum";
+import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
 
 enum ActionTypes {
     FETCH_MY_RISKS = "myRisks/fetchMyRisks",
@@ -35,7 +35,7 @@ export const fetchMyRisks = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
+            const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const risksQuery = query(risksCollection, where("uid", "==", user.uid));
             const riskDocs = await getDocs(risksQuery);
 
@@ -61,7 +61,7 @@ export const addMyRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const myRisksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
+            const myRisksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const docRef = await addDoc(myRisksCollection, {
                 ...newRisk,
                 uid: user.uid,
@@ -86,7 +86,7 @@ export const updateMyRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
+            const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
 
             const riskQuery = query(
                 risksCollection,
@@ -127,7 +127,7 @@ export const deleteMyRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
+            const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const riskQuery = query(
                 risksCollection,
                 where("uid", "==", user.uid),
@@ -154,7 +154,7 @@ export const deleteMyRisk = createAsyncThunk(
 );
 
 export const myRisksSlice = createSlice({
-    name: FirebaseCollectionEnum.MY_RISKS,
+    name: FirestoreCollectionEnum.MY_RISKS,
     initialState: initialState,
     reducers: {},
     extraReducers: (builder) => {

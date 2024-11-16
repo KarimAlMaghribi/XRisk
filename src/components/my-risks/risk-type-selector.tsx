@@ -1,55 +1,73 @@
-import {Autocomplete, TextField} from "@mui/material";
-import React, {useState} from "react";
+import { Autocomplete, Chip, TextField } from "@mui/material";
+import React, { useState, useEffect } from "react";
 
 export interface RiskTypeSelectorProps {
-    riskType: string;
-    setRiskType: (newValue: string) => void;
+
 }
 
 export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
-    const [inputValue, setInputValue] = useState("");
-    const [types, setTypes] = useState([
-        "Reise",
-        "Cyber",
-        "Landwirtschaft",
-        "Maritim",
-        "Event",
-        "Finanz",
-        "Medizinisch",
-        "Weltraum",
-        "Automobil",
-        "Rechtlich"
-    ]);
+    const [inputValue, setInputValue] = useState<string[]>([]);
+    const [types, setTypes] = useState<string[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleAddNewType = (newType: string) => {
-        if (!types.includes(newType)) {
-            setTypes([...types, newType]);
+    useEffect(() => {
+        const loadTypes = async () => {
+            setLoading(true);
+            try {
+                const fetchedTypes = await fetchTypes();
+                setTypes(fetchedTypes);
+            } catch (error) {
+                console.error("Fehler beim Laden der Typen:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadTypes();
+    }, [props.fetchTypes]);
+
+    const handleTagsChange = async (event: any, newValue: string[]) => {
+        const uniqueTags = newValue.filter((type) => !types.includes(type));
+        if (uniqueTags.length > 0) {
+            // Speichere jeden neuen Typ in der Datenbank
+            for (const newType of uniqueTags) {
+                try {
+                    await saveType(newType);
+                    setTypes((prevTags) => [...prevTags, newType]);
+                } catch (error) {
+                    console.error(`Fehler beim Speichern des Typs "${newType}":`, error);
+                }
+            }
         }
+        setInputValue(newValue);
     };
 
     return (
         <Autocomplete
+            sx={{ marginTop: "10px" }}
+            multiple
             freeSolo
-            value={props.riskType}
-            onChange={(event: any, newValue: string | null) => {
-                if (newValue) {
-                    handleAddNewType(newValue);
-                    props.setRiskType(newValue);
-                }
-            }}
-            inputValue={inputValue}
-            onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-            }}
             options={types}
+            loading={loading}
+            value={inputValue}
+            onChange={handleTagsChange}
+            renderTags={(value: readonly string[], getTypeProps) =>
+                value.map((option: string, index: number) => (
+                    <Chip
+                        variant="outlined"
+                        label={option}
+                        {...getTypeProps({ index })}
+                    />
+                ))
+            }
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Risikoart"
-                    fullWidth
-                    margin="dense"
+                    variant="outlined"
+                    label="Typ"
+                    placeholder="Risikotyp hinzufügen"
                 />
             )}
         />
     );
-}
+};
