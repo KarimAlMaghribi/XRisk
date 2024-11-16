@@ -240,7 +240,11 @@ export const riskOverviewSlice = createSlice({
             });
         },
         setFilterType: (state, action: PayloadAction<string[]>) => {
+            state.filters.types = action.payload;
 
+            state.filteredRisks = state.risks.filter(risk => {
+                return action.payload.every(type => risk.type.includes(type));
+            });
         },
         changeFilterValue: (state, action: PayloadAction<number[]>) => {
             state.filters.value = action.payload;
