@@ -3,12 +3,13 @@ import {Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui
 import Button from "@mui/material/Button";
 import {AppDispatch} from "../../../store/store";
 import {useDispatch} from "react-redux";
-import {updateRisk} from "../../../store/slices/my-risks";
+import {updateMyRisk} from "../../../store/slices/my-risks";
 import {Risk} from "../../../models/Risk";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import {addRisk} from "../../../store/slices/risks";
 
 export interface MyRiskEditDialogProps {
     risk: Risk;
@@ -26,7 +27,7 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
 
 
     const handleSave = () => {
-        dispatch(updateRisk(risk));
+        dispatch(updateMyRisk(risk));
         props.setOpen(false);
     }
 

@@ -12,6 +12,7 @@ export interface Risk {
     createdAt?: string;
     updatedAt?: string;
     publishedAt?: string;
+    withdrawnAt?: string;
     status?: RiskStatus;
     riskCategory?: string;
     riskProbability?: number;

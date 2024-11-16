@@ -3,7 +3,7 @@ import {Checkbox, Divider, FormControlLabel, FormGroup, Paper, Typography} from 
 import Slider from '@mui/material/Slider';
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {AppDispatch} from "../../store/store";
-import {changeFilterValue, changeRemainingTerm, clearFilters, setFilterType} from "../../store/slices/risk-overview";
+import {changeFilterValue, changeRemainingTerm, clearFilters, setFilterType} from "../../store/slices/risks";
 import {useDispatch} from "react-redux";
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";

@@ -24,9 +24,9 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     return (
         <React.Fragment>
             {
-                props.risks && props.risks.map((risk: Risk) => (
+                props.risks && props.risks.map((risk: Risk, index) => (
                     <Accordion
-                        key={risk.id}
+                        key={risk.id ? risk.id : index}
                         expanded={expanded === risk.id}
                         onChange={handleChange(risk.id)}
                         sx={{ marginBottom: 2, width: '100%' }}>

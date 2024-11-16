@@ -5,13 +5,14 @@ import Button from "@mui/material/Button";
 import UndoIcon from "@mui/icons-material/Undo";
 import SendIcon from "@mui/icons-material/Send";
 import EditIcon from "@mui/icons-material/Edit";
-import {deleteRisk} from "../../store/slices/my-risks";
+import {deleteMyRisk, updateMyRisk} from "../../store/slices/my-risks";
 import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
 import {Risk} from "../../models/Risk";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
+import {addRisk, deleteRisk} from "../../store/slices/risks";
 
 export interface MyRiskElementProps {
     risk: Risk;
@@ -20,6 +21,37 @@ export interface MyRiskElementProps {
 export const MyRiskElement = (props: MyRiskElementProps) => {
     const dispatch: AppDispatch = useDispatch();
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
+
+    const handlePublish = (): void => {
+        if (props.risk.status !== RiskStatusEnum.PUBLISHED) {
+            const riskToPublish: Risk = {
+                ...props.risk,
+                status: RiskStatusEnum.PUBLISHED,
+                publishedAt: new Date().toISOString()
+            }
+
+            dispatch(updateMyRisk(riskToPublish))
+            dispatch(addRisk(riskToPublish))
+        }
+    }
+
+    const handleWithdraw = (): void => {
+        if (props.risk.status === RiskStatusEnum.PUBLISHED){
+           const riskToWithdraw: Risk = {
+               ...props.risk,
+               status: RiskStatusEnum.WITHDRAWN,
+               withdrawnAt: new Date().toISOString()
+           }
+
+           dispatch(updateMyRisk(riskToWithdraw));
+           dispatch(deleteRisk(riskToWithdraw.id));
+        }
+    }
+
+    const handleDelete = (): void => {
+        dispatch(deleteMyRisk(props.risk.id))
+        dispatch(deleteRisk(props.risk.id))
+    }
 
     return (
         <Grid size={{xs: 12, sm: 6, md: 3, lg: 2, xl: 2}} margin="10px">
@@ -35,6 +67,7 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
                             {   // TODO: Enhance correct status check and button display
                                 props.risk.status === RiskStatusEnum.PUBLISHED ? (
                                     <Button
+                                        onClick={handleWithdraw}
                                         style={{borderRadius: "4px"}}
                                         variant="outlined"
                                         size="small"
@@ -44,6 +77,7 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
                                     </Button>
                                 ) : (
                                     <Button
+                                        onClick={handlePublish}
                                         style={{borderRadius: "4px"}}
                                         variant="outlined"
                                         size="small"
@@ -73,7 +107,7 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
                         Bearbeiten
                     </Button>
                     <Button
-                        onClick={() => dispatch(deleteRisk(props.risk.id))}
+                        onClick={handleDelete}
                         size="small"
                         color="error"
                         startIcon={<DeleteIcon/>}>

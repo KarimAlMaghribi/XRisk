@@ -1,30 +1,36 @@
 import Grid from "@mui/material/Grid2";
 import {RiskOverviewHeader} from "../../components/risk/risk-overview-header";
 import {RiskOverviewElement} from "../../components/risk/risk-overview-element";
-import React from "react";
+import React, {useEffect} from "react";
 import {RiskOverviewFilter} from "../../components/risk/risk-overview-filter";
 import {
+    fetchRisks,
     selectFilteredRisks,
     selectFilterTypes,
     selectFilterValue, selectRemainingTerm,
-    selectRisks,
     selectStatus
-} from "../../store/slices/risk-overview";
+} from "../../store/slices/risks";
 import {Risk} from "../../models/Risk";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {FetchStatus} from "../../types/FetchStatus";
 import {RiskOverviewFilterTypes} from "../../models/RiskOverviewFilterType";
 import Button from "@mui/material/Button";
 import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
 import {Divider} from "@mui/material";
+import {AppDispatch} from "../../store/store";
 
 export const RiskOverview = () => {
+    const dispatch : AppDispatch = useDispatch();
     const filteredRisks: Risk[] = useSelector(selectFilteredRisks);
     const status: FetchStatus = useSelector(selectStatus);
     const filterTypes: RiskOverviewFilterTypes[] = useSelector(selectFilterTypes);
     const filterValue: number | number[] = useSelector(selectFilterValue);
     const filterRemainingTerm: number | number[]  = useSelector(selectRemainingTerm);
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
+
+    useEffect(() => {
+        dispatch(fetchRisks());
+    }, [dispatch]);
 
     const handleClose = () => {
         setOpenRiskCreationDialog(false);

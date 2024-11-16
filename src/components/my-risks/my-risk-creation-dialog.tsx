@@ -13,13 +13,13 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers";
-import {types} from "../../store/slices/risk-overview";
+import {types} from "../../store/slices/risks";
 import {NumericFormat} from 'react-number-format';
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {Risk} from "../../models/Risk";
 import {v4 as uuidv4} from 'uuid';
-import {addRisk} from "../../store/slices/my-risks";
+import {addMyRisk} from "../../store/slices/my-risks";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
@@ -103,7 +103,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
             declinationDate: date?.toDate().toLocaleDateString() || new Date().toLocaleDateString(),
         }
 
-        dispatch(addRisk(newRisk));
+        dispatch(addMyRisk(newRisk));
         navigate(`/${ROUTES.MY_RISKS}`);
         handleClose();
     }
@@ -128,7 +128,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     margin="dense"
                     id="title"
                     name="title"
-                    label="Titel"
+                    label="Name"
                     fullWidth
                 />
                 <TextField

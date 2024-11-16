@@ -8,9 +8,9 @@ import {FirebaseCollectionEnum} from "../../enums/FirebaseCollection.enum";
 
 enum ActionTypes {
     FETCH_MY_RISKS = "myRisks/fetchMyRisks",
-    ADD_RISK = "myRisks/addRisk",
-    DELETE_RISK = "myRisks/deleteRisk",
-    UPDATE_RISK = "myRisks/updateRisk"
+    ADD_MY_RISK = "myRisks/addRisk",
+    DELETE_MY_RISK = "myRisks/deleteRisk",
+    UPDATE_MY_RISK = "myRisks/updateRisk"
 }
 
 export interface MyRisksState {
@@ -52,8 +52,8 @@ export const fetchMyRisks = createAsyncThunk(
     }
 );
 
-export const addRisk = createAsyncThunk(
-    ActionTypes.ADD_RISK,
+export const addMyRisk = createAsyncThunk(
+    ActionTypes.ADD_MY_RISK,
     async (newRisk: Omit<Risk, "id">, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
@@ -61,8 +61,8 @@ export const addRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
-            const docRef = await addDoc(risksCollection, {
+            const myRisksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
+            const docRef = await addDoc(myRisksCollection, {
                 ...newRisk,
                 uid: user.uid,
                 createdAt: new Date().toISOString()
@@ -70,14 +70,14 @@ export const addRisk = createAsyncThunk(
 
             return {id: docRef.id, ...newRisk} as Risk;
         } catch (error) {
-            console.error("Error adding risk: ", error);
+            console.error("Error adding myRisk: ", error);
             return rejectWithValue(error);
         }
     }
 );
 
-export const updateRisk = createAsyncThunk(
-    ActionTypes.UPDATE_RISK,
+export const updateMyRisk = createAsyncThunk(
+    ActionTypes.UPDATE_MY_RISK,
     async (risk: Risk, { rejectWithValue }) => {
         try {
             const user = auth.currentUser;
@@ -117,8 +117,8 @@ export const updateRisk = createAsyncThunk(
     }
 );
 
-export const deleteRisk = createAsyncThunk(
-    ActionTypes.DELETE_RISK,
+export const deleteMyRisk = createAsyncThunk(
+    ActionTypes.DELETE_MY_RISK,
     async (riskId: string, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
@@ -127,7 +127,7 @@ export const deleteRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const risksCollection = collection(db, "myRisks");
+            const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
             const riskQuery = query(
                 risksCollection,
                 where("uid", "==", user.uid),
@@ -154,7 +154,7 @@ export const deleteRisk = createAsyncThunk(
 );
 
 export const myRisksSlice = createSlice({
-    name: "myRisks",
+    name: FirebaseCollectionEnum.MY_RISKS,
     initialState: initialState,
     reducers: {},
     extraReducers: (builder) => {
@@ -173,11 +173,11 @@ export const myRisksSlice = createSlice({
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
-            .addCase(addRisk.pending, (state) => {
+            .addCase(addMyRisk.pending, (state) => {
                 state.error = undefined;
                 state.status = FetchStatusEnum.PENDING;
             })
-            .addCase(addRisk.fulfilled, (state, action) => {
+            .addCase(addMyRisk.fulfilled, (state, action) => {
                 if (state.risks.some(risk => risk.id === action.payload.id)) {
                     return;
                 }
@@ -185,34 +185,34 @@ export const myRisksSlice = createSlice({
                 state.risks.push(action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
-            .addCase(addRisk.rejected, (state, action) => {
+            .addCase(addMyRisk.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
-            .addCase(deleteRisk.pending, (state) => {
+            .addCase(deleteMyRisk.pending, (state) => {
                 state.error = undefined;
                 state.status = FetchStatusEnum.PENDING;
             })
-            .addCase(deleteRisk.fulfilled, (state, action) => {
+            .addCase(deleteMyRisk.fulfilled, (state, action) => {
                 state.risks = state.risks.filter(risk => risk.id !== action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
-            .addCase(deleteRisk.rejected, (state, action) => {
+            .addCase(deleteMyRisk.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
-            .addCase(updateRisk.pending, (state) => {
+            .addCase(updateMyRisk.pending, (state) => {
                 state.error = undefined;
                 state.status = FetchStatusEnum.PENDING;
             })
-            .addCase(updateRisk.fulfilled, (state, action) => {
+            .addCase(updateMyRisk.fulfilled, (state, action) => {
                 console.log(action.payload);
                 state.risks = state.risks.map(risk =>
                     risk.id === action.payload.id ? { ...risk, ...action.payload } : risk
                 );
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
-            .addCase(updateRisk.rejected, (state, action) => {
+            .addCase(updateMyRisk.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })

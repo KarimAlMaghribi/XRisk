@@ -5,7 +5,7 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import Tooltip from "@mui/material/Tooltip";
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
-import {selectSorts, sortRisks} from "../../store/slices/risk-overview";
+import {selectSorts, sortRisks} from "../../store/slices/risks";
 import {RiskOverviewSort} from "../../models/RiskOverviewSort";
 import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
 import {SortDirectionEnum} from "../../enums/SortDirection.enum";
