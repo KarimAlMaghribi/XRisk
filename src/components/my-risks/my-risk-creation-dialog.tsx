@@ -13,7 +13,6 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers";
-import {types} from "../../store/slices/risks";
 import {NumericFormat} from 'react-number-format';
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store/store";
@@ -55,7 +54,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const [date, setDate] = useState<Dayjs | null>(dayjs());
-    const [riskType, setRiskType] = useState<string>('');
+    const [riskType, setRiskType] = useState<string[]>([]);
     const [value, setValue] = useState<number>(0);
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -80,7 +79,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const handleClose = () => {
         setTitle('');
         setDescription('');
-        setRiskType('');
+        setRiskType([]);
         setValue(0);
         setDate(dayjs());
         props.handleClose();
@@ -141,7 +140,10 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     multiline
                     rows={4}
                 />
-                <RiskTypeSelector />
+                <RiskTypeSelector
+                    value={riskType}
+                    setValue={setRiskType}
+                />
                 {/*/!* Risikoarten werden zukünftig zentral von allen angelegt und gespeichert und hier abgerufen*!/*/}
                 {/*<Autocomplete*/}
                 {/*    value={riskType}*/}

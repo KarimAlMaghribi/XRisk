@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {AppDispatch} from "../../../store/store";
@@ -9,7 +9,7 @@ import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import {addRisk} from "../../../store/slices/risks";
+import {RiskTypeSelector} from "../risk-type-selector";
 
 export interface MyRiskEditDialogProps {
     risk: Risk;
@@ -18,18 +18,24 @@ export interface MyRiskEditDialogProps {
 }
 
 export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
-    const [risk, setRisk] = React.useState<Risk>(props.risk);
+    const [riskType, setRiskType] = useState<string[]>(props.risk.type || []);
+    const [risk, setRisk] = useState<Risk>(props.risk);
     const dispatch: AppDispatch = useDispatch();
 
     useEffect(() => {
         setRisk(props.risk);
-    }, []);
-
+        setRiskType(props.risk.type || []);
+    }, [props.risk]);
 
     const handleSave = () => {
-        dispatch(updateMyRisk(risk));
+        const updatedRisk: Risk = {
+            ...risk,
+            type: riskType,
+        };
+
+        dispatch(updateMyRisk(updatedRisk));
         props.setOpen(false);
-    }
+    };
 
     return (
         <Dialog
@@ -43,7 +49,8 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                     fullWidth
                     label="ID"
                     defaultValue={risk.id}
-                    slotProps={{input: {readOnly: true}}}/>
+                    slotProps={{input: {readOnly: true}}}
+                />
                 <TextField
                     sx={{marginTop: "10px"}}
                     fullWidth
@@ -51,16 +58,19 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                     value={risk.description}
                     multiline
                     rows={5}
-                    onChange={(event) => setRisk({...risk, description: event.target.value})}/>
+                    onChange={(event) => setRisk({...risk, description: event.target.value})}
+                />
                 <TextField
                     sx={{marginTop: "10px"}}
                     fullWidth
                     label="Name"
                     value={risk.name}
-                    onChange={(event) => setRisk({...risk, name: event.target.value})}/>
+                    onChange={(event) => setRisk({...risk, name: event.target.value})}
+                />
+                <RiskTypeSelector value={riskType} setValue={setRiskType}/>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{ marginTop: "10px", width: "100%" }}
+                        sx={{marginTop: "10px", width: "100%"}}
                         format="DD.MM.YYYY"
                         label="Laufzeitende"
                         value={dayjs(risk.declinationDate, "DD.MM.YYYY")}
@@ -76,17 +86,13 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                 </LocalizationProvider>
             </DialogContent>
             <DialogActions>
-                <Button
-                    variant="contained"
-                    onClick={handleSave}>
+                <Button variant="contained" onClick={handleSave}>
                     Speichern
                 </Button>
-                <Button
-                    onClick={() => props.setOpen(false)}
-                    variant="outlined">
+                <Button onClick={() => props.setOpen(false)} variant="outlined">
                     Abbrechen
                 </Button>
             </DialogActions>
         </Dialog>
-    )
-}
+    );
+};

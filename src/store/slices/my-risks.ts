@@ -206,7 +206,6 @@ export const myRisksSlice = createSlice({
                 state.status = FetchStatusEnum.PENDING;
             })
             .addCase(updateMyRisk.fulfilled, (state, action) => {
-                console.log(action.payload);
                 state.risks = state.risks.map(risk =>
                     risk.id === action.payload.id ? { ...risk, ...action.payload } : risk
                 );

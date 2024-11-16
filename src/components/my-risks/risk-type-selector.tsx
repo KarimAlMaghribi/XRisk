@@ -1,45 +1,41 @@
-import { Autocomplete, Chip, TextField } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import {Autocomplete, Chip, TextField} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {AppDispatch} from "../../store/store";
+import {useDispatch, useSelector} from "react-redux";
+import {addRiskType, fetchRiskTypes, selectStatus, selectTypes} from "../../store/slices/risks";
+import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 
 export interface RiskTypeSelectorProps {
-
+    value: string[];
+    setValue: (value: any) => void;
 }
 
 export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
-    const [inputValue, setInputValue] = useState<string[]>([]);
-    const [types, setTypes] = useState<string[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const dispatch: AppDispatch = useDispatch();
+    const types: string[] = useSelector(selectTypes);
+    const status: FetchStatusEnum = useSelector(selectStatus);
 
     useEffect(() => {
-        const loadTypes = async () => {
-            setLoading(true);
-            try {
-                const fetchedTypes = await fetchTypes();
-                setTypes(fetchedTypes);
-            } catch (error) {
-                console.error("Fehler beim Laden der Typen:", error);
-            } finally {
-                setLoading(false);
+        const unsubscribe: any = dispatch(fetchRiskTypes());
+        return () => {
+            if (typeof unsubscribe === "function") {
+                unsubscribe();
             }
         };
-
-        loadTypes();
-    }, [props.fetchTypes]);
+    }, [dispatch]);
 
     const handleTagsChange = async (event: any, newValue: string[]) => {
-        const uniqueTags = newValue.filter((type) => !types.includes(type));
-        if (uniqueTags.length > 0) {
-            // Speichere jeden neuen Typ in der Datenbank
-            for (const newType of uniqueTags) {
+        const uniqueTypes: string[] = newValue.filter((type) => !types.includes(type));
+        if (uniqueTypes.length > 0) {
+            for (const newType of uniqueTypes) {
                 try {
-                    await saveType(newType);
-                    setTypes((prevTags) => [...prevTags, newType]);
+                    await dispatch(addRiskType(newType));
                 } catch (error) {
-                    console.error(`Fehler beim Speichern des Typs "${newType}":`, error);
+                    console.error(`Error saving new riskType: "${newType}":`, error);
                 }
             }
         }
-        setInputValue(newValue);
+        props.setValue(newValue);
     };
 
     return (
@@ -48,17 +44,22 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             multiple
             freeSolo
             options={types}
-            loading={loading}
-            value={inputValue}
+            loading={status === FetchStatusEnum.PENDING}
+            value={props.value} // Nutze props.value direkt
             onChange={handleTagsChange}
+            getOptionLabel={(option: any) => (typeof option === "string" ? option : option?.label || "")}
             renderTags={(value: readonly string[], getTypeProps) =>
-                value.map((option: string, index: number) => (
-                    <Chip
-                        variant="outlined"
-                        label={option}
-                        {...getTypeProps({ index })}
-                    />
-                ))
+                value.map((option: string, index: number) => {
+                    const { key, ...tagProps } = getTypeProps({ index });
+                    return (
+                        <Chip
+                            key={index}
+                            variant="outlined"
+                            label={option}
+                            {...tagProps}
+                        />
+                    );
+                })
             }
             renderInput={(params) => (
                 <TextField
@@ -71,3 +72,4 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
         />
     );
 };
+

@@ -5,7 +5,7 @@ export interface Risk {
     id: string;
     name: string; // title
     description: string;
-    type: string | null;
+    type: string[];
     value: number;
     publisher?: Publisher;
     declinationDate: string;

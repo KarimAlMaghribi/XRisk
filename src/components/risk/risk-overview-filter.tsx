@@ -3,18 +3,26 @@ import {Checkbox, Divider, FormControlLabel, FormGroup, Paper, Typography} from 
 import Slider from '@mui/material/Slider';
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {AppDispatch} from "../../store/store";
-import {changeFilterValue, changeRemainingTerm, clearFilters, setFilterType} from "../../store/slices/risks";
-import {useDispatch} from "react-redux";
+import {
+    changeFilterValue,
+    changeRemainingTerm,
+    clearFilters,
+    selectFilterTypes,
+    setFilterType
+} from "../../store/slices/risks";
+import {useDispatch, useSelector} from "react-redux";
 import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
+import {RiskTypeSelector} from "../my-risks/risk-type-selector";
 
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const dispatch: AppDispatch = useDispatch();
     const [sliderValue, setSliderValue] = useState<number | number[]>(props.value);
     const [termValue, setTermValue] = useState<number | number[]>(props.remainingTerm);
+    const filterTypes: string[] = useSelector(selectFilterTypes);
 
-    const handleTypeChange = (type: string) => {
+    const handleTypeChange = (type: string[]) => {
         dispatch(setFilterType(type));
     };
 
@@ -46,15 +54,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
         <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={2}>
             <Typography variant="h6">Filter</Typography>
             <Typography variant="button">Risikoart</Typography>
-            <FormGroup>
-                {props.types.map((type, index) => (
-                    <FormControlLabel
-                        key={index}
-                        control={<Checkbox checked={type.checked} size="small" onChange={() => handleTypeChange(type.name)}/>}
-                        label={type.label}
-                    />
-                ))}
-            </FormGroup>
+            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} />
             <Typography variant="button">Nennwert</Typography>
             <Slider
                 value={sliderValue}

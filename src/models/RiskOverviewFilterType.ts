@@ -1,11 +1,5 @@
-export interface RiskOverviewFilterTypes {
-    name: string;
-    label: string;
-    checked: boolean;
-}
-
 export interface RiskOverviewFilterType {
-    types: RiskOverviewFilterTypes[];
+    types: string[];
     value: number | number[];
     remainingTerm: number | number[];
 }

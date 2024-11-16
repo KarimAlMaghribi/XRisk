@@ -13,7 +13,6 @@ import {
 import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
 import {FetchStatus} from "../../types/FetchStatus";
-import {RiskOverviewFilterTypes} from "../../models/RiskOverviewFilterType";
 import Button from "@mui/material/Button";
 import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
 import {Divider} from "@mui/material";
@@ -23,7 +22,7 @@ export const RiskOverview = () => {
     const dispatch : AppDispatch = useDispatch();
     const filteredRisks: Risk[] = useSelector(selectFilteredRisks);
     const status: FetchStatus = useSelector(selectStatus);
-    const filterTypes: RiskOverviewFilterTypes[] = useSelector(selectFilterTypes);
+    const filterTypes: string[] = useSelector(selectFilterTypes);
     const filterValue: number | number[] = useSelector(selectFilterValue);
     const filterRemainingTerm: number | number[]  = useSelector(selectRemainingTerm);
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);

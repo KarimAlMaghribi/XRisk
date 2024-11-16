@@ -7,10 +7,10 @@ import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
-import {collection, query, where, onSnapshot, addDoc, getDocs, deleteDoc} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, where} from "firebase/firestore";
 import {auth, db} from "../../firebase_config";
 import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
-import {deleteMyRisk} from "./my-risks";
+import {updateMyRisk} from "./my-risks";
 
 enum ActionTypes {
     FETCH_RISKS = "risks/fetchRisks",
@@ -19,25 +19,6 @@ enum ActionTypes {
     FETCH_RISK_TYPES = "risks/fetchRiskTypes",
     ADD_RISK_TYPE = "risks/addRiskType"
 }
-
-export const types: string[] = [
-    "Reise",
-    "Cyber",
-    "Landwirtschaft",
-    "Maritim",
-    "Event",
-    "Finanz",
-    "Medizinisch",
-    "Weltraum",
-    "Automobil",
-    "Rechtlich"
-];
-
-export const riskTypes = types.map(type => ({
-    name: type,
-    label: type,
-    checked: true
-}));
 
 export interface RiskOverviewState {
     risks: Risk[];
@@ -54,7 +35,7 @@ const initialState: RiskOverviewState = {
     filteredRisks: [],
     types: [],
     filters: {
-        types: riskTypes,
+        types: [],
         value: [0, 200000],
         remainingTerm: [0, 24] // months
     },
@@ -122,29 +103,40 @@ export const fetchRiskTypes = createAsyncThunk(
         try {
             const riskTypesCollection = collection(db, FirestoreCollectionEnum.RISK_TYPES);
 
-            const snapshot = await getDocs(riskTypesCollection);
+            return new Promise<string[]>((resolve, reject) => {
+                const unsubscribe = onSnapshot(
+                    riskTypesCollection,
+                    (snapshot) => {
+                        const riskTypes = snapshot.docs.map((doc) => doc.data().name as string);
+                        const uniqueRiskTypes = Array.from(new Set(riskTypes));
+                        resolve(uniqueRiskTypes); // Rückgabe der aktuellen Typen
+                    },
+                    (error) => {
+                        console.error("Error fetching risk types:", error);
+                        reject(error);
+                    }
+                );
 
-            const riskTypes = snapshot.docs.map(doc => doc.data().name as string);
-
-            return riskTypes;
+                return () => unsubscribe();
+            });
         } catch (error) {
-            console.error("Error fetching risk types:", error);
-            return thunkAPI.rejectWithValue("Failed to fetch risk types");
+            console.error("Error in fetchRiskTypesWithListener:", error);
+            throw error;
         }
     }
-)
+);
 
 export const addRiskType = createAsyncThunk(
     ActionTypes.ADD_RISK_TYPE,
     async (newType: string, thunkAPI) => {
         try {
-            const user = auth.currentUser;
+            const uid = auth.currentUser?.uid;
             const riskTypesCollection = collection(db, FirestoreCollectionEnum.RISK_TYPES);
 
             const docRef = await addDoc(riskTypesCollection, {
                 name: newType,
                 createdAt: new Date().toISOString(),
-                creator: user ? user : undefined
+                creator: uid || undefined
             });
 
             console.log("Added risk type:", docRef.id);
@@ -183,7 +175,7 @@ export const addRisk = createAsyncThunk(
 
 export const deleteRisk = createAsyncThunk(
     ActionTypes.DELETE_RISK,
-    async (riskId: string, { rejectWithValue }) => {
+    async (riskId: string, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
 
@@ -247,15 +239,8 @@ export const riskOverviewSlice = createSlice({
                 }
             });
         },
-        setFilterType: (state, action: PayloadAction<string>) => {
-            const filter = state.filters.types.find(t => t.name === action.payload);
-            if (filter) {
-                filter.checked = !filter.checked;
-            }
+        setFilterType: (state, action: PayloadAction<string[]>) => {
 
-            state.filteredRisks = state.risks.filter(risk => {
-                return state.filters.types.find(t => t.name === risk.type)?.checked === true;
-            })
         },
         changeFilterValue: (state, action: PayloadAction<number[]>) => {
             state.filters.value = action.payload;
@@ -275,7 +260,7 @@ export const riskOverviewSlice = createSlice({
             });
         },
         clearFilters: (state) => {
-            state.filters.types.forEach(type => type.checked = true);
+            state.filters.types = [];
             state.filters.value = [0, 1];
             state.filters.remainingTerm = [3, 6];
             state.filteredRisks = state.risks;
@@ -329,6 +314,26 @@ export const riskOverviewSlice = createSlice({
                 state.error = undefined;
                 state.status = FetchStatusEnum.PENDING;
             })
+            .addCase(fetchRiskTypes.fulfilled, (state, action) => {
+                state.types = action.payload;
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(fetchRiskTypes.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            })
+            .addCase(addRiskType.pending, (state, action) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(addRiskType.fulfilled, (state, action) => {
+                state.types.push(action.payload);
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(addRiskType.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            });
     }
 });
 
@@ -338,8 +343,18 @@ export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state
 export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
 export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
 export const selectRemainingTerm = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.remainingTerm;
-export const selecttypes = (state: {riskOverview: RiskOverviewState}) => state.riskOverview.types;
+export const selectTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.types;
+export const selectRiskType = (state: { riskOverview: RiskOverviewState }) => (id: string) => {
+    const risk = state.riskOverview.risks.find(risk => risk.id === id);
+    return risk ? risk.type : [];
+};
 
-export const { sortRisks, setFilterType, changeFilterValue, changeRemainingTerm, clearFilters } = riskOverviewSlice.actions;
+export const {
+    sortRisks,
+    setFilterType,
+    changeFilterValue,
+    changeRemainingTerm,
+    clearFilters
+} = riskOverviewSlice.actions;
 
 export default riskOverviewSlice.reducer;
