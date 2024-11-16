@@ -6,7 +6,7 @@ import Container from '@mui/material/Container';
 import {Typography} from "@mui/material";
 import CurvyLines from "../../assests/imgs/appCurvyLines.png";
 import contracts from "../../assests/imgs/commercial/running_contracts.jpg";
-import happyUsers from "../../assests/imgs/commercial/users.jpg";
+import happyUsers from "../../assests/imgs/commercial/users-min.jpg";
 import secured from "../../assests/imgs/commercial/secured.jpg";
 
 const item = {

@@ -18,27 +18,50 @@ interface RiskExample {
     icon: any;
 }
 
+const iconSize = 50;
+const riskExamples: RiskExample[] = [
+    {
+        title: "Weg absichern",
+        img: route,
+        icon: <RouteIcon sx={{fontSize: iconSize}}/>
+    },
+    {
+        title: "Prozess absichern",
+        img: process,
+        icon: <GavelIcon sx={{fontSize: iconSize}} />
+    },
+    {
+        title: "Event absichern",
+        img: event,
+        icon: <CalendarMonthIcon sx={{fontSize: iconSize}}/>
+    }
+];
+
+export const RiskElement = (props: RiskExample) => {
+    return (
+        <Card sx={{textAlign: "center", cursor: "pointer"}} elevation={2}>
+            <CardMedia
+                sx={{height: 270}}
+                title={props.title}
+                image={props.img} />
+
+            <div style={{margin: "60px"}}>
+                {props.icon}
+            </div>
+
+            <Typography gutterBottom variant="h5" component="div">
+                {props.title}
+            </Typography>
+        </Card>
+    )
+
+}
+
 export const RiskCarousel = () => {
     const orange = theme.palette.primary.main;
-    const iconSize = 50;
 
-    const riskExamples: RiskExample[] = [
-        {
-            title: "Weg absichern",
-            img: route,
-            icon: <RouteIcon sx={{fontSize: iconSize}}/>
-        },
-        {
-            title: "Prozess absichern",
-            img: process,
-            icon: <GavelIcon sx={{fontSize: iconSize}} />
-        },
-        {
-            title: "Event absichern",
-            img: event,
-            icon: <CalendarMonthIcon sx={{fontSize: iconSize}}/>
-        }
-    ];
+
+
 
     return (
         <React.Fragment>
@@ -66,22 +89,14 @@ export const RiskCarousel = () => {
                 </Grid>
                 {
                     riskExamples.map((riskExample: RiskExample) => (
-                        <Grid size={{xs: 12, sm: 6, md: 4, lg: 3, xl: 2}} key={riskExample.title} style={{margin: "40px"}}>
-                            <Card sx={{textAlign: "center"}} elevation={2}>
-                                <CardMedia
-                                    sx={{height: 270}}
-                                    title={riskExample.title}
-                                    image={riskExample.img} />
-
-                                <div style={{margin: "60px"}}>
-                                    {riskExample.icon}
-                                </div>
-
-                                <Typography gutterBottom variant="h5" component="div">
-                                    {riskExample.title}
-                                </Typography>
-                            </Card>
-
+                        <Grid
+                            size={{xs: 12, sm: 6, md: 4, lg: 3, xl: 2}}
+                            key={riskExample.title}
+                            style={{margin: "40px"}}>
+                            <RiskElement
+                                img={riskExample.img}
+                                title={riskExample.title}
+                                icon={riskExample.icon} />
                         </Grid>
                     ))
                 }

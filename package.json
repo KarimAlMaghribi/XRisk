@@ -22,6 +22,7 @@
     "ajv": "^8.17.1",
     "dayjs": "^1.11.13",
     "firebase": "^10.14.1",
+    "hover.css": "^2.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-firebase-hooks": "^5.1.1",

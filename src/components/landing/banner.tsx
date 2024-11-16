@@ -1,4 +1,4 @@
-import cover from "../../assests/imgs/desert_1.png";
+import cover from "../../assests/imgs/desert_1-min.png";
 import React from "react";
 import Box from "@mui/material/Box";
 import {Typography} from "@mui/material";

@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Risk} from "../../models/Risk";
 import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FetchStatus} from "../../types/FetchStatus";
@@ -78,7 +78,7 @@ export const addRisk = createAsyncThunk(
 
 export const updateRisk = createAsyncThunk(
     ActionTypes.UPDATE_RISK,
-    async (risk: Risk, {rejectWithValue}) => {
+    async (risk: Risk, { rejectWithValue }) => {
         try {
             const user = auth.currentUser;
 
@@ -87,6 +87,7 @@ export const updateRisk = createAsyncThunk(
             }
 
             const risksCollection = collection(db, FirebaseCollectionEnum.MY_RISKS);
+
             const riskQuery = query(
                 risksCollection,
                 where("uid", "==", user.uid),
@@ -100,14 +101,18 @@ export const updateRisk = createAsyncThunk(
             }
 
             const riskDocRef = riskDocs.docs[0].ref;
-            await updateDoc(riskDocRef, {...risk, uid: user.uid, updatedAt: new Date().toISOString()});
 
-            return risk;
+            await updateDoc(riskDocRef, {
+                ...risk,
+                updatedAt: new Date().toISOString()
+            });
+
+            console.log("Updated risk", risk.id)
+
+            return { ...risk, updatedAt: new Date().toISOString() };
         } catch (error) {
             console.error("Error updating risk:", error);
-            return rejectWithValue(
-                "Failed to update risk due to permissions or other error"
-            );
+            return rejectWithValue("Failed to update risk due to permissions or other error");
         }
     }
 );
@@ -195,7 +200,22 @@ export const myRisksSlice = createSlice({
             .addCase(deleteRisk.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
-            });
+            })
+            .addCase(updateRisk.pending, (state) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(updateRisk.fulfilled, (state, action) => {
+                console.log(action.payload);
+                state.risks = state.risks.map(risk =>
+                    risk.id === action.payload.id ? { ...risk, ...action.payload } : risk
+                );
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(updateRisk.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            })
     }
 });
 
