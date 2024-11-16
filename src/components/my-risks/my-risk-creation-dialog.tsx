@@ -50,7 +50,7 @@ const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, 
     );
 });
 
-export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
+export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const [date, setDate] = useState<Dayjs | null>(dayjs());
@@ -94,7 +94,7 @@ export const RiskCreationDialog = (props: RiskCreationDialogProps) => {
 
         const newRisk: Risk = {
             id: uuidv4(),
-            createdAt: new Date().toLocaleDateString(),
+            createdAt: new Date().toISOString(),
             name: title,
             description: description,
             status: RiskStatusEnum.DRAFT,

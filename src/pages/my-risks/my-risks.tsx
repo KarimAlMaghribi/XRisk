@@ -5,7 +5,7 @@ import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
 import {fetchMyRisks, selectMyRisks} from "../../store/slices/my-risks";
 import Button from "@mui/material/Button";
-import {RiskCreationDialog} from "../../components/risk/risk-creation-dialog";
+import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
 import AddIcon from '@mui/icons-material/Add';
 import {AppDispatch} from "../../store/store";
 import {MyRiskElement} from "../../components/my-risks/my-risk-element";
@@ -47,7 +47,7 @@ export const MyRisks = () => {
                     ))
                 }
             </Grid>
-            <RiskCreationDialog
+            <MyRiskCreationDialog
                 open={openRiskCreationDialog}
                 handleClose={handleCloseDialog}
             />

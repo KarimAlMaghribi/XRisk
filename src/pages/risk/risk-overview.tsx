@@ -15,7 +15,7 @@ import {useSelector} from "react-redux";
 import {FetchStatus} from "../../types/FetchStatus";
 import {RiskOverviewFilterTypes} from "../../models/RiskOverviewFilterType";
 import Button from "@mui/material/Button";
-import {RiskCreationDialog} from "../../components/risk/risk-creation-dialog";
+import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
 import {Divider} from "@mui/material";
 
 export const RiskOverview = () => {
@@ -55,7 +55,7 @@ export const RiskOverview = () => {
                         status={status}/>
                 </Grid>
             </Grid>
-            <RiskCreationDialog open={openRiskCreationDialog} handleClose={handleClose} />
+            <MyRiskCreationDialog open={openRiskCreationDialog} handleClose={handleClose} />
         </React.Fragment>
     )
 }
