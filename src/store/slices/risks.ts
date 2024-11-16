@@ -40,6 +40,7 @@ export const riskTypes = types.map(type => ({
 export interface RiskOverviewState {
     risks: Risk[];
     filteredRisks: Risk[];
+    riskTypes: string[];
     filters: RiskOverviewFilterType;
     sorts: RiskOverviewSort[];
     status: FetchStatus;
@@ -49,6 +50,7 @@ export interface RiskOverviewState {
 const initialState: RiskOverviewState = {
     risks: [],
     filteredRisks: [],
+    riskTypes: [],
     filters: {
         types: riskTypes,
         value: [0, 200000],
@@ -290,6 +292,7 @@ export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state
 export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
 export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
 export const selectRemainingTerm = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.remainingTerm;
+export const selectRiskTypes = (state: {riskOverview: RiskOverviewState}) => state.riskOverview.riskTypes;
 
 export const { sortRisks, setFilterType, changeFilterValue, changeRemainingTerm, clearFilters } = riskOverviewSlice.actions;
 

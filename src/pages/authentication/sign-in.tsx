@@ -1,6 +1,6 @@
 import {Button, Card, Container, Divider, TextField, Typography} from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import React from "react";
+import React, {useEffect} from "react";
 // @ts-ignore
 import Logo from "../../assests/imgs/logo.png";
 import "./style.scss";
@@ -8,11 +8,18 @@ import GoogleIcon from '@mui/icons-material/Google';
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {signInWithEmail, signInWithGoogle} from "../../firebase/firebase-service";
+import {auth} from "../../firebase_config";
 
 export const SignIn = () => {
     const navigate = useNavigate();
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
+
+    useEffect(() => {
+        if (auth.currentUser) {
+            navigate(`/${ROUTES.MY_RISKS}`)
+        }
+    }, [])
 
     const signIn = async () => {
         const user = await signInWithEmail(email, password);

@@ -23,6 +23,7 @@ import {addMyRisk} from "../../store/slices/my-risks";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
+import {RiskTypeSelector} from "./risk-type-selector";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -54,8 +55,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
     const [date, setDate] = useState<Dayjs | null>(dayjs());
-    const [riskType, setRiskType] = useState<string | null>(null);
-    const [inputValue, setInputValue] = useState<string>('');
+    const [riskType, setRiskType] = useState<string>('');
     const [value, setValue] = useState<number>(0);
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -80,7 +80,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const handleClose = () => {
         setTitle('');
         setDescription('');
-        setRiskType(null);
+        setRiskType('');
         setValue(0);
         setDate(dayjs());
         props.handleClose();
@@ -141,26 +141,29 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     multiline
                     rows={4}
                 />
-                {/* Risikoarten werden zukünftig zentral von allen angelegt und gespeichert und hier abgerufen*/}
-                <Autocomplete
-                    value={riskType}
-                    onChange={(event: any, newValue: string | null) => {
-                        setRiskType(newValue);
-                    }}
-                    inputValue={inputValue}
-                    onInputChange={(event, newInputValue) => {
-                        setInputValue(newInputValue);
-                    }}
-                    disablePortal={false}
-                    options={types}
-                    renderInput={(params) =>
-                        <TextField
-                            {...params}
-                            label="Risikoart"
-                            fullWidth
-                            margin="dense"
-                        />}
-                />
+                <RiskTypeSelector
+                    riskType={riskType}
+                    setRiskType={setRiskType}/>
+                {/*/!* Risikoarten werden zukünftig zentral von allen angelegt und gespeichert und hier abgerufen*!/*/}
+                {/*<Autocomplete*/}
+                {/*    value={riskType}*/}
+                {/*    onChange={(event: any, newValue: string | null) => {*/}
+                {/*        setRiskType(newValue);*/}
+                {/*    }}*/}
+                {/*    inputValue={inputValue}*/}
+                {/*    onInputChange={(event, newInputValue) => {*/}
+                {/*        setInputValue(newInputValue);*/}
+                {/*    }}*/}
+                {/*    disablePortal={false}*/}
+                {/*    options={types}*/}
+                {/*    renderInput={(params) =>*/}
+                {/*        <TextField*/}
+                {/*            {...params}*/}
+                {/*            label="Risikoart"*/}
+                {/*            fullWidth*/}
+                {/*            margin="dense"*/}
+                {/*        />}*/}
+                {/*/>*/}
                 <TextField
                     margin="dense"
                     fullWidth

@@ -101,12 +101,14 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
                 </CardContent>
                 <CardActions>
                     <Button
+                        disabled={props.risk.status === RiskStatusEnum.PUBLISHED}
                         onClick={() => setOpenRiskEditDialog(true)}
                         size="small"
                         startIcon={<EditIcon/>}>
                         Bearbeiten
                     </Button>
                     <Button
+                        disabled={props.risk.status === RiskStatusEnum.PUBLISHED}
                         onClick={handleDelete}
                         size="small"
                         color="error"

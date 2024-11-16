@@ -45,6 +45,15 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                     defaultValue={risk.id}
                     slotProps={{input: {readOnly: true}}}/>
                 <TextField
+                    sx={{marginTop: "10px"}}
+                    fullWidth
+                    label="Kurzbeschreibung"
+                    value={risk.description}
+                    multiline
+                    rows={5}
+                    onChange={(event) => setRisk({...risk, description: event.target.value})}/>
+                <TextField
+                    sx={{marginTop: "10px"}}
                     fullWidth
                     label="Name"
                     value={risk.name}
