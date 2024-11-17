@@ -104,6 +104,7 @@ export function Header() {
                             sx={{display: {xs: 'block', md: 'none'}}}>
 
                             {pages.map((page) => (
+                                page.authenticated && !isLoggedIn ? null :
                                 <MenuItem key={page.name} onClick={() => handleCloseNavMenu(page)}>
                                     <Typography sx={{textAlign: 'center'}}>{page.name}</Typography>
                                 </MenuItem>
@@ -130,6 +131,7 @@ export function Header() {
 
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
+                            page.authenticated && !isLoggedIn ? null :
                             <Button
                                 key={page.name}
                                 onClick={() => handleCloseNavMenu(page)}
