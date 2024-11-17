@@ -210,6 +210,4 @@ export const userProfileSlice = createSlice({
     }
 );
 
-export const {} = userProfileSlice.actions;
-
 export default userProfileSlice.reducer;

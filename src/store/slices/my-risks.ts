@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {Risk} from "../../models/Risk";
 import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FetchStatus} from "../../types/FetchStatus";
@@ -78,7 +78,7 @@ export const addMyRisk = createAsyncThunk(
 
 export const updateMyRisk = createAsyncThunk(
     ActionTypes.UPDATE_MY_RISK,
-    async (risk: Risk, { rejectWithValue }) => {
+    async (risk: Risk, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
 
@@ -109,7 +109,7 @@ export const updateMyRisk = createAsyncThunk(
 
             console.log("Updated risk", risk.id)
 
-            return { ...risk, updatedAt: new Date().toISOString() };
+            return {...risk, updatedAt: new Date().toISOString()};
         } catch (error) {
             console.error("Error updating risk:", error);
             return rejectWithValue("Failed to update risk due to permissions or other error");
@@ -207,7 +207,7 @@ export const myRisksSlice = createSlice({
             })
             .addCase(updateMyRisk.fulfilled, (state, action) => {
                 state.risks = state.risks.map(risk =>
-                    risk.id === action.payload.id ? { ...risk, ...action.payload } : risk
+                    risk.id === action.payload.id ? {...risk, ...action.payload} : risk
                 );
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
@@ -219,7 +219,5 @@ export const myRisksSlice = createSlice({
 });
 
 export const selectMyRisks = (state: { myRisks: MyRisksState }) => state.myRisks.risks;
-
-export const {} = myRisksSlice.actions;
 
 export default myRisksSlice.reducer;

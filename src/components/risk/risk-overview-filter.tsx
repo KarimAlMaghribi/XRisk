@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Checkbox, Divider, FormControlLabel, FormGroup, Paper, Typography} from "@mui/material";
+import {Paper, Typography} from "@mui/material";
 import Slider from '@mui/material/Slider';
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {AppDispatch} from "../../store/store";
@@ -11,7 +11,6 @@ import {
     setFilterType
 } from "../../store/slices/risks";
 import {useDispatch, useSelector} from "react-redux";
-import Grid from "@mui/material/Grid2";
 import Button from "@mui/material/Button";
 import {RiskTypeSelector} from "../my-risks/risk-type-selector";
 
@@ -54,7 +53,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
         <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={2}>
             <Typography variant="h6">Filter</Typography>
             <Typography variant="button">Risikoart</Typography>
-            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} />
+            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange}/>
             <Typography variant="button">Nennwert</Typography>
             <Slider
                 value={sliderValue}

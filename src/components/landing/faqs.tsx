@@ -1,5 +1,5 @@
 import React from "react";
-import {Accordion, AccordionDetails, AccordionSummary, Divider, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export const FAQs = () => {
@@ -53,27 +53,26 @@ export const FAQs = () => {
 
             {
                 faqs.map((faq, index) => (
-                    <React.Fragment>
-                        <Accordion
-                            style={{marginTop: "20px"}}
-                            expanded={expanded === `panel${index}`}
-                            onChange={handleChange(`panel${index}`)}
-                            elevation={0}>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon/>}
-                                aria-controls="panel1bh-content"
-                                id="panel1bh-header">
-                                <Typography variant="h6" sx={{width: '33%', flexShrink: 0, color: 'text.secondary'}}>
-                                    {faq.question}
-                                </Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography>
-                                    {faq.answer}
-                                </Typography>
-                            </AccordionDetails>
-                        </Accordion>
-                    </React.Fragment>
+                    <Accordion
+                        key={index}
+                        style={{marginTop: "20px"}}
+                        expanded={expanded === `panel${index}`}
+                        onChange={handleChange(`panel${index}`)}
+                        elevation={0}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon/>}
+                            aria-controls="panel1bh-content"
+                            id="panel1bh-header">
+                            <Typography variant="h6" sx={{width: '33%', flexShrink: 0, color: 'text.secondary'}}>
+                                {faq.question}
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Typography>
+                                {faq.answer}
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 ))
             }
         </div>
