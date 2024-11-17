@@ -8,20 +8,14 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
-import {useNavigate, useLocation} from "react-router-dom";
-import {Page, pages, settings} from "./pages";
+import {useLocation, useNavigate} from "react-router-dom";
+import {Page, pages} from "./pages";
 import {auth} from "../../firebase_config";
-import {signOutUser} from "../../firebase/firebase-service";
-import West from '@mui/icons-material/West';
-import East from '@mui/icons-material/East';
-import Grid from "@mui/material/Grid2";
-import { ROUTES } from '../../routing/routes';
 import {theme} from "../../theme";
+import {QuickMenuButtons} from "./header-elements/quick-menu-buttons";
 
 export function Header() {
     const location = useLocation();
@@ -52,6 +46,7 @@ export function Header() {
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
+
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
     };
@@ -147,74 +142,11 @@ export function Header() {
                             </Button>
                         ))}
                     </Box>
-
-                    {isLoggedIn ? (
-                        <Box sx={{flexGrow: 0}}>
-                            <Tooltip title="Profilmenü">
-                                <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                    <Avatar src="https://i.pravatar.cc/150?img=12"/>
-                                </IconButton>
-                            </Tooltip>
-                            <Menu
-                                sx={{mt: '45px'}}
-                                id="menu-appbar"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}>
-                                {settings.map((setting) => (
-                                    <MenuItem key={setting.name} onClick={() => handleCloseUserMenu(setting)}>
-                                        <Typography sx={{textAlign: 'center'}}>{setting.name}</Typography>
-                                    </MenuItem>
-                                ))}
-                            </Menu>
-                            <Button
-                                onClick={() => signOutUser()}
-                                variant="outlined"
-                                style={{color: "white", borderColor: "white", marginLeft: "20px"}}
-                                startIcon={<West />}>
-                                Log Out
-                            </Button>
-                        </Box>
-                    ) : (
-                        <Grid container>
-
-                            <Grid size={6}>
-                                <Button
-                                    onClick={() => navigate(ROUTES.SIGN_IN)}
-                                    variant="outlined"
-                                    style={{
-                                        color: "white",
-                                        borderColor: "white",
-                                        minWidth: "100px",
-                                        visibility: location.pathname === `/${ROUTES.SIGN_IN}` ? "hidden" : "visible"
-                                    }}
-                                    endIcon={<East />}>
-                                    Log In
-                                </Button>
-                            </Grid>
-                            <Grid size={6}>
-                                <Button
-                                    onClick={() => navigate(ROUTES.SIGN_UP)}
-                                    variant="contained"
-                                    style={{
-                                        minWidth: "100px",
-                                        visibility: location.pathname === `/${ROUTES.SIGN_UP}` ? "hidden" : "visible"
-                                    }}
-                                    endIcon={<East />}>
-                                    Registrieren
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    )}
+                    <QuickMenuButtons
+                        isLoggedIn={isLoggedIn}
+                        anchorElUser={anchorElUser}
+                        handleOpenUserMenu={handleOpenUserMenu}
+                        handleCloseUserMenu={handleCloseUserMenu} />
                 </Toolbar>
             </Container>
         </AppBar>

@@ -9,8 +9,12 @@ import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {signInWithEmail, signInWithGoogle} from "../../firebase/firebase-service";
 import {auth} from "../../firebase_config";
+import {fetchUserProfile} from "../../store/slices/user-profile";
+import {AppDispatch} from "../../store/store";
+import {useDispatch} from "react-redux";
 
 export const SignIn = () => {
+    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
@@ -23,6 +27,7 @@ export const SignIn = () => {
 
     const signIn = async () => {
         const user = await signInWithEmail(email, password);
+        dispatch(fetchUserProfile())
 
         if (user?.refreshToken) {
             navigate(`/${ROUTES.MY_RISKS}`);
