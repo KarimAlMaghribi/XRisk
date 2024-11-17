@@ -147,7 +147,7 @@ export const updateProfile = createAsyncThunk(
                 updatedAt: new Date().toISOString()
             };
         } catch (error) {
-            console.error("Error updating risk:", error);
+            console.error("Error updating risk-overview:", error);
             return rejectWithValue(error);
         }
     }

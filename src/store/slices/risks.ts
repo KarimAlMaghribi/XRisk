@@ -111,7 +111,7 @@ export const fetchRiskTypes = createAsyncThunk(
                         resolve(uniqueRiskTypes); // Rückgabe der aktuellen Typen
                     },
                     (error) => {
-                        console.error("Error fetching risk types:", error);
+                        console.error("Error fetching risk-overview types:", error);
                         reject(error);
                     }
                 );
@@ -138,11 +138,11 @@ export const addRiskType = createAsyncThunk(
                 creator: uid || undefined
             });
 
-            console.log("Added risk type:", docRef.id);
+            console.log("Added risk-overview type:", docRef.id);
             return newType; // Rückgabe des neuen Typs
         } catch (error) {
-            console.error("Error adding risk type:", error);
-            return thunkAPI.rejectWithValue("Failed to add risk type");
+            console.error("Error adding risk-overview type:", error);
+            return thunkAPI.rejectWithValue("Failed to add risk-overview type");
         }
     }
 );
@@ -166,7 +166,7 @@ export const addRisk = createAsyncThunk(
             return {id: docRef.id, ...riskToPublish} as Risk;
 
         } catch (error) {
-            console.error("Error adding risk: ", error);
+            console.error("Error adding risk-overview: ", error);
             return rejectWithValue(error);
         }
     }
@@ -201,12 +201,12 @@ export const deleteRisk = createAsyncThunk(
 
             await deleteDoc(riskDocRef);
 
-            console.log("Deleted risk:", riskId);
+            console.log("Deleted risk-overview:", riskId);
 
             return riskId;
         } catch (error) {
-            console.error("Error deleting risk:", error);
-            return rejectWithValue("Failed to delete risk due to permissions or other error");
+            console.error("Error deleting risk-overview:", error);
+            return rejectWithValue("Failed to delete risk-overview due to permissions or other error");
         }
     }
 );
@@ -340,15 +340,15 @@ export const riskOverviewSlice = createSlice({
     }
 });
 
-export const selectFilteredRisks = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filteredRisks;
-export const selectStatus = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.status;
-export const selectSorts = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.sorts;
-export const selectFilterTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.types;
-export const selectFilterValue = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.value;
-export const selectRemainingTerm = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.filters.remainingTerm;
-export const selectTypes = (state: { riskOverview: RiskOverviewState }) => state.riskOverview.types;
-export const selectRiskType = (state: { riskOverview: RiskOverviewState }) => (id: string) => {
-    const risk = state.riskOverview.risks.find(risk => risk.id === id);
+export const selectFilteredRisks = (state: { risks: RiskOverviewState }) => state.risks.filteredRisks;
+export const selectStatus = (state: { risks: RiskOverviewState }) => state.risks.status;
+export const selectSorts = (state: { risks: RiskOverviewState }) => state.risks.sorts;
+export const selectFilterTypes = (state: { risks: RiskOverviewState }) => state.risks.filters.types;
+export const selectFilterValue = (state: { risks: RiskOverviewState }) => state.risks.filters.value;
+export const selectRemainingTerm = (state: { risks: RiskOverviewState }) => state.risks.filters.remainingTerm;
+export const selectTypes = (state: { risks: RiskOverviewState }) => state.risks.types;
+export const selectRiskType = (state: { risks: RiskOverviewState }) => (id: string) => {
+    const risk = state.risks.risks.find(risk => risk.id === id);
     return risk ? risk.type : [];
 };
 

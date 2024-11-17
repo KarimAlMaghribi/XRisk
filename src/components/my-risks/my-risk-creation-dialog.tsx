@@ -51,6 +51,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [nameRequiredError, setNameRequiredError] = useState<boolean>(false);
+    const today = dayjs();
 
     useEffect(() => {
         if (!title && !nameRequiredError) {
@@ -135,6 +136,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 <RiskTypeSelector
                     value={riskType}
                     setValue={setRiskType}
+                    required={true}
                 />
                 <TextField
                     margin="dense"
@@ -150,11 +152,16 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{marginTop: "10px", width: "100%"}}
+                        sx={{ marginTop: "10px", width: "100%" }}
                         format="DD.MM.YYYY"
                         label="Laufzeitende"
                         value={date}
-                        onChange={(newValue) => setDate(newValue)}
+                        onChange={(newValue) => {
+                            if (newValue && newValue.isAfter(dayjs())) {
+                                setDate(newValue);
+                            }
+                        }}
+                        minDate={dayjs().add(1, "day")}
                     />
                 </LocalizationProvider>
             </DialogContent>

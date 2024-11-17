@@ -8,6 +8,9 @@ import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 export interface RiskTypeSelectorProps {
     value: string[];
     setValue: (value: any) => void;
+    required?: boolean;
+    textFieldVariant?: "standard" | "outlined" | "filled";
+    label?: string;
 }
 
 export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
@@ -63,10 +66,10 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             }
             renderInput={(params) => (
                 <TextField
-                    required
+                    required={props.required}
                     {...params}
-                    variant="outlined"
-                    label="Typ"
+                    variant={props.textFieldVariant || "outlined"}
+                    label={props.label || "Typ"}
                     placeholder="Risikotyp hinzufügen"
                 />
             )}

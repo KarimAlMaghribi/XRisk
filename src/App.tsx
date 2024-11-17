@@ -5,7 +5,7 @@ import {Landing} from "./pages/landing/landing";
 import {SignIn} from "./pages/authentication/sign-in";
 import {SignUp} from "./pages/authentication/sign-up";
 import {ForgotPassword} from "./pages/authentication/forgot-password";
-import {RiskOverview} from "./pages/risk/risk-overview";
+import {RiskOverview} from "./pages/risk-overview/risk-overview";
 import {Layout} from "./components/layout/layout";
 import {Legal} from "./pages/formalities/legal";
 import {Privacy} from "./pages/formalities/privacy";

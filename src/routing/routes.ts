@@ -8,7 +8,7 @@ export const ROUTES = {
     SETTINGS: 'settings',
     CATALOG: 'catalog',
     INVESTORS: 'investors',
-    RISK_OVERVIEW: 'risk-overview',
+    RISK_OVERVIEW: 'risk-overview-overview',
     LEGAL: 'legal',
     PRIVACY: 'privacy',
     ACCOUNT: 'account',

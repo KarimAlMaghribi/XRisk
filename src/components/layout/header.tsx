@@ -21,6 +21,7 @@ import West from '@mui/icons-material/West';
 import East from '@mui/icons-material/East';
 import Grid from "@mui/material/Grid2";
 import { ROUTES } from '../../routing/routes';
+import {theme} from "../../theme";
 
 export function Header() {
     const location = useLocation();
@@ -134,10 +135,11 @@ export function Header() {
                                 onClick={() => handleCloseNavMenu(page)}
                                 sx={{
                                     my: 2,
-                                    color: 'white',
+                                    color: activePage === page.name ? theme.palette.primary.main : 'white',
                                     display: 'block',
-                                    textDecoration: activePage === page.name ? 'underline' : 'none',
-                                    textDecorationColor: 'white'
+                                    textDecoration: 'none',
+                                    textDecorationColor: 'white',
+                                    fontWeight: activePage === page.name ? 'bold' : 'normal'
                                 }}>
                                 {page.name}
                             </Button>

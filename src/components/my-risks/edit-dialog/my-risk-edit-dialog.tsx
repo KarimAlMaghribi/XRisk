@@ -76,12 +76,17 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                         value={dayjs(risk.declinationDate, "DD.MM.YYYY")}
                         onChange={(newValue) => {
                             if (newValue) {
+                                if (!newValue.isAfter(dayjs())) {
+                                    // date is older than today or today
+                                    return;
+                                }
                                 setRisk({
                                     ...risk,
                                     declinationDate: dayjs(newValue).format("DD.MM.YYYY"),
                                 });
                             }
                         }}
+                        minDate={dayjs().add(1, "day")}
                     />
                 </LocalizationProvider>
             </DialogContent>

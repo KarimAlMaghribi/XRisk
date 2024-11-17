@@ -107,12 +107,12 @@ export const updateMyRisk = createAsyncThunk(
                 updatedAt: new Date().toISOString()
             });
 
-            console.log("Updated risk", risk.id)
+            console.log("Updated risk-overview", risk.id)
 
             return {...risk, updatedAt: new Date().toISOString()};
         } catch (error) {
-            console.error("Error updating risk:", error);
-            return rejectWithValue("Failed to update risk due to permissions or other error");
+            console.error("Error updating risk-overview:", error);
+            return rejectWithValue("Failed to update risk-overview due to permissions or other error");
         }
     }
 );
@@ -143,12 +143,12 @@ export const deleteMyRisk = createAsyncThunk(
             const riskDocRef = riskDocs.docs[0].ref;
             await deleteDoc(riskDocRef);
 
-            console.log("Deleted risk:", riskId);
+            console.log("Deleted risk-overview:", riskId);
 
             return riskId;
         } catch (error) {
-            console.error("Error deleting risk:", error);
-            return rejectWithValue("Failed to delete risk due to permissions or other error");
+            console.error("Error deleting risk-overview:", error);
+            return rejectWithValue("Failed to delete risk-overview due to permissions or other error");
         }
     }
 );

@@ -7,7 +7,8 @@ import {
     fetchRisks,
     selectFilteredRisks,
     selectFilterTypes,
-    selectFilterValue, selectRemainingTerm,
+    selectFilterValue,
+    selectRemainingTerm,
     selectStatus
 } from "../../store/slices/risks";
 import {Risk} from "../../models/Risk";
@@ -60,7 +61,9 @@ export const RiskOverview = () => {
                         status={status}/>
                 </Grid>
             </Grid>
-            <MyRiskCreationDialog open={openRiskCreationDialog} handleClose={handleClose} />
+            <MyRiskCreationDialog
+                open={openRiskCreationDialog}
+                handleClose={handleClose} />
         </React.Fragment>
     )
 }

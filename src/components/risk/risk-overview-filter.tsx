@@ -52,8 +52,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     return (
         <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={2}>
             <Typography variant="h6">Filter</Typography>
-            <Typography variant="button">Risikoart</Typography>
-            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange}/>
+            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} textFieldVariant="standard" label="Risikoart"/>
             <Typography variant="button">Nennwert</Typography>
             <Slider
                 value={sliderValue}

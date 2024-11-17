@@ -8,11 +8,10 @@ export const store = configureStore({
     reducer: {
         myRisks: myRisksReducer,
         myBids: myBidsReducer,
-        riskOverview: riskOverviewReducer,
+        risks: riskOverviewReducer,
         userProfiles: userProfilesReducer,
     },
     devTools: true
 });
 
-export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
