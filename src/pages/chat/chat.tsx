@@ -1,7 +1,9 @@
+import Typography from "@mui/material/Typography";
+
 export const Chat = () => {
     return (
-        <div>
+        <Typography>
             Chat
-        </div>
+        </Typography>
     )
 }
