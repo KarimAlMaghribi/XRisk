@@ -1,9 +1,16 @@
-import Typography from "@mui/material/Typography";
+import React from "react";
+import {Card} from "@mui/material";
+import Container from "@mui/material/Container";
+import {ChatSidebar} from "../../components/chat/chat-sidebar";
+
 
 export const Chat = () => {
     return (
-        <Typography>
-            Chat
-        </Typography>
+        <Container>
+            <Card elevation={2}>
+                <ChatSidebar/>
+            </Card>
+        </Container>
+
     )
 }

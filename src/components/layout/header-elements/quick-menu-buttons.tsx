@@ -39,7 +39,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                     <Box sx={{flexGrow: 0}}>
                         <NotificationButton />
                         <IconButton onClick={props.handleOpenUserMenu} sx={{p: 0}}>
-                            <Avatar src="https://i.pravatar.cc/150?img=12"/>
+                            <Avatar src=""/>
                         </IconButton>
                         <Menu
                             sx={{mt: '45px'}}

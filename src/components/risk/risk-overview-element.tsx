@@ -53,7 +53,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     {/* src wird durch eine Service funktion ersetzt, die das Bild des nutzers aus der
                                     Nutzerdatenbank lädt */}
                                     <Tooltip title={risk.publisher && risk.publisher.name}>
-                                        <Avatar src={`https://i.pravatar.cc/150?img=${index}`}/>
+                                        <Avatar src=""/>
                                     </Tooltip>
                                 </Grid>
                             </Grid>
