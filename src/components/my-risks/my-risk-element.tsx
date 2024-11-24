@@ -10,22 +10,36 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
 import {Risk} from "../../models/Risk";
 import {AppDispatch} from "../../store/store";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import {addRisk, deleteRisk} from "../../store/slices/risks";
+import {auth} from "../../firebase_config";
+import {selectProfileInformation} from "../../store/slices/user-profile";
 
 export interface MyRiskElementProps {
     risk: Risk;
 }
 
 export const MyRiskElement = (props: MyRiskElementProps) => {
+    const user = auth.currentUser;
+    const profileInfos = useSelector(selectProfileInformation);
     const dispatch: AppDispatch = useDispatch();
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
 
     const handlePublish = (): void => {
+        if (!user || !user.uid) {
+            console.error("User not authenticated or UID missing:", user);
+            alert("Konnte Risiko nicht veröffentlichen, es gab Probleme mit der Authentifizierung.");
+            return;
+        }
+
         if (props.risk.status !== RiskStatusEnum.PUBLISHED) {
             const riskToPublish: Risk = {
                 ...props.risk,
+                publisher: {
+                    name: user.displayName ? user.displayName : profileInfos.name,
+                    uid: user.uid
+                },
                 status: RiskStatusEnum.PUBLISHED,
                 publishedAt: new Date().toISOString()
             }

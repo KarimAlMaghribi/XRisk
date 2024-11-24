@@ -107,8 +107,12 @@ export const SignIn = () => {
                                     variant="subtitle2" color="textSecondary">ODER LOGGE DICH EIN
                                     MIT</Typography></Divider>
 
-                                <Button variant="outlined" startIcon={<GoogleIcon/>} fullWidth
-                                        onClick={signInWithGoogle}>
+                                <Button
+                                    disabled
+                                    variant="outlined"
+                                    startIcon={<GoogleIcon/>}
+                                    fullWidth
+                                    onClick={signInWithGoogle}>
                                     Google
                                 </Button>
 

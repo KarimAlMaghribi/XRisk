@@ -22,6 +22,7 @@
     "ajv": "^8.17.1",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
+    "emoji-picker-react": "^4.12.0",
     "firebase": "^10.14.1",
     "hover.css": "^2.3.2",
     "react": "^18.3.1",

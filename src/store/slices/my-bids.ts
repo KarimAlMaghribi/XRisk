@@ -218,6 +218,28 @@ export const fetchMyChats = createAsyncThunk<Chat[], void, { rejectValue: string
     }
 );
 
+export const sendMessage = createAsyncThunk<
+    void,
+    { chatId: string; message: Omit<ChatMessage, "id" | "created"> },
+    { rejectValue: string }
+>(
+    "myBids/sendMessage",
+    async ({ chatId, message }, { rejectWithValue }) => {
+        try {
+            const messageRef = doc(collection(db, FirestoreCollectionEnum.CHATS, chatId, FirestoreCollectionEnum.MESSAGES));
+            const newMessage: ChatMessage = {
+                ...message,
+                id: messageRef.id,
+                created: new Date().toISOString(),
+            };
+            await setDoc(messageRef, newMessage);
+        } catch (error) {
+            console.error("Error sending message:", error);
+            return rejectWithValue("Error sending message");
+        }
+    }
+);
+
 const myBidsSlice = createSlice({
     name: "myBids",
     initialState,

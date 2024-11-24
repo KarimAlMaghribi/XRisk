@@ -8,6 +8,7 @@ import {ChatMessages} from "../../components/chat/chat-messages";
 import {fetchMyChats} from "../../store/slices/my-bids";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
+import {ChatSender} from "../../components/chat/chat-sender";
 
 
 export const Chat = () => {
@@ -24,6 +25,7 @@ export const Chat = () => {
                 <Box flexGrow={1}>
                     <ChatHeader />
                     <ChatMessages />
+                    <ChatSender />
                 </Box>
             </Card>
         </Container>

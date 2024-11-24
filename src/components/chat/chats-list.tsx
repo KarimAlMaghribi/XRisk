@@ -25,6 +25,10 @@ export const ChatsList = () => {
     const isMenuOpen = Boolean(anchorEl);
 
     const handleSelectChat = (chatId: string) => {
+        if (chatId === activeChatId) {
+            return;
+        }
+
         dispatch(setActiveChat(chatId));
     };
 
@@ -45,8 +49,7 @@ export const ChatsList = () => {
                     aria-haspopup="true"
                     aria-expanded={isMenuOpen ? 'true' : undefined}
                     onClick={handleClick}
-                    color="inherit"
-                >
+                    color="inherit">
                     Letzte Chats <ExpandMoreIcon />
                 </Button>
                 <Menu

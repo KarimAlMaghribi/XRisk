@@ -8,15 +8,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {searchChats} from "../../store/slices/my-bids";
-import {selectName} from "../../store/slices/user-profile";
+import {selectMail, selectName} from "../../store/slices/user-profile";
 
 const drawerWidth = 320;
 
 export const ChatSidebar = () => {
     const dispatch: AppDispatch = useDispatch();
     const username: string = useSelector(selectName);
-    const role: string = 'Risikonehmer';
-    const [sidebarOpen, setSidebarOpen] = React.useState(true);
+    const userMail: string = useSelector(selectMail);
 
     return (
         <Drawer
@@ -36,13 +35,13 @@ export const ChatSidebar = () => {
                     }}
                     overlap="circular"
                     color="success">
-                    <Avatar src="" sx={{ width: 54, height: 54 }} />
+                    <Avatar src="" sx={{width: 54, height: 54}}/>
                 </Badge>
                 <Box>
                     <Typography variant="body1" fontWeight={600}>
                         {username}
                     </Typography>
-                    <Typography variant="body2">{role}</Typography>
+                    <Typography variant="body2">{userMail}</Typography>
                 </Box>
             </Box>
 
@@ -56,7 +55,7 @@ export const ChatSidebar = () => {
                     InputProps={{
                         endAdornment: (
                             <InputAdornment position="end">
-                                <SearchIcon />
+                                <SearchIcon/>
                             </InputAdornment>
                         ),
                     }}
