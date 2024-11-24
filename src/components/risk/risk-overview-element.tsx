@@ -46,6 +46,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             return;
         }
 
+        if (selectedRisk.publisher?.uid === user.uid) {
+            console.error("User tried to bid on his own risk:", selectedRisk, user);
+            alert("Konnte Verhandlung nicht starten, du kannst nicht auf dein eigenes Risiko bieten.");
+            return;
+        }
+
         const chatAlreadyExists = chats.some((chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid);
 
         if (chatAlreadyExists) {
@@ -154,6 +160,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                 </Grid>
                                 <Grid size={4} style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
                                     <Button
+                                        disabled={risk.publisher?.uid === user?.uid}
                                         onClick={() => openBid(index)}
                                         variant="contained"
                                         endIcon={<ModeIcon />}
