@@ -132,20 +132,18 @@ export const subscribeToMessages = createAsyncThunk<
     }
 );
 
-export const createChat = createAsyncThunk<
-    Chat,
-    Omit<Chat, "id">,
-    { rejectValue: string }
->(
+export const createChat = createAsyncThunk<Chat, Omit<Chat, "id">, { rejectValue: string }>(
     "myBids/createChat",
     async (chatData, { rejectWithValue }) => {
         try {
-            const chatRef = doc(collection(db, "chats"));
+            const chatRef = doc(collection(db, FirestoreCollectionEnum.CHATS));
 
             const newChat: Chat = {
                 ...chatData,
                 id: chatRef.id,
             };
+
+            console.log(newChat);
 
             await setDoc(chatRef, newChat);
 
@@ -179,6 +177,40 @@ export const fetchProviderChats = createAsyncThunk<
             })) as Chat[];
 
             return chats;
+        } catch (error) {
+            console.error("Error fetching chats:", error);
+            return rejectWithValue("Error fetching chats");
+        }
+    }
+);
+
+export const fetchMyChats = createAsyncThunk<Chat[], void, { rejectValue: string }>(
+    "myBids/fetchMyChats",
+    async (_, { rejectWithValue }) => {
+        try {
+            const userUid = auth.currentUser?.uid;
+            if (!userUid) throw new Error("User not authenticated");
+
+            const chatsRef = collection(db, "chats");
+
+            const providerQuery = query(chatsRef, where("riskProvider.uid", "==", userUid));
+            const providerSnapshot = await getDocs(providerQuery);
+
+            const takerQuery = query(chatsRef, where("riskTaker.uid", "==", userUid));
+            const takerSnapshot = await getDocs(takerQuery);
+
+            const myChats = [
+                ...providerSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })),
+                ...takerSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })),
+            ] as Chat[];
+
+            return myChats;
         } catch (error) {
             console.error("Error fetching chats:", error);
             return rejectWithValue("Error fetching chats");
@@ -229,7 +261,9 @@ const myBidsSlice = createSlice({
             })
             .addCase(createChat.fulfilled, (state, action) => {
                 state.loading = FetchStatusEnum.SUCCEEDED;
-                state.chats.push(action.payload);
+                if (!state.chats.find((chat) => chat.id === action.payload.id)){
+                    state.chats.push(action.payload);
+                }
                 state.activeChatId = action.payload.id;
             })
             .addCase(createChat.rejected, (state, action) => {
@@ -245,6 +279,18 @@ const myBidsSlice = createSlice({
                 state.chats = action.payload;
             })
             .addCase(fetchProviderChats.rejected, (state, action) => {
+                state.loading = FetchStatusEnum.FAILED;
+                state.error = action.payload as string;
+            })
+            .addCase(fetchMyChats.pending, (state) => {
+                state.loading = FetchStatusEnum.PENDING;
+                state.error = null;
+            })
+            .addCase(fetchMyChats.fulfilled, (state, action) => {
+                state.loading = FetchStatusEnum.SUCCEEDED;
+                state.chats = action.payload;
+            })
+            .addCase(fetchMyChats.rejected, (state, action) => {
                 state.loading = FetchStatusEnum.FAILED;
                 state.error = action.payload as string;
             });

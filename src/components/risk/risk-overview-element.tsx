@@ -9,10 +9,11 @@ import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import ModeIcon from '@mui/icons-material/Mode';
 import {AppDispatch} from "../../store/store";
-import {useDispatch} from "react-redux";
-import {Chat, createChat} from "../../store/slices/my-bids";
+import {useDispatch, useSelector} from "react-redux";
+import {Chat, createChat, selectChats, setActiveChat} from "../../store/slices/my-bids";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {auth} from "../../firebase_config";
+import {useNavigate} from "react-router-dom";
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -22,14 +23,43 @@ export interface RiskOverviewElementProps {
 export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const user = auth.currentUser;
     const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
     const [expanded, setExpanded] = React.useState<string | false>(false);
+    const chats: Chat[] = useSelector(selectChats);
 
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
     };
 
     const openBid = (riskIndex: number) => {
+        if (!user || !user.uid) {
+            console.error("User not authenticated or UID missing:", user);
+            alert("Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.");
+            return;
+        }
+
         const selectedRisk = props.risks[riskIndex];
+
+        if (!selectedRisk) {
+            console.error("Selected risk not found:", selectedRisk);
+            alert("Konnte Verhandlung nicht starten, das ausgewählte Risiko wurde nicht gefunden.");
+            return;
+        }
+
+        const chatAlreadyExists = chats.some((chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid);
+
+        if (chatAlreadyExists) {
+            const existingChat = chats.find((chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid);
+
+            if (!existingChat) {
+                console.error("Chat already exists but could not be found:", selectedRisk, user);
+                return;
+            }
+
+            dispatch(setActiveChat(existingChat.id));
+            navigate(`/chat`);
+            return;
+        }
 
         const newChat: Omit<Chat, "id"> = {
             riskId: selectedRisk.id,
@@ -43,11 +73,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             },
             riskTaker: {
                 name: user?.displayName || "Unknown Taker",
-                uid: user?.uid || "unknown_taker_uid",
+                uid: user.uid
             },
         };
 
         dispatch(createChat(newChat));
+        navigate(`/chat`);
     }
 
     return (
