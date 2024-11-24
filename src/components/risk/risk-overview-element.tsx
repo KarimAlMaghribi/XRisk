@@ -94,7 +94,13 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                             expandIcon={<ExpandMoreIcon />}
                             id={`panel-header-${risk.id}`}>
                             <Grid container size={12} spacing={2} alignItems="center">
-                                <Grid size={5}>
+                                <Grid size={2}>
+                                    <Typography variant="body1" sx={{ cursor: 'pointer'}}>
+                                        <b>{risk.name}</b>
+                                    </Typography>
+                                </Grid>
+
+                                <Grid size={3}>
                                     <Typography variant="body1" sx={{ cursor: 'pointer'}}>
                                         <b>{risk.type}</b>
                                     </Typography>

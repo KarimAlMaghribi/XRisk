@@ -37,7 +37,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
             {
                 props.isLoggedIn ? (
                     <Box sx={{flexGrow: 0}}>
-                        <NotificationButton />
+                        {/*<NotificationButton />*/}
                         <IconButton onClick={props.handleOpenUserMenu} sx={{p: 0}}>
                             <Avatar src=""/>
                         </IconButton>

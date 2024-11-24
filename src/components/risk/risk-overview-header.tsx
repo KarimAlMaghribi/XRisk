@@ -21,7 +21,10 @@ export const RiskOverviewHeader = () => {
 
     return (
         <Grid container size={12} style={{backgroundColor: backgroundColor, paddingTop: "20px", paddingBottom: "20px", marginBottom: "10px"}}>
-            <Grid size={5} sx={{ display: 'flex', alignItems: 'center', marginLeft: "5px" }}>
+            <Grid size={2} sx={{display: 'flex', alignItems: 'center'}}>
+                <Typography sx={{ cursor: 'pointer', marginLeft: "10px" }} variant="button">Name</Typography>
+            </Grid>
+            <Grid size={3} sx={{ display: 'flex', alignItems: 'center', marginLeft: "5px" }}>
                 <Tooltip title="Zugeordneter Typ des Risikos">
                     <Typography sx={{ cursor: 'pointer', marginLeft: "10px" }} variant="button">Risikoart</Typography>
                 </Tooltip>

@@ -217,6 +217,7 @@ export const riskOverviewSlice = createSlice({
     reducers: {
         sortRisks: (state, action: PayloadAction<RiskOverviewHeaderEnum>) => {
             const sort = state.sorts.find(s => s.name === action.payload);
+
             if (sort) {
                 sort.direction = sort.direction === SortDirectionEnum.ASC ? SortDirectionEnum.DESC : SortDirectionEnum.ASC;
             }
