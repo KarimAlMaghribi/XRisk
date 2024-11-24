@@ -1,7 +1,8 @@
 export enum FirestoreCollectionEnum {
     MY_RISKS = "myRisks",
-    MY_BIDS = "myBids",
+    CHATS = "chats",
     RISKS = "risks",
     USER_PROFILES = "userProfiles",
-    RISK_TYPES = "riskTypes"
+    RISK_TYPES = "riskTypes",
+    MESSAGES = "messages",
 }

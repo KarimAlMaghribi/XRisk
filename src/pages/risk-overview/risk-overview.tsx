@@ -18,6 +18,7 @@ import Button from "@mui/material/Button";
 import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
 import {Divider} from "@mui/material";
 import {AppDispatch} from "../../store/store";
+import {fetchProviderChats} from "../../store/slices/my-bids";
 
 export const RiskOverview = () => {
     const dispatch : AppDispatch = useDispatch();
@@ -30,6 +31,7 @@ export const RiskOverview = () => {
 
     useEffect(() => {
         dispatch(fetchRisks());
+        dispatch(fetchProviderChats());
     }, [dispatch]);
 
     const handleClose = () => {

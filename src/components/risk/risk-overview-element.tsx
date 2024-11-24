@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import React from "react";
 import {Risk} from "../../models/Risk";
@@ -8,6 +8,11 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import ModeIcon from '@mui/icons-material/Mode';
+import {AppDispatch} from "../../store/store";
+import {useDispatch} from "react-redux";
+import {Chat, createChat} from "../../store/slices/my-bids";
+import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
+import {auth} from "../../firebase_config";
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -15,11 +20,35 @@ export interface RiskOverviewElementProps {
 }
 
 export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
+    const user = auth.currentUser;
+    const dispatch: AppDispatch = useDispatch();
     const [expanded, setExpanded] = React.useState<string | false>(false);
 
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : false);
     };
+
+    const openBid = (riskIndex: number) => {
+        const selectedRisk = props.risks[riskIndex];
+
+        const newChat: Omit<Chat, "id"> = {
+            riskId: selectedRisk.id,
+            created: new Date().toISOString(),
+            lastActivity: new Date().toISOString(),
+            topic: selectedRisk.name,
+            status: ChatStatusEnum.ONLINE,
+            riskProvider: {
+                name: selectedRisk.publisher?.name || "Unknown Provider",
+                uid: selectedRisk.publisher?.uid || "unknown_provider_uid",
+            },
+            riskTaker: {
+                name: user?.displayName || "Unknown Taker",
+                uid: user?.uid || "unknown_taker_uid",
+            },
+        };
+
+        dispatch(createChat(newChat));
+    }
 
     return (
         <React.Fragment>
@@ -87,7 +116,11 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     </Typography>
                                 </Grid>
                                 <Grid size={4} style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
-                                    <Button variant="contained" endIcon={<ModeIcon />} style={{maxHeight: "40px", height: "40px"}}>
+                                    <Button
+                                        onClick={() => openBid(index)}
+                                        variant="contained"
+                                        endIcon={<ModeIcon />}
+                                        style={{maxHeight: "40px", height: "40px"}}>
                                         Jetzt verhandeln
                                     </Button>
                                 </Grid>

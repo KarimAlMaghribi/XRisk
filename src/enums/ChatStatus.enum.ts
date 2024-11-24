@@ -1,5 +1,5 @@
 export enum ChatStatusEnum {
-    ONLINE = "ONLINE",
-    BUSY = "BUSY",
-    AWAY = "AWAY"
+    ONLINE = "online",
+    BUSY = "beschäftigt",
+    AWAY = "offline"
 }

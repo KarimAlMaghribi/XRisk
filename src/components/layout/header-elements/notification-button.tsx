@@ -54,12 +54,12 @@ export const NotificationButton = () => {
                 onClose={handleCloseNotificationsMenu}>
                 {
                     [
-                        <Box sx={{px: 2, py: 1}}>
+                        <Box sx={{px: 2, py: 1}} >
                             <Typography variant="body1" fontWeight="bold">
                                 Benachrichtigungen
                             </Typography>
                         </Box>,
-                        <MenuItem></MenuItem>
+                        <MenuItem key="box_1"></MenuItem>
                     ]
                 }
 
