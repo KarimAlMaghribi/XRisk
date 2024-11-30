@@ -2,10 +2,9 @@ import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {MessageType} from "../../types/MessageType";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {FetchStatus} from "../../types/FetchStatus";
-import {collection, getDocs, query, orderBy, limit, onSnapshot, doc, setDoc, where} from "firebase/firestore";
+import {collection, doc, getDocs, limit, onSnapshot, orderBy, query, setDoc, where} from "firebase/firestore";
 import {auth, db} from "../../firebase_config";
 import {ChatStatus} from "../../types/ChatStatus";
-import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
 
 
@@ -18,54 +17,6 @@ export interface ChatMessage {
     content: any; // string | audio | video | image
     read: boolean;
 }
-
-const exampleData: Chat[] = [
-    {
-        id: "1",
-        riskId: "3",
-        created: "2021-08-01T12:00:00",
-        topic: "Wegbasicherung",
-        riskProvider: {
-            name: "Risk Provider 1"
-        },
-        riskTaker: {
-            name: "Risk Taker 1"
-        },
-        lastMessage: "Das Angebot nehme ich gern an",
-        lastActivity: "2021-08-01T12:00:00",
-        status: ChatStatusEnum.ONLINE
-    },
-    {
-        id: "2",
-        riskId: "434",
-        created: "2021-08-01T12:00:00",
-        topic: "Todesfall Hamster",
-        riskProvider: {
-            name: "Risk Provider 2"
-        },
-        riskTaker: {
-            name: "Risk Taker 2"
-        },
-        lastMessage: "Super, danke!",
-        lastActivity: "2021-08-01T12:00:00",
-        status: ChatStatusEnum.BUSY
-    },
-    {
-        id: "3",
-        riskId: "123",
-        created: "2021-08-01T12:00:00",
-        topic: "Hochzeit Regen",
-        riskProvider: {
-            name: "Risk Provider 3"
-        },
-        riskTaker: {
-            name: "Risk Taker 3"
-        },
-        lastMessage: "Das ist mir zu teuer!",
-        lastActivity: "2021-08-01T12:00:00",
-        status: ChatStatusEnum.AWAY
-    },
-];
 
 export interface Chat {
     id: string;
@@ -95,7 +46,7 @@ export interface MyBidsState {
 }
 
 const initialState: MyBidsState = {
-    chats: exampleData,
+    chats: [],
     chatSearch: "",
     activeChatId: null,
     loading: FetchStatusEnum.IDLE,
@@ -110,7 +61,7 @@ export const subscribeToMessages = createAsyncThunk<
     { rejectValue: string }
 >(
     "myBids/subscribeToMessages",
-    async (chatId, { dispatch, rejectWithValue }) => {
+    async (chatId, {dispatch, rejectWithValue}) => {
         try {
             if (messagesUnsubscribe) {
                 messagesUnsubscribe();
@@ -134,7 +85,7 @@ export const subscribeToMessages = createAsyncThunk<
 
 export const createChat = createAsyncThunk<Chat, Omit<Chat, "id">, { rejectValue: string }>(
     "myBids/createChat",
-    async (chatData, { rejectWithValue }) => {
+    async (chatData, {rejectWithValue}) => {
         try {
             const chatRef = doc(collection(db, FirestoreCollectionEnum.CHATS));
 
@@ -161,7 +112,7 @@ export const fetchProviderChats = createAsyncThunk<
     { rejectValue: string }
 >(
     "myBids/fetchChats",
-    async (_, { rejectWithValue, getState }) => {
+    async (_, {rejectWithValue, getState}) => {
         try {
             const userUid = auth.currentUser?.uid;
             if (!userUid) throw new Error("User not authenticated");
@@ -186,7 +137,7 @@ export const fetchProviderChats = createAsyncThunk<
 
 export const fetchMyChats = createAsyncThunk<Chat[], void, { rejectValue: string }>(
     "myBids/fetchMyChats",
-    async (_, { rejectWithValue }) => {
+    async (_, {rejectWithValue}) => {
         try {
             const userUid = auth.currentUser?.uid;
             if (!userUid) throw new Error("User not authenticated");
@@ -224,7 +175,7 @@ export const sendMessage = createAsyncThunk<
     { rejectValue: string }
 >(
     "myBids/sendMessage",
-    async ({ chatId, message }, { rejectWithValue }) => {
+    async ({chatId, message}, {rejectWithValue}) => {
         try {
             const messageRef = doc(collection(db, FirestoreCollectionEnum.CHATS, chatId, FirestoreCollectionEnum.MESSAGES));
             const newMessage: ChatMessage = {
@@ -240,82 +191,83 @@ export const sendMessage = createAsyncThunk<
     }
 );
 
+
 const myBidsSlice = createSlice({
-    name: "myBids",
-    initialState,
-    reducers: {
-        setChats(state, action: PayloadAction<Chat[]>) {
-            state.chats = action.payload;
-        },
-        searchChats(state, action: PayloadAction<string>) {
-            state.chats = state.chats.filter((chat) => chat.topic.includes(action.payload));
-        },
-        setActiveChat(state, action: PayloadAction<string>) {
-            state.activeChatId = action.payload;
-            state.activeMessages = [];
-        },
-        setChatStatus(state, action: PayloadAction<{ chatId: string, status: ChatStatus }>) {
-            const chat = state.chats.find((chat) => chat.id === action.payload.chatId);
-            if (chat) {
-                chat.status = action.payload.status;
+        name: "myBids",
+        initialState,
+        reducers: {
+            setChats(state, action: PayloadAction<Chat[]>) {
+                state.chats = action.payload;
+            },
+            searchChats(state, action: PayloadAction<string>) {
+                state.chats = state.chats.filter((chat) => chat.topic.includes(action.payload));
+            },
+            setActiveChat(state, action: PayloadAction<string>) {
+                state.activeChatId = action.payload;
+                state.activeMessages = [];
+            },
+            setChatStatus(state, action: PayloadAction<{ chatId: string, status: ChatStatus }>) {
+                const chat = state.chats.find((chat) => chat.id === action.payload.chatId);
+                if (chat) {
+                    chat.status = action.payload.status;
+                }
+            },
+            setMessages(state, action: PayloadAction<ChatMessage[]>) {
+                state.activeMessages = action.payload;
             }
         },
-        setMessages(state, action: PayloadAction<ChatMessage[]>) {
-            state.activeMessages = action.payload;
-        }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(subscribeToMessages.pending, (state) => {
-                state.loading = FetchStatusEnum.PENDING;
-                state.error = null;
-            })
-            .addCase(subscribeToMessages.fulfilled, (state) => {
-                state.loading = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(subscribeToMessages.rejected, (state, action) => {
-                state.loading = FetchStatusEnum.FAILED;
-                state.error = action.payload as string;
-            })
-            .addCase(createChat.pending, (state) => {
-                state.loading = FetchStatusEnum.PENDING;
-                state.error = null;
-            })
-            .addCase(createChat.fulfilled, (state, action) => {
-                state.loading = FetchStatusEnum.SUCCEEDED;
-                if (!state.chats.find((chat) => chat.id === action.payload.id)){
-                    state.chats.push(action.payload);
-                }
-                state.activeChatId = action.payload.id;
-            })
-            .addCase(createChat.rejected, (state, action) => {
-                state.loading = FetchStatusEnum.FAILED;
-                state.error = action.payload as string;
-            })
-            .addCase(fetchProviderChats.pending, (state) => {
-                state.loading = FetchStatusEnum.PENDING;
-                state.error = null;
-            })
-            .addCase(fetchProviderChats.fulfilled, (state, action) => {
-                state.loading = FetchStatusEnum.SUCCEEDED;
-                state.chats = action.payload;
-            })
-            .addCase(fetchProviderChats.rejected, (state, action) => {
-                state.loading = FetchStatusEnum.FAILED;
-                state.error = action.payload as string;
-            })
-            .addCase(fetchMyChats.pending, (state) => {
-                state.loading = FetchStatusEnum.PENDING;
-                state.error = null;
-            })
-            .addCase(fetchMyChats.fulfilled, (state, action) => {
-                state.loading = FetchStatusEnum.SUCCEEDED;
-                state.chats = action.payload;
-            })
-            .addCase(fetchMyChats.rejected, (state, action) => {
-                state.loading = FetchStatusEnum.FAILED;
-                state.error = action.payload as string;
-            });
+        extraReducers: (builder) => {
+            builder
+                .addCase(subscribeToMessages.pending, (state) => {
+                    state.loading = FetchStatusEnum.PENDING;
+                    state.error = null;
+                })
+                .addCase(subscribeToMessages.fulfilled, (state) => {
+                    state.loading = FetchStatusEnum.SUCCEEDED;
+                })
+                .addCase(subscribeToMessages.rejected, (state, action) => {
+                    state.loading = FetchStatusEnum.FAILED;
+                    state.error = action.payload as string;
+                })
+                .addCase(createChat.pending, (state) => {
+                    state.loading = FetchStatusEnum.PENDING;
+                    state.error = null;
+                })
+                .addCase(createChat.fulfilled, (state, action) => {
+                    state.loading = FetchStatusEnum.SUCCEEDED;
+                    if (!state.chats.find((chat) => chat.id === action.payload.id)) {
+                        state.chats.push(action.payload);
+                    }
+                    state.activeChatId = action.payload.id;
+                })
+                .addCase(createChat.rejected, (state, action) => {
+                    state.loading = FetchStatusEnum.FAILED;
+                    state.error = action.payload as string;
+                })
+                .addCase(fetchProviderChats.pending, (state) => {
+                    state.loading = FetchStatusEnum.PENDING;
+                    state.error = null;
+                })
+                .addCase(fetchProviderChats.fulfilled, (state, action) => {
+                    state.loading = FetchStatusEnum.SUCCEEDED;
+                    state.chats = action.payload;
+                })
+                .addCase(fetchProviderChats.rejected, (state, action) => {
+                    state.loading = FetchStatusEnum.FAILED;
+                    state.error = action.payload as string;
+                })
+                .addCase(fetchMyChats.pending, (state) => {
+                    state.loading = FetchStatusEnum.PENDING;
+                    state.error = null;
+                })
+                .addCase(fetchMyChats.fulfilled, (state, action) => {
+                    state.loading = FetchStatusEnum.SUCCEEDED;
+                    state.chats = action.payload;
+                })
+                .addCase(fetchMyChats.rejected, (state, action) => {
+                    state.loading = FetchStatusEnum.FAILED;
+                    state.error = action.payload as string;
+                });
         }
     }
 );
@@ -343,7 +295,7 @@ export const selectOtherChatMemberName = (
         return "";
     }
 
-    const { riskProvider, riskTaker } = activeChat;
+    const {riskProvider, riskTaker} = activeChat;
 
     if (riskProvider?.uid === uid) {
         return riskTaker?.name || "";
@@ -354,5 +306,5 @@ export const selectOtherChatMemberName = (
     return "";
 };
 
-export const { setChats, searchChats, setActiveChat, setChatStatus, setMessages } = myBidsSlice.actions;
+export const {setChats, searchChats, setActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;
 export default myBidsSlice.reducer;

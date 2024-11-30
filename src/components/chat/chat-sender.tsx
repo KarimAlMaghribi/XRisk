@@ -12,6 +12,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {ChatMessage, selectActiveChatId, sendMessage} from "../../store/slices/my-bids";
 import {MessageTypeEnum} from "../../enums/MessageTypeEnum";
 import {auth} from "../../firebase_config";
+import AssistantIcon from '@mui/icons-material/Assistant';
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -66,6 +67,10 @@ export const ChatSender = () => {
         setMsg('');
     };
 
+    const onAIChatMsgSubmit = (e: any) => {
+        console.log("Send to AI:", msg);
+    }
+
     return (
         <Box p={2}>
             <form
@@ -101,11 +106,15 @@ export const ChatSender = () => {
                     inputProps={{ 'aria-label': 'Type a Message' }}
                     onChange={handleChatMsgChange.bind(null)}/>
                 <IconButton
-                    aria-label="delete"
                     onClick={onChatMsgSubmit}
                     disabled={!msg}
                     color="primary">
                     <SendIcon />
+                </IconButton>
+                <IconButton
+                    onClick={onAIChatMsgSubmit}
+                    disabled={!msg}>
+                    <AssistantIcon />
                 </IconButton>
                 <IconButton>
                     <PhotoIcon/>

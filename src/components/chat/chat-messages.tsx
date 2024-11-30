@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Scrollbar from "./scrollbar";
@@ -21,6 +21,7 @@ export const ChatMessages = () => {
     const uid: string | undefined = auth.currentUser?.uid;
     const messages: ChatMessage[] = useSelector(selectActiveMessages);
     const otherChatMemberName: string = useSelector((state: RootState) => selectOtherChatMemberName(state, uid));
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (activeChatId) {
@@ -34,14 +35,21 @@ export const ChatMessages = () => {
         };
     }, [activeChatId, dispatch]);
 
+    useEffect(() => {
+        console.log(scrollRef.current);
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages]);
+
     return (
         <>
             {
                 messages ?
                     <Box width="100%">
-                        <Scrollbar sx={{height: '650px', overflow: 'auto', maxHeight: '800px'}}>
+                        <Box sx={{height: '650px', overflow: 'auto', maxHeight: '800px'}} ref={scrollRef}>
                             <Box p={3}>
-                                {messages && messages.map((message) => {
+                                {messages && [...messages].reverse().map((message) => {
                                     return (
                                         <Box key={message.id + "_" + message.created}>
                                             {message.uid !== uid ? (
@@ -66,6 +74,7 @@ export const ChatMessages = () => {
                                                                 <Box
                                                                     mb={2}
                                                                     sx={{
+                                                                        borderRadius: "5px",
                                                                         p: 1,
                                                                         backgroundColor: 'grey.100',
                                                                         mr: 'auto',
@@ -92,7 +101,7 @@ export const ChatMessages = () => {
                                                     <Box alignItems="flex-end" display="flex" flexDirection={'column'}>
                                                         {message.created ? (
                                                             <Typography variant="body2" color="grey.400" mb={1}>
-                                                                her
+                                                                Du, {formatLastActivity(message.created)}
                                                             </Typography>
                                                         ) : null}
                                                         {message.type === MessageTypeEnum.TEXT ? (
@@ -100,6 +109,7 @@ export const ChatMessages = () => {
                                                                 mb={1}
                                                                 key={message.id}
                                                                 sx={{
+                                                                    borderRadius: "5px",
                                                                     p: 1,
                                                                     backgroundColor: 'primary.light',
                                                                     ml: 'auto',
@@ -121,7 +131,7 @@ export const ChatMessages = () => {
                                     );
                                 })}
                             </Box>
-                        </Scrollbar>
+                        </Box>
                     </Box> :
                     <Box display="flex" alignItems="center" p={2} pb={1} pt={1}>
                         <Typography variant="h4">Wähle einen Chat</Typography>
