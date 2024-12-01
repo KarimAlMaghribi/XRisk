@@ -10,6 +10,7 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, where} from "firebase/firestore";
 import {auth, db} from "../../firebase_config";
 import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
+import {RootState} from "../store";
 
 enum ActionTypes {
     FETCH_RISKS = "risks/fetchRisks",
@@ -341,6 +342,7 @@ export const riskOverviewSlice = createSlice({
     }
 });
 
+export const selectRisks = (state: { risks: RiskOverviewState }) => state.risks.risks;
 export const selectFilteredRisks = (state: { risks: RiskOverviewState }) => state.risks.filteredRisks;
 export const selectStatus = (state: { risks: RiskOverviewState }) => state.risks.status;
 export const selectSorts = (state: { risks: RiskOverviewState }) => state.risks.sorts;
@@ -348,6 +350,9 @@ export const selectFilterTypes = (state: { risks: RiskOverviewState }) => state.
 export const selectFilterValue = (state: { risks: RiskOverviewState }) => state.risks.filters.value;
 export const selectRemainingTerm = (state: { risks: RiskOverviewState }) => state.risks.filters.remainingTerm;
 export const selectTypes = (state: { risks: RiskOverviewState }) => state.risks.types;
+export const selectRiskById = (state: RootState, id: string) => {
+    return state.risks.risks.find(risk => risk.id === id) || null;
+};
 
 export const {
     sortRisks,

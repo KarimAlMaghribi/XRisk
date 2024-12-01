@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import {InputBase, Popover} from "@mui/material";
+import {CircularProgress, InputBase, Popover} from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import PhotoIcon from '@mui/icons-material/Photo';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -9,21 +9,34 @@ import Picker from 'emoji-picker-react';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
-import {ChatMessage, selectActiveChatId, selectActiveMessages, sendMessage} from "../../store/slices/my-bids";
+import {
+    ChatMessage,
+    selectActiveChatId,
+    selectActiveMessages,
+    selectRiskId,
+    sendMessage
+} from "../../store/slices/my-bids";
 import {MessageTypeEnum} from "../../enums/MessageTypeEnum";
 import {auth} from "../../firebase_config";
 import AssistantIcon from '@mui/icons-material/Assistant';
 import OpenAI from "openai";
+import {Chatbot} from "./chatbot";
+import {selectRiskById, selectRisks} from "../../store/slices/risks";
+import {Risk} from "../../models/Risk";
+import {CHATBOT_UID} from "../../constants/chatbot";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeMessages: ChatMessage[] = useSelector(selectActiveMessages);
+    const riskId = useSelector(selectRiskId);
+    const risks = useSelector(selectRisks);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [chosenEmoji, setChosenEmoji] = React.useState<any>();
     const [msg, setMsg] = React.useState<any>('');
+    const [aiLoading, setAILoading] = React.useState<boolean>(false);
     const [msgType, setMsgType] = React.useState<MessageTypeEnum>(MessageTypeEnum.TEXT);
-    const openai = new OpenAI();
+    const openai = new OpenAI({apiKey: process.env.REACT_APP_OPENAI_API_KEY, dangerouslyAllowBrowser: true});
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -72,18 +85,49 @@ export const ChatSender = () => {
 
     const onAIChatMsgSubmit = async (e: any) => {
         onChatMsgSubmit(e);
-        buildPrompt();
-    }
+        setAILoading(true);
 
-    const buildPrompt = () => {
+        const risk: Risk | undefined = risks.find(risk => risk.id === riskId)
+        const chatbot = new Chatbot(risk, activeMessages);
+        const prompt: string = chatbot.getPrompt();
 
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{role: "user", content: prompt}],
+            stream: false,
+        });
+
+        const xRiskChatbotResponse: string = response.choices[0]?.message?.content || "";
+
+        if (!xRiskChatbotResponse) {
+            console.error("No response from OpenAI:", response);
+            return;
+        }
+
+        const newMessage: ChatMessage = {
+            id: CHATBOT_UID,
+            created: new Date().toISOString(),
+            type: MessageTypeEnum.TEXT,
+            uid: CHATBOT_UID,
+            content: xRiskChatbotResponse,
+            read: false,
+            prompt: prompt
+        }
+
+        if (!activeChatId) {
+            console.error("No active chat found:", activeChatId);
+            return;
+        }
+
+        dispatch(sendMessage({chatId: activeChatId, message: newMessage}));
+        setAILoading(false);
     }
 
     return (
         <Box p={2}>
             <form
                 onSubmit={onChatMsgSubmit}
-                style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
                 <IconButton
                     aria-label="more"
                     id="long-button"
@@ -91,7 +135,7 @@ export const ChatSender = () => {
                     aria-expanded="true"
                     aria-haspopup="true"
                     onClick={handleClick}>
-                    <SentimentSatisfiedAltIcon />
+                    <SentimentSatisfiedAltIcon/>
                 </IconButton>
                 <Popover
                     id="long-menu"
@@ -99,9 +143,9 @@ export const ChatSender = () => {
                     keepMounted
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                    transformOrigin={{ horizontal: 'right', vertical: 'bottom' }}>
-                    <Picker onEmojiClick={onEmojiClick} />
+                    anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+                    transformOrigin={{horizontal: 'right', vertical: 'bottom'}}>
+                    <Picker onEmojiClick={onEmojiClick}/>
                     <Box p={2}>Selected: {chosenEmoji ? chosenEmoji.emoji : ''}</Box>
                 </Popover>
                 <InputBase
@@ -111,25 +155,25 @@ export const ChatSender = () => {
                     placeholder="Type a Message"
                     size="small"
                     type="text"
-                    inputProps={{ 'aria-label': 'Type a Message' }}
+                    inputProps={{'aria-label': 'Type a Message'}}
                     onChange={handleChatMsgChange.bind(null)}/>
                 <IconButton
                     onClick={onChatMsgSubmit}
                     disabled={!msg}
                     color="primary">
-                    <SendIcon />
+                    <SendIcon/>
                 </IconButton>
                 <IconButton
                     color="secondary"
                     onClick={onAIChatMsgSubmit}
-                    disabled={!msg}>
-                    <AssistantIcon />
+                    disabled={!msg || aiLoading}>
+                    {aiLoading ? <CircularProgress size={24} color="inherit" /> : <AssistantIcon />}
                 </IconButton>
                 <IconButton>
                     <PhotoIcon/>
                 </IconButton>
                 <IconButton>
-                    <AttachFileIcon />
+                    <AttachFileIcon/>
                 </IconButton>
             </form>
         </Box>

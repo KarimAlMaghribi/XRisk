@@ -16,6 +16,7 @@ export interface ChatMessage {
     attachments?: any[];
     content: any; // string | audio | video | image
     read: boolean;
+    prompt?: string;
 }
 
 export interface Chat {
@@ -293,7 +294,6 @@ export const selectActiveChat = (state: { myBids: MyBidsState }) => {
 }
 export const selectActiveChatId = (state: { myBids: MyBidsState }) => state.myBids.activeChatId;
 export const selectActiveMessages = (state: { myBids: MyBidsState }) => state.myBids.activeMessages;
-
 export const selectOtherChatMemberName = (
     state: { myBids: MyBidsState },
     uid: string | undefined
@@ -319,9 +319,10 @@ export const selectOtherChatMemberName = (
     return "";
 };
 
-export const selectMessages = (state: { myBids: MyBidsState }): ChatMessage[] => {
-    return state.myBids.activeMessages;
-};
+export const selectRiskId = (state: { myBids: MyBidsState }) => {
+    const activeChat = selectActiveChat(state);
+    return activeChat?.riskId;
+}
 
 export const {setChats, searchChats, setActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;
 export default myBidsSlice.reducer;

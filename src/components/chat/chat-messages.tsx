@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import Scrollbar from "./scrollbar";
 import {ListItemAvatar} from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import {formatLastActivity} from "./utils";
@@ -14,6 +13,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {auth} from "../../firebase_config";
 import {AppDispatch, RootState} from "../../store/store";
 import {MessageTypeEnum} from "../../enums/MessageTypeEnum";
+import {CHATBOT_UID} from "../../constants/chatbot";
+import Logo from "../../assests/imgs/logo.png";
 
 export const ChatMessages = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -58,14 +59,14 @@ export const ChatMessages = () => {
                                                         <ListItemAvatar>
                                                             <Avatar
                                                                 alt={otherChatMemberName}
-                                                                src=""
+                                                                src={message.uid === CHATBOT_UID ? Logo : ''}
                                                                 sx={{width: 40, height: 40}}
                                                             />
                                                         </ListItemAvatar>
                                                         <Box>
                                                             {message.created ? (
                                                                 <Typography variant="body2" color="grey.400" mb={1}>
-                                                                    {otherChatMemberName},{' '}
+                                                                    {message.uid === CHATBOT_UID ? "XRisk-Chabot" : otherChatMemberName},{' '}
                                                                     {formatLastActivity(message.created)}{' '}
                                                                     her
                                                                 </Typography>
@@ -79,8 +80,7 @@ export const ChatMessages = () => {
                                                                         backgroundColor: 'grey.100',
                                                                         mr: 'auto',
                                                                         maxWidth: '320px',
-                                                                    }}
-                                                                >
+                                                                    }}>
                                                                     {message.content}
                                                                 </Box>
                                                             ) : null}
@@ -114,8 +114,7 @@ export const ChatMessages = () => {
                                                                     backgroundColor: 'primary.light',
                                                                     ml: 'auto',
                                                                     maxWidth: '320px',
-                                                                }}
-                                                            >
+                                                                }}>
                                                                 {message.content}
                                                             </Box>
                                                         ) : null}
