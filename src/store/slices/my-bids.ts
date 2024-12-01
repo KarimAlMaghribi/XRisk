@@ -55,11 +55,7 @@ const initialState: MyBidsState = {
 
 export let messagesUnsubscribe: (() => void) | null = null;
 
-export const subscribeToMessages = createAsyncThunk<
-    void,
-    string,
-    { rejectValue: string }
->(
+export const subscribeToMessages = createAsyncThunk<void, string, { rejectValue: string }>(
     "myBids/subscribeToMessages",
     async (chatId, {dispatch, rejectWithValue}) => {
         try {
@@ -68,7 +64,7 @@ export const subscribeToMessages = createAsyncThunk<
                 messagesUnsubscribe = null;
             }
             const messagesRef = collection(db, FirestoreCollectionEnum.CHATS, chatId, FirestoreCollectionEnum.MESSAGES);
-            const q = query(messagesRef, orderBy("created", "desc"), limit(50));
+            const q = query(messagesRef, orderBy("created", "desc"));
 
             messagesUnsubscribe = onSnapshot(q, (snapshot) => {
                 const messages = snapshot.docs.map((doc) => ({
@@ -191,6 +187,25 @@ export const sendMessage = createAsyncThunk<
     }
 );
 
+export const fetchMessages = createAsyncThunk<ChatMessage[], string, { rejectValue: string }>(
+    "myBids/fetchMessages",
+    async (chatId, { rejectWithValue }) => {
+        try {
+            const messagesRef = collection(db, FirestoreCollectionEnum.CHATS, chatId, FirestoreCollectionEnum.MESSAGES);
+            const q = query(messagesRef, orderBy("created", "desc"));
+            // const q = query(messagesRef, orderBy("created", "desc"), limit(50));
+            const querySnapshot = await getDocs(q);
+
+            return querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as ChatMessage[];
+        } catch (error) {
+            console.error("Error fetching messages:", error);
+            return rejectWithValue("Error fetching messages");
+        }
+    }
+);
 
 const myBidsSlice = createSlice({
         name: "myBids",
@@ -287,9 +302,7 @@ export const selectOtherChatMemberName = (
         return "";
     }
 
-    const activeChat = state.myBids.chats.find(
-        (chat) => chat.id === state.myBids.activeChatId
-    );
+    const activeChat: Chat | undefined = selectActiveChat(state);
 
     if (!activeChat) {
         return "";
@@ -304,6 +317,10 @@ export const selectOtherChatMemberName = (
     }
 
     return "";
+};
+
+export const selectMessages = (state: { myBids: MyBidsState }): ChatMessage[] => {
+    return state.myBids.activeMessages;
 };
 
 export const {setChats, searchChats, setActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;

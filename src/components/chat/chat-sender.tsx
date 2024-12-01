@@ -9,18 +9,21 @@ import Picker from 'emoji-picker-react';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
-import {ChatMessage, selectActiveChatId, sendMessage} from "../../store/slices/my-bids";
+import {ChatMessage, selectActiveChatId, selectActiveMessages, sendMessage} from "../../store/slices/my-bids";
 import {MessageTypeEnum} from "../../enums/MessageTypeEnum";
 import {auth} from "../../firebase_config";
 import AssistantIcon from '@mui/icons-material/Assistant';
+import OpenAI from "openai";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
     const activeChatId: string | null = useSelector(selectActiveChatId);
+    const activeMessages: ChatMessage[] = useSelector(selectActiveMessages);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [chosenEmoji, setChosenEmoji] = React.useState<any>();
     const [msg, setMsg] = React.useState<any>('');
     const [msgType, setMsgType] = React.useState<MessageTypeEnum>(MessageTypeEnum.TEXT);
+    const openai = new OpenAI();
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -67,8 +70,13 @@ export const ChatSender = () => {
         setMsg('');
     };
 
-    const onAIChatMsgSubmit = (e: any) => {
-        console.log("Send to AI:", msg);
+    const onAIChatMsgSubmit = async (e: any) => {
+        onChatMsgSubmit(e);
+        buildPrompt();
+    }
+
+    const buildPrompt = () => {
+
     }
 
     return (
@@ -112,6 +120,7 @@ export const ChatSender = () => {
                     <SendIcon />
                 </IconButton>
                 <IconButton
+                    color="secondary"
                     onClick={onAIChatMsgSubmit}
                     disabled={!msg}>
                     <AssistantIcon />
