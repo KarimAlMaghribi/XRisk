@@ -77,9 +77,10 @@ export const ChatMessages = () => {
                                                                     sx={{
                                                                         borderRadius: "5px",
                                                                         p: 1,
-                                                                        backgroundColor: 'grey.100',
+                                                                        backgroundColor: message.uid === CHATBOT_UID ? 'primary.light' : 'grey.100',
                                                                         mr: 'auto',
                                                                         maxWidth: '320px',
+                                                                        fontFamily: 'Roboto'
                                                                     }}>
                                                                     {message.content}
                                                                 </Box>
@@ -111,9 +112,10 @@ export const ChatMessages = () => {
                                                                 sx={{
                                                                     borderRadius: "5px",
                                                                     p: 1,
-                                                                    backgroundColor: 'primary.light',
+                                                                    backgroundColor: 'grey.200',
                                                                     ml: 'auto',
                                                                     maxWidth: '320px',
+                                                                    fontFamily: 'Roboto'
                                                                 }}>
                                                                 {message.content}
                                                             </Box>

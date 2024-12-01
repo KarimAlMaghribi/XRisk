@@ -19,8 +19,8 @@ export const Chat = () => {
     }, [])
 
     return (
-        <Container>
-            <Card elevation={2} sx={{ display: 'flex', p: 0 }}>
+        <Container maxWidth={false}>
+            <Card elevation={2} sx={{ display: 'flex', margin: "0 5% 0 5%"}}>
                 <ChatSidebar/>
                 <Box flexGrow={1}>
                     <ChatHeader />

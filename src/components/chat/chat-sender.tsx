@@ -152,7 +152,7 @@ export const ChatSender = () => {
                     id="msg-sent"
                     fullWidth
                     value={msg}
-                    placeholder="Type a Message"
+                    placeholder="Gebe eine Nachricht ein..."
                     size="small"
                     type="text"
                     inputProps={{'aria-label': 'Type a Message'}}
