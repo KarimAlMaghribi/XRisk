@@ -5,16 +5,23 @@ import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import VideoChatIcon from '@mui/icons-material/VideoChat';
+import HandshakeIcon from '@mui/icons-material/Handshake';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useSelector} from "react-redux";
 import {Chat, selectActiveChat, selectActiveChatId} from "../../store/slices/my-bids";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
+import {MyRiskAgreementDialog} from "../risk-agreement/risk-agreement";
 
 
 
 export const ChatHeader = () => {
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
+    const [openRiskAgreementCreationDialog, setOpenRiskAgreementCreationDialog] = React.useState(false);
+
+    const handleClose = () => {
+        setOpenRiskAgreementCreationDialog(false);
+    }
 
     return (
         <Box>
@@ -50,6 +57,9 @@ export const ChatHeader = () => {
                             />
                         </ListItem>
                         <Stack direction={'row'}>
+                        <IconButton aria-label="delete">
+                                <HandshakeIcon onClick={() => {setOpenRiskAgreementCreationDialog(true)}}/>
+                            </IconButton>
                             <IconButton aria-label="delete">
                                 <LocalPhoneIcon />
                             </IconButton>
@@ -64,7 +74,11 @@ export const ChatHeader = () => {
                     <Divider />
                 </Box>
             }
+                        <MyRiskAgreementDialog
+                            open={openRiskAgreementCreationDialog}
+                            handleClose={handleClose} />
         </Box>
+        
 
     )
 }
