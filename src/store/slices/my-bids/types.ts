@@ -21,6 +21,7 @@ export interface Chat {
     riskProvider: {
         name?: string;
         uid?: string;
+        imagePath?: string;
     };
     riskTaker: {
         name?: string;

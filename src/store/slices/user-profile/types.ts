@@ -5,6 +5,7 @@ export enum ActionTypes {
     ADD_PROFILE = "userProfile/addProfile",
     UPDATE_PROFILE = "userProfile/updateProfile",
     CHECK_USER_PROFILE_WITH_GOOGLE = "userProfile/checkUserProfileWithGoogle",
+    GET_USER_IMAGE_BY_UID = "userProfile/getUserImageByUid",
 }
 
 export interface Address {

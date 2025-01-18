@@ -39,7 +39,6 @@ export const ChatMessages = () => {
     }, [activeChatId, dispatch]);
 
     useEffect(() => {
-        console.log(scrollRef.current);
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }

@@ -80,6 +80,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             riskProvider: {
                 name: selectedRisk.publisher?.name || "Unknown Provider",
                 uid: selectedRisk.publisher?.uid || "unknown_provider_uid",
+                imagePath: selectedRisk.publisher?.imagePath || ""
             },
             riskTaker: {
                 name: user?.displayName || "Unknown Taker",

@@ -144,8 +144,6 @@ export const deleteRisk = createAsyncThunk(
 
             const riskDocRef = riskDocs.docs[0].ref;
 
-            console.log("here");
-
             await deleteDoc(riskDocRef);
 
             console.log("Deleted risk-overview:", riskId);

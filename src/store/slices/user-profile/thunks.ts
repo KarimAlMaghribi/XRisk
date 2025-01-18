@@ -35,7 +35,7 @@ export const fetchUserProfile = createAsyncThunk(
 
 export const checkUserProfileWithGoogle = createAsyncThunk<any, User>(
     ActionTypes.CHECK_USER_PROFILE_WITH_GOOGLE,
-    async (user, { rejectWithValue }) => {
+    async (user, {rejectWithValue}) => {
         try {
             const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
             const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
@@ -56,11 +56,11 @@ export const checkUserProfileWithGoogle = createAsyncThunk<any, User>(
 
                 const docRef = await addDoc(userProfilesCollection, {...newUserProfile, uid: user.uid});
 
-                return { ...newUserProfile, id: docRef.id };
+                return {...newUserProfile, id: docRef.id};
             }
 
             const userProfileDoc = userProfileDocs.docs[0];
-            return { id: userProfileDoc.id, ...userProfileDoc.data() };
+            return {id: userProfileDoc.id, ...userProfileDoc.data()};
         } catch (error) {
             console.error("Error checking or creating google user profile:", error);
             return rejectWithValue("Error checking or creating google user profile:");
