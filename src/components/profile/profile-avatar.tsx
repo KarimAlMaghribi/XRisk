@@ -1,21 +1,49 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import EditIcon from "@mui/icons-material/Edit";
+import {auth, storage} from "../../firebase_config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-export const ProfileAvatar = () => {
+export interface ProfileAvatarProps {
+    imagePath?: string;
+}
+
+export const ProfileAvatar = (props: ProfileAvatarProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [imageSrc, setImageSrc] = useState<string>(props.imagePath || "");
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files && event.target.files.length > 0) {
-            const file = event.target.files[0];
-            console.log("Uploaded file:", file);
+    const handleFileUpload = async (file: File) => {
+        const user = auth.currentUser;
+
+        if (!user) {
+            console.error("Benutzer nicht authentifiziert");
+            return;
+        }
+
+        const storageRef = ref(storage, `profile-images/${user.uid}/${file.name}`);
+        try {
+            const snapshot = await uploadBytes(storageRef, file);
+            console.log("Datei hochgeladen:", snapshot.metadata);
+
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            console.log("Download-URL:", downloadURL);
+            setImageSrc(downloadURL);
+        } catch (error) {
+            console.error("Fehler beim Hochladen:", error);
         }
     };
 
     const triggerFileInput = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
+        }
+    };
+
+    const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            await handleFileUpload(file);
         }
     };
 
@@ -32,7 +60,7 @@ export const ProfileAvatar = () => {
                     sx={{
                         width: 25,
                         height: 25,
-                        backgroundColor: "secondary.main",
+                        backgroundColor: "primary.main",
                         borderRadius: "50%",
                         padding: "2px",
                         color: "white",
@@ -41,7 +69,7 @@ export const ProfileAvatar = () => {
 
                         "&:hover": {
                             backgroundColor: "white",
-                            color: "secondary.main",
+                            color: "primary.main",
                         },
                     }}
                 />
@@ -49,7 +77,7 @@ export const ProfileAvatar = () => {
         >
             <Avatar
                 sx={{ width: 100, height: 100 }}
-                src="/path-to-your-avatar.jpg"
+                src={imageSrc}
                 alt="User Avatar"
             />
 
@@ -58,7 +86,7 @@ export const ProfileAvatar = () => {
                 ref={fileInputRef}
                 accept="image/*"
                 style={{ display: "none" }}
-                onChange={handleFileUpload}
+                onChange={onFileChange}
             />
         </Badge>
     );

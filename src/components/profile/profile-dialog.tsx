@@ -1,9 +1,10 @@
 import Dialog from "@mui/material/Dialog";
 import React from "react";
-import {DialogContent, DialogTitle, Divider, Grid2, TextField} from "@mui/material";
+import {DialogActions, DialogContent, DialogTitle, Divider, Grid2, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import {ProfileAvatar} from "./profile-avatar";
+import Button from "@mui/material/Button";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -13,6 +14,11 @@ export interface ProfileDialogProps {
 export const ProfileDialog = (props: ProfileDialogProps) => {
     const [name, setName] = React.useState<string>('');
     const [email, setEmail] = React.useState<string>('');
+
+    const handleSave = () => {
+        console.log("Save profile data");
+        props.handleClose();
+    }
 
     return (
         <Dialog
@@ -59,6 +65,10 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     </Grid2>
                 </Grid2>
             </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleClose} variant="outlined">Abbrechen</Button>
+                <Button onClick={handleSave} variant="contained">Speichern</Button>
+            </DialogActions>
         </Dialog>
     )
 }

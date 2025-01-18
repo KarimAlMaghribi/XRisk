@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 import { GoogleAuthProvider } from "firebase/auth";
 import firebase from "firebase/compat";
@@ -17,8 +18,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-
-
 export const auth = getAuth(app);
 
 setPersistence(auth, browserSessionPersistence)
@@ -31,4 +30,5 @@ setPersistence(auth, browserSessionPersistence)
 
 export const db = getFirestore(app);
 export const googleAuthProvider = new GoogleAuthProvider();
+export const storage = getStorage(app);
 
