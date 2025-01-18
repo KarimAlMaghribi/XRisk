@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -16,9 +15,8 @@ import * as React from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Divider, Fade, ListItemIcon} from "@mui/material";
 import {auth} from "../../../firebase_config";
-import {selectName} from "../../../store/slices/user-profile";
+import {selectName} from "../../../store/slices/user-profile/selectors";
 import {useSelector} from "react-redux";
-import {NotificationButton} from "./notification-button";
 
 export interface AuthenticationButtonsProps {
     isLoggedIn: boolean;
@@ -60,7 +58,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                             {/* TODO:: beautify profilemenu with header menu profile image, name and mail*/}
 
                             {[
-                                <Box sx={{ px: 2, py: 1 }}>
+                                <Box sx={{px: 2, py: 1}}>
                                     <Typography variant="body1" fontWeight="bold">
                                         {userName}
                                     </Typography>

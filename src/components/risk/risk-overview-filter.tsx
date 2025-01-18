@@ -7,12 +7,12 @@ import {
     changeFilterValue,
     changeRemainingTerm,
     clearFilters,
-    selectFilterTypes,
     setFilterType
-} from "../../store/slices/risks";
+} from "../../store/slices/risks/reducers";
 import {useDispatch, useSelector} from "react-redux";
 import Button from "@mui/material/Button";
 import {RiskTypeSelector} from "../my-risks/risk-type-selector";
+import {selectFilterTypes} from "../../store/slices/risks/selectors";
 
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {

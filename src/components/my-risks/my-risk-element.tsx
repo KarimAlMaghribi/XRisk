@@ -5,16 +5,16 @@ import Button from "@mui/material/Button";
 import UndoIcon from "@mui/icons-material/Undo";
 import SendIcon from "@mui/icons-material/Send";
 import EditIcon from "@mui/icons-material/Edit";
-import {deleteMyRisk, updateMyRisk} from "../../store/slices/my-risks";
+import {deleteMyRisk, updateMyRisk} from "../../store/slices/my-risks/thunks";
 import DeleteIcon from "@mui/icons-material/Delete";
 import React from "react";
 import {Risk} from "../../models/Risk";
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
-import {addRisk, deleteRisk} from "../../store/slices/risks";
+import {addRisk, deleteRisk} from "../../store/slices/risks/thunks";
 import {auth} from "../../firebase_config";
-import {selectProfileInformation} from "../../store/slices/user-profile";
+import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 
 export interface MyRiskElementProps {
     risk: Risk;

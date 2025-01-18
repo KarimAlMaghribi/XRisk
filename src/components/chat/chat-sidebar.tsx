@@ -7,8 +7,8 @@ import Avatar from "@mui/material/Avatar";
 import SearchIcon from '@mui/icons-material/Search';
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
-import {searchChats} from "../../store/slices/my-bids";
-import {selectMail, selectName} from "../../store/slices/user-profile";
+import {searchChats} from "../../store/slices/my-bids/reducers";
+import {selectMail, selectName} from "../../store/slices/user-profile/selectors";
 
 const drawerWidth = 320;
 

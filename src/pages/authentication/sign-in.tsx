@@ -9,7 +9,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {signInWithEmail, signInWithGoogle} from "../../firebase/firebase-service";
 import {auth} from "../../firebase_config";
-import {fetchUserProfile} from "../../store/slices/user-profile";
+import {fetchUserProfile} from "../../store/slices/user-profile/thunks";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 

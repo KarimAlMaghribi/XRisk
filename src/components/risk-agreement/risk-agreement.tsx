@@ -1,17 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
-import dayjs, {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import {NumericFormat} from 'react-number-format';
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {v4 as uuidv4} from 'uuid';
-import {addMyRiskAgreement} from "../../store/slices/my-risk-agreements";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
-import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
-import {RiskTypeSelector} from "../my-risks/risk-type-selector";
-import { RiskAgreement } from "../../models/RiskAgreement";
+import {RiskAgreement} from "../../models/RiskAgreement";
+import {addMyRiskAgreement} from "../../store/slices/my-risk-agreements/thunks";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -102,7 +100,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             insuranceSum: insuranceSum,
             costs: costs,
             timeFrame: "",
-            evidence:evidence
+            evidence: evidence
             //status: RiskStatusEnum.DRAFT,
             //type: riskType,
             //value: value,

@@ -10,10 +10,14 @@ import Button from "@mui/material/Button";
 import ModeIcon from '@mui/icons-material/Mode';
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
-import {Chat, createChat, selectChats, setActiveChat} from "../../store/slices/my-bids";
+import {createChat} from "../../store/slices/my-bids/thunks";
+
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {auth} from "../../firebase_config";
 import {useNavigate} from "react-router-dom";
+import {Chat} from "../../store/slices/my-bids/types";
+import {selectChats} from "../../store/slices/my-bids/selectors";
+import {setActiveChat} from "../../store/slices/my-bids/reducers";
 
 export interface RiskOverviewElementProps {
     risks: Risk[];

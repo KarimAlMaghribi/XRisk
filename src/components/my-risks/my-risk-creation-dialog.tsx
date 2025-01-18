@@ -10,7 +10,7 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {Risk} from "../../models/Risk";
 import {v4 as uuidv4} from 'uuid';
-import {addMyRisk} from "../../store/slices/my-risks";
+import {addMyRisk} from "../../store/slices/my-risks/thunks";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
@@ -51,7 +51,6 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [title, setTitle] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [nameRequiredError, setNameRequiredError] = useState<boolean>(false);
-    const today = dayjs();
 
     useEffect(() => {
         if (!title && !nameRequiredError) {

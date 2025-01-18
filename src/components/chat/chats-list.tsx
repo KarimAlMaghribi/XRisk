@@ -9,10 +9,12 @@ import Avatar from "@mui/material/Avatar";
 import Scrollbar from "./scrollbar";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {useDispatch, useSelector} from "react-redux";
-import {Chat, selectActiveChatId, selectChats, setActiveChat} from "../../store/slices/my-bids";
+import {setActiveChat} from "../../store/slices/my-bids/reducers";
 import {AppDispatch} from "../../store/store";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {formatLastActivity} from "./utils";
+import {Chat} from "../../store/slices/my-bids/types";
+import {selectActiveChatId, selectChats} from "../../store/slices/my-bids/selectors";
 
 
 

@@ -8,9 +8,10 @@ import VideoChatIcon from '@mui/icons-material/VideoChat';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useSelector} from "react-redux";
-import {Chat, selectActiveChat, selectActiveChatId} from "../../store/slices/my-bids";
+import {selectActiveChat, selectActiveChatId} from "../../store/slices/my-bids/selectors";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {MyRiskAgreementDialog} from "../risk-agreement/risk-agreement";
+import {Chat} from "../../store/slices/my-bids/types";
 
 
 

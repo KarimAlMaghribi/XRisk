@@ -3,7 +3,7 @@ import {Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui
 import Button from "@mui/material/Button";
 import {AppDispatch} from "../../../store/store";
 import {useDispatch} from "react-redux";
-import {updateMyRisk} from "../../../store/slices/my-risks";
+import {updateMyRisk} from "../../../store/slices/my-risks/thunks";
 import {Risk} from "../../../models/Risk";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
