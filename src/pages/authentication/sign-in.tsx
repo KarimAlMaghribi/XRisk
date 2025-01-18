@@ -9,7 +9,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {signInWithEmail, signInWithGoogle} from "../../firebase/firebase-service";
 import {auth} from "../../firebase_config";
-import {fetchUserProfile} from "../../store/slices/user-profile/thunks";
+import {checkUserProfileWithGoogle, fetchUserProfile} from "../../store/slices/user-profile/thunks";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 
@@ -34,6 +34,15 @@ export const SignIn = () => {
         }
     }
 
+    const signInGoogle = async () => {
+        const user = await signInWithGoogle();
+        dispatch(checkUserProfileWithGoogle(user))
+
+        if (user?.refreshToken) {
+            navigate(`/${ROUTES.MY_RISKS}`);
+        }
+    }
+
     return (
         <div className="sign-in-card">
             <Card>
@@ -50,11 +59,11 @@ export const SignIn = () => {
                     <Grid size={6} style={{padding: "20px"}}>
                         <Grid container>
                             <Grid size={12} textAlign="center">
-                                <Typography variant="h6">Erstelle ein Konto</Typography>
+                                <Typography variant="h6">Melde dich an</Typography>
                             </Grid>
 
                             <Grid size={12} textAlign="center">
-                                <Typography variant="caption">Nutze deine Email zur Kontoerstellung</Typography>
+                                <Typography variant="caption">Nutze deine Email-Adresse und dein Passwort zur Anmeldung</Typography>
                             </Grid>
 
                             <Container style={{maxWidth: "400px"}}>
@@ -99,7 +108,7 @@ export const SignIn = () => {
                                 <Grid size={12} textAlign="center">
                                     <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth
                                             onClick={signIn}>
-                                        Log In
+                                        Anmelden
                                     </Button>
                                 </Grid>
 
@@ -108,11 +117,10 @@ export const SignIn = () => {
                                     MIT</Typography></Divider>
 
                                 <Button
-                                    disabled
                                     variant="outlined"
                                     startIcon={<GoogleIcon/>}
                                     fullWidth
-                                    onClick={signInWithGoogle}>
+                                    onClick={signInGoogle}>
                                     Google
                                 </Button>
 

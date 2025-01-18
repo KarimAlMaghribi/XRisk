@@ -1,8 +1,9 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {ActionTypes, ProfileInformation} from "./types";
+import {ActionTypes, ProfileInformation, UserProfile} from "./types";
 import {auth, db} from "../../../firebase_config";
 import {addDoc, collection, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
+import {User} from "firebase/auth";
 
 export const fetchUserProfile = createAsyncThunk(
     ActionTypes.FETCH_PROFILE,
@@ -28,6 +29,41 @@ export const fetchUserProfile = createAsyncThunk(
         } catch (error) {
             console.error("Error fetching profile:", error);
             return rejectWithValue(error);
+        }
+    }
+);
+
+export const checkUserProfileWithGoogle = createAsyncThunk<any, User>(
+    ActionTypes.CHECK_USER_PROFILE_WITH_GOOGLE,
+    async (user, { rejectWithValue }) => {
+        try {
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
+            const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
+
+            const userProfileDocs = await getDocs(userProfileQuery);
+
+            if (userProfileDocs.empty) {
+                const newUserProfile: UserProfile = {
+                    id: user.uid,
+                    profile: {
+                        name: user.displayName || "Unknown",
+                        email: user.email || "",
+                        imagePath: user.photoURL || undefined,
+                        receiveUpdates: true,
+                        phone: user.phoneNumber || "",
+                    }
+                };
+
+                const docRef = await addDoc(userProfilesCollection, {...newUserProfile, uid: user.uid});
+
+                return { ...newUserProfile, id: docRef.id };
+            }
+
+            const userProfileDoc = userProfileDocs.docs[0];
+            return { id: userProfileDoc.id, ...userProfileDoc.data() };
+        } catch (error) {
+            console.error("Error checking or creating google user profile:", error);
+            return rejectWithValue("Error checking or creating google user profile:");
         }
     }
 );

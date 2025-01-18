@@ -6,10 +6,16 @@ import {
     signInWithEmailAndPassword,
 
 } from "firebase/auth";
+import { UserCredential, User } from "firebase/auth";
 
-export const signInWithGoogle = async () => {
-    // TODO: Handle authenticated close pop-up window
-    return await signInWithPopup(auth, googleAuthProvider);
+export const signInWithGoogle = async (): Promise<User> => {
+    try {
+        const result: UserCredential = await signInWithPopup(auth, googleAuthProvider);
+        return result.user;
+    } catch (error) {
+        console.error("Fehler bei der Google-Anmeldung:", (error as Error).message);
+        throw error;
+    }
 };
 
 export const signOutUser = async () => {

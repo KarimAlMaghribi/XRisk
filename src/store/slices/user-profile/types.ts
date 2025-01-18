@@ -4,6 +4,7 @@ export enum ActionTypes {
     FETCH_PROFILE = "userProfile/fetchProfile",
     ADD_PROFILE = "userProfile/addProfile",
     UPDATE_PROFILE = "userProfile/updateProfile",
+    CHECK_USER_PROFILE_WITH_GOOGLE = "userProfile/checkUserProfileWithGoogle",
 }
 
 export interface Address {
@@ -22,7 +23,7 @@ export interface ProfileInformation {
     birthplace?: Address;
     email: string;
     phone?: string;
-    image?: any;
+    imagePath?: string;
     socialEconomics?: {
         income?: number;
         occupation?: string;
