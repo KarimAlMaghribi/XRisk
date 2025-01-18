@@ -13,22 +13,21 @@ import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import {addRisk, deleteRisk} from "../../store/slices/risks/thunks";
-import {auth} from "../../firebase_config";
-import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
+import {selectUserProfile} from "../../store/slices/user-profile/selectors";
+import {UserProfile} from "../../store/slices/user-profile/types";
 
 export interface MyRiskElementProps {
     risk: Risk;
 }
 
 export const MyRiskElement = (props: MyRiskElementProps) => {
-    const user = auth.currentUser;
-    const profileInfos = useSelector(selectProfileInformation);
+    const user: UserProfile = useSelector(selectUserProfile);
     const dispatch: AppDispatch = useDispatch();
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
 
     const handlePublish = (): void => {
-        if (!user || !user.uid) {
-            console.error("User not authenticated or UID missing:", user);
+        if (!user || !user.id) {
+            console.error("User not authenticated or UID missing:", user.profile.name);
             alert("Konnte Risiko nicht veröffentlichen, es gab Probleme mit der Authentifizierung.");
             return;
         }
@@ -37,8 +36,9 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
             const riskToPublish: Risk = {
                 ...props.risk,
                 publisher: {
-                    name: user.displayName ? user.displayName : profileInfos.name,
-                    uid: user.uid
+                    name: user.profile.name,
+                    imagePath: user.profile.imagePath,
+                    uid: user.id
                 },
                 status: RiskStatusEnum.PUBLISHED,
                 publishedAt: new Date().toISOString()

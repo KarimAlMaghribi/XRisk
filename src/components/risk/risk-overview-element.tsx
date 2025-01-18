@@ -126,10 +126,8 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     </Typography>
                                 </Grid>
                                 <Grid display="flex" justifyContent="center" alignItems="center" size={1}>
-                                    {/* src wird durch eine Service funktion ersetzt, die das Bild des nutzers aus der
-                                    Nutzerdatenbank lädt */}
                                     <Tooltip title={risk.publisher && risk.publisher.name}>
-                                        <Avatar src=""/>
+                                        <Avatar src={risk.publisher?.imagePath}/>
                                     </Tooltip>
                                 </Grid>
                             </Grid>

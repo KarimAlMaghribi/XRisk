@@ -31,8 +31,6 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
     const userName: string = useSelector(selectName);
     const imagePath: string | undefined = useSelector(selectImagePath);
 
-    console.log(imagePath);
-
     return (
         <>
             {
