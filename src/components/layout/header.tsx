@@ -98,9 +98,9 @@ export function Header() {
                             onClose={() => setAnchorElNav(null)}
                             sx={{display: {xs: 'block', md: 'none'}}}>
 
-                            {pages.map((page) => (
+                            {pages.map((page, index) => (
                                 page.authenticated && !isLoggedIn ? null :
-                                <MenuItem key={page.name} onClick={() => handleCloseNavMenu(page)}>
+                                <MenuItem key={index + "_" + page.name} onClick={() => handleCloseNavMenu(page)}>
                                     <Typography sx={{textAlign: 'center'}}>{page.name}</Typography>
                                 </MenuItem>
                             ))}

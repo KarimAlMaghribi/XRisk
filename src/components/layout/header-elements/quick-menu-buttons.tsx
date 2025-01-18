@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -16,9 +15,8 @@ import * as React from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Divider, Fade, ListItemIcon} from "@mui/material";
 import {auth} from "../../../firebase_config";
-import {selectName} from "../../../store/slices/user-profile";
+import {selectImagePath, selectName} from "../../../store/slices/user-profile/selectors";
 import {useSelector} from "react-redux";
-import {NotificationButton} from "./notification-button";
 
 export interface AuthenticationButtonsProps {
     isLoggedIn: boolean;
@@ -31,15 +29,15 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
     const location = useLocation();
     const navigate = useNavigate();
     const userName: string = useSelector(selectName);
+    const imagePath: string | undefined = useSelector(selectImagePath);
 
     return (
         <>
             {
                 props.isLoggedIn ? (
                     <Box sx={{flexGrow: 0}}>
-                        {/*<NotificationButton />*/}
                         <IconButton onClick={props.handleOpenUserMenu} sx={{p: 0}}>
-                            <Avatar src=""/>
+                            <Avatar src={imagePath} sx={{width: 42, height: 42}}/>
                         </IconButton>
                         <Menu
                             sx={{mt: '45px'}}
@@ -60,7 +58,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                             {/* TODO:: beautify profilemenu with header menu profile image, name and mail*/}
 
                             {[
-                                <Box sx={{ px: 2, py: 1 }}>
+                                <Box sx={{px: 2, py: 1}}>
                                     <Typography variant="body1" fontWeight="bold">
                                         {userName}
                                     </Typography>
@@ -69,9 +67,9 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                     </Typography>
                                 </Box>,
                                 <Divider key="divider"/>,
-                                ...settings.map((setting) => (
+                                ...settings.map((setting, index) => (
                                     <MenuItem
-                                        key={setting.name}
+                                        key={index + "_" + setting.name}
                                         onClick={() => props.handleCloseUserMenu(setting)}>
                                         <ListItemIcon>
                                             <setting.icon fontSize="small"/>
@@ -88,7 +86,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                             variant="outlined"
                             style={{color: "white", borderColor: "white", marginLeft: "20px"}}
                             startIcon={<West/>}>
-                            Log Out
+                            Abmelden
                         </Button>
                     </Box>
                 ) : (
@@ -104,7 +102,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                     visibility: location.pathname === `/${ROUTES.SIGN_IN}` ? "hidden" : "visible"
                                 }}
                                 endIcon={<East/>}>
-                                Log In
+                                Anmelden
                             </Button>
                         </Grid>
                         <Grid size={6}>

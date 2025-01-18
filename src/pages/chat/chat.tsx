@@ -5,7 +5,7 @@ import {ChatSidebar} from "../../components/chat/chat-sidebar";
 import Box from "@mui/material/Box";
 import {ChatHeader} from "../../components/chat/chat-header";
 import {ChatMessages} from "../../components/chat/chat-messages";
-import {fetchMyChats} from "../../store/slices/my-bids";
+import {fetchMyChats} from "../../store/slices/my-bids/thunks";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 import {ChatSender} from "../../components/chat/chat-sender";

@@ -1,5 +1,5 @@
 import {Risk} from "../../models/Risk";
-import {ChatMessage} from "../../store/slices/my-bids";
+import {ChatMessage} from "../../store/slices/my-bids/types";
 
 export class Chatbot {
     public basePrompt: string;

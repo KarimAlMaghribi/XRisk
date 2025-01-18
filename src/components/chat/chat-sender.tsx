@@ -9,21 +9,17 @@ import Picker from 'emoji-picker-react';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
-import {
-    ChatMessage,
-    selectActiveChatId,
-    selectActiveMessages,
-    selectRiskId,
-    sendMessage
-} from "../../store/slices/my-bids";
 import {MessageTypeEnum} from "../../enums/MessageTypeEnum";
 import {auth} from "../../firebase_config";
 import AssistantIcon from '@mui/icons-material/Assistant';
 import OpenAI from "openai";
 import {Chatbot} from "./chatbot";
-import {selectRiskById, selectRisks} from "../../store/slices/risks";
 import {Risk} from "../../models/Risk";
 import {CHATBOT_UID} from "../../constants/chatbot";
+import {ChatMessage} from "../../store/slices/my-bids/types";
+import {selectActiveChatId, selectActiveMessages, selectRiskId} from "../../store/slices/my-bids/selectors";
+import {sendMessage} from "../../store/slices/my-bids/thunks";
+import {selectRisks} from "../../store/slices/risks/selectors";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();

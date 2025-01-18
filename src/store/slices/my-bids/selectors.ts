@@ -1,0 +1,37 @@
+import {Chat, MyBidsState} from "./types";
+
+export const selectChats = (state: { myBids: MyBidsState }) => state.myBids.chats;
+export const selectActiveChat = (state: { myBids: MyBidsState }) => {
+    return state.myBids.chats.find((chat) => chat.id === state.myBids.activeChatId);
+}
+export const selectActiveChatId = (state: { myBids: MyBidsState }) => state.myBids.activeChatId;
+export const selectActiveMessages = (state: { myBids: MyBidsState }) => state.myBids.activeMessages;
+export const selectOtherChatMemberName = (
+    state: { myBids: MyBidsState },
+    uid: string | undefined
+): string => {
+    if (!uid) {
+        return "";
+    }
+
+    const activeChat: Chat | undefined = selectActiveChat(state);
+
+    if (!activeChat) {
+        return "";
+    }
+
+    const {riskProvider, riskTaker} = activeChat;
+
+    if (riskProvider?.uid === uid) {
+        return riskTaker?.name || "";
+    } else if (riskTaker?.uid === uid) {
+        return riskProvider?.name || "";
+    }
+
+    return "";
+};
+
+export const selectRiskId = (state: { myBids: MyBidsState }) => {
+    const activeChat = selectActiveChat(state);
+    return activeChat?.riskId;
+};

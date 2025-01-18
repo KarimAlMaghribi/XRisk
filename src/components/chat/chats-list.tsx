@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Alert, Badge, List, ListItemAvatar, ListItemButton, ListItemText} from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -9,16 +9,19 @@ import Avatar from "@mui/material/Avatar";
 import Scrollbar from "./scrollbar";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {useDispatch, useSelector} from "react-redux";
-import {Chat, selectActiveChatId, selectChats, setActiveChat} from "../../store/slices/my-bids";
+import {setActiveChat} from "../../store/slices/my-bids/reducers";
 import {AppDispatch} from "../../store/store";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {formatLastActivity} from "./utils";
+import {Chat} from "../../store/slices/my-bids/types";
+import {selectActiveChatId, selectChats} from "../../store/slices/my-bids/selectors";
 
 
 
 export const ChatsList = () => {
     const dispatch: AppDispatch = useDispatch();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [userImages, setUserImages] = useState<Record<string, string>>({});
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const chats: Chat[] = useSelector(selectChats);
 
@@ -32,13 +35,8 @@ export const ChatsList = () => {
         dispatch(setActiveChat(chatId));
     };
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+    const handleClose = () => setAnchorEl(null);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 
     return (
         <List sx={{ px: 0 }}>
@@ -60,9 +58,9 @@ export const ChatsList = () => {
                     MenuListProps={{
                         'aria-labelledby': 'basic-button',
                     }}>
-                    <MenuItem onClick={handleClose}>Sort By Time</MenuItem>
-                    <MenuItem onClick={handleClose}>Sort By Unread</MenuItem>
-                    <MenuItem onClick={handleClose}>Mark as all Read</MenuItem>
+                    <MenuItem onClick={handleClose}>Letzte Chats</MenuItem>
+                    <MenuItem onClick={handleClose}>Ungelesene Chats</MenuItem>
+                    <MenuItem onClick={handleClose}>Längste Chats</MenuItem>
                 </Menu>
             </Box>
             <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '600px' }}>
@@ -95,7 +93,7 @@ export const ChatsList = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar src="" sx={{ width: 42, height: 42 }} />
+                                    <Avatar src={chat.riskProvider?.imagePath} sx={{ width: 42, height: 42 }} />
                                 </Badge>
                             </ListItemAvatar>
                             <ListItemText

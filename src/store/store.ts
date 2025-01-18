@@ -1,9 +1,8 @@
 import { configureStore,  } from "@reduxjs/toolkit";
-import myRisksReducer from "./slices/my-risks";
-import myBidsReducer from "./slices/my-bids";
-import riskOverviewReducer from "./slices/risks";
-import userProfilesReducer from "./slices/user-profile";
-import notificationReducer from "./slices/notifications"
+import myRisksReducer from "./slices/my-risks/reducers";
+import myBidsReducer from "./slices/my-bids/reducers";
+import riskOverviewReducer from "./slices/risks/reducers";
+import userProfilesReducer from "./slices/user-profile/reducers";
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +10,6 @@ export const store = configureStore({
         myBids: myBidsReducer,
         risks: riskOverviewReducer,
         userProfile: userProfilesReducer,
-        notifications: notificationReducer
     },
     devTools: true
 });

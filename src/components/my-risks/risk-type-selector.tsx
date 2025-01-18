@@ -2,8 +2,9 @@ import {Autocomplete, Chip, TextField} from "@mui/material";
 import React, {useEffect} from "react";
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
-import {addRiskType, fetchRiskTypes, selectStatus, selectTypes} from "../../store/slices/risks";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
+import {selectStatus, selectTypes} from "../../store/slices/risks/selectors";
+import {addRiskType, fetchRiskTypes} from "../../store/slices/risks/thunks";
 
 export interface RiskTypeSelectorProps {
     value: string[];

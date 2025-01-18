@@ -4,17 +4,19 @@ import Box from "@mui/material/Box";
 import {ListItemAvatar} from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import {formatLastActivity} from "./utils";
-import {
-    ChatMessage, messagesUnsubscribe, selectActiveChatId,
-    selectActiveMessages,
-    selectOtherChatMemberName, subscribeToMessages
-} from "../../store/slices/my-bids";
 import {useDispatch, useSelector} from "react-redux";
 import {auth} from "../../firebase_config";
 import {AppDispatch, RootState} from "../../store/store";
 import {MessageTypeEnum} from "../../enums/MessageTypeEnum";
 import {CHATBOT_UID} from "../../constants/chatbot";
 import Logo from "../../assests/imgs/logo.png";
+import {ChatMessage} from "../../store/slices/my-bids/types";
+import {
+    selectActiveChatId,
+    selectActiveMessages,
+    selectOtherChatMemberName
+} from "../../store/slices/my-bids/selectors";
+import {messagesUnsubscribe, subscribeToMessages} from "../../store/slices/my-bids/thunks";
 
 export const ChatMessages = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -37,7 +39,6 @@ export const ChatMessages = () => {
     }, [activeChatId, dispatch]);
 
     useEffect(() => {
-        console.log(scrollRef.current);
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }

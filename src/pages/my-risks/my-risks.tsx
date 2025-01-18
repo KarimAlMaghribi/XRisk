@@ -3,12 +3,13 @@ import Grid from "@mui/material/Grid2";
 import {Typography} from "@mui/material";
 import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchMyRisks, selectMyRisks} from "../../store/slices/my-risks";
+import {selectMyRisks} from "../../store/slices/my-risks/selectors";
 import Button from "@mui/material/Button";
 import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
 import AddIcon from '@mui/icons-material/Add';
 import {AppDispatch} from "../../store/store";
 import {MyRiskElement} from "../../components/my-risks/my-risk-element";
+import {fetchMyRisks} from "../../store/slices/my-risks/thunks";
 
 
 export const MyRisks = () => {

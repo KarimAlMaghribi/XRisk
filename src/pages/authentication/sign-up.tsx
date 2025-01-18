@@ -9,7 +9,8 @@ import {signUpWithEmail} from "../../firebase/firebase-service";
 import "./style.scss";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
-import {addProfile, ProfileInformation} from "../../store/slices/user-profile";
+import {ProfileInformation} from "../../store/slices/user-profile/types";
+import {addProfile} from "../../store/slices/user-profile/thunks";
 
 export const SignUp = () => {
     const dispatch: AppDispatch = useDispatch();

@@ -1,30 +1,9 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {Risk} from "../../models/Risk";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import {ActionTypes} from "./types";
+import {auth, db} from "../../../firebase_config";
 import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "firebase/firestore";
-import {FetchStatus} from "../../types/FetchStatus";
-import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
-import {auth, db} from "../../firebase_config";
-import {FirestoreCollectionEnum} from "../../enums/FirestoreCollectionEnum";
-import { RiskAgreement } from "../../models/RiskAgreement";
-
-enum ActionTypes {
-    FETCH_MY_RISK_AGREEMENTS = "myRiskAgreements/fetchMyRiskAgreements",
-    ADD_MY_RISK_AGREEMENTS = "myRiskAgreements/addRiskAgreements",
-    DELETE_MY_RISK_AGREEMENTS = "myRiskAgreements/deleteRiskAgreements",
-    UPDATE_MY_RISK_AGREEMENTS = "myRiskAgreements/updateRiskAgreements"
-}
-
-export interface MyRiskAgreementsState {
-    riskAgreements: RiskAgreement[];
-    error?: string;
-    status: FetchStatus;
-}
-
-const initialState: MyRiskAgreementsState = {
-    riskAgreements: [],
-    error: undefined,
-    status: FetchStatusEnum.IDLE
-};
+import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
+import {RiskAgreement} from "../../../models/RiskAgreement";
 
 export const fetchMyRiskAgreements = createAsyncThunk(
     ActionTypes.FETCH_MY_RISK_AGREEMENTS,
@@ -40,12 +19,10 @@ export const fetchMyRiskAgreements = createAsyncThunk(
             const riskAgreementsQuery = query(riskAgreementsCollection, where("uid", "==", user.uid));
             const riskAgreementDocs = await getDocs(riskAgreementsQuery);
 
-            const riskAgreements = riskAgreementDocs.docs.map(doc => ({
+            return riskAgreementDocs.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             })) as RiskAgreement[];
-
-            return riskAgreements;
         } catch (error) {
             console.error("Error fetching risk agreements: ", error);
             return rejectWithValue("Failed to fetch risk agreements");
@@ -153,72 +130,3 @@ export const deleteMyRiskAgreement = createAsyncThunk(
         }
     }
 );
-
-export const myRiskAgreementsSlice = createSlice({
-    name: FirestoreCollectionEnum.MY_RISK_AGREEMENTS,
-    initialState: initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchMyRiskAgreements.pending, (state) => {
-                state.riskAgreements = [];
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(fetchMyRiskAgreements.fulfilled, (state, action) => {
-                state.riskAgreements = action.payload;
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(fetchMyRiskAgreements.rejected, (state, action) => {
-                state.riskAgreements = [];
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-            .addCase(addMyRiskAgreement.pending, (state) => {
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(addMyRiskAgreement.fulfilled, (state, action) => {
-                if (state.riskAgreements.some(riskAgreement => riskAgreement.id === action.payload.id)) {
-                    return;
-                }
-
-                state.riskAgreements.push(action.payload);
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(addMyRiskAgreement.rejected, (state, action) => {
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-            .addCase(deleteMyRiskAgreement.pending, (state) => {
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(deleteMyRiskAgreement.fulfilled, (state, action) => {
-                state.riskAgreements = state.riskAgreements.filter(riskAgreement => riskAgreement.id !== action.payload);
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(deleteMyRiskAgreement.rejected, (state, action) => {
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-            .addCase(updateMyRiskAgreement.pending, (state) => {
-                state.error = undefined;
-                state.status = FetchStatusEnum.PENDING;
-            })
-            .addCase(updateMyRiskAgreement.fulfilled, (state, action) => {
-                state.riskAgreements = state.riskAgreements.map(riskAgreement =>
-                    riskAgreement.id === action.payload.id ? {...riskAgreement, ...action.payload} : riskAgreement
-                );
-                state.status = FetchStatusEnum.SUCCEEDED;
-            })
-            .addCase(updateMyRiskAgreement.rejected, (state, action) => {
-                state.error = action.error.message;
-                state.status = FetchStatusEnum.FAILED;
-            })
-    }
-});
-
-export const selectMyRisks = (state: { myRiskAgreements: MyRiskAgreementsState }) => state.myRiskAgreements.riskAgreements;
-
-export default myRiskAgreementsSlice.reducer;
