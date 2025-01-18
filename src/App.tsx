@@ -15,7 +15,6 @@ import {Catalog} from "./pages/catalog/catalog";
 import {Account} from "./pages/account/account";
 import {Investors} from "./pages/investors/investors";
 import {Chat} from "./pages/chat/chat";
-import {Profile} from "./pages/profile/profile";
 import {Settings} from "@mui/icons-material";
 import {ROUTES} from "./routing/routes";
 import {PrivateRoute} from "./routing/private-route";
@@ -33,7 +32,6 @@ function App() {
                 <Route path={`/${ROUTES.ABOUT}`} element={<About />}/>
                 <Route path={`/${ROUTES.CHAT}`} element={<PrivateRoute><Chat /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.CATALOG}`} element={<Catalog />}/>
-                <Route path={`/${ROUTES.PROFILE}`} element={<PrivateRoute><Profile /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.ACCOUNT}`} element={<PrivateRoute><Account /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.SETTINGS}`} element={<PrivateRoute><Settings /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.INVESTORS}`} element={<Investors />}/>

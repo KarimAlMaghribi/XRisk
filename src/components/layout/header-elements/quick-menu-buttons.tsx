@@ -2,7 +2,6 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
-import {settings} from "../pages";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -16,13 +15,15 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {Divider, Fade, ListItemIcon} from "@mui/material";
 import {auth} from "../../../firebase_config";
 import {selectImagePath, selectName} from "../../../store/slices/user-profile/selectors";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {useSelector} from "react-redux";
+import { ProfileDialog } from "../../profile/profile-dialog";
 
 export interface AuthenticationButtonsProps {
     isLoggedIn: boolean;
     anchorElUser: HTMLElement | null;
     handleOpenUserMenu: (event: React.MouseEvent<HTMLElement>) => void;
-    handleCloseUserMenu: (setting: any) => void;
+    setAnchorElUser: () => void;
 }
 
 export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
@@ -30,6 +31,12 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
     const navigate = useNavigate();
     const userName: string = useSelector(selectName);
     const imagePath: string | undefined = useSelector(selectImagePath);
+    const [showProfileDialog, setShowProfileDialog] = React.useState<boolean>(false);
+
+    const openProfileDialog = () => {
+        setShowProfileDialog(true);
+        props.setAnchorElUser();
+    }
 
     return (
         <>
@@ -54,7 +61,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                             }}
                             open={Boolean(props.anchorElUser)}
                             TransitionComponent={Fade}
-                            onClose={props.handleCloseUserMenu}>
+                            onClose={props.setAnchorElUser}>
                             {/* TODO:: beautify profilemenu with header menu profile image, name and mail*/}
 
                             {[
@@ -67,18 +74,15 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                     </Typography>
                                 </Box>,
                                 <Divider key="divider"/>,
-                                ...settings.map((setting, index) => (
-                                    <MenuItem
-                                        key={index + "_" + setting.name}
-                                        onClick={() => props.handleCloseUserMenu(setting)}>
-                                        <ListItemIcon>
-                                            <setting.icon fontSize="small"/>
-                                        </ListItemIcon>
-                                        <Typography sx={{textAlign: 'center'}}>
-                                            {setting.name}
-                                        </Typography>
-                                    </MenuItem>
-                                )),
+                                <MenuItem
+                                    onClick={openProfileDialog}>
+                                    <ListItemIcon>
+                                        <AccountCircleIcon />
+                                    </ListItemIcon>
+                                    <Typography sx={{textAlign: 'center'}}>
+                                        Profil
+                                    </Typography>
+                                </MenuItem>
                             ]}
                         </Menu>
                         <Button
@@ -120,6 +124,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                     </Grid>
                 )
             }
+            <ProfileDialog show={showProfileDialog} handleClose={() => setShowProfileDialog(false)}/>
         </>
     )
 }

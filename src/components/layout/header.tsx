@@ -146,7 +146,7 @@ export function Header() {
                         isLoggedIn={isLoggedIn}
                         anchorElUser={anchorElUser}
                         handleOpenUserMenu={handleOpenUserMenu}
-                        handleCloseUserMenu={handleCloseUserMenu} />
+                        setAnchorElUser={() => setAnchorElUser(null)} />
                 </Toolbar>
             </Container>
         </AppBar>
