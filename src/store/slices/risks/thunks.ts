@@ -99,11 +99,17 @@ export const addRisk = createAsyncThunk(
     async (riskToPublish: Omit<Risk, "id">, {rejectWithValue}) => {
         try {
             const user = auth.currentUser;
+
             if (!user) {
                 return rejectWithValue("User not authenticated")
             }
 
+            if (!riskToPublish.publisher?.name || !riskToPublish.publisher?.imagePath) {
+                return rejectWithValue("Publisher information missing");
+            }
+
             const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+
             const docRef = await addDoc(risksCollection, {
                 ...riskToPublish,
                 publishedAt: new Date().toISOString(),

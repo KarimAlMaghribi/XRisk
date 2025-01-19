@@ -100,7 +100,7 @@ export const addProfile = createAsyncThunk(
 
 export const updateImagePath = createAsyncThunk(
     ActionTypes.UPDATE_IMAGE_PATH,
-    async (imagePath: string, {rejectWithValue}) => {
+    async (imagePath: string, { rejectWithValue, getState }) => {
         try {
             const user = auth.currentUser;
 
@@ -108,26 +108,47 @@ export const updateImagePath = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
-            const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
+            const state: any = getState();
+            const currentUserProfile = state.userProfile;
+
+            if (!currentUserProfile || !currentUserProfile.profile) {
+                return rejectWithValue("Current user profile not found in state");
+            }
+
+            const existingProfile = currentUserProfile.profile;
+
+            const userProfilesCollection = collection(
+                db,
+                FirestoreCollectionEnum.USER_PROFILES
+            );
+            const userProfileQuery = query(
+                userProfilesCollection,
+                where("uid", "==", user.uid)
+            );
 
             const userProfileDocs = await getDocs(userProfileQuery);
 
             if (userProfileDocs.empty) {
-                return rejectWithValue("Profile not found");
+                return rejectWithValue("Profile not found in Firestore");
             }
 
             const userProfileDocRef = userProfileDocs.docs[0].ref;
+
+            const updatedProfile: ProfileInformation = {
+                ...existingProfile,
+                imagePath: imagePath,
+            };
+
             await updateDoc(userProfileDocRef, {
-                    imagePath: imagePath,
-                    updatedAt: new Date().toISOString()
-                }
-            );
+                profile: updatedProfile,
+                updatedAt: new Date().toISOString(),
+            });
 
             return {
+                ...currentUserProfile,
                 id: user.uid,
-                imagePath: imagePath,
-                updatedAt: new Date().toISOString()
+                profile: updatedProfile,
+                updatedAt: new Date().toISOString(),
             };
         } catch (error) {
             console.error("Error updating image path:", error);
@@ -138,7 +159,7 @@ export const updateImagePath = createAsyncThunk(
 
 export const updateProfile = createAsyncThunk(
     ActionTypes.UPDATE_PROFILE,
-    async (profile: ProfileInformation, {rejectWithValue}) => {
+    async (profile: Partial<ProfileInformation>, { rejectWithValue }) => {
         try {
             const user = auth.currentUser;
 
@@ -146,32 +167,46 @@ export const updateProfile = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
-            const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
+            const userProfilesCollection = collection(
+                db,
+                FirestoreCollectionEnum.USER_PROFILES
+            );
+            const userProfileQuery = query(
+                userProfilesCollection,
+                where("uid", "==", user.uid)
+            );
 
             const userProfileDocs = await getDocs(userProfileQuery);
 
             if (userProfileDocs.empty) {
-                return rejectWithValue("Risk not found");
+                return rejectWithValue("Profile not found");
             }
 
-            const userProfileDocRef = userProfileDocs.docs[0].ref;
+            const userProfileDoc = userProfileDocs.docs[0];
+            const existingProfile = userProfileDoc.data()?.profile || {};
+
+            // Zusammenführen alter und neuer Werte
+            const updatedProfile = {
+                ...existingProfile,
+                ...profile,
+            };
+
+            const userProfileDocRef = userProfileDoc.ref;
             await updateDoc(userProfileDocRef, {
-                    id: user.uid,
-                    profile: profile,
-                    uid: user.uid,
-                    updatedAt: new Date().toISOString()
-                }
-            );
+                profile: updatedProfile,
+                uid: user.uid,
+                updatedAt: new Date().toISOString(),
+            });
 
             return {
                 id: user.uid,
-                profile: profile,
-                updatedAt: new Date().toISOString()
+                profile: updatedProfile,
+                updatedAt: new Date().toISOString(),
             };
         } catch (error) {
-            console.error("Error updating risk-overview:", error);
+            console.error("Error updating profile:", error);
             return rejectWithValue(error);
         }
     }
 );
+

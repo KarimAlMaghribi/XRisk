@@ -40,6 +40,7 @@ export const addMyRisk = createAsyncThunk(
             }
 
             const myRisksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
+
             const docRef = await addDoc(myRisksCollection, {
                 ...newRisk,
                 uid: user.uid,
@@ -62,6 +63,10 @@ export const updateMyRisk = createAsyncThunk(
 
             if (!user) {
                 return rejectWithValue("User not authenticated");
+            }
+
+            if (!risk.publisher?.name || !risk.publisher?.imagePath) {
+                return rejectWithValue("Publisher information missing");
             }
 
             const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);

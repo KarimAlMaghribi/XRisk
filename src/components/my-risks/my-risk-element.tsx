@@ -44,6 +44,8 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
                 publishedAt: new Date().toISOString()
             }
 
+            console.log(riskToPublish);
+
             dispatch(updateMyRisk(riskToPublish))
             dispatch(addRisk(riskToPublish))
         }

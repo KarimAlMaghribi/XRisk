@@ -41,12 +41,13 @@ export const userProfileSlice = createSlice({
                     state.status = FetchStatusEnum.PENDING;
                 })
                 .addCase(updateProfile.fulfilled, (state, action) => {
-                    state.profile = action.payload.profile;
-                    state.updatedAt = action.payload.updatedAt;
+                    if (action.payload) {
+                        state.profile = action.payload.profile;
+                        state.updatedAt = action.payload.updatedAt;
+                    }
                     state.status = FetchStatusEnum.SUCCEEDED;
                 })
                 .addCase(updateProfile.rejected, (state, action) => {
-                    state.profile = {name: "", email: ""};
                     state.error = action.payload as string;
                     state.status = FetchStatusEnum.FAILED;
                 })
@@ -89,7 +90,7 @@ export const userProfileSlice = createSlice({
                     state.status = FetchStatusEnum.PENDING;
                 })
                 .addCase(updateImagePath.fulfilled, (state, action) => {
-                    state.profile.imagePath = action.payload.imagePath;
+                    state.profile.imagePath = action.payload.profile.imagePath;
                     state.updatedAt = new Date().toISOString();
                     state.status = FetchStatusEnum.SUCCEEDED;
                 })

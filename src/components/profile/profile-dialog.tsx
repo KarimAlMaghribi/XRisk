@@ -1,14 +1,17 @@
 import Dialog from "@mui/material/Dialog";
-import React from "react";
+import React, {useEffect} from "react";
 import {DialogActions, DialogContent, DialogTitle, Divider, Grid2, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import {ProfileAvatar} from "./profile-avatar";
 import Button from "@mui/material/Button";
 import {saveInStorage} from "../../firebase/firebase-service";
 import {auth} from "../../firebase_config";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
-import {updateImagePath} from "../../store/slices/user-profile/thunks";
+import {updateImagePath, updateProfile} from "../../store/slices/user-profile/thunks";
+import {selectUserProfile} from "../../store/slices/user-profile/selectors";
+import {UserProfile} from "../../store/slices/user-profile/types";
+import {Countries} from "./countries";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -17,10 +20,25 @@ export interface ProfileDialogProps {
 
 export const ProfileDialog = (props: ProfileDialogProps) => {
     const dispatch: AppDispatch = useDispatch();
-    const [name, setName] = React.useState<string>('');
-    const [email, setEmail] = React.useState<string>('');
+    const userProfile: UserProfile = useSelector(selectUserProfile);
+    const [name, setName] = React.useState<string>();
+    const [email, setEmail] = React.useState<string>();
+    const [country, setCountry] = React.useState<string>("");
+    const [street, setStreet] = React.useState<string>();
+    const [number, setNumber] = React.useState<string>();
+    const [city, setCity] = React.useState<string>();
+    const [zip, setZip] = React.useState<string>();
+    const [gender, setGender] = React.useState<string>();
+    const [birthdate, setBirthdate] = React.useState<string>();
+    const [birthplace, setBirthplace] = React.useState<string>();
+    const [phone, setPhone] = React.useState<string>();
     const [imageFile, setImageFile] = React.useState<File | null>(null);
-    const [imagePath, setImagePath] = React.useState<string>('');
+    const [imagePath, setImagePath] = React.useState<string | null>(null);
+
+    useEffect(() => {
+        setName(userProfile.profile.name);
+        setEmail(userProfile.profile.email);
+    }, [userProfile])
 
     const handleFileUpload = async () => {
         const downloadUrl = await saveInStorage(`profileImages/${auth.currentUser?.uid}`, imageFile);
@@ -36,11 +54,12 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
     const handleSave = () => {
         handleFileUpload()
+        // dispatch(updateProfile({name, email, country}));
         props.handleClose();
     }
 
     const handleCancel = () => {
-        if (imagePath.startsWith("blob:")) {
+        if (imagePath && imagePath.startsWith("blob:")) {
             URL.revokeObjectURL(imagePath);
         }
         setImageFile(null);
@@ -69,31 +88,35 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
             <DialogContent sx={{marginTop: "20px"}}>
                 <Grid2 container spacing={2}>
-                    <Grid2 size={2}>
+                    <Grid2 size={{md: 12, lg: 12}}>
                         <ProfileAvatar
-                            imagePath={imagePath}
+                            imagePath={imagePath || userProfile.profile.imagePath || ""}
                             setImagePath={setImagePath}
                             file={imageFile}
                             setFile={setImageFile}
                         />
                     </Grid2>
-                    <Grid2 size={5}>
+                    <Grid2 size={{md: 12, lg: 6}}>
                         <TextField
-                            variant="standard"
+                            variant="outlined"
                             fullWidth
                             label="Name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
                     </Grid2>
-                    <Grid2 size={5}>
+                    <Grid2 size={{md: 12, lg: 6}}>
                         <TextField
-                            variant="standard"
+                            disabled
+                            variant="outlined"
                             fullWidth
                             label="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
+                    </Grid2>
+                    <Grid2 size={{md: 12, lg: 6}}>
+                        <Countries value={country} setValue={setCountry} />
                     </Grid2>
                 </Grid2>
             </DialogContent>

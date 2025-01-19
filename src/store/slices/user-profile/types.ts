@@ -8,20 +8,11 @@ export enum ActionTypes {
     UPDATE_IMAGE_PATH = "userProfile/updateImagePath",
 }
 
-export interface Address {
-    country: string;
-    street: string;
-    number: string;
-    city: string;
-    zip: string;
-}
-
 export interface ProfileInformation {
     name: string;
     gender?: string;
-    address?: Address;
     birthdate?: string;
-    birthplace?: Address;
+    birthplace?: string; // country
     email: string;
     phone?: string;
     imagePath?: string;
@@ -31,6 +22,11 @@ export interface ProfileInformation {
         education?: string;
     };
     receiveUpdates?: boolean;
+    country?: string;
+    street?: string;
+    number?: string;
+    city?: string;
+    zip?: string;
 }
 
 export interface UserProfile {
