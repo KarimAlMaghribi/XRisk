@@ -1,4 +1,4 @@
-import { auth, googleAuthProvider } from '../firebase_config';
+import {auth, googleAuthProvider, storage} from '../firebase_config';
 import {
     signInWithPopup,
     signOut,
@@ -7,6 +7,7 @@ import {
 
 } from "firebase/auth";
 import { UserCredential, User } from "firebase/auth";
+import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 
 export const signInWithGoogle = async (): Promise<User> => {
     try {
@@ -49,3 +50,36 @@ export const signInWithEmail = async (email: string, password: string) => {
         alert(error)
     }
 };
+
+export const saveInStorage = async (path: string, file: File | null): Promise<string | null> => {
+    const user = auth.currentUser;
+
+    if (!file) {
+        console.error("No file provided!");
+        return null
+    }
+
+    if (!user) {
+        console.error("No user logged in!");
+        return null;
+    }
+
+    if (!path) {
+        console.error("Path is empty!");
+        return null;
+    }
+
+    const storageRef = ref(storage, path);
+
+    try {
+        const snapshot = await uploadBytes(storageRef, file);
+        const downloadUrl = await getDownloadURL(snapshot.ref);
+        console.debug("File uploaded successfully! Url: ", downloadUrl);
+        return downloadUrl;
+    } catch (error) {
+        console.error("Error uploading file: ", error);
+        return null;
+    }
+
+    return null;
+}

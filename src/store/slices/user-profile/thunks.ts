@@ -98,6 +98,44 @@ export const addProfile = createAsyncThunk(
     }
 )
 
+export const updateImagePath = createAsyncThunk(
+    ActionTypes.UPDATE_IMAGE_PATH,
+    async (imagePath: string, {rejectWithValue}) => {
+        try {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
+            const userProfileQuery = query(userProfilesCollection, where("uid", "==", user.uid));
+
+            const userProfileDocs = await getDocs(userProfileQuery);
+
+            if (userProfileDocs.empty) {
+                return rejectWithValue("Profile not found");
+            }
+
+            const userProfileDocRef = userProfileDocs.docs[0].ref;
+            await updateDoc(userProfileDocRef, {
+                    imagePath: imagePath,
+                    updatedAt: new Date().toISOString()
+                }
+            );
+
+            return {
+                id: user.uid,
+                imagePath: imagePath,
+                updatedAt: new Date().toISOString()
+            };
+        } catch (error) {
+            console.error("Error updating image path:", error);
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const updateProfile = createAsyncThunk(
     ActionTypes.UPDATE_PROFILE,
     async (profile: ProfileInformation, {rejectWithValue}) => {

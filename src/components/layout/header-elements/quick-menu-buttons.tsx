@@ -62,10 +62,8 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                             open={Boolean(props.anchorElUser)}
                             TransitionComponent={Fade}
                             onClose={props.setAnchorElUser}>
-                            {/* TODO:: beautify profilemenu with header menu profile image, name and mail*/}
-
                             {[
-                                <Box sx={{px: 2, py: 1}}>
+                                <Box sx={{px: 2, py: 1}} key="first_box">
                                     <Typography variant="body1" fontWeight="bold">
                                         {userName}
                                     </Typography>

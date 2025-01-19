@@ -1,38 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, {useRef} from "react";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import EditIcon from "@mui/icons-material/Edit";
-import {auth, storage} from "../../firebase_config";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export interface ProfileAvatarProps {
-    imagePath?: string;
+    imagePath: string;
+    setImagePath: (imagePath: string) => void;
+    file: File | null;
+    setFile: (file: File) => void;
 }
 
 export const ProfileAvatar = (props: ProfileAvatarProps) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [imageSrc, setImageSrc] = useState<string>(props.imagePath || "");
-
-    const handleFileUpload = async (file: File) => {
-        const user = auth.currentUser;
-
-        if (!user) {
-            console.error("Benutzer nicht authentifiziert");
-            return;
-        }
-
-        const storageRef = ref(storage, `profile-images/${user.uid}/${file.name}`);
-        try {
-            const snapshot = await uploadBytes(storageRef, file);
-            console.log("Datei hochgeladen:", snapshot.metadata);
-
-            const downloadURL = await getDownloadURL(snapshot.ref);
-            console.log("Download-URL:", downloadURL);
-            setImageSrc(downloadURL);
-        } catch (error) {
-            console.error("Fehler beim Hochladen:", error);
-        }
-    };
 
     const triggerFileInput = () => {
         if (fileInputRef.current) {
@@ -43,7 +22,11 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
-            await handleFileUpload(file);
+            props.setFile(file);
+            console.log(file);
+
+            const tempUrl = URL.createObjectURL(file);
+            props.setImagePath(tempUrl);
         }
     };
 
@@ -76,8 +59,8 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
             }
         >
             <Avatar
-                sx={{ width: 100, height: 100 }}
-                src={imageSrc}
+                sx={{width: 100, height: 100}}
+                src={props.imagePath}
                 alt="User Avatar"
             />
 
@@ -85,9 +68,10 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
                 type="file"
                 ref={fileInputRef}
                 accept="image/*"
-                style={{ display: "none" }}
+                style={{display: "none"}}
                 onChange={onFileChange}
             />
         </Badge>
     );
 };
+

@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {UserProfile} from "./types";
-import {addProfile, checkUserProfileWithGoogle, fetchUserProfile, updateProfile} from "./thunks";
+import {addProfile, checkUserProfileWithGoogle, fetchUserProfile, updateImagePath, updateProfile} from "./thunks";
 
 const initialState: UserProfile = {
     id: null,
@@ -81,6 +81,19 @@ export const userProfileSlice = createSlice({
                 })
                 .addCase(checkUserProfileWithGoogle.rejected, (state, action) => {
                     state.profile = {name: "", email: ""};
+                    state.error = action.payload as string;
+                    state.status = FetchStatusEnum.FAILED;
+                })
+                .addCase(updateImagePath.pending, (state) => {
+                    state.error = undefined;
+                    state.status = FetchStatusEnum.PENDING;
+                })
+                .addCase(updateImagePath.fulfilled, (state, action) => {
+                    state.profile.imagePath = action.payload.imagePath;
+                    state.updatedAt = new Date().toISOString();
+                    state.status = FetchStatusEnum.SUCCEEDED;
+                })
+                .addCase(updateImagePath.rejected, (state, action) => {
                     state.error = action.payload as string;
                     state.status = FetchStatusEnum.FAILED;
                 });
