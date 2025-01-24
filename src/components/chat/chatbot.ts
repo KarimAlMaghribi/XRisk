@@ -52,13 +52,16 @@ export class Chatbot {
             "Typ: " + risk.type + ", " +
             "Wert: " + risk.value + ", " +
             "Veröffentlichungsdatum: " + risk.publishedAt + ", " +
-            "Veröffentlicher: " + risk.publisher + ", " +
+            "Veröffentlicher: " + risk.publisher?.name + ", " +
             "Ablaufdatum: " + risk.declinationDate + ", " +
             "Erstellt am: " + risk.createdAt + ", " +
             "Aktualisiert am: " + risk.updatedAt + "}; "
     }
 
     private enrichPromptWithRiskNegotiation = (messages: ChatMessage[]): void => {
+
+        
+        
         if (!messages) {
             this.basePrompt += "Bisherige Unterhaltung: {Keine Unterhaltung gefunden}; ";
             return;
