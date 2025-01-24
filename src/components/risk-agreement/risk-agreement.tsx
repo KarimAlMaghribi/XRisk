@@ -1,15 +1,22 @@
 import React, {useState} from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
-import dayjs from "dayjs";
 import {NumericFormat} from 'react-number-format';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {v4 as uuidv4} from 'uuid';
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskAgreement} from "../../models/RiskAgreement";
 import {addMyRiskAgreement} from "../../store/slices/my-risk-agreements/thunks";
+import {Risk} from "../../models/Risk";
+import OpenAI from "openai";
+import { selectActiveChat, selectActiveMessages, selectRiskId } from "../../store/slices/my-bids/selectors";
+import { Chat, ChatMessage } from "../../store/slices/my-bids/types";
+import { selectRisks } from "../../store/slices/risks/selectors";
+import { DataExtractionBot } from "../../extraction/DataExtractionBot";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from "zod";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -40,15 +47,14 @@ const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, 
 export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
-    //const [date, setDate] = useState<Dayjs | null>(dayjs());
-    const [riskType, setRiskType] = useState<string>("");
     const [costs, setCosts] = useState<number>(0);
+    const [timeframe, setTimeframe] = useState<string>('');
     const [evidence, setEvidence] = useState<string>('');
     const [insuranceSum, setInsuranceSum] = useState<number>(0);
-    //const [nameRequiredError, setNameRequiredError] = useState<boolean>(false);
+    const [riskDetails, setRiskDetails] = useState<string>('');
     const [insuranceSumRequiredError, setInsuranceSumRequiredError] = useState<boolean>(false);
     const [costsRequiredError, setCostsRequiredError] = useState<boolean>(false);
-    const today = dayjs();
+
 
     //useEffect(() => {
     //    if (!title && !nameRequiredError) {
@@ -60,6 +66,65 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     //    }
     //}, [title]);
 
+    const activeChat: Chat | undefined = useSelector(selectActiveChat);
+
+    const riskId = useSelector(selectRiskId);
+    const risks = useSelector(selectRisks);
+    const risk: Risk | undefined = risks.find(risk => risk.id === riskId);
+    const riskTitle = risk?.name ? risk?.name : '';
+    const riskType = risk?.type ? risk.type : []; 
+
+    //data extraction
+
+    const activeMessages: ChatMessage[] = useSelector(selectActiveMessages);
+    const openai = new OpenAI({apiKey: process.env.REACT_APP_OPENAI_API_KEY, dangerouslyAllowBrowser: true});
+
+    const DataSchema = z.object({
+        insuranceSum : z.number(),
+        costs : z.number(),
+        timeframe : z.string(),
+        evidence : z.string(),
+        details : z.string(),
+    })
+
+    const handleDataExtraction = async (e: any) => {
+        const dataExtractionBot = new DataExtractionBot(risk, activeMessages);
+        const prompt: string = dataExtractionBot.getPrompt();
+
+        const completion = await openai.beta.chat.completions.parse({
+            model: "gpt-4o-mini",
+            messages: [{role: "user", content: prompt}],
+            response_format: zodResponseFormat(DataSchema, "conversationData"),
+            stream: false,
+          });
+          
+        const conversationData = completion.choices[0].message.parsed;
+
+        if (!conversationData) {
+            console.error("No response from OpenAI:", conversationData);
+            return;
+        }
+
+        // Set the extracted values into state
+        if (conversationData.evidence) {
+            setEvidence(conversationData.evidence);
+        }
+        if (conversationData.timeframe) {
+            setTimeframe(conversationData.timeframe); // Assuming "Zeitspanne" corresponds to evidence
+        }
+        if (conversationData.costs) {
+            setCosts(Number(conversationData.costs));
+        }
+        if (conversationData.insuranceSum) {
+            setInsuranceSum(conversationData.insuranceSum);
+        }
+        if (conversationData.details) {
+            setRiskDetails(conversationData.details);
+        }
+
+        console.log(conversationData)
+    }
+
     const handleCostsChange = (newCosts: number) => {
         if (!isNaN(newCosts)) {
             setCosts(newCosts);
@@ -70,6 +135,10 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         if (!isNaN(newInsuranceSum)) {
             setInsuranceSum(newInsuranceSum);
         }
+    }
+
+    const handleDetailsChange = (newDetails: string) => {
+        setRiskDetails(newDetails);
     }
 
     const handleClose = () => {
@@ -89,22 +158,17 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
 
         const newRiskAgreement: RiskAgreement = {
             id: uuidv4(),
-            //createdAt: new Date().toISOString(),
-            //name: title,
-            riskId: 0,
-            riskTaker: NaN,
-            riskGiver: NaN,
-            chatroomId: NaN,
-            chatId: "",
-            typeOfRisk: riskType,
+            riskId: risk?.id ? risk?.id : '',
+            riskTakerId: activeChat?.riskTaker.uid ? activeChat?.riskTaker.uid : '',
+            riskGiverId: activeChat?.riskProvider.uid ? activeChat?.riskProvider.uid : '',
+            chatId: activeChat?.id ? activeChat?.id : '',
+            title: riskTitle,
+            type: riskType,
             insuranceSum: insuranceSum,
             costs: costs,
-            timeFrame: "",
-            evidence: evidence
-            //status: RiskStatusEnum.DRAFT,
-            //type: riskType,
-            //value: value,
-            //declinationDate: date?.toISOString() || 'kein Ablaufdatum',
+            timeframe: timeframe,
+            evidence: evidence,
+            details: riskDetails,
         }
 
         dispatch(addMyRiskAgreement(newRiskAgreement));
@@ -126,8 +190,26 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                 <TextField
                     margin="dense"
                     fullWidth
+                    label="Titel"
+                    value={riskTitle}
+                    disabled={true}
+                    name="title"
+                    id="title"
+                />
+                <TextField
+                    margin="dense"
+                    fullWidth
+                    label="Art des Risikos"
+                    value={riskType}
+                    disabled={true}
+                    name="riskType"
+                    id="riskType"
+                />
+                <TextField
+                    margin="dense"
+                    fullWidth
                     label="Risikogeber"
-                    value={"Risikogeber XY"}
+                    value={activeChat?.riskProvider.name}
                     disabled={true}
                     name="riskGiver"
                     id="riskGiver"
@@ -136,7 +218,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     margin="dense"
                     fullWidth
                     label="Risikonehmer"
-                    value={"Risikonehmer XY"}
+                    value={activeChat?.riskTaker.name}
                     disabled={true}
                     name="riskTaker"
                     id="riskTaker"
@@ -145,8 +227,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     margin="dense"
                     fullWidth
                     label="Zeitspanne"
-                    value={"Zeitspanne XY"}
-                    disabled={true}
+                    value={timeframe}
                     name="timeFrame"
                     id="timeFrame"
                 />
@@ -154,8 +235,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     margin="dense"
                     fullWidth
                     label="Beweismittel"
-                    value={"Beweismittel XY"}
-                    disabled={true}
+                    value={evidence}
                     name="evidence"
                     id="evidence"
                 />
@@ -183,8 +263,22 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                         inputComponent: EuroNumberFormat,
                     }}
                 />
+                <TextField
+                    margin="dense"
+                    fullWidth
+                    label="Sonstige Anmerkungen"
+                    value={riskDetails}
+                    onChange={(event) => handleDetailsChange(event.target.value)}
+                    name="details"
+                    id="details"
+                />
             </DialogContent>
             <DialogActions>
+                <Button
+                    variant="contained"
+                    onClick={handleDataExtraction}>
+                    Automatisch füllen
+                </Button>
                 <Button
                     disabled={insuranceSumRequiredError || costsRequiredError}
                     variant="contained"
