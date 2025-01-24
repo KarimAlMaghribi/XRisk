@@ -20,6 +20,8 @@ import {ChatMessage} from "../../store/slices/my-bids/types";
 import {selectActiveChatId, selectActiveMessages, selectRiskId} from "../../store/slices/my-bids/selectors";
 import {sendMessage} from "../../store/slices/my-bids/thunks";
 import {selectRisks} from "../../store/slices/risks/selectors";
+import {ProfileInformation} from "../../store/slices/user-profile/types";
+import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -32,6 +34,7 @@ export const ChatSender = () => {
     const [msg, setMsg] = React.useState<any>('');
     const [aiLoading, setAILoading] = React.useState<boolean>(false);
     const [msgType, setMsgType] = React.useState<MessageTypeEnum>(MessageTypeEnum.TEXT);
+    const profile: ProfileInformation | null = useSelector(selectProfileInformation);
     const openai = new OpenAI({apiKey: process.env.REACT_APP_OPENAI_API_KEY, dangerouslyAllowBrowser: true});
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -71,6 +74,7 @@ export const ChatSender = () => {
             created: new Date().toISOString(),
             type: msgType,
             uid: uid,
+            name: profile?.name || auth?.currentUser?.displayName || "Unbekannt",
             content: msg,
             read: false
         }
@@ -105,6 +109,7 @@ export const ChatSender = () => {
             created: new Date().toISOString(),
             type: MessageTypeEnum.TEXT,
             uid: CHATBOT_UID,
+            name: "xRisk Chatbot",
             content: xRiskChatbotResponse,
             read: false,
             prompt: prompt

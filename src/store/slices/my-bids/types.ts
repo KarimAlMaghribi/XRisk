@@ -7,6 +7,7 @@ export interface ChatMessage {
     created: string;
     type: MessageType;
     uid: string;
+    name: string;
     attachments?: any[];
     content: any; // string | audio | video | image
     read: boolean;

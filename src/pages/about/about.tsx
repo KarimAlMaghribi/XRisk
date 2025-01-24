@@ -5,3 +5,4 @@ export const About = () => {
         <Typography variant="h1">Über Uns</Typography>
     )
 }
+
