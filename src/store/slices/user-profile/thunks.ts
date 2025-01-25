@@ -46,7 +46,7 @@ export const checkUserProfileWithGoogle = createAsyncThunk<any, User>(
                 const newUserProfile: UserProfile = {
                     id: user.uid,
                     profile: {
-                        name: user.displayName || "Unknown",
+                        name: user.displayName || "Unbekannt",
                         email: user.email || "",
                         imagePath: user.photoURL || undefined,
                         receiveUpdates: true,

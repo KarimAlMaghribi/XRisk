@@ -35,6 +35,7 @@ export interface Chat {
 
 export interface MyBidsState {
     chats: Chat[];
+    filteredChats: Chat[] | null;
     chatSearch: string;
     activeChatId: string | null;
     loading: FetchStatus;

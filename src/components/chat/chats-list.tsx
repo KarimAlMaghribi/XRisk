@@ -14,16 +14,20 @@ import {AppDispatch} from "../../store/store";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {formatLastActivity} from "./utils";
 import {Chat} from "../../store/slices/my-bids/types";
-import {selectActiveChatId, selectChats} from "../../store/slices/my-bids/selectors";
+import {
+    selectActiveChatId,
+    selectChats,
+    selectChatsToDisplay,
+    selectFilteredChats
+} from "../../store/slices/my-bids/selectors";
 
 
 
 export const ChatsList = () => {
     const dispatch: AppDispatch = useDispatch();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [userImages, setUserImages] = useState<Record<string, string>>({});
     const activeChatId: string | null = useSelector(selectActiveChatId);
-    const chats: Chat[] = useSelector(selectChats);
+    const chats: Chat[] = useSelector(selectChatsToDisplay);
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -64,7 +68,7 @@ export const ChatsList = () => {
                 </Menu>
             </Box>
             <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '600px' }}>
-                {chats && chats.length ? (
+                {chats ? (
                     chats.map((chat) => (
                         <ListItemButton
                             key={chat.id}

@@ -1,4 +1,5 @@
 import {Chat, MyBidsState} from "./types";
+import {RootState} from "../../store";
 
 export const selectChats = (state: { myBids: MyBidsState }) => state.myBids.chats;
 export const selectActiveChat = (state: { myBids: MyBidsState }) => {
@@ -6,6 +7,7 @@ export const selectActiveChat = (state: { myBids: MyBidsState }) => {
 }
 export const selectActiveChatId = (state: { myBids: MyBidsState }) => state.myBids.activeChatId;
 export const selectActiveMessages = (state: { myBids: MyBidsState }) => state.myBids.activeMessages;
+export const selectActiveChatRiskProviderImagePath = (state: { myBids: MyBidsState }) =>  selectActiveChat(state)?.riskProvider?.imagePath;
 export const selectOtherChatMemberName = (
     state: { myBids: MyBidsState },
     uid: string | undefined
@@ -34,4 +36,15 @@ export const selectOtherChatMemberName = (
 export const selectRiskId = (state: { myBids: MyBidsState }) => {
     const activeChat = selectActiveChat(state);
     return activeChat?.riskId;
+};
+
+export const selectFilteredChats = (state: { myBids: MyBidsState }) => state.myBids.filteredChats;
+
+export const selectChatsToDisplay = (state: RootState) => {
+    if (state.myBids.filteredChats === null) {
+        return [];
+    }
+    return state.myBids.filteredChats.length > 0
+        ? state.myBids.filteredChats
+        : state.myBids.chats;
 };

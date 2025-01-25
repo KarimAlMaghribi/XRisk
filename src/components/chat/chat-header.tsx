@@ -48,7 +48,7 @@ export const ChatHeader = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar alt={activeChat?.riskProvider?.name} src="" />
+                                    <Avatar alt={activeChat?.riskProvider?.name} src={activeChat?.riskProvider.imagePath} />
 
                                 </Badge>
                             </ListItemAvatar>
@@ -75,11 +75,9 @@ export const ChatHeader = () => {
                     <Divider />
                 </Box>
             }
-                        <MyRiskAgreementDialog
-                            open={openRiskAgreementCreationDialog}
-                            handleClose={handleClose} />
+                <MyRiskAgreementDialog
+                    open={openRiskAgreementCreationDialog}
+                    handleClose={handleClose} />
         </Box>
-        
-
     )
 }

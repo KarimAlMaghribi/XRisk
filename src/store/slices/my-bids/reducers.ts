@@ -6,6 +6,7 @@ import {createChat, fetchMyChats, fetchProviderChats, subscribeToMessages} from 
 
 const initialState: MyBidsState = {
     chats: [],
+    filteredChats: [],
     chatSearch: "",
     activeChatId: null,
     loading: FetchStatusEnum.IDLE,
@@ -20,7 +21,22 @@ const myBidsSlice = createSlice({
                 state.chats = action.payload;
             },
             searchChats(state, action: PayloadAction<string>) {
-                state.chats = state.chats.filter((chat) => chat.topic.includes(action.payload));
+                const query = action.payload.trim().toLowerCase();
+
+                if (!query) {
+                    state.filteredChats = [];
+                    return;
+                }
+
+                const hasMatches = state.chats.some((chat) =>
+                    chat.topic.toLowerCase().includes(query)
+                );
+
+                state.filteredChats = hasMatches
+                    ? state.chats.filter((chat) =>
+                        chat.topic.toLowerCase().includes(query)
+                    )
+                    : null;
             },
             setActiveChat(state, action: PayloadAction<string>) {
                 state.activeChatId = action.payload;
