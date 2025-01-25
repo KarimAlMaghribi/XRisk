@@ -3,6 +3,7 @@ import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {ChatStatus} from "../../../types/ChatStatus";
 import {Chat, ChatMessage, MyBidsState} from "./types";
 import {createChat, fetchMyChats, fetchProviderChats, subscribeToMessages} from "./thunks";
+import {ChatSort} from "../../../components/chat/chats-list";
 
 const initialState: MyBidsState = {
     chats: [],
@@ -50,6 +51,23 @@ const myBidsSlice = createSlice({
             },
             setMessages(state, action: PayloadAction<ChatMessage[]>) {
                 state.activeMessages = action.payload;
+            },
+            setChatSort(state, action: PayloadAction<ChatSort>) {
+                const sortChats = (chats: Chat[], isLatest: boolean) => {
+                    chats.sort((a, b) => {
+                        const dateA = new Date(a.created).getTime();
+                        const dateB = new Date(b.created).getTime();
+                        return isLatest ? dateB - dateA : dateA - dateB;
+                    });
+                };
+
+                const isLatest = action.payload === ChatSort.LATEST;
+
+                if (state.filteredChats && state.filteredChats.length > 0) {
+                    sortChats(state.filteredChats, isLatest);
+                } else {
+                    sortChats(state.chats, isLatest);
+                }
             }
         },
         extraReducers: (builder) => {
@@ -86,7 +104,11 @@ const myBidsSlice = createSlice({
                 })
                 .addCase(fetchProviderChats.fulfilled, (state, action) => {
                     state.loading = FetchStatusEnum.SUCCEEDED;
-                    state.chats = action.payload;
+                    state.chats = action.payload.sort((a, b) => {
+                        const dateA = new Date(a.created).getTime();
+                        const dateB = new Date(b.created).getTime();
+                        return dateB - dateA;
+                    });
                 })
                 .addCase(fetchProviderChats.rejected, (state, action) => {
                     state.loading = FetchStatusEnum.FAILED;
@@ -98,7 +120,11 @@ const myBidsSlice = createSlice({
                 })
                 .addCase(fetchMyChats.fulfilled, (state, action) => {
                     state.loading = FetchStatusEnum.SUCCEEDED;
-                    state.chats = action.payload;
+                    state.chats = action.payload.sort((a, b) => {
+                        const dateA = new Date(a.created).getTime();
+                        const dateB = new Date(b.created).getTime();
+                        return dateB - dateA;
+                    });
                 })
                 .addCase(fetchMyChats.rejected, (state, action) => {
                     state.loading = FetchStatusEnum.FAILED;
@@ -108,5 +134,5 @@ const myBidsSlice = createSlice({
     }
 );
 
-export const {setChats, searchChats, setActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;
+export const {setChats,setChatSort, searchChats, setActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;
 export default myBidsSlice.reducer;

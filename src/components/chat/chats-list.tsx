@@ -9,7 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Scrollbar from "./scrollbar";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {useDispatch, useSelector} from "react-redux";
-import {setActiveChat} from "../../store/slices/my-bids/reducers";
+import {setActiveChat, setChatSort} from "../../store/slices/my-bids/reducers";
 import {AppDispatch} from "../../store/store";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {formatLastActivity} from "./utils";
@@ -21,7 +21,10 @@ import {
     selectFilteredChats
 } from "../../store/slices/my-bids/selectors";
 
-
+export enum ChatSort {
+    LATEST = 'LATEST',
+    OLDEST = 'OLDEST',
+}
 
 export const ChatsList = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -38,6 +41,10 @@ export const ChatsList = () => {
 
         dispatch(setActiveChat(chatId));
     };
+
+    const handleSetChatSort = (sort: ChatSort) => {
+        dispatch(setChatSort(sort))
+    }
 
     const handleClose = () => setAnchorEl(null);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
@@ -62,9 +69,8 @@ export const ChatsList = () => {
                     MenuListProps={{
                         'aria-labelledby': 'basic-button',
                     }}>
-                    <MenuItem onClick={handleClose}>Letzte Chats</MenuItem>
-                    <MenuItem onClick={handleClose}>Ungelesene Chats</MenuItem>
-                    <MenuItem onClick={handleClose}>Längste Chats</MenuItem>
+                    <MenuItem onClick={() => handleSetChatSort(ChatSort.LATEST)}>Neuste Chats</MenuItem>
+                    <MenuItem onClick={() => handleSetChatSort(ChatSort.OLDEST)}>Älteste Chats</MenuItem>
                 </Menu>
             </Box>
             <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '600px' }}>
