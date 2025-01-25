@@ -44,9 +44,9 @@ export const ChatSender = () => {
         setAnchorEl(null);
     };
 
-    const onEmojiClick = (_event: any, emojiObject: any) => {
+    const onEmojiClick = (emojiObject: any) => {
         setChosenEmoji(emojiObject);
-        setMsg(msg + emojiObject.emoji);
+        setMsg((prevMsg: string) => prevMsg + emojiObject.emoji);
     };
 
     const handleChatMsgChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,12 +174,6 @@ export const ChatSender = () => {
                     onClick={onAIChatMsgSubmit}
                     disabled={!msg || aiLoading}>
                     {aiLoading ? <CircularProgress size={24} color="inherit" /> : <AssistantIcon />}
-                </IconButton>
-                <IconButton>
-                    <PhotoIcon/>
-                </IconButton>
-                <IconButton>
-                    <AttachFileIcon/>
                 </IconButton>
             </form>
         </Box>
