@@ -34,6 +34,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
     const [gender, setGender] = React.useState<string>("");
     const [birthdate, setBirthdate] = React.useState<string>("");
     const [birthplace, setBirthplace] = React.useState<string>("");
+    const [aboutMe, setAboutMe] = React.useState<string>("");
     const [phone, setPhone] = React.useState<string>("");
     const [imageFile, setImageFile] = React.useState<File | null>(null);
     const [imagePath, setImagePath] = React.useState<string | null>(null);
@@ -57,6 +58,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
         setBirthdate(userProfile.profile.birthdate || "");
         setBirthplace(userProfile.profile.birthplace || "");
         setPhone(userProfile.profile.phone || "");
+        setAboutMe(userProfile.profile.aboutMe || "");
     }, [userProfile]);
 
     const handleFileUpload = async () => {
@@ -91,6 +93,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
             dispatch(
                 updateProfile({
+                    imagePath: imagePath || userProfile.profile.imagePath,
                     name,
                     gender,
                     birthdate,
@@ -101,6 +104,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     number,
                     city,
                     zip,
+                    aboutMe,
                 })
             );
             props.handleClose();
@@ -123,6 +127,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
             open={props.show}
             PaperProps={{
                 sx: {
+                    maxHeight: "80%",
                     position: "absolute",
                     top: "10%",
                     margin: 0,
@@ -179,6 +184,21 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             renderInput={(params) => <TextField {...params} label="Geschlecht" variant="outlined" />}
                         />
                     </Grid2>
+                    <Grid2 size={{xs: 12}}>
+                        <TextField
+                            sx={{
+                                marginTop: "10px",
+                            }}
+                            rows={4}
+                            multiline
+                            variant="outlined"
+                            fullWidth
+                            label="Vorstellung"
+                            value={aboutMe}
+                            onChange={(e) => setAboutMe(e.target.value)}
+                        />
+                    </Grid2>
+
                     <Grid2 size={{ md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"

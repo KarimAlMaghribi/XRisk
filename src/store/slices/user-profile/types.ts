@@ -27,6 +27,7 @@ export interface ProfileInformation {
     number?: string;
     city?: string;
     zip?: string;
+    aboutMe?: string;
 }
 
 export interface UserProfile {
