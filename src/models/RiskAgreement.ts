@@ -1,16 +1,14 @@
-import {RiskStatus} from "../types/RiskStatus";
-import {Publisher} from "./Publisher";
-
 export interface RiskAgreement {
     id: string;
-    riskId: number;
-    riskTaker: number;
-    riskGiver: number;
-    chatroomId: number;
+    riskId: string;
+    riskTakerId: string;
+    riskGiverId: string;
     chatId: string;
-    typeOfRisk: string;
+    title: string;
+    type: string[];
     insuranceSum: number;
     costs: number;
-    timeFrame: string;
+    timeframe: string;
     evidence: string;
+    details: string;
 }

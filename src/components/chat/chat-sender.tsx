@@ -92,10 +92,15 @@ export const ChatSender = () => {
         const prompt: string = chatbot.getPrompt();
 
         const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: "gpt-4o",
             messages: [{role: "user", content: prompt}],
             stream: false,
-        });
+            max_tokens: 200,
+            temperature: 0.5,
+            top_p: 0.4,
+            presence_penalty: 0.4,
+            frequency_penalty: 0.0
+        }, { timeout: 60000 });
 
         const xRiskChatbotResponse: string = response.choices[0]?.message?.content || "";
 
