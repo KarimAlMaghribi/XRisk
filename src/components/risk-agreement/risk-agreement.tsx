@@ -70,9 +70,11 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
 
     const riskId = useSelector(selectRiskId);
     const risks = useSelector(selectRisks);
-    const risk: Risk | undefined = risks.find(risk => risk.id === riskId);
+    console.log('risks' + risks)
+    console.log('firstRiskId' + risks.at(0)?.id)
+    const risk: Risk | undefined = risks.find((risk) => risk.id === riskId);
     const riskTitle = risk?.name ? risk?.name : '';
-    const riskType = risk?.type ? risk.type : []; 
+    const riskType = risk?.type ? risk.type : [];
 
     //data extraction
 
@@ -89,13 +91,18 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
 
     const handleDataExtraction = async (e: any) => {
         const dataExtractionBot = new DataExtractionBot(risk, activeMessages);
-        const prompt: string = dataExtractionBot.getPrompt();
+        const promptMessages = dataExtractionBot.getMessages();
 
         const completion = await openai.beta.chat.completions.parse({
             model: "gpt-4o-mini",
-            messages: [{role: "user", content: prompt}],
+            messages: promptMessages,
             response_format: zodResponseFormat(DataSchema, "conversationData"),
             stream: false,
+            //max_tokens: 200,
+            temperature: 0.5,
+            top_p: 0.4,
+            presence_penalty: 0.4,
+            frequency_penalty: 0.0
           });
           
         const conversationData = completion.choices[0].message.parsed;
@@ -123,6 +130,14 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         }
 
         console.log(conversationData)
+    }
+
+    const handleTimeframeChange = (newTimeframe: string) => {
+        setTimeframe(newTimeframe);
+    }
+
+    const handleEvidenceChange = (newEvidence: string) => {
+        setEvidence(newEvidence);
     }
 
     const handleCostsChange = (newCosts: number) => {
@@ -228,6 +243,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     fullWidth
                     label="Zeitspanne"
                     value={timeframe}
+                    onChange={(event) => handleTimeframeChange(event.target.value)}
                     name="timeFrame"
                     id="timeFrame"
                 />
@@ -236,6 +252,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     fullWidth
                     label="Beweismittel"
                     value={evidence}
+                    onChange={(event) => handleEvidenceChange(event.target.value)}
                     name="evidence"
                     id="evidence"
                 />

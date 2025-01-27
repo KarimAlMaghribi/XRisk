@@ -2,6 +2,8 @@ import {Chat, MyBidsState} from "./types";
 import {RootState} from "../../store";
 
 export const selectChats = (state: { myBids: MyBidsState }) => state.myBids.chats;
+export const selectChatById = (state: RootState, id: string) => {
+    return state.myBids.chats.find(chat => chat.id === id) || null};
 export const selectActiveChat = (state: { myBids: MyBidsState }) => {
     return state.myBids.chats.find((chat) => chat.id === state.myBids.activeChatId);
 }
