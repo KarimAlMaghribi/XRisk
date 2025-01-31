@@ -87,13 +87,9 @@ export const ChatSender = () => {
     const onAIChatMsgSubmit = async (e: any) => {
         onChatMsgSubmit(e);
         setAILoading(true);
-        console.log('RISKID: ')
-        console.log(riskId)
         console.log('RISKS: ')
         console.log(risks)
         const risk: Risk | undefined = risks.find((risk) => risk.id === riskId)
-        console.log('RISK: ')
-        console.log(risk)
 
         const lastMessage: ChatMessage = {
             id: uuid(),

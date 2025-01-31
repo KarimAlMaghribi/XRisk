@@ -79,8 +79,6 @@ export class Chatbot {
         this.messages = [{role: "system", content: this.basePrompt}];
         this.enrichMessagesWithRiskInformation(risk)
         this.enrichMessagesWithRiskNegotiation(chatMessages)
-        console.log('MESSAGES:\n')
-        console.log(this.messages)
     }
  
     public getPrompt(): string {
@@ -109,7 +107,11 @@ export class Chatbot {
     }
     
     private enrichMessagesWithRiskNegotiation = (chatMessages: ChatMessage[]): void => {
-        chatMessages.forEach((chatMessage) => {
+        // sort by time of creation in ascending order
+        const sortedMessages = [...chatMessages].sort(
+            (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime()
+          );
+        sortedMessages.forEach((chatMessage) => {
             if (chatMessage.uid === 'xRiskChatbot'){
                 const content = "Absender: xRiskChatbot, Nachricht: " + chatMessage.content
                 this.messages.push({ role: "assistant", content: content });

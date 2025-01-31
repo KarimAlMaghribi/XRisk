@@ -22,7 +22,8 @@ export class DataExtractionBot {
             "costs : Die Kosten, die der Risikogeber dem Risikonehmer zahlt, damit dieser das Risiko versichert.\n"+                   
             "timeframe : Der Zeitraum der Versicherung.\n"+
             "evidence : Die Beweise, die der Risikogeber im Schadenfall vorlegen muss.\n"+
-            "details : Weitere Details, auf die sich beide Parteien geeinigt haben, die relevant zur Erstellung eines genauen Vertrags sind.\n"
+            "details : Weitere Details, auf die sich beide Parteien geeinigt haben, die relevant zur Erstellung eines genauen Vertrags sind.\\s\n" +
+            "Die extrahierten Informationen müssen präzise, formell und für einen Vertrag geeignet formuliert sein."
         this.messages = [{role: "system", content: this.basePrompt}];
         this.enrichMessagesWithRiskNegotiation(chatMessages)
     }
@@ -36,7 +37,10 @@ export class DataExtractionBot {
     }
 
     private enrichMessagesWithRiskNegotiation = (chatMessages: ChatMessage[]): void => {
-        chatMessages.forEach((chatMessage) => {
+        const sortedMessages = [...chatMessages].sort(
+            (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime()
+          );
+        sortedMessages.forEach((chatMessage) => {
             if (chatMessage.uid === 'xRiskChatbot'){
                 const content = "Absender: xRiskChatbot, Nachricht: " + chatMessage.content
                 this.messages.push({ role: "assistant", content: content });
