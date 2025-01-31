@@ -25,7 +25,6 @@ export class DataExtractionBot {
             "details : Weitere Details, auf die sich beide Parteien geeinigt haben, die relevant zur Erstellung eines genauen Vertrags sind.\n"
         this.messages = [{role: "system", content: this.basePrompt}];
         this.enrichMessagesWithRiskNegotiation(chatMessages)
-        console.log(this.messages)
     }
 
     public getPrompt(): string {
@@ -38,12 +37,12 @@ export class DataExtractionBot {
 
     private enrichMessagesWithRiskNegotiation = (chatMessages: ChatMessage[]): void => {
         chatMessages.forEach((chatMessage) => {
-            if (chatMessage.uid == 'xRiskChatbot'){
+            if (chatMessage.uid === 'xRiskChatbot'){
                 const content = "Absender: xRiskChatbot, Nachricht: " + chatMessage.content
                 this.messages.push({ role: "assistant", content: content });
             }
             else{
-                const content = "Absender: " + chatMessage.uid + ", Nachricht: " + chatMessage.content
+                const content = "Absender: " + chatMessage.name + ", Nachricht: " + chatMessage.content
                 this.messages.push({ role: "user", content: content });
             }
         });

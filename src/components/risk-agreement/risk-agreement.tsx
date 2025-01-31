@@ -55,23 +55,10 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const [insuranceSumRequiredError, setInsuranceSumRequiredError] = useState<boolean>(false);
     const [costsRequiredError, setCostsRequiredError] = useState<boolean>(false);
 
-
-    //useEffect(() => {
-    //    if (!title && !nameRequiredError) {
-    //        setNameRequiredError(true);
-    //    }
-//
-    //    if (title && nameRequiredError) {
-    //        setNameRequiredError(false);
-    //    }
-    //}, [title]);
-
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
 
     const riskId = useSelector(selectRiskId);
     const risks = useSelector(selectRisks);
-    console.log('risks' + risks)
-    console.log('firstRiskId' + risks.at(0)?.id)
     const risk: Risk | undefined = risks.find((risk) => risk.id === riskId);
     const riskTitle = risk?.name ? risk?.name : '';
     const riskType = risk?.type ? risk.type : [];
@@ -112,12 +99,11 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             return;
         }
 
-        // Set the extracted values into state
         if (conversationData.evidence) {
             setEvidence(conversationData.evidence);
         }
         if (conversationData.timeframe) {
-            setTimeframe(conversationData.timeframe); // Assuming "Zeitspanne" corresponds to evidence
+            setTimeframe(conversationData.timeframe);
         }
         if (conversationData.costs) {
             setCosts(Number(conversationData.costs));
@@ -128,8 +114,6 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         if (conversationData.details) {
             setRiskDetails(conversationData.details);
         }
-
-        console.log(conversationData)
     }
 
     const handleTimeframeChange = (newTimeframe: string) => {
