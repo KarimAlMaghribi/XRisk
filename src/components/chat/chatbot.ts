@@ -7,6 +7,7 @@ export class Chatbot {
     public messages: ChatCompletionMessageParam[];
  
     constructor(risk: Risk | undefined, chatMessages: ChatMessage[]) {
+        console.log(risk)
         this.basePrompt = "\"\"\"\n" +
             "# Kontext\n" +
             "Stell dir vor, du bist ein Chatbot (xRisk Chatbot). Deine Aufgabe ist es, eine Verhandlung zwischen zwei Parteien zu unterstützen:\n" +

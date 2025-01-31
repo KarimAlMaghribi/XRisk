@@ -12,6 +12,7 @@ import {auth} from "../../firebase_config";
 import {checkUserProfileWithGoogle, fetchUserProfile} from "../../store/slices/user-profile/thunks";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
+import { fetchRisks } from "../../store/slices/risks/thunks";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -28,6 +29,7 @@ export const SignIn = () => {
     const signIn = async () => {
         const user = await signInWithEmail(email, password);
         dispatch(fetchUserProfile())
+        dispatch(fetchRisks())
 
         if (user?.refreshToken) {
             navigate(`/${ROUTES.MY_RISKS}`);
