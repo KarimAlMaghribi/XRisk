@@ -78,6 +78,7 @@ export const ChatSender = () => {
             content: msg,
             read: false
         }
+        console.log(newMessage)
 
         dispatch(sendMessage({chatId: activeChatId, message: newMessage}));
         setMsg('');
@@ -87,7 +88,7 @@ export const ChatSender = () => {
         onChatMsgSubmit(e);
         setAILoading(true);
 
-        const risk: Risk | undefined = risks.find(risk => risk.id === riskId)
+        const risk: Risk | undefined = risks.find((risk) => risk.id === riskId)
         const chatbot = new Chatbot(risk, activeMessages);
         const prompt: string = chatbot.getPrompt();
 

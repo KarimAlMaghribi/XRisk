@@ -125,6 +125,7 @@ export const sendMessage = createAsyncThunk<
             const newMessage: ChatMessage = {
                 ...message,
                 id: messageRef.id,
+                name: message.name,
                 created: new Date().toISOString(),
             };
             await setDoc(messageRef, newMessage);
