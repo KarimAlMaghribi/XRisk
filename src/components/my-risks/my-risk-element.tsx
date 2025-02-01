@@ -7,7 +7,7 @@ import SendIcon from "@mui/icons-material/Send";
 import EditIcon from "@mui/icons-material/Edit";
 import {deleteMyRisk, updateMyRisk} from "../../store/slices/my-risks/thunks";
 import DeleteIcon from "@mui/icons-material/Delete";
-import React from "react";
+import React, {useEffect} from "react";
 import {Risk} from "../../models/Risk";
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
@@ -23,12 +23,38 @@ export interface MyRiskElementProps {
 export const MyRiskElement = (props: MyRiskElementProps) => {
     const user: UserProfile = useSelector(selectUserProfile);
     const dispatch: AppDispatch = useDispatch();
+    const [noAddressError, setNoAddressError] = React.useState(false);
+    const [noPhoneError, setNoPhoneError] = React.useState(false);
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
+
+    useEffect(() => {
+        if (noAddressError) {
+            alert("Bitte vervollständigen Sie Ihre Adresse in Ihrem Profil, um ein Risiko zu veröffentlichen.");
+            setNoAddressError(false);
+            return;
+        }
+
+        if (noPhoneError) {
+            alert("Bitte vervollständigen Sie Ihre Telefonnummer in Ihrem Profil, um ein Risiko zu veröffentlichen.");
+            setNoPhoneError(false);
+            return;
+        }
+    }, [noAddressError, noPhoneError]);
 
     const handlePublish = (): void => {
         if (!user || !user.id) {
             console.error("User not authenticated or UID missing:", user.profile.name);
             alert("Konnte Risiko nicht veröffentlichen, es gab Probleme mit der Authentifizierung.");
+            return;
+        }
+
+        if (!user.profile.street || !user.profile.number || !user.profile.zip || !user.profile.city) {
+            setNoAddressError(true);
+            return;
+        }
+
+        if (!user.profile.phone) {
+            setNoPhoneError(true);
             return;
         }
 
@@ -38,13 +64,15 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
                 publisher: {
                     name: user.profile.name,
                     imagePath: user.profile.imagePath,
-                    uid: user.id
+                    uid: user.id,
+                    address: `${user.profile.street} ${user.profile.number}, ${user.profile.zip} ${user.profile.city}`,
+                    description: user.profile.aboutMe || "- Nutzer hat noch keine Beschreibung hinzugefügt -",
+                    email: user.profile.email,
+                    phoneNumber: user.profile.phone
                 },
                 status: RiskStatusEnum.PUBLISHED,
                 publishedAt: new Date().toISOString()
             }
-
-            console.log(riskToPublish);
 
             dispatch(updateMyRisk(riskToPublish))
             dispatch(addRisk(riskToPublish))

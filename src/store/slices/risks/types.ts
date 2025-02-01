@@ -6,6 +6,7 @@ import {FetchStatus} from "../../../types/FetchStatus";
 export enum ActionTypes {
     FETCH_RISKS = "risks/fetchRisks",
     ADD_RISK = "risks/addRisk",
+    UPDATE_RISK = "risks/updateRisk",
     DELETE_RISK = "risk/deleteRisk",
     FETCH_RISK_TYPES = "risks/fetchRiskTypes",
     ADD_RISK_TYPE = "risks/addRiskType"

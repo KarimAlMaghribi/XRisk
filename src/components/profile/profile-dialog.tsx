@@ -10,11 +10,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {updateImagePath, updateProfile} from "../../store/slices/user-profile/thunks";
 import {selectUserProfile} from "../../store/slices/user-profile/selectors";
-import {UserProfile} from "../../store/slices/user-profile/types";
+import {ProfileInformation, UserProfile} from "../../store/slices/user-profile/types";
 import {Countries} from "./countries";
 import Box from "@mui/material/Box";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import {updateRisk} from "../../store/slices/risks/thunks";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -107,6 +108,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     aboutMe,
                 })
             );
+
             props.handleClose();
         } catch (error) {
             console.error("Error saving profile:", error);

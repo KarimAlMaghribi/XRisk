@@ -1,6 +1,6 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {ActionTypes} from "./types";
-import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, where} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, updateDoc, where} from "firebase/firestore";
 import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
@@ -124,6 +124,46 @@ export const addRisk = createAsyncThunk(
         }
     }
 )
+
+export const updateRisk = createAsyncThunk(
+    ActionTypes.UPDATE_RISK,
+    async (riskToUpdate: Risk, { rejectWithValue }) => {
+        try {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const riskQuery = query(
+                risksCollection,
+                where("uid", "==", user.uid),
+                where("id", "==", riskToUpdate.id)
+            );
+
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return rejectWithValue("Risk not found");
+            }
+
+            const riskDocRef = riskDocs.docs[0].ref;
+
+            await updateDoc(riskDocRef, {
+                ...riskToUpdate,
+                updatedAt: new Date().toISOString(),
+            });
+
+            console.log("Updated risk-overview:", riskToUpdate.id);
+
+            return riskToUpdate;
+        } catch (error) {
+            console.error("Error updating risk-overview:", error);
+            return rejectWithValue("Failed to update risk-overview due to permissions or other error");
+        }
+    }
+);
 
 export const deleteRisk = createAsyncThunk(
     ActionTypes.DELETE_RISK,
