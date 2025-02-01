@@ -10,13 +10,8 @@ import { UserCredential, User } from "firebase/auth";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 
 export const signInWithGoogle = async (): Promise<User> => {
-    try {
-        const result: UserCredential = await signInWithPopup(auth, googleAuthProvider);
-        return result.user;
-    } catch (error) {
-        console.error("Fehler bei der Google-Anmeldung:", (error as Error).message);
-        throw error;
-    }
+    const result: UserCredential = await signInWithPopup(auth, googleAuthProvider);
+    return result.user;
 };
 
 export const signOutUser = async () => {
@@ -42,13 +37,8 @@ export const signUpWithEmail = async (email: string, password: string) => {
 };
 
 export const signInWithEmail = async (email: string, password: string) => {
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        return userCredential.user;
-    } catch (error) {
-        console.error(error);
-        alert(error)
-    }
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
 };
 
 export const saveInStorage = async (path: string, file: File | null): Promise<string | null> => {

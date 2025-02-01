@@ -12,12 +12,14 @@ import {auth} from "../../firebase_config";
 import {checkUserProfileWithGoogle, fetchUserProfile} from "../../store/slices/user-profile/thunks";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
+import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
+    const { showSnackbar } = useSnackbarContext();
 
     useEffect(() => {
         if (auth.currentUser) {
@@ -26,21 +28,33 @@ export const SignIn = () => {
     }, [])
 
     const signIn = async () => {
-        const user = await signInWithEmail(email, password);
-        dispatch(fetchUserProfile())
+        try {
+            const user = await signInWithEmail(email, password);
 
-        if (user?.refreshToken) {
-            navigate(`/${ROUTES.MY_RISKS}`);
+            dispatch(fetchUserProfile())
+
+            if (user?.refreshToken) {
+                navigate(`/${ROUTES.MY_RISKS}`);
+            }
+        } catch (error) {
+            console.error(error)
+            showSnackbar("Login fehlgeschlagen!", "Email oder Passwort sind falsch.", { vertical: "top", horizontal: "center" }, "error")
         }
     }
 
     const signInGoogle = async () => {
-        const user = await signInWithGoogle();
-        dispatch(checkUserProfileWithGoogle(user))
+        try {
+            const user = await signInWithGoogle();
+            dispatch(checkUserProfileWithGoogle(user))
 
-        if (user?.refreshToken) {
-            navigate(`/${ROUTES.MY_RISKS}`);
+            if (user?.refreshToken) {
+                navigate(`/${ROUTES.MY_RISKS}`);
+            }
+        } catch (error) {
+            console.error(error)
+            showSnackbar("Login fehlgeschlagen!", "Google konnte deine Anmeldedaten nicht verifizieren.", { vertical: "top", horizontal: "center" }, "error")
         }
+
     }
 
     return (
@@ -106,15 +120,16 @@ export const SignIn = () => {
                                 </Grid>
 
                                 <Grid size={12} textAlign="center">
-                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth
-                                            onClick={signIn}>
+                                    <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth onClick={signIn}>
                                         Anmelden
                                     </Button>
                                 </Grid>
 
-                                <Divider style={{marginTop: "10px", marginBottom: "10px"}}><Typography
-                                    variant="subtitle2" color="textSecondary">ODER LOGGE DICH EIN
-                                    MIT</Typography></Divider>
+                                <Divider style={{marginTop: "10px", marginBottom: "10px"}}>
+                                    <Typography variant="subtitle2" color="textSecondary">
+                                        ODER LOGGE DICH EIN MIT
+                                    </Typography>
+                                </Divider>
 
                                 <Button
                                     variant="outlined"
