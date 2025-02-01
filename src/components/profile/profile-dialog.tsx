@@ -1,21 +1,29 @@
+// ProfileDialog.tsx
 import Dialog from "@mui/material/Dialog";
-import React, {useEffect} from "react";
-import {Autocomplete, DialogActions, DialogContent, DialogTitle, Divider, Grid2, TextField} from "@mui/material";
-import Typography from "@mui/material/Typography";
-import {ProfileAvatar} from "./profile-avatar";
-import Button from "@mui/material/Button";
-import {saveInStorage} from "../../firebase/firebase-service";
-import {auth} from "../../firebase_config";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "../../store/store";
-import {updateImagePath, updateProfile} from "../../store/slices/user-profile/thunks";
-import {selectUserProfile} from "../../store/slices/user-profile/selectors";
-import {ProfileInformation, UserProfile} from "../../store/slices/user-profile/types";
-import {Countries} from "./countries";
-import Box from "@mui/material/Box";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import {updateRisk} from "../../store/slices/risks/thunks";
+import React, { useEffect } from "react";
+import {
+    Autocomplete,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    Grid2,
+    TextField,
+    Typography,
+    Box,
+    Snackbar,
+    Alert,
+    Button,
+} from "@mui/material";
+import { ProfileAvatar } from "./profile-avatar";
+import { saveInStorage } from "../../firebase/firebase-service";
+import { auth } from "../../firebase_config";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { updateImagePath, updateProfile } from "../../store/slices/user-profile/thunks";
+import { selectUserProfile } from "../../store/slices/user-profile/selectors";
+import { UserProfile } from "../../store/slices/user-profile/types";
+import { Countries } from "./countries";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -25,8 +33,8 @@ export interface ProfileDialogProps {
 export const ProfileDialog = (props: ProfileDialogProps) => {
     const dispatch: AppDispatch = useDispatch();
     const userProfile: UserProfile = useSelector(selectUserProfile);
-    const [name, setName] = React.useState<string>();
-    const [email, setEmail] = React.useState<string>();
+    const [name, setName] = React.useState<string>("");
+    const [email, setEmail] = React.useState<string>("");
     const [country, setCountry] = React.useState<string>("");
     const [street, setStreet] = React.useState<string>("");
     const [number, setNumber] = React.useState<string>("");
@@ -47,6 +55,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
     const handleSnackbarClose = () => setSnackbarOpen(false);
 
+    // Populate state from the user profile
     useEffect(() => {
         setName(userProfile.profile.name);
         setEmail(userProfile.profile.email);
@@ -62,36 +71,43 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
         setAboutMe(userProfile.profile.aboutMe || "");
     }, [userProfile]);
 
-    const handleFileUpload = async () => {
-        if (!imageFile) {
-            console.error("No file provided for upload!");
-            return;
+    // Immediately upload the file when imageFile changes
+    useEffect(() => {
+        if (imageFile) {
+            (async () => {
+                try {
+                    const downloadUrl = await saveInStorage(
+                        `imgs/profile/${auth.currentUser?.uid}`,
+                        imageFile
+                    );
+
+                    if (!downloadUrl) {
+                        console.error("Error uploading file! Could not get download URL!");
+                        setSnackbarMessage("Fehler beim Hochladen des Bildes!");
+                        setSnackbarSeverity("error");
+                        setSnackbarOpen(true);
+                        return;
+                    }
+
+                    dispatch(updateImagePath(downloadUrl));
+                    setImagePath(downloadUrl);
+                } catch (error) {
+                    console.error("File upload failed:", error);
+                    const errorMsg = error instanceof Error ? error.message : "Unbekannter Fehler";
+                    setSnackbarMessage("Fehler beim Hochladen: " + errorMsg);
+                    setSnackbarSeverity("error");
+                    setSnackbarOpen(true);
+                } finally {
+                    // Clear the file state after upload
+                    setImageFile(null);
+                }
+            })();
         }
-
-        try {
-            const downloadUrl = await saveInStorage(
-                `profileImages/${auth.currentUser?.uid}`,
-                imageFile
-            );
-
-            if (!downloadUrl) {
-                console.error("Error uploading file! Could not find download URL!");
-                return;
-            }
-
-            dispatch(updateImagePath(downloadUrl));
-            setImagePath(downloadUrl);
-        } catch (error) {
-            console.error("File upload failed:", error);
-        }
-    };
+    }, [imageFile, dispatch]);
 
     const handleSave = async () => {
         try {
-            if (imageFile) {
-                await handleFileUpload();
-            }
-
+            // Update profile using the permanent imagePath (or fallback to stored imagePath)
             dispatch(
                 updateProfile({
                     imagePath: imagePath || userProfile.profile.imagePath,
@@ -108,20 +124,19 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     aboutMe,
                 })
             );
-
             props.handleClose();
         } catch (error) {
             console.error("Error saving profile:", error);
+            const errorMsg = error instanceof Error ? error.message : "Unbekannter Fehler";
+            setSnackbarMessage("Fehler beim Speichern: " + errorMsg);
+            setSnackbarSeverity("error");
+            setSnackbarOpen(true);
         }
     };
 
     const handleCancel = () => {
-        if (imagePath && imagePath.startsWith("blob:")) {
-            URL.revokeObjectURL(imagePath);
-        }
-        setImageFile(null);
         props.handleClose();
-    }
+    };
 
     return (
         <Dialog
@@ -134,19 +149,22 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     top: "10%",
                     margin: 0,
                     width: "50%",
-                    maxWidth: "none"
+                    maxWidth: "none",
                 },
-            }}>
+            }}
+        >
             <DialogTitle>
                 <Typography variant="h6">Profil</Typography>
-                <Typography variant="subtitle1">Passe deine Profilinformationen an, die du auf der Webseite präsentierst</Typography>
+                <Typography variant="subtitle1">
+                    Passe deine Profilinformationen an, die du in der Risikobörse präsentierst
+                </Typography>
             </DialogTitle>
 
-            <Divider/>
+            <Divider />
 
-            <DialogContent sx={{marginTop: "20px"}}>
+            <DialogContent sx={{ marginTop: "20px" }}>
                 <Grid2 container spacing={2}>
-                    <Grid2 size={{md: 12, lg: 12}}>
+                    <Grid2 size={{ md: 12, lg: 12 }}>
                         <ProfileAvatar
                             imagePath={imagePath || userProfile.profile.imagePath || ""}
                             setImagePath={setImagePath}
@@ -154,7 +172,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             setFile={setImageFile}
                         />
                     </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    <Grid2 size={{ md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -163,7 +181,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             onChange={(e) => setName(e.target.value)}
                         />
                     </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    <Grid2 size={{ md: 12, lg: 6 }}>
                         <TextField
                             disabled
                             variant="outlined"
@@ -173,24 +191,24 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    <Grid2 size={{ md: 12, lg: 6 }}>
                         <Countries value={country} setValue={setCountry} />
                     </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    <Grid2 size={{ md: 12, lg: 6 }}>
                         <Autocomplete
                             value={gender}
                             onChange={(event, newValue) => {
                                 newValue && setGender(newValue);
                             }}
                             options={["Männlich", "Weiblich", "Divers"]}
-                            renderInput={(params) => <TextField {...params} label="Geschlecht" variant="outlined" />}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Geschlecht" variant="outlined" />
+                            )}
                         />
                     </Grid2>
-                    <Grid2 size={{xs: 12}}>
+                    <Grid2 size={{ xs: 12 }}>
                         <TextField
-                            sx={{
-                                marginTop: "10px",
-                            }}
+                            sx={{ marginTop: "10px" }}
                             rows={4}
                             multiline
                             variant="outlined"
@@ -200,7 +218,6 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             onChange={(e) => setAboutMe(e.target.value)}
                         />
                     </Grid2>
-
                     <Grid2 size={{ md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
@@ -209,26 +226,30 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             type="date"
                             value={birthdate}
                             error={birthdateError}
-                            helperText={birthdateError ? "Das Alter darf nicht unter 18 Jahren liegen!" : ""}
+                            helperText={
+                                birthdateError ? "Das Alter darf nicht unter 18 Jahren liegen!" : ""
+                            }
                             onChange={(e) => {
                                 const selectedDate = new Date(e.target.value);
                                 const currentDate = new Date();
                                 const age = currentDate.getFullYear() - selectedDate.getFullYear();
 
-                                if (age < 18 || (age === 18 && currentDate < new Date(selectedDate.setFullYear(selectedDate.getFullYear() + 18)))) {
+                                if (
+                                    age < 18 ||
+                                    (age === 18 &&
+                                        currentDate < new Date(selectedDate.setFullYear(selectedDate.getFullYear() + 18)))
+                                ) {
                                     setBirthdateError(true);
                                     setSnackbarMessage("Das Alter darf nicht unter 18 Jahren liegen!");
                                     setSnackbarSeverity("error");
                                     setSnackbarOpen(true);
-                                    setBirthdate(""); // Zurücksetzen bei ungültigem Alter
+                                    setBirthdate(""); // Reset bei ungültigem Alter
                                 } else {
                                     setBirthdateError(false);
                                     setBirthdate(e.target.value);
                                 }
                             }}
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
+                            InputLabelProps={{ shrink: true }}
                         />
                     </Grid2>
                     <Grid2 size={{ md: 12, lg: 6 }}>
@@ -237,8 +258,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             fullWidth
                             label="Telefonnummer"
                             value={phone}
-                            onChange={(e) => {setPhone(e.target.value);}
-                            }
+                            onChange={(e) => setPhone(e.target.value)}
                         />
                     </Grid2>
                     <Grid2 size={{ md: 12, lg: 12 }}>
@@ -288,21 +308,23 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                 </Grid2>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCancel} variant="outlined">Abbrechen</Button>
-                <Button onClick={handleSave} variant="contained">Speichern</Button>
+                <Button onClick={handleCancel} variant="outlined">
+                    Abbrechen
+                </Button>
+                <Button onClick={handleSave} variant="contained">
+                    Speichern
+                </Button>
             </DialogActions>
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={4000}
                 onClose={handleSnackbarClose}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity={snackbarSeverity}
-                    sx={{ width: "100%" }}>
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
         </Dialog>
-    )
-}
+    );
+};

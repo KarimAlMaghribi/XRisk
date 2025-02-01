@@ -60,7 +60,6 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
                 autoHideDuration={3000}
                 anchorOrigin={snackbarOrigin}>
                 <Alert severity={severity} onClose={handleClose}>
-                    {/* Hier optional ein Titel */}
                     <AlertTitle>{snackbarTitle}</AlertTitle>
                     {snackbarMessage}
                 </Alert>

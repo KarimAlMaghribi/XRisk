@@ -15,6 +15,7 @@ import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import {addRisk, deleteRisk} from "../../store/slices/risks/thunks";
 import {selectUserProfile} from "../../store/slices/user-profile/selectors";
 import {UserProfile} from "../../store/slices/user-profile/types";
+import {useSnackbarContext} from "../snackbar/custom-snackbar";
 
 export interface MyRiskElementProps {
     risk: Risk;
@@ -26,16 +27,17 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
     const [noAddressError, setNoAddressError] = React.useState(false);
     const [noPhoneError, setNoPhoneError] = React.useState(false);
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
+    const {showSnackbar} = useSnackbarContext();
 
     useEffect(() => {
         if (noAddressError) {
-            alert("Bitte vervollständigen Sie Ihre Adresse in Ihrem Profil, um ein Risiko zu veröffentlichen.");
+            showSnackbar("Adresse fehlt!", "Bitte vervollständige deine Adresse in deinem Profil, um ein Risiko zu veröffentlichen.", {vertical: "top", horizontal: "center"}, "warning");
             setNoAddressError(false);
             return;
         }
 
         if (noPhoneError) {
-            alert("Bitte vervollständigen Sie Ihre Telefonnummer in Ihrem Profil, um ein Risiko zu veröffentlichen.");
+            showSnackbar("Telefonnummer fehlt!", "Bitte vervollständigen deine Telefonnummer in deinem Profil, um ein Risiko zu veröffentlichen.", {vertical: "top", horizontal: "center"}, "warning");
             setNoPhoneError(false);
             return;
         }
@@ -43,8 +45,8 @@ export const MyRiskElement = (props: MyRiskElementProps) => {
 
     const handlePublish = (): void => {
         if (!user || !user.id) {
-            console.error("User not authenticated or UID missing:", user.profile.name);
-            alert("Konnte Risiko nicht veröffentlichen, es gab Probleme mit der Authentifizierung.");
+            console.error("User not authenticated or UID missing:", user);
+            showSnackbar("Nutzer Id unbekannt!", "Risiko kann nicht veröffentlicht werden. Melde dich ab- und wieder an.", {vertical: "top", horizontal: "center"}, "error");
             return;
         }
 
