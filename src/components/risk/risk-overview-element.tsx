@@ -1,23 +1,22 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import React from "react";
-import {Risk} from "../../models/Risk";
-import {FetchStatus} from "../../types/FetchStatus";
+import { Risk } from "../../models/Risk";
+import { FetchStatus } from "../../types/FetchStatus";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import ModeIcon from '@mui/icons-material/Mode';
-import {AppDispatch} from "../../store/store";
-import {useDispatch, useSelector} from "react-redux";
-import {createChat} from "../../store/slices/my-bids/thunks";
-
-import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
-import {auth} from "../../firebase_config";
-import {useNavigate} from "react-router-dom";
-import {Chat} from "../../store/slices/my-bids/types";
-import {selectChats} from "../../store/slices/my-bids/selectors";
-import {setActiveChat} from "../../store/slices/my-bids/reducers";
+import { AppDispatch } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { createChat } from "../../store/slices/my-bids/thunks";
+import { ChatStatusEnum } from "../../enums/ChatStatus.enum";
+import { auth } from "../../firebase_config";
+import { useNavigate } from "react-router-dom";
+import { Chat } from "../../store/slices/my-bids/types";
+import { selectChats } from "../../store/slices/my-bids/selectors";
+import { setActiveChat } from "../../store/slices/my-bids/reducers";
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -28,11 +27,16 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const user = auth.currentUser;
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
-    const [expanded, setExpanded] = React.useState<string | false>(false);
+    const [expandedPanels, setExpandedPanels] = React.useState<string[]>([]);
+
     const chats: Chat[] = useSelector(selectChats);
 
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-        setExpanded(isExpanded ? panel : false);
+        if (isExpanded) {
+            setExpandedPanels((prev) => [...prev, panel]);
+        } else {
+            setExpandedPanels((prev) => prev.filter((p) => p !== panel));
+        }
     };
 
     const openBid = (riskIndex: number) => {
@@ -56,10 +60,14 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             return;
         }
 
-        const chatAlreadyExists = chats.some((chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid);
+        const chatAlreadyExists = chats.some(
+            (chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid
+        );
 
         if (chatAlreadyExists) {
-            const existingChat = chats.find((chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid);
+            const existingChat = chats.find(
+                (chat) => chat.riskId === selectedRisk.id && chat.riskTaker.uid === user.uid
+            );
 
             if (!existingChat) {
                 console.error("Chat already exists but could not be found:", selectedRisk, user);
@@ -90,7 +98,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
 
         dispatch(createChat(newChat));
         navigate(`/chat`);
-    }
+    };
 
     return (
         <React.Fragment>
@@ -98,25 +106,26 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                 props.risks && props.risks.map((risk: Risk, index) => (
                     <Accordion
                         key={risk.id ? risk.id : index}
-                        expanded={expanded === risk.id}
-                        onChange={handleChange(risk.id)}
-                        sx={{ marginBottom: 2, width: '100%' }}>
+                        expanded={expandedPanels.includes(risk.id!)}
+                        onChange={handleChange(risk.id!)}
+                        sx={{ marginBottom: 2, width: '100%', borderRadius: "20px" }}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
-                            id={`panel-header-${risk.id}`}>
+                            id={`panel-header-${risk.id}`}
+                        >
                             <Grid container size={12} spacing={2} alignItems="center">
                                 <Grid size={2}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer'}}>
+                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
                                         <b>{risk.name}</b>
                                     </Typography>
                                 </Grid>
 
                                 <Grid size={3}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer'}}>
-                                        <b>{risk.type}</b>
+                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
+                                        <b>{Array.isArray(risk.type) ? risk.type.join(", ") : risk.type}</b>
                                     </Typography>
                                 </Grid>
-                                <Grid size={3} sx={{marginLeft: "20px"}}>
+                                <Grid size={3} sx={{ marginLeft: "20px" }}>
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
                                         <b>{risk.value.toLocaleString()}€</b>
                                     </Typography>
@@ -128,7 +137,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                 </Grid>
                                 <Grid display="flex" justifyContent="center" alignItems="center" size={1}>
                                     <Tooltip title={risk.publisher && risk.publisher.name}>
-                                        <Avatar src={risk.publisher?.imagePath}/>
+                                        <Avatar src={risk.publisher?.imagePath} />
                                     </Tooltip>
                                 </Grid>
                             </Grid>
@@ -161,18 +170,21 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         <b>Wohnort: </b> {risk.publisher && risk.publisher.address}
                                     </Typography>
                                 </Grid>
-                                <Grid size={4} style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
+                                <Grid
+                                    size={4}
+                                    style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}
+                                >
                                     <Button
                                         disabled={risk.publisher?.uid === user?.uid}
                                         onClick={() => openBid(index)}
                                         variant="contained"
                                         endIcon={<ModeIcon />}
-                                        style={{maxHeight: "40px", height: "40px"}}>
+                                        style={{ maxHeight: "40px", height: "40px" }}
+                                    >
                                         Jetzt verhandeln
                                     </Button>
                                 </Grid>
                             </Grid>
-
                         </AccordionDetails>
                     </Accordion>
                 ))
