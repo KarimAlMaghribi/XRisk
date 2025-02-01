@@ -27,6 +27,7 @@ export interface Chat {
     riskTaker: {
         name?: string;
         uid?: string;
+        imagePath?: string;
     };
     lastMessage?: string;
     lastActivity: string;

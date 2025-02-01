@@ -14,7 +14,7 @@ import {ChatMessage} from "../../store/slices/my-bids/types";
 import {
     selectActiveChatId,
     selectActiveChatRiskProviderImagePath,
-    selectActiveMessages,
+    selectActiveMessages, selectOpposingImagePath,
     selectOtherChatMemberName
 } from "../../store/slices/my-bids/selectors";
 import {messagesUnsubscribe, subscribeToMessages} from "../../store/slices/my-bids/thunks";
@@ -27,6 +27,7 @@ export const ChatMessages = () => {
     const messages: ChatMessage[] = useSelector(selectActiveMessages);
     const riskProviderImage: string | undefined = useSelector(selectActiveChatRiskProviderImagePath);
     const userImage: string | undefined = useSelector(selectImagePath);
+    const otherChatMemberImagePath: string | undefined = useSelector(selectOpposingImagePath);
     const otherChatMemberName: string = useSelector((state: RootState) => selectOtherChatMemberName(state, uid));
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +66,7 @@ export const ChatMessages = () => {
                                                             <ListItemAvatar>
                                                                 <Avatar
                                                                     alt={otherChatMemberName}
-                                                                    src={message.uid === CHATBOT_UID ? Logo : riskProviderImage}
+                                                                    src={message.uid === CHATBOT_UID ? Logo : otherChatMemberImagePath}
                                                                     sx={{width: 40, height: 40}}
                                                                 />
                                                             </ListItemAvatar>

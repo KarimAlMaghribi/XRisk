@@ -8,16 +8,15 @@ import VideoChatIcon from '@mui/icons-material/VideoChat';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useSelector} from "react-redux";
-import {selectActiveChat, selectActiveChatId} from "../../store/slices/my-bids/selectors";
+import {selectActiveChat, selectActiveChatId, selectOpposingImagePath} from "../../store/slices/my-bids/selectors";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {MyRiskAgreementDialog} from "../risk-agreement/risk-agreement";
 import {Chat} from "../../store/slices/my-bids/types";
 
-
-
 export const ChatHeader = () => {
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
+    const opposingImagePath: string | undefined = useSelector(selectOpposingImagePath);
     const [openRiskAgreementCreationDialog, setOpenRiskAgreementCreationDialog] = React.useState(false);
 
     const handleClose = () => {
@@ -48,7 +47,10 @@ export const ChatHeader = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar alt={activeChat?.riskProvider?.name} src={activeChat?.riskProvider.imagePath} />
+                                    <Avatar
+                                        alt={activeChat?.riskProvider?.name}
+                                        src={opposingImagePath}
+                                    />
 
                                 </Badge>
                             </ListItemAvatar>

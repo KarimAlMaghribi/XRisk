@@ -18,7 +18,7 @@ import {
     selectActiveChatId,
     selectChats,
     selectChatsToDisplay,
-    selectFilteredChats
+    selectFilteredChats, selectOpposingImagePath
 } from "../../store/slices/my-bids/selectors";
 
 export enum ChatSort {
@@ -31,6 +31,7 @@ export const ChatsList = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const chats: Chat[] = useSelector(selectChatsToDisplay);
+    const opponentImagePath: string | undefined = useSelector(selectOpposingImagePath);
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -103,7 +104,7 @@ export const ChatsList = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar src={chat.riskProvider?.imagePath} sx={{ width: 42, height: 42 }} />
+                                    <Avatar src={opponentImagePath} sx={{ width: 42, height: 42 }} />
                                 </Badge>
                             </ListItemAvatar>
                             <ListItemText

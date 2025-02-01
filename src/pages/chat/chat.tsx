@@ -7,12 +7,16 @@ import {ChatHeader} from "../../components/chat/chat-header";
 import {ChatMessages} from "../../components/chat/chat-messages";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
 import {AppDispatch} from "../../store/store";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {ChatSender} from "../../components/chat/chat-sender";
+import {selectActiveChatId, selectChats} from "../../store/slices/my-bids/selectors";
+import {Chat as ChatModel} from "../../store/slices/my-bids/types";
 
 
 export const Chat = () => {
     const dispatch: AppDispatch = useDispatch();
+    const myChats: ChatModel[] = useSelector(selectChats);
+    const activeChatId: string | null = useSelector(selectActiveChatId);
 
     useEffect(() => {
         dispatch(fetchMyChats());
@@ -25,7 +29,9 @@ export const Chat = () => {
                 <Box flexGrow={1}>
                     <ChatHeader />
                     <ChatMessages />
-                    <ChatSender />
+                    {
+                        myChats.length > 0 && activeChatId && <ChatSender />
+                    }
                 </Box>
             </Card>
         </Container>

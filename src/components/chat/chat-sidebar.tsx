@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {searchChats} from "../../store/slices/my-bids/reducers";
 import {selectImagePath, selectMail, selectName} from "../../store/slices/user-profile/selectors";
+import {selectOpposingImagePath} from "../../store/slices/my-bids/selectors";
 
 const drawerWidth = 320;
 

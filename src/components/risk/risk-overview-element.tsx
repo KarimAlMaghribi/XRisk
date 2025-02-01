@@ -96,6 +96,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             riskTaker: {
                 name: user?.displayName || profileInfo.name,
                 uid: user.uid,
+                imagePath: profileInfo.imagePath || user.photoURL || ""
             },
         };
 
