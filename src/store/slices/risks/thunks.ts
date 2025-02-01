@@ -1,6 +1,6 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {ActionTypes} from "./types";
-import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, updateDoc, where} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, updateDoc, where, writeBatch} from "firebase/firestore";
 import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
@@ -198,6 +198,40 @@ export const deleteRisk = createAsyncThunk(
         } catch (error) {
             console.error("Error deleting risk-overview:", error);
             return rejectWithValue("Failed to delete risk-overview due to permissions or other error");
+        }
+    }
+);
+
+export const updateProviderImageOnAllMyRisks = createAsyncThunk(
+    ActionTypes.UPDATE_PROVIDER_IMAGE_ON_ALL_MY_RISKS,
+    async (imagePath: string, { rejectWithValue }) => {
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const riskQuery = query(risksCollection, where("uid", "==", user.uid));
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return rejectWithValue("No risks found");
+            }
+
+            const batch = writeBatch(db);
+
+            riskDocs.forEach((doc) => {
+                batch.update(doc.ref, { "publisher.imagePath": imagePath });
+            });
+
+            await batch.commit();
+
+            console.log("Updated provider image on all my risks");
+            return imagePath;
+        } catch (error: any) {
+            console.error("Error updating provider image on all my risks:", error);
+            return rejectWithValue("Failed to update provider image on all my risks");
         }
     }
 );

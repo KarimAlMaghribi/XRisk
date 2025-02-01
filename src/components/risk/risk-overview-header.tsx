@@ -42,7 +42,7 @@ export const RiskOverviewHeader = () => {
                 <Tooltip title="Zeitpunkt, an dem das Risiko...">
                     <Typography style={{cursor: "pointer"}} variant="button">Fällig am</Typography>
                 </Tooltip>
-                <SwapVertIcon  sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.DECLINATION_DATE)?.direction === SortDirectionEnum.ASC ? 'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.DECLINATION_DATE)}/>
+                <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.DECLINATION_DATE)?.direction === SortDirectionEnum.ASC ? 'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.DECLINATION_DATE)}/>
             </Grid>
             <Grid size={1} sx={{display: 'flex', alignItems: 'center'}}>
                 <Tooltip title="Person, die das Risiko erstellt und veröffentlicht hat">

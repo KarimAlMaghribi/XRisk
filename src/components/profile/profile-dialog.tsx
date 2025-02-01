@@ -24,6 +24,7 @@ import { updateImagePath, updateProfile } from "../../store/slices/user-profile/
 import { selectUserProfile } from "../../store/slices/user-profile/selectors";
 import { UserProfile } from "../../store/slices/user-profile/types";
 import { Countries } from "./countries";
+import {updateProviderImageOnAllMyRisks} from "../../store/slices/risks/thunks";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -107,7 +108,6 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
     const handleSave = async () => {
         try {
-            // Update profile using the permanent imagePath (or fallback to stored imagePath)
             dispatch(
                 updateProfile({
                     imagePath: imagePath || userProfile.profile.imagePath,
@@ -124,6 +124,9 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     aboutMe,
                 })
             );
+
+            dispatch(updateProviderImageOnAllMyRisks(imagePath || userProfile.profile.imagePath || ""));
+
             props.handleClose();
         } catch (error) {
             console.error("Error saving profile:", error);

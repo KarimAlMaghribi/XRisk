@@ -18,8 +18,8 @@ import {formatDate} from "../../utils/dateFormatter";
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const dispatch: AppDispatch = useDispatch();
-    const [sliderValue, setSliderValue] = useState<number | number[]>(props.value);
-    const [termValue, setTermValue] = useState<number | number[]>(props.remainingTerm);
+    const [sliderValue, setSliderValue] = useState<number[]>(props.value);
+    const [termValue, setTermValue] = useState<number[]>(props.remainingTerm);
     const filterTypes: string[] = useSelector(selectFilterTypes);
 
     const handleTypeChange = (type: string[]) => {
@@ -56,6 +56,12 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
         return d;
     };
 
+    const handleClearFilters = () => {
+        dispatch(clearFilters());
+        setSliderValue([0, 200000]);
+        setTermValue([0, 24]);
+    }
+
     return (
         <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={0}>
             <Typography variant="h6"><b>Filter</b></Typography>
@@ -90,12 +96,8 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
             </Box>
 
             <Box textAlign="center">
-                <Typography variant="caption" sx={{color: "grey"}}>
-                    {`${
-                        Array.isArray(sliderValue)
-                            ? `${sliderValue[0].toLocaleString("de-DE")}€ bis ${sliderValue[1].toLocaleString("de-DE")}€`
-                            : `${sliderValue.toLocaleString("de-DE")}€`
-                    }`}
+                <Typography variant="caption" sx={{ color: "grey" }}>
+                    {`${sliderValue[0].toLocaleString("de-DE")}€ bis ${sliderValue[1].toLocaleString("de-DE")}€`}
                 </Typography>
             </Box>
 
@@ -111,12 +113,12 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                     onChange={handleTermChange}
                     onChangeCommitted={handleTermChangeCommitted}
                     valueLabelDisplay="auto"
-                    min={1}
+                    min={0}
                     max={24}
                     marks={[
-                        {value: 1, label: '< 1 Monat'},
+                        {value: 0, label: '< 1 Monat'},
                         {value: 12, label: '1 Jahr'},
-                        {value: 24, label: '> 2 Jahre'},
+                        {value: 24, label: '2 Jahre'},
                     ]}
                 />
             </Box>
@@ -141,7 +143,8 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
 
             <Button
                 variant="outlined"
-                fullWidth onClick={() => dispatch(clearFilters())}>
+                fullWidth
+                onClick={handleClearFilters}>
                 Zurücksetzen
             </Button>
         </Paper>

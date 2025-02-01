@@ -19,6 +19,7 @@ import { selectChats } from "../../store/slices/my-bids/selectors";
 import { setActiveChat } from "../../store/slices/my-bids/reducers";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
+import { formatDate } from '../../utils/dateFormatter';
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -161,7 +162,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                 </Grid>
                                 <Grid size={2}>
                                     <Typography variant="subtitle1" sx={{ cursor: 'pointer' }}>
-                                        {new Date(risk.declinationDate).toLocaleDateString()}
+                                        {formatDate(new Date(risk.declinationDate))}
                                     </Typography>
                                 </Grid>
                                 <Grid  size={1} display="flex" justifyContent="center" alignItems="center">
