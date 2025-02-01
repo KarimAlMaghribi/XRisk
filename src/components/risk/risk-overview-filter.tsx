@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Paper, Typography} from "@mui/material";
+import {Box, Divider, Paper, Typography} from "@mui/material";
 import Slider from '@mui/material/Slider';
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {AppDispatch} from "../../store/store";
@@ -13,6 +13,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Button from "@mui/material/Button";
 import {RiskTypeSelector} from "../my-risks/risk-type-selector";
 import {selectFilterTypes} from "../../store/slices/risks/selectors";
+import {formatDate} from "../../utils/dateFormatter";
 
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
@@ -49,41 +50,100 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
         }
     };
 
+    const addMonths = (date: Date, months: number) => {
+        const d = new Date(date);
+        d.setMonth(d.getMonth() + months);
+        return d;
+    };
+
     return (
-        <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={2}>
-            <Typography variant="h6">Filter</Typography>
+        <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={0}>
+            <Typography variant="h6"><b>Filter</b></Typography>
+            <Typography variant="caption">Filter die Risiken nach deinen Wünschen und Interessen</Typography>
+
+            <br/>
+
             <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} textFieldVariant="standard" label="Risikoart"/>
-            <Typography variant="button">Nennwert</Typography>
-            <Slider
-                value={sliderValue}
-                onChange={handleValueChange}
-                onChangeCommitted={handleValueChangeCommitted}
-                min={0}
-                max={200000}
-                step={1}
-                marks={[
-                    {value: 0, label: '0€'},
-                    {value: 75000, label: '75.000€'},
-                    {value: 135000, label: '135.000€'},
-                    {value: 200000, label: '200.000€'}
-                ]}
-                valueLabelDisplay="auto"
-            />
-            <Typography variant="button">Restlaufzeit</Typography>
-            <Slider
-                value={termValue}
-                onChange={handleTermChange}
-                onChangeCommitted={handleTermChangeCommitted}
-                valueLabelDisplay="auto"
-                min={1}
-                max={24}
-                marks={[
-                    {value: 1, label: '< 1 Monat'},
-                    {value: 12, label: '1 Jahr'},
-                    {value: 24, label: '> 2 Jahre'},
-                ]}
-            />
-            <Button variant="outlined" fullWidth onClick={() => dispatch(clearFilters())}>Zurücksetzen</Button>
+
+            <br/>
+
+            <Typography variant="body1">Nennwert</Typography>
+            <Typography variant="caption">Absicherungssumme des Risikos</Typography>
+
+            <Box margin="15px">
+                <Slider
+                    value={sliderValue}
+                    onChange={handleValueChange}
+                    onChangeCommitted={handleValueChangeCommitted}
+                    min={0}
+                    max={200000}
+                    step={100}
+                    marks={[
+                        {value: 0, label: '0€'},
+                        {value: 75000, label: '75.000€'},
+                        {value: 135000, label: '135.000€'},
+                        {value: 200000, label: '200.000€'}
+                    ]}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(value) => `${value.toLocaleString("de-DE")}€`}
+                />
+            </Box>
+
+            <Box textAlign="center">
+                <Typography variant="caption" sx={{color: "grey"}}>
+                    {`${
+                        Array.isArray(sliderValue)
+                            ? `${sliderValue[0].toLocaleString("de-DE")}€ bis ${sliderValue[1].toLocaleString("de-DE")}€`
+                            : `${sliderValue.toLocaleString("de-DE")}€`
+                    }`}
+                </Typography>
+            </Box>
+
+
+            <br/>
+
+            <Typography variant="body1">Restlaufzeit</Typography>
+            <Typography variant="caption">Zeitpunkt zu dem das Risiko verfällt</Typography>
+
+            <Box margin="15px">
+                <Slider
+                    value={termValue}
+                    onChange={handleTermChange}
+                    onChangeCommitted={handleTermChangeCommitted}
+                    valueLabelDisplay="auto"
+                    min={1}
+                    max={24}
+                    marks={[
+                        {value: 1, label: '< 1 Monat'},
+                        {value: 12, label: '1 Jahr'},
+                        {value: 24, label: '> 2 Jahre'},
+                    ]}
+                />
+            </Box>
+
+            <Box textAlign="center">
+                <Typography variant="caption" sx={{ color: "grey" }}>
+                    {`vom ${
+                        Array.isArray(termValue)
+                            ? formatDate(addMonths(new Date(), termValue[0]))
+                            : formatDate(new Date())
+                    } bis zum ${
+                        Array.isArray(termValue)
+                            ? formatDate(addMonths(new Date(), termValue[1]))
+                            : formatDate(addMonths(new Date(), termValue))
+                    }`}
+                </Typography>
+            </Box>
+
+            <br />
+            <Divider sx={{margin: 0, padding: 0}}/>
+            <br />
+
+            <Button
+                variant="outlined"
+                fullWidth onClick={() => dispatch(clearFilters())}>
+                Zurücksetzen
+            </Button>
         </Paper>
     )
 }

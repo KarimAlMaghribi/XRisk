@@ -2,8 +2,6 @@ import {Chat, MyBidsState} from "./types";
 import {RootState} from "../../store";
 import {auth} from "../../../firebase_config";
 
-const uid = auth.currentUser?.uid;
-
 export const selectChats = (state: { myBids: MyBidsState }) => state.myBids.chats;
 export const selectChatById = (state: RootState, id: string) => {
     return state.myBids.chats.find(chat => chat.id === id) || null};
@@ -14,19 +12,18 @@ export const selectActiveChatId = (state: { myBids: MyBidsState }) => state.myBi
 export const selectActiveMessages = (state: { myBids: MyBidsState }) => state.myBids.activeMessages;
 export const selectActiveChatRiskProviderImagePath = (state: { myBids: MyBidsState }) => selectActiveChat(state)?.riskProvider?.imagePath;
 
-export const selectOpposingImagePath = (state: { myBids: MyBidsState }) => {
+export const selectOpposingImagePath = (
+    state: { myBids: MyBidsState },
+    uid?: string
+): string => {
     const activeChat = selectActiveChat(state);
-
-    if (!uid || !activeChat || !activeChat.riskProvider || !activeChat.riskTaker) {
+    if (!uid || !activeChat?.riskProvider || !activeChat?.riskTaker) {
         return "";
     }
-
-    if (activeChat.riskProvider.uid === uid) {
-        return activeChat.riskTaker.imagePath || "";
-    }
-
-    return activeChat.riskProvider.imagePath || "";
-}
+    return activeChat.riskProvider.uid === uid
+        ? activeChat.riskTaker.imagePath || ""
+        : activeChat.riskProvider.imagePath || "";
+};
 
 export const selectOtherChatMemberName = (
     state: { myBids: MyBidsState },

@@ -43,6 +43,10 @@ const myBidsSlice = createSlice({
                 state.activeChatId = action.payload;
                 state.activeMessages = [];
             },
+            clearActiveChat(state) {
+                state.activeChatId = null;
+                state.activeMessages = [];
+            },
             setChatStatus(state, action: PayloadAction<{ chatId: string, status: ChatStatus }>) {
                 const chat = state.chats.find((chat) => chat.id === action.payload.chatId);
                 if (chat) {
@@ -134,5 +138,5 @@ const myBidsSlice = createSlice({
     }
 );
 
-export const {setChats,setChatSort, searchChats, setActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;
+export const {setChats, setChatSort, searchChats, setActiveChat, clearActiveChat, setChatStatus, setMessages} = myBidsSlice.actions;
 export default myBidsSlice.reducer;

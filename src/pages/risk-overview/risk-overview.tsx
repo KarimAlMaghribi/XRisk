@@ -41,13 +41,13 @@ export const RiskOverview = () => {
         <React.Fragment>
             <Grid container>
                 <Grid size={{xs: 12, md: 2}}>
-                    <Grid style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: "63px", margin: '5px'}}>
-                        <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)}>
+                    <Grid style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: "63px", margin: '0 30px 0 30px'}}>
+                        <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)} fullWidth style={{borderRadius: "5px"}}>
                             RISIKO DEFINIEREN!
                         </Button>
                     </Grid>
 
-                    <Divider style={{margin: "0 25px 0 25px"}}/>
+                    {/*<Divider style={{margin: "0 25px 0 25px"}}/>*/}
 
                     <RiskOverviewFilter
                         types={filterTypes}

@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {ChatSender} from "../../components/chat/chat-sender";
 import {selectActiveChatId, selectChats} from "../../store/slices/my-bids/selectors";
 import {Chat as ChatModel} from "../../store/slices/my-bids/types";
+import {clearActiveChat} from "../../store/slices/my-bids/reducers";
 
 
 export const Chat = () => {
@@ -20,7 +21,11 @@ export const Chat = () => {
 
     useEffect(() => {
         dispatch(fetchMyChats());
-    }, [])
+
+        return () => {
+            dispatch(clearActiveChat());
+        };
+    }, [dispatch]);
 
     return (
         <Container maxWidth={false}>

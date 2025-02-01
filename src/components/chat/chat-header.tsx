@@ -12,11 +12,15 @@ import {selectActiveChat, selectActiveChatId, selectOpposingImagePath} from "../
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {MyRiskAgreementDialog} from "../risk-agreement/risk-agreement";
 import {Chat} from "../../store/slices/my-bids/types";
+import {RootState} from "../../store/store";
+import {auth} from "../../firebase_config";
 
 export const ChatHeader = () => {
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
-    const opposingImagePath: string | undefined = useSelector(selectOpposingImagePath);
+    const opposingImagePath: string = useSelector((state: RootState) =>
+        selectOpposingImagePath({ myBids: state.myBids }, auth.currentUser?.uid)
+    );
     const [openRiskAgreementCreationDialog, setOpenRiskAgreementCreationDialog] = React.useState(false);
 
     const handleClose = () => {

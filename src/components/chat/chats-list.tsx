@@ -10,7 +10,7 @@ import Scrollbar from "./scrollbar";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {useDispatch, useSelector} from "react-redux";
 import {setActiveChat, setChatSort} from "../../store/slices/my-bids/reducers";
-import {AppDispatch} from "../../store/store";
+import {AppDispatch, RootState} from "../../store/store";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {formatLastActivity} from "./utils";
 import {Chat} from "../../store/slices/my-bids/types";
@@ -20,6 +20,7 @@ import {
     selectChatsToDisplay,
     selectFilteredChats, selectOpposingImagePath
 } from "../../store/slices/my-bids/selectors";
+import {auth} from "../../firebase_config";
 
 export enum ChatSort {
     LATEST = 'LATEST',
@@ -31,7 +32,9 @@ export const ChatsList = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const chats: Chat[] = useSelector(selectChatsToDisplay);
-    const opponentImagePath: string | undefined = useSelector(selectOpposingImagePath);
+    const opposingImagePath: string = useSelector((state: RootState) =>
+        selectOpposingImagePath({ myBids: state.myBids }, auth.currentUser?.uid)
+    );
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -104,7 +107,7 @@ export const ChatsList = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar src={opponentImagePath} sx={{ width: 42, height: 42 }} />
+                                    <Avatar src={opposingImagePath} sx={{ width: 42, height: 42 }} />
                                 </Badge>
                             </ListItemAvatar>
                             <ListItemText

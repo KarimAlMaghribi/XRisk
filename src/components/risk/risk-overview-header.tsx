@@ -13,7 +13,7 @@ import {selectSorts} from "../../store/slices/risks/selectors";
 
 export const RiskOverviewHeader = () => {
     const dispatch: AppDispatch = useDispatch();
-    const backgroundColor = "#f1f6f1";
+    const backgroundColor = "#fcece4";
     const sorts: RiskOverviewSort[] = useSelector(selectSorts);
 
     const sortCol = (colName: RiskOverviewHeaderEnum) => {
@@ -24,6 +24,7 @@ export const RiskOverviewHeader = () => {
         <Grid container size={12} style={{backgroundColor: backgroundColor, paddingTop: "20px", paddingBottom: "20px", marginBottom: "10px"}}>
             <Grid size={3} sx={{display: 'flex', alignItems: 'center'}}>
                 <Typography sx={{ cursor: 'pointer', marginLeft: "10px" }} variant="button">Name</Typography>
+                <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.NAME)?.direction === SortDirectionEnum.ASC ?'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.NAME)}/>
             </Grid>
             <Grid size={3} sx={{ display: 'flex', alignItems: 'center', marginLeft: "5px" }}>
                 <Tooltip title="Zugeordneter Typ des Risikos">

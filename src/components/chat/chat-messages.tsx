@@ -25,9 +25,10 @@ export const ChatMessages = () => {
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const uid: string | undefined = auth.currentUser?.uid;
     const messages: ChatMessage[] = useSelector(selectActiveMessages);
-    const riskProviderImage: string | undefined = useSelector(selectActiveChatRiskProviderImagePath);
     const userImage: string | undefined = useSelector(selectImagePath);
-    const otherChatMemberImagePath: string | undefined = useSelector(selectOpposingImagePath);
+    const otherChatMemberImagePath: string = useSelector((state: RootState) =>
+        selectOpposingImagePath({ myBids: state.myBids }, auth.currentUser?.uid)
+    );
     const otherChatMemberName: string = useSelector((state: RootState) => selectOtherChatMemberName(state, uid));
     const scrollRef = useRef<HTMLDivElement>(null);
 
