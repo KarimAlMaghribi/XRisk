@@ -1,5 +1,5 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Chip, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import React from "react";
 import { Risk } from "../../models/Risk";
@@ -17,6 +17,8 @@ import { useNavigate } from "react-router-dom";
 import { Chat } from "../../store/slices/my-bids/types";
 import { selectChats } from "../../store/slices/my-bids/selectors";
 import { setActiveChat } from "../../store/slices/my-bids/reducers";
+import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
+import {ProfileInformation} from "../../store/slices/user-profile/types";
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -27,6 +29,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const user = auth.currentUser;
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
+    const profileInfo: ProfileInformation = useSelector(selectProfileInformation);
     const [expandedPanels, setExpandedPanels] = React.useState<string[]>([]);
 
     const chats: Chat[] = useSelector(selectChats);
@@ -91,8 +94,8 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                 imagePath: selectedRisk.publisher?.imagePath || ""
             },
             riskTaker: {
-                name: user?.displayName || "Unknown Taker",
-                uid: user.uid
+                name: user?.displayName || profileInfo.name,
+                uid: user.uid,
             },
         };
 
@@ -105,37 +108,62 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             {
                 props.risks && props.risks.map((risk: Risk, index) => (
                     <Accordion
+                        sx={{
+                            margin: 0,
+                            '&.MuiAccordion-root': {
+                                margin: 0
+                            },
+                            '&.MuiAccordion-gutters': {
+                                margin: 0
+                            },
+                        }}
+                        elevation={0}
                         key={risk.id ? risk.id : index}
                         expanded={expandedPanels.includes(risk.id!)}
-                        onChange={handleChange(risk.id!)}
-                        sx={{ marginBottom: 2, width: '100%', borderRadius: "20px" }}>
+                        onChange={handleChange(risk.id!)}>
                         <AccordionSummary
+
                             expandIcon={<ExpandMoreIcon />}
-                            id={`panel-header-${risk.id}`}
-                        >
+                            sx={{
+                                borderTop: '1px solid #f3f3f3',
+                                borderBottom: '1px solid #f3f3f3',
+                                borderTopLeftRadius: '5px',
+                                borderTopRightRadius: '5px',
+                            }}
+                            id={`panel-header-${risk.id}`}>
                             <Grid container size={12} spacing={2} alignItems="center">
-                                <Grid size={2}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        <b>{risk.name}</b>
+                                <Grid size={3}>
+                                    <Typography variant="body1" sx={{ cursor: 'pointer', fontWeight: "bolder"}}>
+                                        {risk.name}
                                     </Typography>
                                 </Grid>
 
                                 <Grid size={3}>
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        <b>{Array.isArray(risk.type) ? risk.type.join(", ") : risk.type}</b>
+                                        {
+                                             risk.type.map((element, idx) => (
+                                                <Chip key={idx} label={element} sx={{
+                                                    backgroundColor: '#f3f3f3',
+                                                    color: '#343434',
+                                                    marginRight: '4px',
+                                                    border: '1px solid',
+                                                    borderColor: "#d7d7d7",
+                                                }}/>
+                                            ))
+                                        }
                                     </Typography>
                                 </Grid>
-                                <Grid size={3} sx={{ marginLeft: "20px" }}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        <b>{risk.value.toLocaleString()}€</b>
+                                <Grid size={2} sx={{ marginLeft: "20px" }}>
+                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer'}}>
+                                        {`${risk.value.toLocaleString()},00 €`}
                                     </Typography>
                                 </Grid>
                                 <Grid size={2}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
-                                        <b>{new Date(risk.declinationDate).toLocaleDateString()}</b>
+                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer' }}>
+                                        {new Date(risk.declinationDate).toLocaleDateString()}
                                     </Typography>
                                 </Grid>
-                                <Grid display="flex" justifyContent="center" alignItems="center" size={1}>
+                                <Grid  size={1} display="flex" justifyContent="center" alignItems="center">
                                     <Tooltip title={risk.publisher && risk.publisher.name}>
                                         <Avatar src={risk.publisher?.imagePath} />
                                     </Tooltip>
@@ -144,45 +172,76 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                         </AccordionSummary>
                         <AccordionDetails>
                             <Grid container>
-                                <Grid size={8}>
-                                    <Typography>
-                                        <b>Kurzbeschreibung: </b>{risk.description}
-                                    </Typography>
-                                    {
-                                        risk.createdAt &&
-                                        <Grid container>
-                                            <Grid size={6}>
-                                                <Typography>
-                                                    <b>Verfügbar seit: </b> {new Date(risk.createdAt).toLocaleDateString()}
-                                                </Typography>
-                                            </Grid>
-                                            <Grid>
-                                                <Typography>
-                                                    <b>Verfügbar bis: </b> {new Date(risk.declinationDate).toLocaleDateString()}
-                                                </Typography>
-                                            </Grid>
-                                        </Grid>
-                                    }
-                                    <Typography>
-                                        <b>Anbieter: </b> {risk.publisher && risk.publisher.name}
-                                    </Typography>
-                                    <Typography>
-                                        <b>Wohnort: </b> {risk.publisher && risk.publisher.address}
-                                    </Typography>
-                                </Grid>
                                 <Grid
-                                    size={4}
-                                    style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}
-                                >
+                                    size={12}
+                                    style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
                                     <Button
                                         disabled={risk.publisher?.uid === user?.uid}
                                         onClick={() => openBid(index)}
                                         variant="contained"
                                         endIcon={<ModeIcon />}
-                                        style={{ maxHeight: "40px", height: "40px" }}
-                                    >
+                                        style={{ maxHeight: "40px", height: "40px" }}>
                                         Jetzt verhandeln
                                     </Button>
+                                </Grid>
+                                <Grid size={6}>
+                                    <Typography variant="body1">
+                                        Beschreibung
+                                    </Typography>
+                                    <br />
+                                    <Typography variant="body2" sx={{color: "grey"}}>
+                                        {risk.description}
+                                    </Typography>
+                                </Grid>
+                                <Grid size={6}>
+                                    <Typography variant="body1">
+                                        Details
+                                    </Typography>
+                                    <br />
+                                    <Grid container>
+                                        <Grid size={4}>
+                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                                Anbieter
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                                Telefonnummer
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                                E-Mail
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                                Adresse
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                                Vorstellung
+                                            </Typography>
+                                        </Grid>
+                                        <Grid size={8}>
+                                            <Typography variant="body2">
+                                                {risk.publisher?.name}
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2">
+                                                {risk.publisher?.phoneNumber}
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2">
+                                                {risk.publisher?.email}
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2">
+                                                {risk.publisher?.address}
+                                            </Typography>
+                                            <br />
+                                            <Typography variant="body2">
+                                                {risk.publisher?.description}
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </AccordionDetails>

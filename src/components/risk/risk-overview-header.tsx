@@ -22,7 +22,7 @@ export const RiskOverviewHeader = () => {
 
     return (
         <Grid container size={12} style={{backgroundColor: backgroundColor, paddingTop: "20px", paddingBottom: "20px", marginBottom: "10px"}}>
-            <Grid size={2} sx={{display: 'flex', alignItems: 'center'}}>
+            <Grid size={3} sx={{display: 'flex', alignItems: 'center'}}>
                 <Typography sx={{ cursor: 'pointer', marginLeft: "10px" }} variant="button">Name</Typography>
             </Grid>
             <Grid size={3} sx={{ display: 'flex', alignItems: 'center', marginLeft: "5px" }}>
@@ -31,7 +31,7 @@ export const RiskOverviewHeader = () => {
                 </Tooltip>
                 <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.TYPE)?.direction === SortDirectionEnum.ASC ?'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.TYPE)}/>
             </Grid>
-            <Grid size={3} sx={{display: 'flex', alignItems: 'center'}}>
+            <Grid size={2} sx={{display: 'flex', alignItems: 'center'}}>
                 <Tooltip title="Die Höhe, mit der das Risiko...">
                     <Typography style={{cursor: "pointer"}} variant="button">Absicherungssumme</Typography>
                 </Tooltip>

@@ -1,4 +1,4 @@
-import {createTheme} from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
     palette: {
@@ -10,6 +10,9 @@ export const theme = createTheme({
             main: "#f5874d",
         },
     },
+    typography: {
+        fontFamily: '"Open Sans", sans-serif',
+    },
     components: {
         MuiButton: {
             defaultProps: {
@@ -20,14 +23,14 @@ export const theme = createTheme({
                     borderRadius: 25,
                     textTransform: 'none',
                     fontWeight: 'normal',
-
+                    fontFamily: '"Open Sans", sans-serif',
                 },
             },
         },
         MuiTypography: {
             styleOverrides: {
                 root: {
-                    fontFamily: 'Roboto, "Helvetica Neue", Arial, sans-serif',
+                    fontFamily: '"Open Sans", sans-serif',
                 },
             },
         },
@@ -37,12 +40,6 @@ export const theme = createTheme({
                     fontSize: "10px",
                 },
             },
-        }
-    },
-    typography: {
-        fontFamily: [
-            'Roboto',
-            'sans-serif'
-        ].join(','),
+        },
     },
 });
