@@ -1,10 +1,8 @@
-import {Badge, Box, Divider, ListItem, ListItemAvatar, ListItemText, Stack} from "@mui/material";
+import {Badge, Box, Button, Divider, ListItem, ListItemAvatar, ListItemText, Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
-import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
-import VideoChatIcon from '@mui/icons-material/VideoChat';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {useSelector} from "react-redux";
@@ -19,7 +17,7 @@ export const ChatHeader = () => {
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
     const opposingImagePath: string = useSelector((state: RootState) =>
-        selectOpposingImagePath({ myBids: state.myBids }, auth.currentUser?.uid)
+        selectOpposingImagePath({myBids: state.myBids}, auth.currentUser?.uid)
     );
     const [openRiskAgreementCreationDialog, setOpenRiskAgreementCreationDialog] = React.useState(false);
 
@@ -59,31 +57,28 @@ export const ChatHeader = () => {
                                 </Badge>
                             </ListItemAvatar>
                             <ListItemText
-                                primary={<Typography variant="body1" fontWeight={600}>{activeChat?.riskProvider?.name}</Typography>}
+                                primary={<Typography variant="body1"
+                                                     fontWeight={600}>{activeChat?.riskProvider?.name}</Typography>}
                                 secondary={<Typography variant="body2">{activeChat?.status}</Typography>}
                             />
                         </ListItem>
                         <Stack direction={'row'}>
-                        <IconButton aria-label="delete">
-                                <HandshakeIcon onClick={() => {setOpenRiskAgreementCreationDialog(true)}}/>
-                            </IconButton>
-                            <IconButton aria-label="delete">
-                                <LocalPhoneIcon />
-                            </IconButton>
-                            <IconButton aria-label="delete">
-                                <VideoChatIcon />
-                            </IconButton>
-                            <IconButton aria-label="delete">
-                                <MoreVertIcon />
+                            <Button
+                                variant="contained"
+                                sx={{whiteSpace: "nowrap"}}
+                                onClick={() => setOpenRiskAgreementCreationDialog(true)}
+                                startIcon={<HandshakeIcon/>}>
+                                Einigung erreicht
+                            </Button>
+                            <IconButton>
+                                <MoreVertIcon/>
                             </IconButton>
                         </Stack>
                     </Box>
-                    <Divider />
+                    <Divider/>
                 </Box>
             }
-                <MyRiskAgreementDialog
-                    open={openRiskAgreementCreationDialog}
-                    handleClose={handleClose} />
+            <MyRiskAgreementDialog open={openRiskAgreementCreationDialog} handleClose={handleClose}/>
         </Box>
     )
 }

@@ -13,6 +13,7 @@ import {checkUserProfileWithGoogle, fetchUserProfile} from "../../store/slices/u
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
+import {fetchRisks} from "../../store/slices/risks/thunks";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -34,6 +35,7 @@ export const SignIn = () => {
             dispatch(fetchUserProfile())
 
             if (user?.refreshToken) {
+                dispatch(fetchRisks())
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
@@ -48,6 +50,7 @@ export const SignIn = () => {
             dispatch(checkUserProfileWithGoogle(user))
 
             if (user?.refreshToken) {
+                dispatch(fetchRisks())
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {

@@ -183,7 +183,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         variant="contained"
                                         endIcon={<ModeIcon />}
                                         style={{ maxHeight: "40px", height: "40px" }}>
-                                        Jetzt verhandeln
+                                        Kontakt aufnehmen
                                     </Button>
                                 </Grid>
                                 <Grid size={6}>

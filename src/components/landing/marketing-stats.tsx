@@ -8,6 +8,12 @@ import CurvyLines from "../../assests/imgs/appCurvyLines.png";
 import contracts from "../../assests/imgs/commercial/running_contracts.jpg";
 import happyUsers from "../../assests/imgs/commercial/users-min.jpg";
 import secured from "../../assests/imgs/commercial/secured.jpg";
+import { collection, getCountFromServer } from "firebase/firestore";
+import {useEffect} from "react";
+import {fetchUserCount} from "../../store/slices/meta/thunks";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "../../store/store";
+import {selectUserCount} from "../../store/slices/meta/selectors";
 
 const item = {
     display: 'flex',
@@ -17,6 +23,13 @@ const item = {
 };
 
 function MarketingStats() {
+    const dispatch: AppDispatch = useDispatch();
+    const userCount: number | null = useSelector(selectUserCount);
+
+    useEffect(() => {
+       dispatch(fetchUserCount())
+    }, []);
+
     const lightOrange = "#ffd7bb";
 
     return (
@@ -42,7 +55,7 @@ function MarketingStats() {
                                 Glückliche User
                             </Typography>
                             <Typography variant="h4">
-                                1
+                                {userCount}
                             </Typography>
                         </Box>
                     </Grid>
@@ -55,7 +68,7 @@ function MarketingStats() {
                                 sx={{ height: 150, borderRadius: "10px"  }}
                             />
                             <Typography variant="h5" sx={{ my: 5 }}>
-                                In Absicherung
+                                Betrag in Absicherung
                             </Typography>
                             <Typography variant="h4">
                                 100€
@@ -70,11 +83,11 @@ function MarketingStats() {
                                 alt="clock"
                                 sx={{ height: 150, borderRadius: "10px"  }}
                             />
-                            <Typography variant="h5" sx={{ my: 5 }}>
-                                Laufende Verträge
+                            <Typography variant="h5" sx={{ my: 5 }} textAlign="center">
+                                Geschlossene Verträge/ Risikotransfers
                             </Typography>
                             <Typography variant="h4">
-                                1
+                                7
                             </Typography>
                         </Box>
                     </Grid>
