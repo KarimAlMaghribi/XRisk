@@ -49,7 +49,7 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             freeSolo
             options={types}
             loading={status === FetchStatusEnum.PENDING}
-            value={props.value} // Nutze props.value direkt
+            value={props.value}
             onChange={handleTagsChange}
             getOptionLabel={(option: any) => (typeof option === "string" ? option : option?.label || "")}
             renderTags={(value: readonly string[], getTypeProps) =>
@@ -67,6 +67,8 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             }
             renderInput={(params) => (
                 <TextField
+                    error={props.required && props.value.length === 0}
+                    helperText={props.required && props.value.length === 0 ? "Bitte wähle mindestens einen Typ" : ""}
                     required={props.required}
                     {...params}
                     variant={props.textFieldVariant || "outlined"}

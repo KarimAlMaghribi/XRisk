@@ -10,6 +10,7 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {RiskTypeSelector} from "../risk-type-selector";
+import {EuroNumberFormat} from "../my-risk-creation-dialog";
 
 export interface MyRiskEditDialogProps {
     risk: Risk;
@@ -52,6 +53,17 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                     slotProps={{input: {readOnly: true}}}
                 />
                 <TextField
+                    error={risk.name.length === 0}
+                    helperText={risk.name.length === 0 ? "Bitte gib einen Namen ein" : ""}
+                    sx={{marginTop: "10px"}}
+                    fullWidth
+                    label="Name"
+                    value={risk.name}
+                    onChange={(event) => setRisk({...risk, name: event.target.value})}
+                />
+                <TextField
+                    error={risk.description.length <= 20}
+                    helperText={risk.description.length === 0 ? "Bitte füge eine Beschreibung hinzu" : risk.description.length <= 20 ? "Bitte füge eine längere Beschreibung hinzu" : ""}
                     sx={{marginTop: "10px"}}
                     fullWidth
                     label="Kurzbeschreibung"
@@ -60,38 +72,41 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                     rows={5}
                     onChange={(event) => setRisk({...risk, description: event.target.value})}
                 />
-                <TextField
-                    sx={{marginTop: "10px"}}
-                    fullWidth
-                    label="Name"
-                    value={risk.name}
-                    onChange={(event) => setRisk({...risk, name: event.target.value})}
-                />
                 <RiskTypeSelector value={riskType} setValue={setRiskType}/>
+                <TextField
+                    error={risk.value > 999999}
+                    helperText={risk.value > 999999 ? "Maximal 999.999,00 € möglich" : ""}
+                    margin="dense"
+                    fullWidth
+                    label="Absicherungssumme"
+                    value={risk.value}
+                    onChange={(event) => setRisk({...risk, value: Number(event.target.value.replace(/€\s?|(,*)/g, ''))})}
+                    name="value"
+                    id="value"
+                    InputProps={{
+                        inputComponent: EuroNumberFormat,
+                    }}
+                />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{marginTop: "10px", width: "100%"}}
+                        sx={{ marginTop: "10px", width: "100%" }}
                         format="DD.MM.YYYY"
                         label="Laufzeitende"
-                        value={dayjs(risk.declinationDate, "DD.MM.YYYY")}
+                        value={dayjs(risk.declinationDate)}
                         onChange={(newValue) => {
-                            if (newValue) {
-                                if (!newValue.isAfter(dayjs())) {
-                                    // date is older than today or today
-                                    return;
-                                }
+                            if (newValue && newValue.isAfter(dayjs())) {
                                 setRisk({
                                     ...risk,
-                                    declinationDate: dayjs(newValue).format("DD.MM.YYYY"),
+                                    declinationDate: newValue.toISOString(),
                                 });
                             }
                         }}
-                        minDate={dayjs().add(1, "day")}
+                        minDate={dayjs().add(10, "day")}
                     />
                 </LocalizationProvider>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" onClick={handleSave}>
+                <Button variant="contained" onClick={handleSave} disabled={risk.value > 999999 || risk.name.length === 0 || risk.description.length < 20 || risk.type.length < 1}>
                     Speichern
                 </Button>
                 <Button onClick={() => props.setOpen(false)} variant="outlined">
