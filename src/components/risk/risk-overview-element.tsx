@@ -243,6 +243,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                     </Accordion>
                 ))
             }
+            {
+                !props.risks || props.risks.length === 0 ?
+                    <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" }}>
+                        Keine Risiken gefunden.
+                    </Typography> : null
+            }
         </React.Fragment>
     );
 };

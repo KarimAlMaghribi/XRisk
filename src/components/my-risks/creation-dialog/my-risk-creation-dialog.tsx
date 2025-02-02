@@ -1,20 +1,46 @@
 import React, {useEffect, useState} from "react";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle, Paper,
+    PaperProps,
+    TextField
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {NumericFormat} from 'react-number-format';
-import {useDispatch} from "react-redux";
-import {AppDispatch} from "../../store/store";
-import {Risk} from "../../models/Risk";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch} from "../../../store/store";
+import {Risk} from "../../../models/Risk";
 import {v4 as uuidv4} from 'uuid';
-import {addMyRisk} from "../../store/slices/my-risks/thunks";
+import {addMyRisk} from "../../../store/slices/my-risks/thunks";
 import {useNavigate} from "react-router-dom";
-import {ROUTES} from "../../routing/routes";
-import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
-import {RiskTypeSelector} from "./risk-type-selector";
+import {ROUTES} from "../../../routing/routes";
+import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
+import {RiskTypeSelector} from "../risk-type-selector";
+import Draggable from 'react-draggable';
+import {selectUserProfile} from "../../../store/slices/user-profile/selectors";
+import {UserProfile} from "../../../store/slices/user-profile/types";
+import {auth} from "../../../firebase_config";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+
+export function PaperComponent(props: PaperProps) {
+    const nodeRef = React.useRef<HTMLDivElement>(null);
+    return (
+        <Draggable
+            nodeRef={nodeRef as React.RefObject<HTMLDivElement>}
+            handle="#draggable-dialog-title"
+            cancel={'[class*="MuiDialogContent-root"]'}>
+            <Paper {...props} ref={nodeRef} />
+        </Draggable>
+    );
+}
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -50,6 +76,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [riskType, setRiskType] = useState<string[]>([]);
     const [value, setValue] = useState<number>(0);
     const [date, setDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
+    const userProfile: UserProfile = useSelector(selectUserProfile);
 
     const handleValueChange = (newValue: number) => {
         if (!isNaN(newValue)) {
@@ -75,6 +102,10 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
             status: RiskStatusEnum.DRAFT,
             type: riskType,
             value: value,
+            publisher: {
+                uid: userProfile.id || auth.currentUser?.uid || '',
+                name: userProfile.profile.name,
+            },
             declinationDate: date?.toISOString() || 'kein Ablaufdatum',
         }
 
@@ -84,8 +115,30 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     }
 
     return (
-        <Dialog open={props.open} onClose={props.handleClose}>
-            <DialogTitle>Risiko definieren</DialogTitle>
+        <Dialog
+            open={props.open}
+            onClose={props.handleClose}
+            PaperComponent={PaperComponent}
+            PaperProps={{
+                sx: {
+                    position: 'absolute',
+                    top: '10%',
+                    m: 0,
+                },
+            }}>
+            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">Risiko definieren</DialogTitle>
+            <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={(theme) => ({
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: theme.palette.grey[500],
+                })}>
+                <CloseIcon />
+            </IconButton>
+
             <DialogContent>
                 <DialogContentText>
                     Definiere dein eignes Risiko, dass du später veröffentlichen kannst!

@@ -10,7 +10,9 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {RiskTypeSelector} from "../risk-type-selector";
-import {EuroNumberFormat} from "../my-risk-creation-dialog";
+import {EuroNumberFormat, PaperComponent} from "../creation-dialog/my-risk-creation-dialog";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 export interface MyRiskEditDialogProps {
     risk: Risk;
@@ -26,6 +28,8 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
     useEffect(() => {
         setRisk(props.risk);
         setRiskType(props.risk.type || []);
+
+        console.log(props.risk);
     }, [props.risk]);
 
     const handleSave = () => {
@@ -42,8 +46,27 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
         <Dialog
             fullWidth
             open={props.open}
-            onClose={() => props.setOpen(false)}>
-            <DialogTitle>Risiko bearbeiten</DialogTitle>
+            onClose={() => props.setOpen(false)}
+            PaperComponent={PaperComponent}
+            PaperProps={{
+                sx: {
+                    position: 'absolute',
+                    top: '10%',
+                    m: 0,
+                },
+            }}>
+            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">Risiko bearbeiten</DialogTitle>
+            <IconButton
+                aria-label="close"
+                onClick={() => props.setOpen(false)}
+                sx={(theme) => ({
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: theme.palette.grey[500],
+                })}>
+                <CloseIcon />
+            </IconButton>
             <DialogContent style={{padding: "10px", margin: "10px"}}>
                 <TextField
                     disabled

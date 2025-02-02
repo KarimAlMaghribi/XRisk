@@ -7,7 +7,7 @@ import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
 import {FetchStatus} from "../../types/FetchStatus";
 import Button from "@mui/material/Button";
-import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
+import {MyRiskCreationDialog} from "../../components/my-risks/creation-dialog/my-risk-creation-dialog";
 import {AppDispatch} from "../../store/store";
 import {fetchProviderChats} from "../../store/slices/my-bids/thunks";
 import {

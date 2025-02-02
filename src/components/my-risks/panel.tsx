@@ -6,6 +6,7 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {MyRiskRow} from "./my-risk-row";
 import {RiskPanelArea} from "../../enums/RiskPanelArea.enum";
 import dayjs from "dayjs";
+import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 
 export interface PanelProps {
     risks: Risk[];
@@ -65,8 +66,20 @@ export const Panel = (props: PanelProps) => {
             }
         }
 
-        if (props.type === RiskStatusEnum.PUBLISHED && risk.status === RiskStatusEnum.PUBLISHED) {
-            if (column === 1) {
+        if (props.type === RiskStatusEnum.PUBLISHED) {
+            if (risk.status === RiskStatusEnum.PUBLISHED && column === 1) {
+                return <MyRiskRow risk={risk} />;
+            }
+
+            if (risk.status === RiskStatusEnum.WITHDRAWN && column === 2) {
+                return <MyRiskRow risk={risk} />;
+            }
+
+            if (risk.status === RiskStatusEnum.DEAL && column === 3) {
+                return <MyRiskRow risk={risk} />;
+            }
+
+            if (risk.status === RiskStatusEnum.AGREEMENT && column === 4) {
                 return <MyRiskRow risk={risk} />;
             }
         }

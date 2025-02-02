@@ -4,6 +4,7 @@ import {auth, db} from "../../../firebase_config";
 import {addDoc, collection, deleteDoc, getDocs, query, updateDoc, where} from "firebase/firestore";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {Risk} from "../../../models/Risk";
+import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 
 export const fetchMyRisks = createAsyncThunk(
     ActionTypes.FETCH_MY_RISKS,
@@ -57,20 +58,28 @@ export const addMyRisk = createAsyncThunk(
 
 export const updateMyRisk = createAsyncThunk(
     ActionTypes.UPDATE_MY_RISK,
-    async (risk: Risk, {rejectWithValue}) => {
+    async (risk: Risk, { rejectWithValue }) => {
         try {
             const user = auth.currentUser;
-
             if (!user) {
+                console.error("User not authenticated");
                 return rejectWithValue("User not authenticated");
             }
 
-            if (!risk.publisher?.name || !risk.publisher?.imagePath) {
+            if (risk.status === RiskStatusEnum.PUBLISHED && !risk.publisher?.imagePath) {
+                console.error("Risk publisher image path is missing. Aborted Publishing Update.");
+                return rejectWithValue("Risk publisher image path is missing. Aborted Publishing Update.");
+            }
+
+            if (!risk.publisher?.name || !risk.publisher?.uid) {
+                console.error("Publisher information missing in risk:", risk.publisher);
                 return rejectWithValue("Publisher information missing");
             }
 
-            const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
+            console.log("Updating risk:", risk);
+            console.log("User uid:", user.uid);
 
+            const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const riskQuery = query(
                 risksCollection,
                 where("uid", "==", user.uid),
@@ -78,24 +87,29 @@ export const updateMyRisk = createAsyncThunk(
             );
 
             const riskDocs = await getDocs(riskQuery);
+            console.log("Found riskDocs:", riskDocs.size);
 
             if (riskDocs.empty) {
+                console.error("Risk not found for id:", risk.id);
                 return rejectWithValue("Risk not found");
             }
 
             const riskDocRef = riskDocs.docs[0].ref;
+            console.log("Risk document ref:", riskDocRef.path);
 
+            const updatedAt = new Date().toISOString();
             await updateDoc(riskDocRef, {
                 ...risk,
-                updatedAt: new Date().toISOString()
+                updatedAt,
             });
 
-            console.log("Updated risk-overview", risk.id)
-
-            return {...risk, updatedAt: new Date().toISOString()};
-        } catch (error) {
+            console.log("Updated risk-overview", risk.id);
+            return { ...risk, updatedAt };
+        } catch (error: any) {
             console.error("Error updating risk-overview:", error);
-            return rejectWithValue("Failed to update risk-overview due to permissions or other error");
+            return rejectWithValue(
+                error?.message || "Failed to update risk-overview due to permissions or other error"
+            );
         }
     }
 );
@@ -109,6 +123,8 @@ export const deleteMyRisk = createAsyncThunk(
             if (!user) {
                 return rejectWithValue("User not authenticated");
             }
+
+            console.log(riskId);
 
             const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const riskQuery = query(

@@ -5,7 +5,7 @@ import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
 import {selectMyRisks} from "../../store/slices/my-risks/selectors";
 import Button from "@mui/material/Button";
-import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
+import {MyRiskCreationDialog} from "../../components/my-risks/creation-dialog/my-risk-creation-dialog";
 import {AppDispatch} from "../../store/store";
 import {fetchMyRisks} from "../../store/slices/my-risks/thunks";
 import TabContext from '@mui/lab/TabContext';
@@ -24,8 +24,6 @@ export const MyRisks = () => {
     useEffect(() => {
         dispatch(fetchMyRisks());
     }, [dispatch]);
-
-    console.log(myRisks)
 
     const handleCloseDialog = () => {
         setOpenRiskCreationDialog(false);

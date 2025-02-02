@@ -1,4 +1,5 @@
 export interface Publisher {
+    uid: string;
     name: string;
     address?: string;
     phoneNumber?: string;
@@ -6,5 +7,4 @@ export interface Publisher {
     description?: string;
     age?: number;
     imagePath?: string;
-    uid: string;
 }
