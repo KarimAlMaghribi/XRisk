@@ -4,7 +4,7 @@ import { SortDirectionEnum } from "../../../enums/SortDirection.enum";
 import { FetchStatusEnum } from "../../../enums/FetchStatus.enum";
 import { FirestoreCollectionEnum } from "../../../enums/FirestoreCollectionEnum";
 import { RiskOverviewState } from "./types";
-import { addRisk, addRiskType, deleteRisk, fetchRisks, fetchRiskTypes } from "./thunks";
+import {addRisk, addRiskType, deleteRisk, fetchRisks, fetchRiskTypes, updateProviderDetails} from "./thunks";
 import {RiskOverviewFilterType} from "../../../models/RiskOverviewFilterType";
 
 const initialState: RiskOverviewState = {
@@ -192,9 +192,26 @@ export const riskOverviewSlice = createSlice({
             .addCase(addRiskType.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
+            })
+            .addCase(updateProviderDetails.pending, (state) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(updateProviderDetails.fulfilled, (state, action) => {
+                state.risks.forEach((risk) => {
+                    if (risk?.publisher?.uid === action.payload.uid) {
+                        risk.publisher = action.payload;
+                    }
+                });
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(updateProviderDetails.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
             });
+        }
     }
-});
+);
 
 export const {
     sortRisks,

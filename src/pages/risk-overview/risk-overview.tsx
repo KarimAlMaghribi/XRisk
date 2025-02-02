@@ -8,28 +8,26 @@ import {useDispatch, useSelector} from "react-redux";
 import {FetchStatus} from "../../types/FetchStatus";
 import Button from "@mui/material/Button";
 import {MyRiskCreationDialog} from "../../components/my-risks/my-risk-creation-dialog";
-import {Divider} from "@mui/material";
 import {AppDispatch} from "../../store/store";
 import {fetchProviderChats} from "../../store/slices/my-bids/thunks";
 import {
     selectFilteredRisks,
     selectFilterTypes,
-    selectFilterValue, selectRemainingTerm,
+    selectFilterValue,
+    selectRemainingTerm,
     selectStatus
 } from "../../store/slices/risks/selectors";
-import {fetchRisks} from "../../store/slices/risks/thunks";
 
 export const RiskOverview = () => {
-    const dispatch : AppDispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const filteredRisks: Risk[] = useSelector(selectFilteredRisks);
     const status: FetchStatus = useSelector(selectStatus);
     const filterTypes: string[] = useSelector(selectFilterTypes);
     const filterValue: number | number[] = useSelector(selectFilterValue);
-    const filterRemainingTerm: number | number[]  = useSelector(selectRemainingTerm);
+    const filterRemainingTerm: number | number[] = useSelector(selectRemainingTerm);
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
 
     useEffect(() => {
-        dispatch(fetchRisks());
         dispatch(fetchProviderChats());
     }, [dispatch]);
 
@@ -41,8 +39,15 @@ export const RiskOverview = () => {
         <React.Fragment>
             <Grid container>
                 <Grid size={{xs: 12, md: 2}}>
-                    <Grid style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: "63px", margin: '0 30px 0 30px'}}>
-                        <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)} fullWidth style={{borderRadius: "5px"}}>
+                    <Grid style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: "63px",
+                        margin: '0 30px 0 30px'
+                    }}>
+                        <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)} fullWidth
+                                style={{borderRadius: "5px"}}>
                             RISIKO DEFINIEREN!
                         </Button>
                     </Grid>
@@ -56,7 +61,7 @@ export const RiskOverview = () => {
                     />
                 </Grid>
                 <Grid size={{xs: 10}}>
-                    <RiskOverviewHeader />
+                    <RiskOverviewHeader/>
                     <RiskOverviewElement
                         risks={filteredRisks}
                         status={status}/>
@@ -64,7 +69,7 @@ export const RiskOverview = () => {
             </Grid>
             <MyRiskCreationDialog
                 open={openRiskCreationDialog}
-                handleClose={handleClose} />
+                handleClose={handleClose}/>
         </React.Fragment>
     )
 }

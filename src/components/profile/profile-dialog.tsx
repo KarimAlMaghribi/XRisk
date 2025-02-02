@@ -24,7 +24,8 @@ import { updateImagePath, updateProfile } from "../../store/slices/user-profile/
 import { selectUserProfile } from "../../store/slices/user-profile/selectors";
 import { UserProfile } from "../../store/slices/user-profile/types";
 import { Countries } from "./countries";
-import {updateProviderImageOnAllMyRisks} from "../../store/slices/risks/thunks";
+import {updateProviderDetails} from "../../store/slices/risks/thunks";
+import {Publisher} from "../../models/Publisher";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -111,6 +112,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
             dispatch(
                 updateProfile({
                     imagePath: imagePath || userProfile.profile.imagePath,
+                    email,
                     name,
                     gender,
                     birthdate,
@@ -125,7 +127,17 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                 })
             );
 
-            dispatch(updateProviderImageOnAllMyRisks(imagePath || userProfile.profile.imagePath || ""));
+            const publisherInfos: Publisher = {
+                uid: auth.currentUser?.uid || userProfile.id || "",
+                name: name,
+                email: email,
+                phoneNumber: phone,
+                imagePath: imagePath || userProfile.profile.imagePath || "",
+                address: `${street} ${number}, ${zip} ${city}, ${country}`,
+                description: aboutMe,
+            }
+
+            dispatch(updateProviderDetails(publisherInfos));
 
             props.handleClose();
         } catch (error) {
@@ -186,7 +198,6 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     </Grid2>
                     <Grid2 size={{ md: 12, lg: 6 }}>
                         <TextField
-                            disabled
                             variant="outlined"
                             fullWidth
                             label="Email"

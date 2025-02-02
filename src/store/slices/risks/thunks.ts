@@ -5,6 +5,7 @@ import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 import {Risk} from "../../../models/Risk";
+import {Publisher} from "../../../models/Publisher";
 
 export const fetchRisks = createAsyncThunk(
     ActionTypes.FETCH_RISKS,
@@ -202,9 +203,9 @@ export const deleteRisk = createAsyncThunk(
     }
 );
 
-export const updateProviderImageOnAllMyRisks = createAsyncThunk(
+export const updateProviderDetails = createAsyncThunk(
     ActionTypes.UPDATE_PROVIDER_IMAGE_ON_ALL_MY_RISKS,
-    async (imagePath: string, { rejectWithValue }) => {
+    async (publisher: Publisher, { rejectWithValue }) => {
         try {
             const user = auth.currentUser;
             if (!user) {
@@ -222,16 +223,16 @@ export const updateProviderImageOnAllMyRisks = createAsyncThunk(
             const batch = writeBatch(db);
 
             riskDocs.forEach((doc) => {
-                batch.update(doc.ref, { "publisher.imagePath": imagePath });
+                batch.update(doc.ref, { publisher: publisher });
             });
 
             await batch.commit();
 
-            console.log("Updated provider image on all my risks");
-            return imagePath;
+            console.log("Updated provider details on all my risks");
+            return publisher;
         } catch (error: any) {
-            console.error("Error updating provider image on all my risks:", error);
-            return rejectWithValue("Failed to update provider image on all my risks");
+            console.error("Error updating provider details on all my risks:", error);
+            return rejectWithValue("Failed to update provider details on all my risks");
         }
     }
 );
