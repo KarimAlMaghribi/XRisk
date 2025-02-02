@@ -125,7 +125,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <TextField
                     error={value > 999999}
-                    helperText={value > 999999 ? "Maximal 999.999,00 € möglich" : ""}
+                    helperText={value > 999999 ? "Maximal 999.999,00 € möglich" : value < 0 ? "Bitte gib einen positiven Betrag ein" : ""}
                     margin="dense"
                     fullWidth
                     label="Absicherungssumme"
@@ -154,7 +154,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button
-                    disabled={name.length === 0 || riskType.length === 0 || description.length <= 20 || value > 999999}
+                    disabled={name.length === 0 || riskType.length === 0 || description.length <= 20 || value > 999999 || value < 0}
                     variant="contained"
                     onClick={handleCreateRisk}>
                     Definieren

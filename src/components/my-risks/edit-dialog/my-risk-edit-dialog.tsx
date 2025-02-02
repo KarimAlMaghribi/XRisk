@@ -75,7 +75,7 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                 <RiskTypeSelector value={riskType} setValue={setRiskType}/>
                 <TextField
                     error={risk.value > 999999}
-                    helperText={risk.value > 999999 ? "Maximal 999.999,00 € möglich" : ""}
+                    helperText={risk.value > 999999 ? "Maximal 999.999,00 € möglich" : risk.value < 0 ? "Bitte gib einen positiven Betrag ein" : ""}
                     margin="dense"
                     fullWidth
                     label="Absicherungssumme"
@@ -106,7 +106,12 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
                 </LocalizationProvider>
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" onClick={handleSave} disabled={risk.value > 999999 || risk.name.length === 0 || risk.description.length < 20 || risk.type.length < 1}>
+                <Button variant="contained" onClick={handleSave} disabled={
+                    risk.value > 999999 || risk.value < 0 ||
+                    risk.name.length === 0 ||
+                    risk.description.length < 20 ||
+                    risk.type.length < 1
+                }>
                     Speichern
                 </Button>
                 <Button onClick={() => props.setOpen(false)} variant="outlined">

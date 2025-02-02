@@ -146,7 +146,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
                                         {
                                              risk.type.map((element, idx) => (
-                                                <Chip key={idx} label={element} sx={{
+                                                <Chip key={idx} label={element} clickable sx={{
                                                     backgroundColor: '#f3f3f3',
                                                     color: '#343434',
                                                     marginRight: '4px',
