@@ -35,6 +35,8 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
 
     const chats: Chat[] = useSelector(selectChats);
 
+    const elementBottomMargin: number = 20;
+
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
         if (isExpanded) {
             setExpandedPanels((prev) => [...prev, panel]);
@@ -187,10 +189,9 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     </Button>
                                 </Grid>
                                 <Grid size={6}>
-                                    <Typography variant="body1">
+                                    <Typography variant="body1" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                         Beschreibung
                                     </Typography>
-                                    <br />
                                     <Typography variant="body2" sx={{color: "grey"}}>
                                         {risk.description}
                                     </Typography>
@@ -202,45 +203,37 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     <br />
                                     <Grid container>
                                         <Grid size={4}>
-                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}} >
                                                 Anbieter
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 Telefonnummer
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 E-Mail
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 Adresse
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2" sx={{color: "grey"}}>
+                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 Vorstellung
                                             </Typography>
                                         </Grid>
                                         <Grid size={8}>
-                                            <Typography variant="body2">
-                                                {risk.publisher?.name}
+                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                                {risk.publisher?.name || "-"}
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2">
-                                                {risk.publisher?.phoneNumber}
+                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                                {risk.publisher?.phoneNumber || "-"}
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2">
-                                                {risk.publisher?.email}
+                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                                {risk.publisher?.email || "-"}
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2">
-                                                {risk.publisher?.address}
+                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                                {risk.publisher?.address || "-"}
                                             </Typography>
-                                            <br />
-                                            <Typography variant="body2">
-                                                {risk.publisher?.description}
+                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                                {risk.publisher?.description || "-"}
                                             </Typography>
                                         </Grid>
                                     </Grid>
