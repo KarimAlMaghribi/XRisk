@@ -22,6 +22,7 @@ import {sendMessage} from "../../store/slices/my-bids/thunks";
 import {selectRisks} from "../../store/slices/risks/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
+import {v4 as uuid} from "uuid"
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -78,7 +79,6 @@ export const ChatSender = () => {
             content: msg,
             read: false
         }
-        console.log(newMessage)
 
         dispatch(sendMessage({chatId: activeChatId, message: newMessage}));
         setMsg('');
@@ -87,14 +87,28 @@ export const ChatSender = () => {
     const onAIChatMsgSubmit = async (e: any) => {
         onChatMsgSubmit(e);
         setAILoading(true);
-
+        console.log('RISKS: ')
+        console.log(risks)
         const risk: Risk | undefined = risks.find((risk) => risk.id === riskId)
-        const chatbot = new Chatbot(risk, activeMessages);
-        const prompt: string = chatbot.getPrompt();
+
+        const lastMessage: ChatMessage = {
+            id: uuid(),
+            created: new Date().toISOString(),
+            type: MessageTypeEnum.TEXT,
+            uid: auth.currentUser?.uid || '',
+            name: profile.name,
+            content: msg,
+            read: false,
+        }
+
+        const updatedActiveMessages = [lastMessage, ...activeMessages]
+
+        const chatbot = new Chatbot(risk, updatedActiveMessages);
+        const promptMessages = chatbot.getMessages();
 
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
-            messages: [{role: "user", content: prompt}],
+            messages: promptMessages,
             stream: false,
             max_tokens: 200,
             temperature: 0.5,
@@ -118,7 +132,7 @@ export const ChatSender = () => {
             name: "xRisk Chatbot",
             content: xRiskChatbotResponse,
             read: false,
-            prompt: prompt
+            //prompt: prompt
         }
 
         if (!activeChatId) {

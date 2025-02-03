@@ -1,10 +1,13 @@
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import {Risk} from "../../models/Risk";
 import {ChatMessage} from "../../store/slices/my-bids/types";
  
 export class Chatbot {
     public basePrompt: string;
+    public messages: ChatCompletionMessageParam[];
  
-    constructor(risk: Risk | undefined, messages: ChatMessage[]) {
+    constructor(risk: Risk | undefined, chatMessages: ChatMessage[]) {
+        console.log(risk)
         this.basePrompt = "\"\"\"\n" +
             "# Kontext\n" +
             "Stell dir vor, du bist ein Chatbot (xRisk Chatbot). Deine Aufgabe ist es, eine Verhandlung zwischen zwei Parteien zu unterstützen:\n" +
@@ -73,48 +76,51 @@ export class Chatbot {
             "- Identifiziere fehlende oder unklare Informationen.\n" +
             "- Mach Vorschläge, um diese Schwächen zu beheben.\n" +
             "\"\"\"";
-        this.enrichPromptWithRisk(risk);
-        this.enrichPromptWithRiskNegotiation(messages);
+        this.messages = [{role: "system", content: this.basePrompt}];
+        this.enrichMessagesWithRiskInformation(risk)
+        this.enrichMessagesWithRiskNegotiation(chatMessages)
     }
  
     public getPrompt(): string {
         return this.basePrompt;
     }
- 
-    private enrichPromptWithRisk = (risk: Risk | undefined): void => {
+
+    public getMessages(): ChatCompletionMessageParam[] {
+            return this.messages;
+        }
+
+    private enrichMessagesWithRiskInformation = (risk: Risk | undefined): void => {
         if (!risk) {
-            this.basePrompt += "Risiko: {Kein Informationen zum Risiko gefunden}; ";
+            const content = "Es wird über das folgende Risikoinserat verhandelt: {Keine Informationen zum Risiko gefunden}";
+            this.messages.push({ role: "system", content: content });
             return;
         }
- 
-        this.basePrompt += "Risiko: {" +
-            "Name: " + risk.name + ", " +
-            "Beschreibung: " + risk.description + ", " +
-            "Typ: " + risk.type + ", " +
-            "Wert: " + risk.value + ", " +
-            "Veröffentlichungsdatum: " + risk.publishedAt + ", " +
-            "Veröffentlicher: " + risk.publisher?.name + ", " +
-            "Ablaufdatum: " + risk.declinationDate + ", " +
-            "Erstellt am: " + risk.createdAt + ", " +
-            "Aktualisiert am: " + risk.updatedAt + "}; "
+        else {
+            const content = "Es wird über das folgende Risikoinserat verhandelt: {" +
+                "Name: " + risk.name + ", " +
+                "Beschreibung: " + risk.description + ", " +
+                "Typ: " + risk.type + ", " +
+                "Versicherungssumme: " + risk.value + ", " +
+                "Veröffentlicher: " + risk.publisher?.name + "}; "
+            this.messages.push({ role: "system", content: content });
+        }
     }
- 
-    private enrichPromptWithRiskNegotiation = (messages: ChatMessage[]): void => {
- 
-       
-       
-        if (!messages) {
-            this.basePrompt += "Bisherige Unterhaltung: {Keine Unterhaltung gefunden}; ";
-            return;
-        }
- 
-        messages.forEach((message) => {
-            this.basePrompt += "Bisherige Unterhaltung: {" +
-                "Absender: " + message.name + ", " +
-                "Nachricht: " + message.content + ", " +
-                "Erstellt am: " + message.created + "}; "
+    
+    private enrichMessagesWithRiskNegotiation = (chatMessages: ChatMessage[]): void => {
+        // sort by time of creation in ascending order
+        const sortedMessages = [...chatMessages].sort(
+            (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime()
+          );
+        sortedMessages.forEach((chatMessage) => {
+            if (chatMessage.uid === 'xRiskChatbot'){
+                const content = "Absender: xRiskChatbot, Nachricht: " + chatMessage.content
+                this.messages.push({ role: "assistant", content: content });
+            }
+            else{
+                const content = "Absender: " + chatMessage.name + ", Nachricht: " + chatMessage.content
+                this.messages.push({ role: "user", content: content });
+            }
         });
-        console.log("basePrompt: " + this.basePrompt);
     }
  
 }

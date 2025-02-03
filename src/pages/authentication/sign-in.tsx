@@ -33,6 +33,7 @@ export const SignIn = () => {
             const user = await signInWithEmail(email, password);
 
             dispatch(fetchUserProfile())
+            dispatch(fetchRisks())
 
             if (user?.refreshToken) {
                 dispatch(fetchRisks())
