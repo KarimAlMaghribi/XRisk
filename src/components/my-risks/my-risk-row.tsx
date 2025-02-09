@@ -76,7 +76,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 ...props.risk,
                 publisher: {
                     name: user.profile.name,
-                    imagePath: user.profile.imagePath,
+                    imagePath: user.profile.imagePath || "",
                     uid: user.id,
                     address: `${user.profile.street} ${user.profile.number}, ${user.profile.zip} ${user.profile.city}`,
                     description: user.profile.aboutMe || "- Nutzer hat noch keine Beschreibung hinzugefügt -",
@@ -103,11 +103,6 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
             dispatch(updateMyRisk(riskToWithdraw));
             dispatch(deleteRisk(riskToWithdraw.id));
         }
-    }
-
-    const handleDelete = () => {
-        dispatch(deleteMyRisk(props.risk.id))
-        dispatch(deleteRisk(props.risk.id))
     }
 
     const mapStatus = (status: RiskStatusEnum | undefined) => {

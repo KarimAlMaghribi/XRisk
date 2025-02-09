@@ -32,9 +32,7 @@ export const ChatsList = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const chats: Chat[] = useSelector(selectChatsToDisplay);
-    const opposingImagePath: string = useSelector((state: RootState) =>
-        selectOpposingImagePath({ myBids: state.myBids }, auth.currentUser?.uid)
-    );
+    const uid: string | undefined = auth.currentUser?.uid;
 
     const isMenuOpen = Boolean(anchorEl);
 
@@ -107,7 +105,7 @@ export const ChatsList = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar src={opposingImagePath} sx={{ width: 42, height: 42 }} />
+                                    <Avatar src={chat.riskTaker.uid === uid ? chat.riskProvider.imagePath : chat.riskTaker.imagePath} sx={{ width: 42, height: 42 }} />
                                 </Badge>
                             </ListItemAvatar>
                             <ListItemText
