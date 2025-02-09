@@ -5,9 +5,9 @@ import {useDispatch} from "react-redux";
 import {Risk} from "../../../models/Risk";
 import React from "react";
 import {Dialog, Button, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
-import {PaperComponent} from "../creation-dialog/my-risk-creation-dialog";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import {PaperComponent} from "../../ui/draggable-dialog";
 
 export interface MyRiskDeletionDialogProps {
     open: boolean;

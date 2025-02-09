@@ -1,13 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle, Paper,
-    PaperProps,
-    TextField
-} from "@mui/material";
+import React, {useState} from "react";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
@@ -23,24 +15,12 @@ import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../../routing/routes";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 import {RiskTypeSelector} from "../risk-type-selector";
-import Draggable from 'react-draggable';
 import {selectUserProfile} from "../../../store/slices/user-profile/selectors";
 import {UserProfile} from "../../../store/slices/user-profile/types";
 import {auth} from "../../../firebase_config";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-
-export function PaperComponent(props: PaperProps) {
-    const nodeRef = React.useRef<HTMLDivElement>(null);
-    return (
-        <Draggable
-            nodeRef={nodeRef as React.RefObject<HTMLDivElement>}
-            handle="#draggable-dialog-title"
-            cancel={'[class*="MuiDialogContent-root"]'}>
-            <Paper {...props} ref={nodeRef} />
-        </Draggable>
-    );
-}
+import {PaperComponent} from "../../ui/draggable-dialog";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -126,7 +106,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     m: 0,
                 },
             }}>
-            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">Risiko definieren</DialogTitle>
+            <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title">Risiko definieren</DialogTitle>
             <IconButton
                 aria-label="close"
                 onClick={handleClose}
@@ -136,7 +116,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     top: 8,
                     color: theme.palette.grey[500],
                 })}>
-                <CloseIcon />
+                <CloseIcon/>
             </IconButton>
 
             <DialogContent>
@@ -192,7 +172,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{ marginTop: "10px", width: "100%" }}
+                        sx={{marginTop: "10px", width: "100%"}}
                         format="DD.MM.YYYY"
                         label="Laufzeitende"
                         value={date}

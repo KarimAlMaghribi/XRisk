@@ -1,6 +1,5 @@
 export enum RiskPanelArea {
-    RECENTLY_DEFINED = "Kürzlich definiert",
-    PLANNED_PUBLICATION = "Veröffentlichung geplant",
+    DRAFT = "Entwurf",
     PUBLISHED = "Veröffentlicht",
     WITHDRAWN = "Zurückgezogen",
     DEAL = "In Verhandlung",

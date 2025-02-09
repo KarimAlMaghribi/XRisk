@@ -59,24 +59,17 @@ export const MyRisks = () => {
                         <TabContext value={tab}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleTabChange}>
-                                    <Tab sx={{fontWeight: "bold"}} label="Entwürfe" value="1"/>
-                                    <Tab sx={{fontWeight: "bold"}} label="Angebotene Risiken" value="2"/>
-                                    <Tab sx={{fontWeight: "bold"}} label="Übernommene Risiken" value="3"/>
+                                    <Tab sx={{fontWeight: "bold"}} label="Angebotene Risiken" value="1"/>
+                                    <Tab sx={{fontWeight: "bold"}} label="Angenommene Risiken" value="2"/>
                                 </TabList>
                             </Box>
-                            <TabPanel value="1" >
+                            <TabPanel value="1">
                                 <Panel
-                                    risks={myRisks.filter(risk => risk.status === RiskStatusEnum.DRAFT) }
-                                    type={RiskStatusEnum.DRAFT}
-                                />
-                            </TabPanel>
-                            <TabPanel value="2">
-                                <Panel
-                                    risks={myRisks.filter(risk => risk.status === RiskStatusEnum.WITHDRAWN || risk.status === RiskStatusEnum.PUBLISHED || risk.status === RiskStatusEnum.DEAL) }
+                                    risks={myRisks.filter(risk =>  risk.status !== RiskStatusEnum.AGREEMENT) }
                                     type={RiskStatusEnum.PUBLISHED}
                                 />
                             </TabPanel>
-                            <TabPanel value="3">
+                            <TabPanel value="2">
                                 <Panel
                                     risks={myRisks.filter(risk => risk.status === RiskStatusEnum.AGREEMENT) }
                                     type={RiskStatusEnum.AGREEMENT}
@@ -86,10 +79,10 @@ export const MyRisks = () => {
                     </Box>
                 </Grid>
             </Grid>
+
             <MyRiskCreationDialog
                 open={openRiskCreationDialog}
-                handleClose={handleCloseDialog}
-            />
+                handleClose={handleCloseDialog}/>
         </React.Fragment>
     );
 }

@@ -10,9 +10,10 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {RiskTypeSelector} from "../risk-type-selector";
-import {EuroNumberFormat, PaperComponent} from "../creation-dialog/my-risk-creation-dialog";
+import {EuroNumberFormat} from "../creation-dialog/my-risk-creation-dialog";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { PaperComponent } from "../../ui/draggable-dialog";
 
 export interface MyRiskEditDialogProps {
     risk: Risk;

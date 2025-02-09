@@ -5,8 +5,6 @@ import {Risk} from "../../models/Risk";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {MyRiskRow} from "./my-risk-row";
 import {RiskPanelArea} from "../../enums/RiskPanelArea.enum";
-import dayjs from "dayjs";
-import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 
 export interface PanelProps {
     risks: Risk[];
@@ -14,27 +12,18 @@ export interface PanelProps {
 }
 
 export const Panel = (props: PanelProps) => {
-    const getHeaders = (column: 1 | 2 | 3 | 4) => {
-        if (props.type === RiskStatusEnum.DRAFT) {
-            switch (column) {
-                case 1:
-                    return RiskPanelArea.RECENTLY_DEFINED;
-                case 2:
-                    return RiskPanelArea.PLANNED_PUBLICATION;
-                default:
-                    return null;
-            }
-        }
-
+    const getHeaders = (column: 1 | 2 | 3 | 4 | 5) => {
         if (props.type === RiskStatusEnum.PUBLISHED) {
             switch (column) {
                 case 1:
-                    return RiskPanelArea.PUBLISHED;
+                    return RiskPanelArea.DRAFT;
                 case 2:
-                    return RiskPanelArea.WITHDRAWN;
+                    return RiskPanelArea.PUBLISHED;
                 case 3:
-                    return RiskPanelArea.DEAL;
+                    return RiskPanelArea.WITHDRAWN;
                 case 4:
+                    return RiskPanelArea.DEAL;
+                case 5:
                     return RiskPanelArea.AGREEMENT;
                 default:
                     return null;
@@ -53,34 +42,26 @@ export const Panel = (props: PanelProps) => {
         }
     }
 
-    const getRiskRow = (column: 1 | 2 | 3 | 4, risk: Risk) => {
-        if (props.type === RiskStatusEnum.DRAFT && risk.status === RiskStatusEnum.DRAFT) {
-            const createdAt = dayjs(risk.createdAt);
-            const hoursDiff = dayjs().diff(createdAt, "hour");
-
-            if (column === 1 && hoursDiff < 24) {
-                return <MyRiskRow risk={risk} />;
-            }
-            if (column === 2 && hoursDiff >= 24) {
-                return <MyRiskRow risk={risk} />;
-            }
-        }
-
+    const getRiskRow = (column: 1 | 2 | 3 | 4 | 5, risk: Risk) => {
         if (props.type === RiskStatusEnum.PUBLISHED) {
-            if (risk.status === RiskStatusEnum.PUBLISHED && column === 1) {
-                return <MyRiskRow risk={risk} />;
+            if (risk.status === RiskStatusEnum.DRAFT && column === 1) {
+                return <MyRiskRow risk={risk}/>;
             }
 
-            if (risk.status === RiskStatusEnum.WITHDRAWN && column === 2) {
-                return <MyRiskRow risk={risk} />;
+            if (risk.status === RiskStatusEnum.PUBLISHED && column === 2) {
+                return <MyRiskRow risk={risk}/>;
             }
 
-            if (risk.status === RiskStatusEnum.DEAL && column === 3) {
-                return <MyRiskRow risk={risk} />;
+            if (risk.status === RiskStatusEnum.WITHDRAWN && column === 3) {
+                return <MyRiskRow risk={risk}/>;
             }
 
-            if (risk.status === RiskStatusEnum.AGREEMENT && column === 4) {
-                return <MyRiskRow risk={risk} />;
+            if (risk.status === RiskStatusEnum.DEAL && column === 4) {
+                return <MyRiskRow risk={risk}/>;
+            }
+
+            if (risk.status === RiskStatusEnum.AGREEMENT && column === 5) {
+                return <MyRiskRow risk={risk}/>;
             }
         }
 
@@ -105,6 +86,10 @@ export const Panel = (props: PanelProps) => {
                 {getHeaders(4)}
             </Typography>
             {props.risks.map((risk) => getRiskRow(4, risk))}
+            <Typography variant="button" component="div" fontWeight="bolder" marginTop="20px">
+                {getHeaders(5)}
+            </Typography>
+            {props.risks.map((risk) => getRiskRow(5, risk))}
 
         </Box>
     )
