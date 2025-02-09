@@ -20,6 +20,9 @@ import { setActiveChat } from "../../store/slices/my-bids/reducers";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import { formatDate } from '../../utils/dateFormatter';
+import {Publisher} from "../../models/Publisher";
+import {useSnackbarContext} from "../snackbar/custom-snackbar";
+import {PublisherProfile} from "./publisher-profile";
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -31,7 +34,10 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const profileInfo: ProfileInformation = useSelector(selectProfileInformation);
+    const [openPublisherProfileDialog, setOpenPublisherProfileDialog] = React.useState<boolean>(false);
+    const [publisherProfile, setPublisherProfile] = React.useState<Publisher | null | undefined>(null);
     const [expandedPanels, setExpandedPanels] = React.useState<string[]>([]);
+    const { showSnackbar } = useSnackbarContext();
 
     const chats: Chat[] = useSelector(selectChats);
 
@@ -45,10 +51,22 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
         }
     };
 
+    const displayPublisherProfile = (event: any, publisher: Publisher | undefined) => {
+        event.stopPropagation();
+
+        if (!publisher) {
+            console.error("Error displaying publisher information. Publisher is undefined!", publisher);
+            showSnackbar("Probleme bei der Profilanzeige!", "Profil des Anbieters konnte nicht geladen werden. Lade die Seite erneut!", { vertical: "top", horizontal: "center" }, "error")
+        }
+
+        setPublisherProfile(publisher);
+        setOpenPublisherProfileDialog(true);
+    }
+
     const openBid = (riskIndex: number) => {
         if (!user || !user.uid) {
             console.error("User not authenticated or UID missing:", user);
-            alert("Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.");
+            showSnackbar("Nutzer nicht authentifiziert!","Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.", { vertical: "top", horizontal: "center" }, "error");
             return;
         }
 
@@ -56,13 +74,13 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
 
         if (!selectedRisk) {
             console.error("Selected risk not found:", selectedRisk);
-            alert("Konnte Verhandlung nicht starten, das ausgewählte Risiko wurde nicht gefunden.");
+            showSnackbar("Risiko nicht gefunden","Konnte Verhandlung nicht starten, das ausgewählte Risiko wurde nicht gefunden.", { vertical: "top", horizontal: "center" }, "error");
             return;
         }
 
         if (selectedRisk.publisher?.uid === user.uid) {
             console.error("User tried to bid on his own risk:", selectedRisk, user);
-            alert("Konnte Verhandlung nicht starten, du kannst nicht auf dein eigenes Risiko bieten.");
+            showSnackbar("Falsches Risiko", "Konnte Verhandlung nicht starten, du kannst nicht auf dein eigenes Risiko bieten.", { vertical: "top", horizontal: "center" }, "error");
             return;
         }
 
@@ -167,9 +185,9 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         {formatDate(new Date(risk.declinationDate))}
                                     </Typography>
                                 </Grid>
-                                <Grid  size={1} display="flex" justifyContent="center" alignItems="center">
+                                <Grid size={1} display="flex" justifyContent="center" alignItems="center">
                                     <Tooltip title={risk.publisher && risk.publisher.name}>
-                                        <Avatar src={risk.publisher?.imagePath} />
+                                        <Avatar src={risk.publisher?.imagePath} onClick={(event) => displayPublisherProfile(event, risk.publisher)}/>
                                     </Tooltip>
                                 </Grid>
                             </Grid>
@@ -207,16 +225,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                                 Anbieter
                                             </Typography>
                                             <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
-                                                Telefonnummer
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 E-Mail
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
-                                                Adresse
-                                            </Typography>
-                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
-                                                Vorstellung
                                             </Typography>
                                         </Grid>
                                         <Grid size={8}>
@@ -224,16 +233,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                                 {risk.publisher?.name || "-"}
                                             </Typography>
                                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                                {risk.publisher?.phoneNumber || "-"}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
                                                 {risk.publisher?.email || "-"}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                                {risk.publisher?.address || "-"}
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                                {risk.publisher?.description || "-"}
                                             </Typography>
                                         </Grid>
                                     </Grid>
@@ -249,6 +249,13 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                         Keine Risiken gefunden.
                     </Typography> : null
             }
+            <PublisherProfile
+                open={openPublisherProfileDialog}
+                setOpen={setOpenPublisherProfileDialog}
+                publisher={publisherProfile}
+                setPublisher={setPublisherProfile}
+            />
+
         </React.Fragment>
     );
 };
