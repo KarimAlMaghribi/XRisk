@@ -1,5 +1,7 @@
 import { createTheme } from '@mui/material/styles';
 
+const fontFamily: string = '"Roboto", sans-serif';
+
 export const theme = createTheme({
     palette: {
         primary: {
@@ -11,7 +13,7 @@ export const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: '"Open Sans", sans-serif',
+        fontFamily: fontFamily,
     },
     components: {
         MuiButton: {
@@ -23,14 +25,14 @@ export const theme = createTheme({
                     borderRadius: 25,
                     textTransform: 'none',
                     fontWeight: 'normal',
-                    fontFamily: '"Open Sans", sans-serif',
+                    fontFamily: fontFamily
                 },
             },
         },
         MuiTypography: {
             styleOverrides: {
                 root: {
-                    fontFamily: '"Open Sans", sans-serif',
+                    fontFamily: fontFamily
                 },
             },
         },

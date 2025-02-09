@@ -73,6 +73,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                 </Box>,
                                 <Divider key="divider"/>,
                                 <MenuItem
+                                    key="second-box"
                                     onClick={openProfileDialog}>
                                     <ListItemIcon>
                                         <AccountCircleIcon />
