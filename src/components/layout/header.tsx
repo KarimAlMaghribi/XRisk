@@ -57,11 +57,6 @@ export function Header() {
         navigate(page.route);
     };
 
-    const handleCloseUserMenu = (setting: Page) => {
-        setAnchorElUser(null);
-        navigate(setting.route)
-    };
-
     return (
         <AppBar position="static" elevation={0} sx={{backgroundColor: "#1F271B"}}>
             <Container maxWidth="xl">

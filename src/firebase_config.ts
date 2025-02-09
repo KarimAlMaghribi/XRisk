@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { getAuth, setPersistence, inMemoryPersistence } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 import { GoogleAuthProvider } from "firebase/auth";
-import firebase from "firebase/compat";
 
 
 const firebaseConfig = {
@@ -20,9 +19,9 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
-setPersistence(auth, browserSessionPersistence)
+setPersistence(auth, inMemoryPersistence)
     .then(() => {
-        console.log("Persistence auf SESSION gesetzt.");
+        console.log("Persistence auf inMemoryPersistence gesetzt. Der Nutzer wird beim Neuladen oder Schließen der Seite ausgeloggt.");
     })
     .catch((error) => {
         console.error("Fehler beim Setzen der Persistence:", error);
