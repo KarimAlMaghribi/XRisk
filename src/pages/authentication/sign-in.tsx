@@ -14,6 +14,7 @@ import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
 import {fetchRisks} from "../../store/slices/risks/thunks";
+import {fetchMyChats} from "../../store/slices/my-bids/thunks";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -32,18 +33,22 @@ export const SignIn = () => {
         try {
             const user = await signInWithEmail(email, password);
 
-            dispatch(fetchUserProfile())
-            dispatch(fetchRisks())
-
             if (user?.refreshToken) {
-                dispatch(fetchRisks())
+                dispatch(fetchUserProfile());
+                dispatch(fetchRisks());
+                dispatch(fetchMyChats());
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
-            console.error(error)
-            showSnackbar("Login fehlgeschlagen!", "Email oder Passwort sind falsch.", { vertical: "top", horizontal: "center" }, "error")
+            console.error(error);
+            showSnackbar(
+                "Login fehlgeschlagen!",
+                "Email oder Passwort sind falsch.",
+                { vertical: "top", horizontal: "center" },
+                "error"
+            );
         }
-    }
+    };
 
     const signInGoogle = async () => {
         try {

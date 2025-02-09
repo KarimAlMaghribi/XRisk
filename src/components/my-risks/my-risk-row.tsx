@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {deleteMyRisk, updateMyRisk} from "../../store/slices/my-risks/thunks";
+import {updateMyRisk} from "../../store/slices/my-risks/thunks";
 import {addRisk, deleteRisk} from "../../store/slices/risks/thunks";
 import {AppDispatch} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
@@ -24,15 +24,21 @@ import SendIcon from "@mui/icons-material/Send";
 import {UserProfile} from "../../store/slices/user-profile/types";
 import {selectUserProfile} from "../../store/slices/user-profile/selectors";
 import {MyRiskDeletionDialog} from "./deletion-dialog/deletion-dialog";
+import SignLanguageIcon from '@mui/icons-material/SignLanguage';
+import {ROUTES} from "../../routing/routes";
+import {useNavigate} from "react-router-dom";
+import {setActiveChatByRiskId} from "../../store/slices/my-bids/reducers";
 
 export interface MyRiskRowProps {
     risk: Risk;
     onEdit?: (risk: Risk) => void;
     onDelete?: (risk: Risk) => void;
+    taken?: boolean;
 }
 
 export const MyRiskRow = (props: MyRiskRowProps) => {
     const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
     const {showSnackbar} = useSnackbarContext();
     const user: UserProfile = useSelector(selectUserProfile);
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
@@ -103,6 +109,11 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
             dispatch(updateMyRisk(riskToWithdraw));
             dispatch(deleteRisk(riskToWithdraw.id));
         }
+    }
+
+    const handleDeal = (risk: Risk): void => {
+        navigate(`/${ROUTES.CHAT}`);
+        dispatch(setActiveChatByRiskId(risk.id));
     }
 
     const mapStatus = (status: RiskStatusEnum | undefined) => {
@@ -194,36 +205,48 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                         </Typography>
                     </Grid>
                     <Grid size={3}>
-                        <Box display="flex" justifyContent="flex-end">
-                            {
-                                RiskStatusEnum.WITHDRAWN === props.risk.status || RiskStatusEnum.DRAFT === props.risk.status
-                                    ?
+                        {
+                            props.taken &&
+                            <Box display="flex" justifyContent="flex-end">
+                                <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={<SignLanguageIcon />}>
+                                    Verhandeln
+                                </Button>
+                            </Box>
+                        }
+                        {
+                            !props.taken &&
+                            <Box display="flex" justifyContent="flex-end">
+                                {
+                                    RiskStatusEnum.WITHDRAWN === props.risk.status || RiskStatusEnum.DRAFT === props.risk.status
+                                        ?
                                         <Button color="success" variant="contained" onClick={handlePublish} size="small" startIcon={<SendIcon />}>
                                             Veröffentlichen
                                         </Button>
-                                    :
+                                        :
                                         <Button color="warning" variant="contained" onClick={handleWithdraw} size="small" startIcon={<UndoIcon />}>
                                             Zurückziehen
                                         </Button>
-                            }
+                                }
+                                <Button
+                                    variant="outlined"
+                                    disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
+                                    onClick={() => setOpenRiskEditDialog(true)}
+                                    size="small"
+                                    startIcon={<EditIcon/>}
+                                    sx={{marginLeft: "10px"}}>
+                                    Bearbeiten
+                                </Button>
+                                <IconButton
+                                    size="small"
+                                    disabled={props.risk.status === RiskStatusEnum.PUBLISHED || props.risk.status === RiskStatusEnum.AGREEMENT || props.risk.status === RiskStatusEnum.DEAL}
+                                    onClick={() => setOpenDeletionDialog(true)}
+                                    sx={{marginLeft: "10px"}}>
+                                    <DeleteIcon color="warning"/>
+                                </IconButton>
+                            </Box>
+                        }
 
-                            <Button
-                                variant="outlined"
-                                disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
-                                onClick={() => setOpenRiskEditDialog(true)}
-                                size="small"
-                                startIcon={<EditIcon/>}
-                                sx={{marginLeft: "10px"}}>
-                                Bearbeiten
-                            </Button>
-                            <IconButton
-                                size="small"
-                                disabled={props.risk.status === RiskStatusEnum.PUBLISHED || props.risk.status === RiskStatusEnum.AGREEMENT || props.risk.status === RiskStatusEnum.DEAL}
-                                onClick={() => setOpenDeletionDialog(true)}
-                                sx={{marginLeft: "10px"}}>
-                                <DeleteIcon color="warning"/>
-                            </IconButton>
-                        </Box>
+
                     </Grid>
                 </Grid>
             </Card>
@@ -237,7 +260,5 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 setOpen={setOpenDeletionDialog}
                 risk={props.risk} />
         </>
-
-
     )
 }

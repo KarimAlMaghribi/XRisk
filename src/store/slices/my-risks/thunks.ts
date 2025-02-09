@@ -6,7 +6,7 @@ import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {Risk} from "../../../models/Risk";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 
-export const fetchMyRisks = createAsyncThunk(
+export const fetchMyOfferedRisks = createAsyncThunk(
     ActionTypes.FETCH_MY_RISKS,
     async (_, {rejectWithValue}) => {
         try {

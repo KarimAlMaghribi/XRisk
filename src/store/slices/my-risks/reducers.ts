@@ -2,11 +2,13 @@ import {createSlice} from "@reduxjs/toolkit";
 import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {MyRisksState} from "./types";
-import {addMyRisk, deleteMyRisk, fetchMyRisks, updateMyRisk} from "./thunks";
+import {addMyRisk, deleteMyRisk, fetchMyOfferedRisks, updateMyRisk} from "./thunks";
+import {fetchMyTakenRisks} from "../risks/thunks";
 
 
 const initialState: MyRisksState = {
-    risks: [],
+    offeredRisks: [],
+    takenRisks: [],
     error: undefined,
     status: FetchStatusEnum.IDLE
 };
@@ -17,17 +19,17 @@ export const myRisksSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchMyRisks.pending, (state) => {
-                state.risks = [];
+            .addCase(fetchMyOfferedRisks.pending, (state) => {
+                state.offeredRisks = [];
                 state.error = undefined;
                 state.status = FetchStatusEnum.PENDING;
             })
-            .addCase(fetchMyRisks.fulfilled, (state, action) => {
-                state.risks = action.payload;
+            .addCase(fetchMyOfferedRisks.fulfilled, (state, action) => {
+                state.offeredRisks = action.payload;
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
-            .addCase(fetchMyRisks.rejected, (state, action) => {
-                state.risks = [];
+            .addCase(fetchMyOfferedRisks.rejected, (state, action) => {
+                state.offeredRisks = [];
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
@@ -36,11 +38,11 @@ export const myRisksSlice = createSlice({
                 state.status = FetchStatusEnum.PENDING;
             })
             .addCase(addMyRisk.fulfilled, (state, action) => {
-                if (state.risks.some(risk => risk.id === action.payload.id)) {
+                if (state.offeredRisks.some(risk => risk.id === action.payload.id)) {
                     return;
                 }
 
-                state.risks.push(action.payload);
+                state.offeredRisks.push(action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(addMyRisk.rejected, (state, action) => {
@@ -52,7 +54,7 @@ export const myRisksSlice = createSlice({
                 state.status = FetchStatusEnum.PENDING;
             })
             .addCase(deleteMyRisk.fulfilled, (state, action) => {
-                state.risks = state.risks.filter(risk => risk.id !== action.payload);
+                state.offeredRisks = state.offeredRisks.filter(risk => risk.id !== action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(deleteMyRisk.rejected, (state, action) => {
@@ -64,7 +66,7 @@ export const myRisksSlice = createSlice({
                 state.status = FetchStatusEnum.PENDING;
             })
             .addCase(updateMyRisk.fulfilled, (state, action) => {
-                state.risks = state.risks.map(risk =>
+                state.offeredRisks = state.offeredRisks.map(risk =>
                     risk.id === action.payload.id ? {...risk, ...action.payload} : risk
                 );
                 state.status = FetchStatusEnum.SUCCEEDED;
@@ -73,6 +75,20 @@ export const myRisksSlice = createSlice({
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
+            .addCase(fetchMyTakenRisks.pending, (state) => {
+                state.takenRisks = [];
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(fetchMyTakenRisks.fulfilled, (state, action) => {
+                state.takenRisks = action.payload;
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(fetchMyTakenRisks.rejected, (state, action) => {
+                state.takenRisks = [];
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            });
     }
 });
 

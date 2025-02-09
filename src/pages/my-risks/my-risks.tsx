@@ -3,33 +3,37 @@ import Grid from "@mui/material/Grid2";
 import {Box, Tab, Typography} from "@mui/material";
 import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
-import {selectMyRisks} from "../../store/slices/my-risks/selectors";
+import {selectMyOfferedRisks, selectMyTakenRisks} from "../../store/slices/my-risks/selectors";
 import Button from "@mui/material/Button";
 import {MyRiskCreationDialog} from "../../components/my-risks/creation-dialog/my-risk-creation-dialog";
 import {AppDispatch} from "../../store/store";
-import {fetchMyRisks} from "../../store/slices/my-risks/thunks";
+import {fetchMyOfferedRisks} from "../../store/slices/my-risks/thunks";
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import {Panel} from "../../components/my-risks/panel";
-import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
-
+import {fetchMyTakenRisks} from "../../store/slices/risks/thunks";
+import {RiskTypeEnum} from "../../enums/RiskType.enum";
 
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
-    const myRisks: Risk[] = useSelector(selectMyRisks);
+    const myOfferedRisks: Risk[] = useSelector(selectMyOfferedRisks);
+    const myTakenRisks: Risk[] = useSelector(selectMyTakenRisks);
+
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
-    const [tab, setTab] = React.useState('1');
+    const [tab, setTab] = React.useState(RiskTypeEnum.OFFERED);
 
     useEffect(() => {
-        dispatch(fetchMyRisks());
-    }, [dispatch]);
+        dispatch(fetchMyOfferedRisks());
+        dispatch(fetchMyTakenRisks());
+    }, [dispatch, tab]);
+
 
     const handleCloseDialog = () => {
         setOpenRiskCreationDialog(false);
     }
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleTabChange = (event: React.SyntheticEvent, newValue: RiskTypeEnum) => {
         setTab(newValue);
     };
 
@@ -59,21 +63,15 @@ export const MyRisks = () => {
                         <TabContext value={tab}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleTabChange}>
-                                    <Tab sx={{fontWeight: "bold"}} label="Angebotene Risiken" value="1"/>
-                                    <Tab sx={{fontWeight: "bold"}} label="Angenommene Risiken" value="2"/>
+                                    <Tab sx={{fontWeight: "bold"}} label="Angebotene Risiken" value={RiskTypeEnum.OFFERED}/>
+                                    <Tab sx={{fontWeight: "bold"}} label="Angenommene Risiken" value={RiskTypeEnum.TAKEN}/>
                                 </TabList>
                             </Box>
-                            <TabPanel value="1">
-                                <Panel
-                                    risks={myRisks.filter(risk =>  risk.status !== RiskStatusEnum.AGREEMENT) }
-                                    type={RiskStatusEnum.PUBLISHED}
-                                />
+                            <TabPanel value={RiskTypeEnum.OFFERED}>
+                                <Panel risks={myOfferedRisks} type={RiskTypeEnum.OFFERED}/>
                             </TabPanel>
-                            <TabPanel value="2">
-                                <Panel
-                                    risks={myRisks.filter(risk => risk.status === RiskStatusEnum.AGREEMENT) }
-                                    type={RiskStatusEnum.AGREEMENT}
-                                />
+                            <TabPanel value={RiskTypeEnum.TAKEN}>
+                                <Panel risks={myTakenRisks} type={RiskTypeEnum.TAKEN}/>
                             </TabPanel>
                         </TabContext>
                     </Box>
@@ -86,3 +84,4 @@ export const MyRisks = () => {
         </React.Fragment>
     );
 }
+

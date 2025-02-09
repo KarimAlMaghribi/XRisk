@@ -1,3 +1,4 @@
 import {MyRisksState} from "./types";
 
-export const selectMyRisks = (state: { myRisks: MyRisksState }) => state.myRisks.risks;
+export const selectMyOfferedRisks = (state: { myRisks: MyRisksState }) => state.myRisks.offeredRisks;
+export const selectMyTakenRisks = (state: { myRisks: MyRisksState }) => state.myRisks.takenRisks;

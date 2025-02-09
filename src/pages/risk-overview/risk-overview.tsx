@@ -52,8 +52,6 @@ export const RiskOverview = () => {
                         </Button>
                     </Grid>
 
-                    {/*<Divider style={{margin: "0 25px 0 25px"}}/>*/}
-
                     <RiskOverviewFilter
                         types={filterTypes}
                         value={filterValue}

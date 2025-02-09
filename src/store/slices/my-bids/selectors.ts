@@ -3,14 +3,11 @@ import {RootState} from "../../store";
 import {auth} from "../../../firebase_config";
 
 export const selectChats = (state: { myBids: MyBidsState }) => state.myBids.chats;
-export const selectChatById = (state: RootState, id: string) => {
-    return state.myBids.chats.find(chat => chat.id === id) || null};
 export const selectActiveChat = (state: { myBids: MyBidsState }) => {
     return state.myBids.chats.find((chat) => chat.id === state.myBids.activeChatId);
 }
 export const selectActiveChatId = (state: { myBids: MyBidsState }) => state.myBids.activeChatId;
 export const selectActiveMessages = (state: { myBids: MyBidsState }) => state.myBids.activeMessages;
-export const selectActiveChatRiskProviderImagePath = (state: { myBids: MyBidsState }) => selectActiveChat(state)?.riskProvider?.imagePath;
 
 export const selectOpposingImagePath = (
     state: { myBids: MyBidsState },
@@ -64,4 +61,13 @@ export const selectChatsToDisplay = (state: RootState) => {
     return state.myBids.filteredChats.length > 0
         ? state.myBids.filteredChats
         : state.myBids.chats;
+};
+
+export const selectMyTakenRiskIds = (state: { myBids: MyBidsState }) => {
+    const userUid = auth.currentUser?.uid;
+    if (!userUid) return [];
+
+    return state.myBids.chats
+        .filter(chat => chat.riskTaker.uid === userUid)
+        .map(chat => chat.riskId);
 };

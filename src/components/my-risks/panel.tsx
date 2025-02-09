@@ -1,19 +1,19 @@
-import {RiskStatus} from "../../types/RiskStatus";
 import React from "react";
 import {Box, Typography} from "@mui/material";
 import {Risk} from "../../models/Risk";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {MyRiskRow} from "./my-risk-row";
 import {RiskPanelArea} from "../../enums/RiskPanelArea.enum";
+import {RiskTypeEnum} from "../../enums/RiskType.enum";
 
 export interface PanelProps {
     risks: Risk[];
-    type: RiskStatus;
+    type: RiskTypeEnum;
 }
 
 export const Panel = (props: PanelProps) => {
-    const getHeaders = (column: 1 | 2 | 3 | 4 | 5) => {
-        if (props.type === RiskStatusEnum.PUBLISHED) {
+    const getHeaders = (column: number) => {
+        if (props.type === RiskTypeEnum.OFFERED) {
             switch (column) {
                 case 1:
                     return RiskPanelArea.DRAFT;
@@ -29,68 +29,63 @@ export const Panel = (props: PanelProps) => {
                     return null;
             }
         }
-
-        if (props.type === RiskStatusEnum.AGREEMENT) {
+        if (props.type === RiskTypeEnum.TAKEN) {
             switch (column) {
                 case 1:
                     return RiskPanelArea.DEAL;
                 case 2:
-                    return RiskPanelArea.RISK_TAKEN;
+                    return RiskPanelArea.AGREEMENT;
                 default:
                     return null;
             }
         }
-    }
+    };
 
-    const getRiskRow = (column: 1 | 2 | 3 | 4 | 5, risk: Risk) => {
-        if (props.type === RiskStatusEnum.PUBLISHED) {
+    const getRiskRow = (column: number, risk: Risk) => {
+        if (props.type === RiskTypeEnum.OFFERED) {
             if (risk.status === RiskStatusEnum.DRAFT && column === 1) {
-                return <MyRiskRow risk={risk}/>;
+                return <MyRiskRow risk={risk} />;
             }
-
             if (risk.status === RiskStatusEnum.PUBLISHED && column === 2) {
-                return <MyRiskRow risk={risk}/>;
+                return <MyRiskRow risk={risk} />;
             }
-
             if (risk.status === RiskStatusEnum.WITHDRAWN && column === 3) {
-                return <MyRiskRow risk={risk}/>;
+                return <MyRiskRow risk={risk} />;
             }
-
             if (risk.status === RiskStatusEnum.DEAL && column === 4) {
-                return <MyRiskRow risk={risk}/>;
+                return <MyRiskRow risk={risk} />;
             }
-
             if (risk.status === RiskStatusEnum.AGREEMENT && column === 5) {
-                return <MyRiskRow risk={risk}/>;
+                return <MyRiskRow risk={risk} />;
+            }
+        } else if (props.type === RiskTypeEnum.TAKEN) {
+            if (risk.status !== RiskStatusEnum.AGREEMENT && column === 1) {
+                return <MyRiskRow risk={risk} taken={true}/>;
+            }
+            if ((risk.status === RiskStatusEnum.AGREEMENT) && column === 2) {
+                return <MyRiskRow risk={risk} taken={true}/>;
             }
         }
-
         return null;
     };
 
+    const columns = props.type === RiskTypeEnum.OFFERED ? [1, 2, 3, 4, 5] : [1, 2];
+
     return (
         <Box>
-            <Typography variant="button" component="div" fontWeight="bolder" marginTop="20px">
-                {getHeaders(1)}
-            </Typography>
-            {props.risks.map((risk) => getRiskRow(1, risk))}
-            <Typography variant="button" component="div" fontWeight="bolder" marginTop="20px">
-                {getHeaders(2)}
-            </Typography>
-            {props.risks.map((risk) => getRiskRow(2, risk))}
-            <Typography variant="button" component="div" fontWeight="bolder" marginTop="20px">
-                {getHeaders(3)}
-            </Typography>
-            {props.risks.map((risk) => getRiskRow(3, risk))}
-            <Typography variant="button" component="div" fontWeight="bolder" marginTop="20px">
-                {getHeaders(4)}
-            </Typography>
-            {props.risks.map((risk) => getRiskRow(4, risk))}
-            <Typography variant="button" component="div" fontWeight="bolder" marginTop="20px">
-                {getHeaders(5)}
-            </Typography>
-            {props.risks.map((risk) => getRiskRow(5, risk))}
-
+            {columns.map((section) => (
+                <React.Fragment key={section}>
+                    <Typography
+                        variant="button"
+                        component="div"
+                        fontWeight="bolder"
+                        marginTop="20px"
+                    >
+                        {getHeaders(section)}
+                    </Typography>
+                    {props.risks.map((risk) => getRiskRow(section, risk))}
+                </React.Fragment>
+            ))}
         </Box>
-    )
-}
+    );
+};

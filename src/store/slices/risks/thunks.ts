@@ -6,6 +6,8 @@ import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 import {Risk} from "../../../models/Risk";
 import {Publisher} from "../../../models/Publisher";
+import {RootState} from "../../store";
+import {selectMyTakenRiskIds} from "../my-bids/selectors";
 
 export const fetchRisks = createAsyncThunk(
     ActionTypes.FETCH_RISKS,
@@ -40,6 +42,30 @@ export const fetchRisks = createAsyncThunk(
         } catch (error) {
             console.error("Error in fetchRisks:", error);
             throw error;
+        }
+    }
+);
+
+export const fetchMyTakenRisks = createAsyncThunk<Risk[], void, { state: RootState }>(
+    ActionTypes.FETCH_MY_TAKEN_RISKS,
+    async (_, { getState, rejectWithValue }) => {
+        try {
+            const riskIds = selectMyTakenRiskIds(getState());
+            if (riskIds.length === 0) return [];
+
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const risksQuery = query(risksCollection, where("id", "in", riskIds));
+
+            const snapshot = await getDocs(risksQuery);
+            const risks: Risk[] = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Risk[];
+
+            return risks;
+        } catch (error: any) {
+            console.error("Error in fetchMyTakenRisks:", error);
+            return rejectWithValue(error.message);
         }
     }
 );

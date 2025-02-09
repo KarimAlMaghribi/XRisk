@@ -29,8 +29,6 @@ export const MyRiskEditDialog = (props: MyRiskEditDialogProps) => {
     useEffect(() => {
         setRisk(props.risk);
         setRiskType(props.risk.type || []);
-
-        console.log(props.risk);
     }, [props.risk]);
 
     const handleSave = () => {

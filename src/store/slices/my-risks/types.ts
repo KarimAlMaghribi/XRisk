@@ -9,7 +9,8 @@ export enum ActionTypes {
 }
 
 export interface MyRisksState {
-    risks: Risk[];
+    offeredRisks: Risk[];
+    takenRisks: Risk[];
     error?: string;
     status: FetchStatus;
 }

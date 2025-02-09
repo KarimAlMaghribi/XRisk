@@ -32,6 +32,7 @@ export interface Chat {
     lastMessage?: string;
     lastActivity: string;
     status?: ChatStatus;
+    agreement?: boolean;
 }
 
 export interface MyBidsState {
