@@ -15,11 +15,15 @@ import {Catalog} from "./pages/catalog/catalog";
 import {Account} from "./pages/account/account";
 import {Investors} from "./pages/investors/investors";
 import {Chat} from "./pages/chat/chat";
-import {Settings} from "@mui/icons-material";
+import {Settings, Support} from "@mui/icons-material";
 import {ROUTES} from "./routing/routes";
 import {PrivateRoute} from "./routing/private-route";
 import {MyRisks} from "./pages/my-risks/my-risks";
 import {MyBids} from "./pages/my-bids/my-bids";
+import { Contact } from './pages/formalities/contact';
+import { TermsPage } from './pages/formalities/terms';
+import { SupportPage } from './pages/formalities/support';
+import FooterProductDescriptions from './pages/formalities/product';
 
 function App() {
     return (
@@ -39,6 +43,10 @@ function App() {
                 <Route path={`/${ROUTES.LEGAL}`} element={<Legal />}/>
                 <Route path={`/${ROUTES.PRIVACY}`} element={<Privacy />}/>
                 <Route path={`/${ROUTES.IMPRINT}`} element={<Imprint />}/>
+                <Route path={`/${ROUTES.CONTACT}`} element={<Contact />}/>
+                <Route path={`/${ROUTES.TERMS}`} element={<TermsPage />}/>
+                <Route path={`/${ROUTES.SUPPORT}`} element={<SupportPage />}/>
+                <Route path={`/${ROUTES.FOOTER_PRODUCTS}`} element={<FooterProductDescriptions />}/>
                 <Route path={`/${ROUTES.MY_RISKS}`} element={<PrivateRoute><MyRisks /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.MY_BIDS}`} element={<PrivateRoute><MyBids /></PrivateRoute>}/>
 

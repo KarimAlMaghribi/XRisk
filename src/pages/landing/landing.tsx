@@ -12,7 +12,9 @@ export const Landing = () => {
             <Banner/>
             <RiskCarousel/>
             <MarketingStats />
-            <FAQs />
+            <div id="faq">
+                <FAQs />
+            </div>
             <div style={{height: "200px"}}></div>
         </React.Fragment>
     )

@@ -18,11 +18,13 @@ import {Risk} from "../../models/Risk";
 import {CHATBOT_UID} from "../../constants/chatbot";
 import {ChatMessage} from "../../store/slices/my-bids/types";
 import {selectActiveChatId, selectActiveMessages, selectRiskId} from "../../store/slices/my-bids/selectors";
+import { basePromptForClassification, basePromptFiltered, mediationPrompt, informationPrompt, controllPrompt, miscPrompt } from "../../constants/prompts";
 import {sendMessage} from "../../store/slices/my-bids/thunks";
 import {selectRisks} from "../../store/slices/risks/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {v4 as uuid} from "uuid"
+import { ChatCompletionMessageParam } from "openai/resources";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -87,10 +89,8 @@ export const ChatSender = () => {
     const onAIChatMsgSubmit = async (e: any) => {
         onChatMsgSubmit(e);
         setAILoading(true);
-        console.log('RISKS: ')
-        console.log(risks)
-        const risk: Risk | undefined = risks.find((risk) => risk.id === riskId)
-
+    
+        const risk: Risk | undefined = risks.find((risk) => risk.id === riskId);
         const lastMessage: ChatMessage = {
             id: uuid(),
             created: new Date().toISOString(),
@@ -98,52 +98,51 @@ export const ChatSender = () => {
             uid: auth.currentUser?.uid || '',
             name: profile.name,
             content: msg,
-            read: false,
-        }
-
-        const updatedActiveMessages = [lastMessage, ...activeMessages]
-
+            read: false
+        };
+    
+        const updatedActiveMessages = [lastMessage, ...activeMessages];
         const chatbot = new Chatbot(risk, updatedActiveMessages);
-        const promptMessages = chatbot.getMessages();
-
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: promptMessages,
-            stream: false,
-            max_tokens: 200,
-            temperature: 0.5,
-            top_p: 0.4,
-            presence_penalty: 0.4,
-            frequency_penalty: 0.0
-        }, { timeout: 60000 });
-
-        const xRiskChatbotResponse: string = response.choices[0]?.message?.content || "";
-
-        if (!xRiskChatbotResponse) {
-            console.error("No response from OpenAI:", response);
-            return;
-        }
-
-        const newMessage: ChatMessage = {
-            id: CHATBOT_UID,
-            created: new Date().toISOString(),
-            type: MessageTypeEnum.TEXT,
-            uid: CHATBOT_UID,
-            name: "xRisk Chatbot",
-            content: xRiskChatbotResponse,
-            read: false,
-            //prompt: prompt
-        }
-
-        if (!activeChatId) {
-            console.error("No active chat found:", activeChatId);
-            return;
-        }
-
-        dispatch(sendMessage({chatId: activeChatId, message: newMessage}));
-        setAILoading(false);
-    }
-
+        
+        // Wait for classification to complete
+        setTimeout(async () => {
+            const promptMessages = chatbot.getMessages();
+            const response = await openai.chat.completions.create({
+                model: "gpt-4o",
+                messages: promptMessages,
+                max_tokens: 200,
+                temperature: 0.5,
+                top_p: 0.4,
+                presence_penalty: 0.4,
+                frequency_penalty: 0.0
+            });
+    
+            const xRiskChatbotResponse: string = response.choices[0]?.message?.content || "";
+    
+            if (!xRiskChatbotResponse) {
+                console.error("No response from OpenAI:", response);
+                return;
+            }
+    
+            const newMessage: ChatMessage = {
+                id: CHATBOT_UID,
+                created: new Date().toISOString(),
+                type: MessageTypeEnum.TEXT,
+                uid: CHATBOT_UID,
+                name: "xRisk Chatbot",
+                content: xRiskChatbotResponse,
+                read: false
+            };
+    
+            if (!activeChatId) {
+                console.error("No active chat found:", activeChatId);
+                return;
+            }
+    
+            dispatch(sendMessage({ chatId: activeChatId, message: newMessage }));
+            setAILoading(false);
+        }, 2000); // Small delay to allow classification to complete
+    };
     return (
         <Box p={2}>
             <form

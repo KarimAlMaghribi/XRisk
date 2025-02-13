@@ -4,8 +4,20 @@ import Logo from "../../assests/imgs/logo.png";
 import {Chip, Divider, Typography} from "@mui/material";
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import XIcon from '@mui/icons-material/X';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const Footer = () => {
+
+    const navigate = useNavigate();
+    
+    const goToFAQ = () => {
+        navigate("/landingpage");
+        setTimeout(() => {
+          document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+        }, 100); // Delay to allow page transition
+    };
+
     return (
         <React.Fragment>
             <Grid container style={{backgroundColor: "#1F271B", padding: "60px 80px 100px 80px"}}>
@@ -13,7 +25,15 @@ export const Footer = () => {
                     <img src={Logo} style={{width: "60px", height: "50px"}} alt="logo"/>
                 </Grid>
                 <Grid size={2}>
-                    <Typography variant="h6" color="white">Product</Typography>
+                    <Typography 
+                        color="white" 
+                        variant="h6" 
+                        component={Link}
+                        to="footer_products"
+                        sx={{ textDecoration: 'none' }}>
+                        Product
+                    </Typography>
+                    <br />
                     <br />
                     <Typography color="white" variant="body2">Pricing</Typography>
                     <br />
@@ -47,12 +67,28 @@ export const Footer = () => {
                     <br />
                     <Typography color="white" variant="body2">Tutorials</Typography>
                     <br />
-                    <Typography color="white" variant="body2">FAQs</Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="/landingpage#faq"
+                        onClick={goToFAQ}
+                        sx={{ textDecoration: 'none' }}>
+                        FAQs
+                    </Typography>
                 </Grid>
                 <Grid size={2}>
                     <Typography variant="h6" color="white">Support</Typography>
                     <br />
-                    <Typography color="white" variant="body2">Contact Us</Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="contact"
+                        sx={{ textDecoration: 'none' }}>
+                        Contact Us
+                    </Typography>
+                    <br />
                     <br />
                     <Typography color="white" variant="body2">Developers</Typography>
                     <br />
@@ -63,7 +99,15 @@ export const Footer = () => {
                 <Grid size={2}>
                     <Typography variant="h6" color="white">Company</Typography>
                     <br />
-                    <Typography color="white" variant="body2">About</Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="about"
+                        sx={{ textDecoration: 'none' }}>
+                        About
+                    </Typography>
+                    <br />
                     <br />
                     <Typography color="white" variant="body2">Press</Typography>
                     <br />
@@ -75,15 +119,63 @@ export const Footer = () => {
                     <Divider color="white"/>
                 </Grid>
                 <Grid size={6} style={{marginTop: "20px"}}>
-                    <Typography color="white">© {new Date().getFullYear()} XRISK AG. All rights reserved</Typography>
+                    <Typography color="white">© {new Date().getFullYear()} xRisk AG (iG)</Typography>
                 </Grid>
                 <Grid size={6} display="flex" justifyContent="right" style={{marginTop: "20px"}}>
-                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Imprint</Typography>
-                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Terms</Typography>
-                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Privacy</Typography>
-                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Support</Typography>
-                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>About</Typography>
-                    <Typography color="white" variant="body2" style={{ marginLeft: "10px", marginRight: "10px" }}>Contact</Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="imprint"
+                        sx={{ textDecoration: 'none' }}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        Imprint
+                    </Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="terms"
+                        sx={{ textDecoration: 'none' }}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        Terms
+                    </Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="privacy"
+                        sx={{ textDecoration: 'none' }}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        Privacy
+                    </Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="support"
+                        sx={{ textDecoration: 'none' }}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        Support
+                    </Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="about"
+                        sx={{ textDecoration: 'none' }}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        About
+                    </Typography>
+                    <Typography 
+                        color="white" 
+                        variant="body2" 
+                        component={Link}
+                        to="contact"
+                        sx={{ textDecoration: 'none' }}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        Contact
+                    </Typography>
                     <LinkedInIcon style={{color: "white", marginLeft: "10px", marginRight: "10px"}}/>
                     <XIcon style={{color: "white", marginLeft: "10px", marginRight: "10px"}}/>
                 </Grid>

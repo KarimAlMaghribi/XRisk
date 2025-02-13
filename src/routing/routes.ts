@@ -10,9 +10,13 @@ export const ROUTES = {
     INVESTORS: 'investors',
     RISK_OVERVIEW: 'risk-overview-overview',
     LEGAL: 'legal',
+    CONTACT: 'contact',
+    SUPPORT: 'support',
+    TERMS: 'terms',
     PRIVACY: 'privacy',
     ACCOUNT: 'account',
     IMPRINT: 'imprint',
+    FOOTER_PRODUCTS: 'footer_products',
     MY_RISKS: 'my-risks',
     MY_BIDS: 'my-bids',
 }

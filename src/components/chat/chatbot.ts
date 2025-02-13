@@ -1,88 +1,105 @@
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import {Risk} from "../../models/Risk";
 import {ChatMessage} from "../../store/slices/my-bids/types";
- 
+import {OpenAI} from "openai";
+import { 
+    basePromptFiltered,
+    basePromptForClassification, 
+    mediationPrompt, 
+    informationPrompt, 
+    controllPrompt, 
+    miscPrompt 
+} from "../../constants/prompts";
+
 export class Chatbot {
-    public basePrompt: string;
+    public chosenPrompt: string = "";
     public messages: ChatCompletionMessageParam[];
- 
+    openai = new OpenAI({ apiKey: process.env.REACT_APP_OPENAI_API_KEY, dangerouslyAllowBrowser: true });
+    classificationResult: string = "";
+
     constructor(risk: Risk | undefined, chatMessages: ChatMessage[]) {
-        console.log(risk)
-        this.basePrompt = "\"\"\"\n" +
-            "# Kontext\n" +
-            "Stell dir vor, du bist ein Chatbot (xRisk Chatbot). Deine Aufgabe ist es, eine Verhandlung zwischen zwei Parteien zu unterstützen:\n" +
-            "1. **Risikogeber (RG):** Die Person, die ein x-beliebiges Risiko absichern möchte.\n" +
-            "2. **Risikonehmer (RN):** Die Person, die bereit ist, gegen eine Gebühr dieses Risiko zu übernehmen.\n" +
-            "Der Risikonehmer (RN) wird im Schadensfall eine festgelegte Summe an den Risikogeber (RG) auszahlen.\n" +
-            "\\s\n" +
-            "# Regeln\n" +
-            "1. Du übernimmst niemals die Rollen von Risikonehmer oder Risikogeber.\n" +
-            "2. Du moderierst die Verhandlung und reagierst nur auf die vorherige Unterhaltung.\n" +
-            "3. Denk dir keinen Dialog aus.\n" +
-            "4. Falls relevante Informationen fehlen, mach darauf aufmerksam und schlage vor, diese zu klären.\n" +
-            "5. Spekuliere nicht. Wenn dir Informationen fehlen, verweise auf glaubwürdige externe Quellen oder Websites.\n" +
-            "6. Glaubwürdige Quellen sind öffentlich zugängliche Datenbanken, offizielle Berichte, wissenschaftliche Studien oder Daten von anerkannten Institutionen.\n" +
-            "7. Deine Antworten müssen präzise, neutral und lösungsorientiert sein.\n" +
-            "\\s\n" +
-            "# Vorgehen\n" +
-            "Der Input besteht aus dem bisherigen Chatverlauf und der letzten Nachricht, die eine direkte Frage an dich als Chatbot enthält und mit (XXXX) gekennzeichnet ist. Diese letzte Nachricht ist immer von einer der beiden Parteien. Zunächst führst du den Schritt Klassifikation aus, gibst das Ergebnis aber nicht als Output raus, sondern entscheidest ausgehend von dem Ergebnis, wie du die Frage in Schritt 2 beantwortest.\n" +
-            "\\s\n" +
-            "## Schritt 1: Klassifikation\n" +
-            "Ermittle, in welches der folgenden Themengebiete die Frage fällt. Behalte das Ergebnis für dich und merke es dir für Schritt 2. Gib das Ergebnis aus Schritt 1 nicht als Antwort aus.\n" +
-            "\\s\n" +
-            "### Kategorien:\n" +
-            "1. **Vermittlungsvorschlag**\n" +
-            "   - Wähle diese Kategorie, wenn:\n" +
-            "     - Die Verhandlung stockt oder beide Parteien widersprüchliche Positionen vertreten.\n" +
-            "     - Die letzte Nachricht eine Meinungsverschiedenheit oder ein direktes Vermittlungsersuchen enthält.\n" +
-            "   - Beispiele:\n" +
-            "     - „Ich finde das Angebot zu teuer, können wir uns in der Mitte treffen?“\n" +
-            "     - „Gibt es eine Möglichkeit, die Laufzeit anzupassen?“\n" +
-            "     - „Was könnte ich tun, um die Gebühren zu senken?“\n" +
-            "2. **Informationsanfrage**\n" +
-            "   - Wähle diese Kategorie, wenn:\n" +
-            "     - Die letzte Nachricht nach spezifischen Fakten, Zahlen oder Hintergrundinformationen fragt.\n" +
-            "   - Beispiele:\n" +
-            "     - „Wie hoch ist die Wahrscheinlichkeit, dass dieses Risiko eintritt?“\n" +
-            "     - „Welche Unterlagen könnten wir im Schadensfall als Beweis heranziehen?“\n" +
-            "3. **Logische Prüfung**\n" +
-            "   - Wähle diese Kategorie, wenn:\n" +
-            "     - Die letzte Nachricht um eine Überprüfung der bisherigen Unterhaltung bittet oder nach Unklarheiten sucht.\n" +
-            "   - Beispiele:\n" +
-            "     - „Haben wir alle Aspekte des Risikos berücksichtigt?“\n" +
-            "     - „Gibt es noch Punkte, die wir vergessen haben zu klären?“\n" +
-            "\\s\n" +
-            "## Schritt 2: Antwort\n" +
-            "Basierend auf der Klassifikation aus Schritt 1 beantwortest du die Frage. Gebe nur die Antwort auf die Frage aus!\n" +
-            "\\s\n" +
-            "### Für „Vermittlungsvorschlag“:\n" +
-            "- Analysiere die Positionen beider Parteien.\n" +
-            "- Mache einen neutralen Vorschlag, der als Kompromiss dienen könnte.\n" +
-            "- Der Kompromiss soll möglichst inhaltlicher Natur sein, ändere nicht nur die Geldbeträge.\n" +
-            "\\s\n" +
-            "### Für „Informationsanfrage“:\n" +
-            "- Stelle präzise und relevante Informationen bereit und belege diese nachvollziehbar mit Quellenangaben.\n" +
-            "- Die Informationen müssen unbedingt wahr sein.\n" +
-            "- Wenn möglich, liefere konkrete Zahlen oder Daten.\n" +
-            "- Verweise auf glaubwürdige externe Quellen oder Websites, falls die Informationen nicht direkt verfügbar sind.\n" +
-            "\\s\n" +
-            "### Für „Logische Prüfung“:\n" +
-            "- Untersuche, ob es offene Punkte, Unklarheiten oder logische Widersprüche gibt im Hinblick auf:\n" +
-            "  - Art des Risikos\n" +
-            "  - Höhe der Absicherungssumme\n" +
-            "  - Kosten/Gebühren\n" +
-            "  - Zeitraum der Versicherung\n" +
-            "  - Beweise im Schadensfall\n" +
-            "- Identifiziere fehlende oder unklare Informationen.\n" +
-            "- Mach Vorschläge, um diese Schwächen zu beheben.\n" +
-            "\"\"\"";
-        this.messages = [{role: "system", content: this.basePrompt}];
-        this.enrichMessagesWithRiskInformation(risk)
-        this.enrichMessagesWithRiskNegotiation(chatMessages)
+        this.messages = [];
+        this.classificationResult = "";
+
+        this.performClassification(chatMessages).then(category => {
+            this.chosenPrompt = this.assignPrompt(category);
+            this.chosenPrompt = basePromptFiltered + this.chosenPrompt;
+            this.messages.push({ role: "system", content: this.chosenPrompt });
+            
+            this.enrichMessagesWithRiskInformation(risk);
+            this.enrichMessagesWithRiskNegotiation(chatMessages);
+        });
+    }
+
+    /**
+     * Performs classification with the help of the classification prompt on the entire 
+     * conversation context and classifies the text to one of the four categories 
+     * ('Vermittlung', 'Information', 'Prüfung', 'Diverses').
+     * @param chatMessages 
+     * @returns Promise<string>
+     */
+    private async performClassification(chatMessages: ChatMessage[] = []): Promise<string> {
+        const classificationMessages: ChatCompletionMessageParam[] = [
+            { role: "system", content: basePromptForClassification },
+            ...chatMessages.map((msg: ChatMessage) => ({
+                role: msg.uid === "xRiskChatbot" ? "assistant" : "user",
+                content: msg.content
+            }) as ChatCompletionMessageParam) // Explicitly typecast to avoid type mismatch
+        ];
+    
+        try {
+            const response = await this.openai.chat.completions.create({
+                model: "gpt-4o-mini",
+                messages: classificationMessages,
+                max_tokens: 200,
+                temperature: 0.5,
+                top_p: 0.4,
+                presence_penalty: 0.4,
+                frequency_penalty: 0.0
+            });
+    
+            const category = response.choices[0]?.message?.content?.trim() || "Diverses";
+            return this.getClassificationResult(category);
+        } catch (error) {
+            console.error("Error in classification:", error);
+            return "Diverses"; // Default category
+        }
     }
  
     public getPrompt(): string {
-        return this.basePrompt;
+        return this.chosenPrompt;
+    }
+
+    public getClassificationResult(result: string): string {
+        if ([
+            'Vermittlung', 
+            'Information', 
+            'Prüfung',
+            'Diverses'
+        ].includes(result)){
+            return result;
+        }
+        else{
+            return 'Diverses';
+        }
+
+    }
+
+    public assignPrompt(category: string){
+        if (category==='Vermittlung'){
+            return mediationPrompt;
+        }
+        else if (category==='Information'){
+            return informationPrompt;
+        }
+        else if (category==='Prüfung'){
+            return controllPrompt;
+        }
+        else if (category==='Diverses'){
+            return miscPrompt;
+        }
+        else 
+            return miscPrompt;
     }
 
     public getMessages(): ChatCompletionMessageParam[] {
