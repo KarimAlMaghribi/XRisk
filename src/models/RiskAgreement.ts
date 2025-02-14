@@ -11,4 +11,12 @@ export interface RiskAgreement {
     timeframe: string;
     evidence: string;
     details: string;
+
+    riskTakerApprovals: {
+        [attribute: string]: boolean;
+    };
+
+    riskGiverApprovals: {
+        [attribute: string]: boolean;
+    };
 }

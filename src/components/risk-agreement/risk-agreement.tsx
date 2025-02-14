@@ -8,7 +8,7 @@ import {v4 as uuidv4} from 'uuid';
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {RiskAgreement} from "../../models/RiskAgreement";
-import {addMyRiskAgreement} from "../../store/slices/my-risk-agreements/thunks";
+import {addMyRiskAgreement, updateMyRiskAgreement} from "../../store/slices/my-risk-agreements/thunks";
 import {Risk} from "../../models/Risk";
 import OpenAI from "openai";
 import { selectActiveChat, selectActiveMessages, selectRiskId } from "../../store/slices/my-bids/selectors";
@@ -17,6 +17,8 @@ import { selectRisks } from "../../store/slices/risks/selectors";
 import { DataExtractionBot } from "../../extraction/DataExtractionBot";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
+import { selectAgreementByChatId } from "../../store/slices/my-risk-agreements/selectors";
+import { auth } from "../../firebase_config";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -47,11 +49,13 @@ const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, 
 export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const navigate = useNavigate();
     const dispatch: AppDispatch = useDispatch();
+
     const [costs, setCosts] = useState<number>(0);
     const [timeframe, setTimeframe] = useState<string>('');
     const [evidence, setEvidence] = useState<string>('');
     const [insuranceSum, setInsuranceSum] = useState<number>(0);
     const [riskDetails, setRiskDetails] = useState<string>('');
+
     const [insuranceSumRequiredError, setInsuranceSumRequiredError] = useState<boolean>(false);
     const [costsRequiredError, setCostsRequiredError] = useState<boolean>(false);
 
@@ -62,6 +66,27 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const risk: Risk | undefined = risks.find((risk) => risk.id === riskId);
     const riskTitle = risk?.name ? risk?.name : '';
     const riskType = risk?.type ? risk.type : [];
+
+    const existingAgreement = useSelector((state: any) => selectAgreementByChatId(state, activeChat?.id));
+    console.log("active chat id: " + activeChat?.id)
+    console.log("existing agreement id: " + existingAgreement?.id)
+
+    React.useEffect(() => {
+        if (existingAgreement) {
+            setCosts(existingAgreement.costs);
+            setTimeframe(existingAgreement.timeframe);
+            setEvidence(existingAgreement.evidence);
+            setInsuranceSum(existingAgreement.insuranceSum);
+            setRiskDetails(existingAgreement.details);
+        }
+        else {
+            setCosts(0);
+            setTimeframe('');
+            setEvidence('');
+            setInsuranceSum(risk?.value || 0);
+            setRiskDetails('');
+        }
+    }, [existingAgreement]);
 
     //data extraction
 
@@ -125,53 +150,98 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     }
 
     const handleCostsChange = (newCosts: number) => {
-        if (!isNaN(newCosts)) {
+        if(!isNaN(newCosts)){
             setCosts(newCosts);
         }
     }
 
     const handleInsuranceSumChange = (newInsuranceSum: number) => {
-        if (!isNaN(newInsuranceSum)) {
+        if(!isNaN(newInsuranceSum)){
             setInsuranceSum(newInsuranceSum);
         }
     }
 
     const handleDetailsChange = (newDetails: string) => {
-        setRiskDetails(newDetails);
+        if(riskDetails !== newDetails){
+            setRiskDetails(newDetails);
+        }
     }
 
     const handleClose = () => {
-        //setTitle('');
-        //setDescription('');
-        //setRiskType([]);
-        //setCosts(0);
-        //setDate(dayjs());
         props.handleClose();
     }
 
-    const handleCreateRiskAgreement = () => {
-        //if (!title) {
-        //    setNameRequiredError(true);
-        //    return;
-        //}
+    const handleAffirmRiskAgreement = () => {
 
-        const newRiskAgreement: RiskAgreement = {
-            id: uuidv4(),
-            riskId: risk?.id ? risk?.id : '',
-            riskTakerId: activeChat?.riskTaker.uid ? activeChat?.riskTaker.uid : '',
-            riskGiverId: activeChat?.riskProvider.uid ? activeChat?.riskProvider.uid : '',
-            chatId: activeChat?.id ? activeChat?.id : '',
-            title: riskTitle,
-            type: riskType,
-            insuranceSum: insuranceSum,
-            costs: costs,
-            timeframe: timeframe,
-            evidence: evidence,
-            details: riskDetails,
+        if(activeChat){
+
+            if (existingAgreement) {
+                if(activeChat?.riskTaker.uid === auth?.currentUser?.uid){
+                    const costsApproved = existingAgreement.riskGiverApprovals.costs && (existingAgreement.costs === costs)
+                    const timeframeApproved = existingAgreement.riskGiverApprovals.timeframe && (existingAgreement.timeframe === timeframe)
+                    const insuranceSumApproved = existingAgreement.riskGiverApprovals.insuranceSum && (existingAgreement.insuranceSum === insuranceSum)
+                    const evidenceApproved = existingAgreement.riskGiverApprovals.evidence && (existingAgreement.evidence === evidence)
+                    const detailsApproved = existingAgreement.riskGiverApprovals.details && (existingAgreement.details === riskDetails)
+
+                    riskGiverApprovals = {costs : costsApproved, insuranceSum : insuranceSumApproved, timeframe : timeframeApproved, evidence : evidenceApproved, details : detailsApproved, };
+                    riskTakerApprovals = {costs : true, insuranceSum : true, timeframe : true, evidence : true, details : true, };
+                }
+                else {
+                    const costsApproved = existingAgreement.riskTakerApprovals.costs && (existingAgreement.costs === costs)
+                    const timeframeApproved = existingAgreement.riskTakerApprovals.timeframe && (existingAgreement.timeframe === timeframe)
+                    const insuranceSumApproved = existingAgreement.riskTakerApprovals.insuranceSum && (existingAgreement.insuranceSum === insuranceSum)
+                    const evidenceApproved = existingAgreement.riskTakerApprovals.evidence && (existingAgreement.evidence === evidence)
+                    const detailsApproved = existingAgreement.riskTakerApprovals.details && (existingAgreement.details === riskDetails)
+
+                    riskTakerApprovals = {costs : costsApproved, insuranceSum : insuranceSumApproved, timeframe : timeframeApproved, evidence : evidenceApproved, details : detailsApproved, };
+                    riskGiverApprovals = {costs : true, insuranceSum : true, timeframe : true, evidence : true, details : true, };
+                }
+
+                const updatedRiskAgreement: RiskAgreement = {
+                    ...existingAgreement,
+                    insuranceSum: insuranceSum,
+                    costs: costs,
+                    timeframe: timeframe,
+                    evidence: evidence,
+                    details: riskDetails,
+                    riskGiverApprovals: riskGiverApprovals,
+                    riskTakerApprovals: riskTakerApprovals,
+                };
+                dispatch(updateMyRiskAgreement(updatedRiskAgreement));
+            } else {
+
+                var riskGiverApprovals;
+                var riskTakerApprovals;
+
+                if(activeChat?.riskTaker.uid === auth?.currentUser?.uid){
+                    riskGiverApprovals = {costs : false, insuranceSum : false, timeframe : false, evidence : false, details : false, };
+                    riskTakerApprovals = {costs : true, insuranceSum : true, timeframe : true, evidence : true, details : true, };
+                }
+                else {
+                    riskGiverApprovals = {costs : true, insuranceSum : true, timeframe : true, evidence : true, details : true, };
+                    riskTakerApprovals = {costs : false, insuranceSum : false, timeframe : false, evidence : false, details : false, };
+                }
+
+                const newRiskAgreement: RiskAgreement = {
+                    id: uuidv4(),
+                    riskId: risk?.id ? risk?.id : '',
+                    riskTakerId: activeChat?.riskTaker.uid ? activeChat?.riskTaker.uid : '',
+                    riskGiverId: activeChat?.riskProvider.uid ? activeChat?.riskProvider.uid : '',
+                    chatId: activeChat?.id ? activeChat?.id : '',
+                    title: riskTitle,
+                    type: riskType,
+                    insuranceSum: insuranceSum,
+                    costs: costs,
+                    timeframe: timeframe,
+                    evidence: evidence,
+                    details: riskDetails,
+                    riskGiverApprovals: riskGiverApprovals,
+                    riskTakerApprovals: riskTakerApprovals,
+                }
+                dispatch(addMyRiskAgreement(newRiskAgreement));
+            }
         }
 
-        dispatch(addMyRiskAgreement(newRiskAgreement));
-        navigate(`/${ROUTES.MY_RISKS}`);
         handleClose();
     }
 
@@ -283,7 +353,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                 <Button
                     disabled={insuranceSumRequiredError || costsRequiredError}
                     variant="contained"
-                    onClick={handleCreateRiskAgreement}>
+                    onClick={handleAffirmRiskAgreement}>
                     Vereinbaren
                 </Button>
                 <Button

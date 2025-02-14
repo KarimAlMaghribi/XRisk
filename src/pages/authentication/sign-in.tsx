@@ -15,6 +15,7 @@ import {useDispatch} from "react-redux";
 import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
 import {fetchRisks} from "../../store/slices/risks/thunks";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
+import { fetchMyRiskAgreements } from "../../store/slices/my-risk-agreements/thunks";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -37,6 +38,7 @@ export const SignIn = () => {
                 dispatch(fetchUserProfile());
                 dispatch(fetchRisks());
                 dispatch(fetchMyChats());
+                dispatch(fetchMyRiskAgreements());
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
@@ -57,6 +59,8 @@ export const SignIn = () => {
 
             if (user?.refreshToken) {
                 dispatch(fetchRisks())
+                dispatch(fetchMyChats());
+                dispatch(fetchMyRiskAgreements());
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {

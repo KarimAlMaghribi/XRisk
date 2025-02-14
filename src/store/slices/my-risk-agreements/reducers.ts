@@ -1,8 +1,9 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {MyRiskAgreementsState} from "./types";
 import {addMyRiskAgreement, deleteMyRiskAgreement, fetchMyRiskAgreements, updateMyRiskAgreement} from "./thunks";
+import { RiskAgreement } from "../../../models/RiskAgreement";
 
 const initialState: MyRiskAgreementsState = {
     riskAgreements: [],
@@ -13,7 +14,27 @@ const initialState: MyRiskAgreementsState = {
 export const myRiskAgreementsSlice = createSlice({
     name: FirestoreCollectionEnum.MY_RISK_AGREEMENTS,
     initialState: initialState,
-    reducers: {},
+    reducers: {
+        setAgreementData: (state, action: PayloadAction<RiskAgreement>) => {
+            const existingIndex = state.riskAgreements.findIndex((a) => a.id === action.payload.id);
+            if (existingIndex !== -1) { //es gibt ein agreement mit der id
+              state.riskAgreements[existingIndex] = { ...action.payload};
+            } else {
+              state.riskAgreements.push({ ...action.payload});
+            }
+          },
+        /*confirmAgreement: (state, action: PayloadAction<{ id: string; userId: string }>) => {
+            const agreement = state.riskAgreements.find((a) => a.id === action.payload.id);
+            if (agreement) {
+                if(agreement.riskGiverId === action.payload.userId){
+                    agreement.riskGiverAgreed = true;
+                }
+                else if(agreement.riskTakerId === action.payload.userId){
+                    agreement.riskTakerAgreed = true;
+                }
+            }
+          },*/
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchMyRiskAgreements.pending, (state) => {
