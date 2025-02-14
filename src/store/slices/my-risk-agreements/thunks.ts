@@ -124,7 +124,7 @@ export const updateMyRiskAgreement = createAsyncThunk(
 }
 );
 
-/*export const deleteMyRiskAgreement = createAsyncThunk(
+export const deleteMyRiskAgreement = createAsyncThunk(
     ActionTypes.DELETE_MY_RISK_AGREEMENTS,
     async (riskAgreementId: string, {rejectWithValue}) => {
         try {
@@ -158,4 +158,4 @@ export const updateMyRiskAgreement = createAsyncThunk(
             return rejectWithValue("Failed to delete risk-agreement-overview due to permissions or other error");
         }
     }
-);*/
+);
