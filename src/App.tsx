@@ -8,7 +8,7 @@ import {ForgotPassword} from "./pages/authentication/forgot-password";
 import {RiskOverview} from "./pages/risk-overview/risk-overview";
 import {Layout} from "./components/layout/layout";
 import {Legal} from "./pages/formalities/legal";
-import {Privacy} from "./pages/formalities/privacy";
+import Privacy from "./pages/formalities/privacy";
 import {Imprint} from "./pages/formalities/imprint";
 import {About} from "./pages/about/about";
 import {Catalog} from "./pages/catalog/catalog";
@@ -22,8 +22,11 @@ import {MyRisks} from "./pages/my-risks/my-risks";
 import {MyBids} from "./pages/my-bids/my-bids";
 import { Contact } from './pages/formalities/contact';
 import { TermsPage } from './pages/formalities/terms';
-import { SupportPage } from './pages/formalities/support';
 import FooterProductDescriptions from './pages/formalities/product';
+import FooterSolutionDescriptions from './pages/formalities/solutions';
+import FooterResourceDescriptions from './pages/formalities/resources';
+import FooterSupportDescriptions from './pages/formalities/support';
+import FooterCompanyDescriptions from './pages/formalities/company';
 
 function App() {
     return (
@@ -45,8 +48,11 @@ function App() {
                 <Route path={`/${ROUTES.IMPRINT}`} element={<Imprint />}/>
                 <Route path={`/${ROUTES.CONTACT}`} element={<Contact />}/>
                 <Route path={`/${ROUTES.TERMS}`} element={<TermsPage />}/>
-                <Route path={`/${ROUTES.SUPPORT}`} element={<SupportPage />}/>
+                <Route path={`/${ROUTES.FOOTER_SUPPORT}`} element={<FooterSupportDescriptions />}/>
                 <Route path={`/${ROUTES.FOOTER_PRODUCTS}`} element={<FooterProductDescriptions />}/>
+                <Route path={`/${ROUTES.FOOTER_SOLUTIONS}`} element={<FooterSolutionDescriptions />}/>
+                <Route path={`/${ROUTES.FOOTER_RESOURCES}`} element={<FooterResourceDescriptions />}/>
+                <Route path={`/${ROUTES.FOOTER_COMPANY}`} element={<FooterCompanyDescriptions />}/>
                 <Route path={`/${ROUTES.MY_RISKS}`} element={<PrivateRoute><MyRisks /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.MY_BIDS}`} element={<PrivateRoute><MyBids /></PrivateRoute>}/>
 

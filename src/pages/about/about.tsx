@@ -2,43 +2,80 @@ import {Typography} from "@mui/material";
 
 export const About = () => {
     return (
-        <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-4">Über uns</h1>
-        <p className="mb-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vehicula ex eu augue consequat,
-            ac pharetra purus tincidunt. Donec pharetra nisi vel turpis pharetra, et lacinia ex varius.
-        </p>
-        
-        <h2 className="text-2xl font-semibold mt-6 mb-2">Unsere Mission</h2>
-        <p className="mb-4">
-            Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Nulla porttitor accumsan tincidunt.
-            Quisque velit nisi, pretium ut lacinia in, elementum id enim.
-        </p>
-        
-        <h2 className="text-2xl font-semibold mt-6 mb-2">Unsere Werte</h2>
-        <p className="mb-4">
-            Pellentesque in ipsum id orci porta dapibus. Vivamus magna justo, lacinia eget consectetur sed,
-            convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.
-        </p>
-        
-        <h2 className="text-2xl font-semibold mt-6 mb-2">Unser Team</h2>
-        <p className="mb-4">
-            Sed porttitor lectus nibh. Donec rutrum congue leo eget malesuada. Vestibulum ac diam sit amet quam
-            vehicula elementum sed sit amet dui.
-        </p>
-        
-        <h2 className="text-2xl font-semibold mt-6 mb-2">Unsere Geschichte</h2>
-        <p className="mb-4">
-            Nulla quis lorem ut libero malesuada feugiat. Donec sollicitudin molestie malesuada. Curabitur arcu erat,
-            accumsan id imperdiet et, porttitor at sem.
-        </p>
-        
-        <h2 className="text-2xl font-semibold mt-6 mb-2">Kontakt</h2>
-        <p className="mb-4">
-            Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Quisque velit nisi, pretium ut lacinia in,
-            elementum id enim. Nulla porttitor accumsan tincidunt.
-        </p>
+        <div>
+            <br/>
+            <br/>
+            <div id="about">
+            <Typography
+                color="black" 
+                variant="h4"
+                style={{ marginLeft: "10px", marginRight: "10px" }}>
+                Über uns
+            </Typography>
+            </div>
+            <br/>
+            <br/>
+            <Typography
+                color="black" 
+                variant="h6"
+                style={{ marginLeft: "10px", marginRight: "10px" }}>
+                Unsere Mission
+            </Typography>
+            <Typography
+                variant="body1"
+                component="p"
+                style={{ marginLeft: "10px", marginRight: "400px" }}>
+            Unsere Mission ist es, den Versicherungsprozess einfacher, transparenter und kundenfreundlicher zu gestalten. Mit unserer Chat-Anwendung schaffen wir eine direkte Verbindung zwischen Versicherern und Kunden, sodass Fragen schnell geklärt, Tarife verglichen und Verträge unkompliziert abgeschlossen werden können. Wir setzen auf moderne Technologie, um Versicherungslösungen zugänglicher und effizienter zu machen – für eine bessere Kundenerfahrung und eine optimierte Beratung.
+            </Typography>
+            <br/>
+            <br/>
+            <Typography
+                color="black" 
+                variant="h6"
+                style={{ marginLeft: "10px", marginRight: "10px" }}>
+                Unsere Werte
+            </Typography>
+            <Typography
+                variant="body1"
+                component="p"
+                style={{ marginLeft: "10px", marginRight: "400px" }}>
+            Transparenz, Innovation und Kundenzentrierung stehen bei uns an erster Stelle. Wir glauben daran, dass Versicherungen einfach und verständlich sein sollten. Deshalb entwickeln wir Lösungen, die Nutzer in den Mittelpunkt stellen. Respekt, Vertrauen und eine offene Kommunikation prägen unser Handeln – sowohl im Team als auch im Umgang mit unseren Kunden und Partnern. Unsere Werte sind die Basis für eine zukunftsorientierte und nachhaltige Versicherungswelt.
+            </Typography>
+            <br/>
+            <br/>
+            <Typography
+                color="black" 
+                variant="h6"
+                style={{ marginLeft: "10px", marginRight: "10px" }}>
+                Unser Team
+            </Typography>
+            <Typography
+                variant="body1"
+                component="p"
+                style={{ marginLeft: "10px", marginRight: "400px" }}>
+            Hinter unserer Chat-Anwendung steht ein engagiertes Team aus Experten in den Bereichen Technologie, Versicherungen und Kundenerfahrung. Gemeinsam arbeiten wir daran, den Versicherungsmarkt mit innovativen Lösungen zu revolutionieren. Unser Team vereint kreative Köpfe, Entwickler, Berater und Branchenkenner – alle mit dem Ziel, die bestmögliche Nutzererfahrung zu bieten. Wir setzen auf Zusammenarbeit, Leidenschaft und kontinuierliche Verbesserung.
+            </Typography>
+            <br/>
+            <br/>
+            <Typography
+                color="black" 
+                variant="h6"
+                style={{ marginLeft: "10px", marginRight: "10px" }}>
+                Unsere Geschichte
+            </Typography>
+            <Typography
+                variant="body1"
+                component="p"
+                style={{ marginLeft: "10px", marginRight: "400px" }}>
+            Unsere Reise begann mit der Vision, den Versicherungsmarkt zu modernisieren. Wir haben erkannt, dass viele Kunden sich eine einfachere, schnellere und direktere Möglichkeit wünschen, Versicherungen abzuschließen und zu verwalten. Aus dieser Idee entstand unsere Chat-Anwendung – eine Lösung, die Versicherer und Kunden näher zusammenbringt. Seitdem haben wir unser Produkt stetig weiterentwickelt, wertvolle Partnerschaften aufgebaut und vielen Nutzern geholfen, die passende Risiken abzusichern. Und das ist erst der Anfang.
+            </Typography>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
         </div>
-    );
+        )
 }
       

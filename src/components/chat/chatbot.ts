@@ -2,6 +2,8 @@ import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import {Risk} from "../../models/Risk";
 import {ChatMessage} from "../../store/slices/my-bids/types";
 import {OpenAI} from "openai";
+import {z} from "zod";
+import { zodResponseFormat } from "openai/helpers/zod";
 import { 
     basePromptFiltered,
     basePromptForClassification, 
@@ -10,6 +12,7 @@ import {
     controllPrompt, 
     miscPrompt 
 } from "../../constants/prompts";
+import { toHaveFormValues } from "@testing-library/jest-dom/matchers";
 
 export class Chatbot {
     public chosenPrompt: string = "";
@@ -42,15 +45,24 @@ export class Chatbot {
         const classificationMessages: ChatCompletionMessageParam[] = [
             { role: "system", content: basePromptForClassification },
             ...chatMessages.map((msg: ChatMessage) => ({
-                role: msg.uid === "xRiskChatbot" ? "assistant" : "user",
+                role: msg.uid === "XRiskChatbot" ? "assistant" : "user",
                 content: msg.content
             }) as ChatCompletionMessageParam) // Explicitly typecast to avoid type mismatch
         ];
     
+        const DataSchema = z.object({
+            category : z.enum([
+                'Vermittlung', 
+                'Information', 
+                'Prüfung',
+                'Diverses'
+            ]),
+        })
         try {
-            const response = await this.openai.chat.completions.create({
+            const response = await this.openai.beta.chat.completions.parse({
                 model: "gpt-4o-mini",
                 messages: classificationMessages,
+                response_format: zodResponseFormat(DataSchema, "conversationData"),
                 max_tokens: 200,
                 temperature: 0.5,
                 top_p: 0.4,

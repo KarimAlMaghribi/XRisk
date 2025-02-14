@@ -1,101 +1,65 @@
 import { Typography } from "@mui/material";
 
-export const SupportPage = () => {
-    return (
-      <div>
+function FooterSupportDescriptions() {
+  return (
+    <>
         <br/>
         <br/>
-        <br/>
-        <br/>
-        <br/>
+        <div id="support">
         <Typography
             color="black" 
             variant="h4"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
             Support
         </Typography>
-        <br/>
-        <Typography
-            variant="body1"
-            component="p"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vehicula ex eu augue consequat,
-          ac pharetra purus tincidunt. Donec pharetra nisi vel turpis pharetra, et lacinia ex varius.  
-        </Typography>
+        </div>
         <br/>
         <br/>
+        <div id="developers">
         <Typography
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            1. Kontaktaufnahme
+            Developers
         </Typography>
+        </div>
         <Typography
             variant="body1"
             component="p"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-          Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Nulla porttitor accumsan tincidunt.
-          Quisque velit nisi, pretium ut lacinia in, elementum id enim.
+            style={{ marginLeft: "10px", marginRight: "400px" }}>
+          Unser Entwickler-Support stellt sicher, dass technische Teams die bestmögliche Unterstützung bei der Integration und Nutzung unserer Plattform erhalten. Ob es um APIs, Webhooks oder individuelle Anpassungen geht – Entwickler finden hier detaillierte Anleitungen, Codebeispiele und direkten Zugang zu unserem technischen Support. Unser Ziel ist es, eine nahtlose und effiziente Implementierung unserer Chat-Anwendung zu ermöglichen..
         </Typography>
         <br/>
         <br/>
+        <div id="documentation">
         <Typography
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            2. Häufig gestellte Fragen
+            Documentation
         </Typography>
+        </div>
         <Typography
             variant="body1"
             component="p"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-          Pellentesque in ipsum id orci porta dapibus. Vivamus magna justo, lacinia eget consectetur sed,
-          convallis at tellus. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.
+            style={{ marginLeft: "10px", marginRight: "400px" }}>
+          Unsere umfassende Dokumentation bietet eine detaillierte Anleitung zur Nutzung und Integration unserer Plattform. Von ersten Einrichtungsschritten bis hin zu erweiterten Funktionen – hier finden Entwickler und Unternehmen alle relevanten Informationen. Klar strukturierte Inhalte, Beispiele und häufig gestellte Fragen helfen dabei, Herausforderungen schnell zu lösen und die Anwendung optimal zu nutzen.
         </Typography>
         <br/>
         <br/>
+        <div id="integrations">
         <Typography
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            3. Technischer Support
+            Integrations
         </Typography>
+        </div>
         <Typography
             variant="body1"
             component="p"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-          Sed porttitor lectus nibh. Donec rutrum congue leo eget malesuada. Vestibulum ac diam sit amet quam
-          vehicula elementum sed sit amet dui.
-        </Typography>
-        <br/>
-        <br/>
-        <Typography
-            color="black" 
-            variant="h6"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-            4. Community & Foren
-        </Typography>
-        <Typography
-            variant="body1"
-            component="p"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-          Nulla quis lorem ut libero malesuada feugiat. Donec sollicitudin molestie malesuada. Curabitur arcu erat,
-          accumsan id imperdiet et, porttitor at sem.
-        </Typography>
-        <br/>
-        <br/>
-        <Typography
-            color="black" 
-            variant="h6"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-            5. Feedback & Verbesserungsvorschläge
-        </Typography>
-        <Typography
-            variant="body1"
-            component="p"
-            style={{ marginLeft: "10px", marginRight: "10px" }}>
-          Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Quisque velit nisi, pretium ut lacinia in,
-          elementum id enim. Nulla porttitor accumsan tincidunt.
+            style={{ marginLeft: "10px", marginRight: "400px" }}>
+          Unsere Chat-Anwendung lässt sich nahtlos in bestehende Systeme und Tools integrieren. Ob CRM-Systeme, Zahlungsdienste oder Analyseplattformen – wir bieten flexible Schnittstellen, um den Versicherungsprozess effizient in bestehende Workflows einzubinden. Nutzer finden hier eine Übersicht über alle verfügbaren Integrationen sowie Anleitungen zur schnellen Implementierung, damit alles reibungslos funktioniert.
         </Typography>
         <br/>
         <br/>
@@ -103,13 +67,8 @@ export const SupportPage = () => {
         <br/>
         <br/>
         <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-      </div>
-    );
-  }
-  
+    </>
+  );
+}
+
+export default FooterSupportDescriptions;
