@@ -49,6 +49,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
     const [openRiskEditDialog, setOpenRiskEditDialog] = React.useState(false);
     const [noAddressError, setNoAddressError] = React.useState(false);
     const [noPhoneError, setNoPhoneError] = React.useState(false);
+    const [noImageError, setNoImageError] = React.useState(false);
     const [openDeletionDialog, setOpenDeletionDialog] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
 
@@ -64,7 +65,14 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
             setNoPhoneError(false);
             return;
         }
-    }, [noAddressError, noPhoneError]);
+
+        if (noImageError) {
+            showSnackbar("Profilbild fehlt!", "Bitte lade ein Profilbild in deinem Profil hoch, um ein Risiko zu veröffentlichen.", {vertical: "top", horizontal: "center"}, "warning");
+            setNoImageError(false);
+            return;
+        }
+
+    }, [noAddressError, noPhoneError, noImageError]);
 
     const handlePublish = (): void => {
         if (!user || !user.id) {
@@ -80,6 +88,11 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
 
         if (!user.profile.phone) {
             setNoPhoneError(true);
+            return;
+        }
+
+        if (!user.profile.imagePath) {
+            setNoImageError(true);
             return;
         }
 

@@ -303,12 +303,7 @@ export const updateRiskStatus = createAsyncThunk(
             }
 
             const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
-            const riskQuery = query(
-                risksCollection,
-                where("uid", "==", user.uid),
-                where("id", "==", id)
-            );
-
+            const riskQuery = query(risksCollection, where("id", "==", id));
             const riskDocs = await getDocs(riskQuery);
 
             if (riskDocs.empty) {
@@ -322,7 +317,20 @@ export const updateRiskStatus = createAsyncThunk(
                 updatedAt: new Date().toISOString(),
             });
 
-            console.log("Updated risk status:", id);
+            const myRisksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
+            const myRiskQuery = query(myRisksCollection, where("id", "==", id));
+            const myRiskDocs = await getDocs(myRiskQuery);
+
+            if (!myRiskDocs.empty) {
+                await Promise.all(
+                    myRiskDocs.docs.map((doc) =>
+                        updateDoc(doc.ref, {
+                            status: status,
+                            updatedAt: new Date().toISOString(),
+                        })
+                    )
+                );
+            }
 
             return { id, status };
         } catch (error) {
