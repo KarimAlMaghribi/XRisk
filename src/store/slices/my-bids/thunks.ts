@@ -221,3 +221,20 @@ export const deleteChatsByRiskId = createAsyncThunk<
         }
     }
 );
+
+export const updateLastMessage = createAsyncThunk<
+    void,
+    { chatId: string; lastMessage: string },
+    { rejectValue: string }
+>(
+    "myBids/updateLastMessage",
+    async ({chatId, lastMessage}, {rejectWithValue}) => {
+        try {
+            const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chatId);
+            await setDoc(chatDocRef, {lastMessage}, {merge: true});
+        } catch (error) {
+            console.error("Error updating last message:", error);
+            return rejectWithValue("Error updating last message");
+        }
+    }
+);

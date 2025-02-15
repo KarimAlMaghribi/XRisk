@@ -3,8 +3,6 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import {CircularProgress, InputBase, Popover} from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import PhotoIcon from '@mui/icons-material/Photo';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import Picker from 'emoji-picker-react';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import {AppDispatch} from "../../store/store";
@@ -18,13 +16,11 @@ import {Risk} from "../../models/Risk";
 import {CHATBOT_UID} from "../../constants/chatbot";
 import {ChatMessage} from "../../store/slices/my-bids/types";
 import {selectActiveChatId, selectActiveMessages, selectRiskId} from "../../store/slices/my-bids/selectors";
-import { basePromptForClassification, basePromptFiltered, mediationPrompt, informationPrompt, controllPrompt, miscPrompt } from "../../constants/prompts";
-import {sendMessage} from "../../store/slices/my-bids/thunks";
+import {sendMessage, updateLastMessage} from "../../store/slices/my-bids/thunks";
 import {selectRisks} from "../../store/slices/risks/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {v4 as uuid} from "uuid"
-import { ChatCompletionMessageParam } from "openai/resources";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -83,13 +79,14 @@ export const ChatSender = () => {
         }
 
         dispatch(sendMessage({chatId: activeChatId, message: newMessage}));
+        dispatch(updateLastMessage({chatId: activeChatId, lastMessage: msg}));
         setMsg('');
     };
 
     const onAIChatMsgSubmit = async (e: any) => {
         onChatMsgSubmit(e);
         setAILoading(true);
-    
+
         const risk: Risk | undefined = risks.find((risk) => risk.id === riskId);
         const lastMessage: ChatMessage = {
             id: uuid(),
@@ -100,10 +97,10 @@ export const ChatSender = () => {
             content: msg,
             read: false
         };
-    
+
         const updatedActiveMessages = [lastMessage, ...activeMessages];
         const chatbot = new Chatbot(risk, updatedActiveMessages);
-        
+
         // Wait for classification to complete
         setTimeout(async () => {
             const promptMessages = chatbot.getMessages();
@@ -116,14 +113,14 @@ export const ChatSender = () => {
                 presence_penalty: 0.4,
                 frequency_penalty: 0.0
             });
-    
+
             const xRiskChatbotResponse: string = response.choices[0]?.message?.content || "";
-    
+
             if (!xRiskChatbotResponse) {
                 console.error("No response from OpenAI:", response);
                 return;
             }
-    
+
             const newMessage: ChatMessage = {
                 id: CHATBOT_UID,
                 created: new Date().toISOString(),
@@ -133,13 +130,14 @@ export const ChatSender = () => {
                 content: xRiskChatbotResponse,
                 read: false
             };
-    
+
             if (!activeChatId) {
                 console.error("No active chat found:", activeChatId);
                 return;
             }
-    
-            dispatch(sendMessage({ chatId: activeChatId, message: newMessage }));
+
+            dispatch(sendMessage({chatId: activeChatId, message: newMessage}));
+            dispatch(updateLastMessage({chatId: activeChatId, lastMessage: newMessage.content}));
             setAILoading(false);
         }, 2000); // Small delay to allow classification to complete
     };
@@ -187,7 +185,7 @@ export const ChatSender = () => {
                     color="secondary"
                     onClick={onAIChatMsgSubmit}
                     disabled={!msg || aiLoading}>
-                    {aiLoading ? <CircularProgress size={24} color="inherit" /> : <AssistantIcon />}
+                    {aiLoading ? <CircularProgress size={24} color="inherit"/> : <AssistantIcon/>}
                 </IconButton>
             </form>
         </Box>

@@ -74,7 +74,10 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
 
     }, [noAddressError, noPhoneError, noImageError]);
 
-    const handlePublish = (): void => {
+    const handlePublish = (e: any): void => {
+        e.stopPropagation();
+        e.preventDefault();
+
         if (!user || !user.id) {
             console.error("User not authenticated or UID missing:", user);
             showSnackbar("Nutzer Id unbekannt!", "Risiko kann nicht veröffentlicht werden. Melde dich ab- und wieder an.", {vertical: "top", horizontal: "center"}, "error");
@@ -117,8 +120,11 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         }
     }
 
-    const handleWithdraw = (): void => {
-        if (props.risk.status === RiskStatusEnum.PUBLISHED) {
+    const handleWithdraw = (e: any): void => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (props.risk.status === RiskStatusEnum.PUBLISHED || props.risk.status === RiskStatusEnum.DEAL) {
             const riskToWithdraw: Risk = {
                 ...props.risk,
                 status: RiskStatusEnum.WITHDRAWN,
@@ -299,16 +305,36 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                 !props.taken &&
                                 <Box display="flex" justifyContent="flex-end">
                                     {
-                                        RiskStatusEnum.WITHDRAWN === props.risk.status || RiskStatusEnum.DRAFT === props.risk.status
-                                            ?
-                                            <Button color="success" variant="contained" onClick={handlePublish} size="small" startIcon={<SendIcon />}>
+                                        (props.risk.status === RiskStatusEnum.WITHDRAWN || props.risk.status === RiskStatusEnum.DRAFT) ? (
+                                            <Button
+                                                color="success"
+                                                variant="contained"
+                                                onClick={(e) => handlePublish(e)}
+                                                size="small"
+                                                startIcon={<SendIcon />}>
                                                 Veröffentlichen
                                             </Button>
-                                            :
-                                            <Button color="warning" variant="contained" onClick={handleWithdraw} size="small" startIcon={<UndoIcon />}>
+                                        ) : props.risk.status === RiskStatusEnum.DEAL ? (
+                                            <Button
+                                                color="warning"
+                                                variant="contained"
+                                                onClick={(e) => handleWithdraw(e)}
+                                                size="small"
+                                                startIcon={<UndoIcon />}>
+                                                Verhandlung beenden
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                color="warning"
+                                                variant="contained"
+                                                onClick={(e) => handleWithdraw(e)}
+                                                size="small"
+                                                startIcon={<UndoIcon />}>
                                                 Zurückziehen
                                             </Button>
+                                        )
                                     }
+
                                     <Button
                                         variant="outlined"
                                         disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
