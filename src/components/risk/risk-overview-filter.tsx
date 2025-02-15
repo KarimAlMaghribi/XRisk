@@ -1,20 +1,14 @@
 import React, {useState} from "react";
-import {Box, Divider, Paper, Typography} from "@mui/material";
+import {Box, Divider, Paper, SelectChangeEvent, Typography} from "@mui/material";
 import Slider from '@mui/material/Slider';
 import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
 import {AppDispatch} from "../../store/store";
-import {
-    changeFilterValue,
-    changeRemainingTerm,
-    clearFilters,
-    setFilterType
-} from "../../store/slices/risks/reducers";
+import {changeFilterValue, changeRemainingTerm, clearFilters, setFilterType} from "../../store/slices/risks/reducers";
 import {useDispatch, useSelector} from "react-redux";
 import Button from "@mui/material/Button";
 import {RiskTypeSelector} from "../my-risks/risk-type-selector";
 import {selectFilterTypes} from "../../store/slices/risks/selectors";
 import {formatDate} from "../../utils/dateFormatter";
-
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const dispatch: AppDispatch = useDispatch();
@@ -22,7 +16,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const [termValue, setTermValue] = useState<number[]>(props.remainingTerm);
     const filterTypes: string[] = useSelector(selectFilterTypes);
 
-    const handleTypeChange = (type: string[]) => {
+    const handleTypeChange = (type: string[]) => { // for complex type selector
         dispatch(setFilterType(type));
     };
 
@@ -96,7 +90,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
             </Box>
 
             <Box textAlign="center">
-                <Typography variant="caption" sx={{ color: "grey" }}>
+                <Typography variant="caption" sx={{color: "grey"}}>
                     {`${sliderValue[0].toLocaleString("de-DE")}€ bis ${sliderValue[1].toLocaleString("de-DE")}€`}
                 </Typography>
             </Box>
@@ -124,7 +118,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
             </Box>
 
             <Box textAlign="center">
-                <Typography variant="caption" sx={{ color: "grey" }}>
+                <Typography variant="caption" sx={{color: "grey"}}>
                     {`vom ${
                         Array.isArray(termValue)
                             ? formatDate(addMonths(new Date(), termValue[0]))
@@ -137,9 +131,9 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 </Typography>
             </Box>
 
-            <br />
+            <br/>
             <Divider sx={{margin: 0, padding: 0}}/>
-            <br />
+            <br/>
 
             <Button
                 variant="outlined"

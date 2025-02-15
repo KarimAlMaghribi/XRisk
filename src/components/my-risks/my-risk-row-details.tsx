@@ -215,9 +215,6 @@ export const DealDetails = ({ risk, chats }: { risk: Risk, chats: Chat[] }) => {
                         <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                             Veröffentlichet am
                         </Typography>
-                        <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
-                            Zurückgezogen am am
-                        </Typography>
                     </Grid>
                     <Grid size={8}>
                         <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>

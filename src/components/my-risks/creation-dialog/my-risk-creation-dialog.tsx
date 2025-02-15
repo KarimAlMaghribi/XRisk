@@ -152,6 +152,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     rows={4}
                 />
                 <RiskTypeSelector
+                    textFieldVariant="outlined"
                     value={riskType}
                     setValue={setRiskType}
                     required={true}

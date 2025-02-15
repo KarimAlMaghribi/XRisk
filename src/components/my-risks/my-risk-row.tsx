@@ -353,8 +353,6 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                     </IconButton>
                                 </Box>
                             }
-
-
                         </Grid>
                     </Grid>
                 </Card>
