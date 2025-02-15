@@ -4,8 +4,17 @@ import { SortDirectionEnum } from "../../../enums/SortDirection.enum";
 import { FetchStatusEnum } from "../../../enums/FetchStatus.enum";
 import { FirestoreCollectionEnum } from "../../../enums/FirestoreCollectionEnum";
 import { RiskOverviewState } from "./types";
-import {addRisk, addRiskType, deleteRisk, fetchRisks, fetchRiskTypes, updateProviderDetails} from "./thunks";
+import {
+    addRisk,
+    addRiskType,
+    deleteRisk,
+    fetchRisks,
+    fetchRiskTypes,
+    updateProviderDetails,
+    updateRiskStatus
+} from "./thunks";
 import {RiskOverviewFilterType} from "../../../models/RiskOverviewFilterType";
+import {Risk} from "../../../models/Risk";
 
 const initialState: RiskOverviewState = {
     risks: [],
@@ -123,6 +132,10 @@ export const riskOverviewSlice = createSlice({
             state.filters.value = [0, 200000];
             state.filters.remainingTerm = [0, 24];
             state.filteredRisks = state.risks;
+        },
+        setRisks: (state, action: PayloadAction<Risk[]>) => {
+            state.risks = action.payload;
+            state.filteredRisks = applyAllFilters(action.payload, state.filters as RiskOverviewFilterType);
         }
     },
     extraReducers: (builder) => {
@@ -208,6 +221,22 @@ export const riskOverviewSlice = createSlice({
             .addCase(updateProviderDetails.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
+            })
+            .addCase(updateRiskStatus.pending, (state) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(updateRiskStatus.fulfilled, (state, action) => {
+                state.risks.forEach((risk) => {
+                    if (risk.id === action.payload.id) {
+                        risk.status = action.payload.status;
+                    }
+                });
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(updateRiskStatus.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
             });
         }
     }
@@ -218,7 +247,8 @@ export const {
     setFilterType,
     changeFilterValue,
     changeRemainingTerm,
-    clearFilters
+    clearFilters,
+    setRisks
 } = riskOverviewSlice.actions;
 
 export default riskOverviewSlice.reducer;

@@ -15,7 +15,7 @@ import {Catalog} from "./pages/catalog/catalog";
 import {Account} from "./pages/account/account";
 import {Investors} from "./pages/investors/investors";
 import {Chat} from "./pages/chat/chat";
-import {Settings, Support} from "@mui/icons-material";
+import {Settings} from "@mui/icons-material";
 import {ROUTES} from "./routing/routes";
 import {PrivateRoute} from "./routing/private-route";
 import {MyRisks} from "./pages/my-risks/my-risks";
@@ -35,7 +35,7 @@ function App() {
                 <Route path="/" element={<Landing/>}/>
                 <Route path={`/${ROUTES.SIGN_IN}`} element={<SignIn/>}/>
                 <Route path={`/${ROUTES.SIGN_UP}`} element={<SignUp/>}/>
-                <Route path={`/${ROUTES.FORGOT_PASSWORD}`} element={<ForgotPassword/>}/>
+                <Route path={`/${ROUTES.FORGOT_PASSWORD}`} element={<ForgotPassword />}/>
                 <Route path={`/${ROUTES.ABOUT}`} element={<About />}/>
                 <Route path={`/${ROUTES.CHAT}`} element={<PrivateRoute><Chat /></PrivateRoute>}/>
                 <Route path={`/${ROUTES.CATALOG}`} element={<Catalog />}/>

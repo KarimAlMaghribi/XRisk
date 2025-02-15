@@ -21,6 +21,7 @@ import {
     selectFilteredChats, selectOpposingImagePath
 } from "../../store/slices/my-bids/selectors";
 import {auth} from "../../firebase_config";
+import {chatsUnsubscribe, subscribeToChats} from "../../store/slices/my-bids/thunks";
 
 export enum ChatSort {
     LATEST = 'LATEST',
@@ -33,6 +34,15 @@ export const ChatsList = () => {
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const chats: Chat[] = useSelector(selectChatsToDisplay);
     const uid: string | undefined = auth.currentUser?.uid;
+
+    useEffect(() => {
+        dispatch(subscribeToChats());
+        return () => {
+            if (chatsUnsubscribe) {
+                chatsUnsubscribe();
+            }
+        };
+    }, [dispatch]);
 
     const isMenuOpen = Boolean(anchorEl);
 

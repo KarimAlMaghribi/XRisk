@@ -17,6 +17,7 @@ import {
     selectRemainingTerm,
     selectStatus
 } from "../../store/slices/risks/selectors";
+import {subscribeToRisks} from "../../store/slices/risks/thunks";
 
 export const RiskOverview = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -28,6 +29,7 @@ export const RiskOverview = () => {
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
 
     useEffect(() => {
+        dispatch(subscribeToRisks());
         dispatch(fetchProviderChats());
     }, [dispatch]);
 

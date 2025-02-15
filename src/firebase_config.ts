@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, setPersistence, inMemoryPersistence } from "firebase/auth";
+import { getAuth, setPersistence, browserLocalPersistence  } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 import { GoogleAuthProvider } from "firebase/auth";
@@ -19,9 +19,9 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
-setPersistence(auth, inMemoryPersistence)
+setPersistence(auth, browserLocalPersistence)
     .then(() => {
-        console.log("Persistence auf inMemoryPersistence gesetzt. Der Nutzer wird beim Neuladen oder Schließen der Seite ausgeloggt.");
+        console.log("Persistence auf browserLocalPersistence gesetzt. Der Nutzer bleibt angemeldet, auch wenn der Tab geschlossen wird, bis das Token abläuft.");
     })
     .catch((error) => {
         console.error("Fehler beim Setzen der Persistence:", error);

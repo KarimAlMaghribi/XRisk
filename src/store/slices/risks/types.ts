@@ -11,7 +11,8 @@ export enum ActionTypes {
     DELETE_RISK = "risk/deleteRisk",
     FETCH_RISK_TYPES = "risks/fetchRiskTypes",
     ADD_RISK_TYPE = "risks/addRiskType",
-    UPDATE_PROVIDER_IMAGE_ON_ALL_MY_RISKS = "risks/updateProviderDetails"
+    UPDATE_PROVIDER_IMAGE_ON_ALL_MY_RISKS = "risks/updateProviderDetails",
+    UPDATE_RISK_STATUS = "risks/updateRiskStatus"
 }
 
 export interface RiskOverviewState {

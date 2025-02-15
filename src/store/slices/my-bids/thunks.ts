@@ -1,9 +1,10 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {collection, doc, getDocs, onSnapshot, orderBy, query, setDoc, where} from "firebase/firestore";
+import {collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, setDoc, where} from "firebase/firestore";
 import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {Chat, ChatMessage} from "./types";
-import {setMessages} from "./reducers";
+import {setChats, setMessages} from "./reducers";
+import {RootState} from "../../store";
 
 export let messagesUnsubscribe: (() => void) | null = null;
 
@@ -27,6 +28,35 @@ export const subscribeToMessages = createAsyncThunk<void, string, { rejectValue:
             });
         } catch (error) {
             return rejectWithValue("Error subscribing to messages");
+        }
+    }
+);
+
+export let chatsUnsubscribe: (() => void) | null = null;
+
+export const subscribeToChats = createAsyncThunk<
+    void,
+    void,
+    { rejectValue: string }
+>(
+    "myBids/subscribeToChats",
+    async (_, { dispatch, rejectWithValue }) => {
+        try {
+            if (chatsUnsubscribe) {
+                chatsUnsubscribe();
+                chatsUnsubscribe = null;
+            }
+            const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
+            const q = query(chatsRef, orderBy("lastActivity", "desc"));
+            chatsUnsubscribe = onSnapshot(q, (snapshot) => {
+                const chats = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as Chat[];
+                dispatch(setChats(chats));
+            });
+        } catch (error) {
+            return rejectWithValue("Error subscribing to chats");
         }
     }
 );
@@ -152,6 +182,42 @@ export const fetchMessages = createAsyncThunk<ChatMessage[], string, { rejectVal
         } catch (error) {
             console.error("Error fetching messages:", error);
             return rejectWithValue("Error fetching messages");
+        }
+    }
+);
+
+export const deleteChatsByRiskId = createAsyncThunk<
+    void,
+    string,
+    { rejectValue: string; state: RootState }
+>(
+    "myBids/deleteChatsByRiskId",
+    async (riskId, { rejectWithValue, getState }) => {
+        try {
+            if (!riskId) throw new Error("Risk ID is required");
+            if (!auth.currentUser) throw new Error("User not authenticated");
+
+            const myChats: Chat[] = (getState() as RootState).myBids.chats;
+            const chatsToDelete = myChats.filter((chat) => chat.riskId === riskId);
+
+            if (chatsToDelete.length === 0) {
+                return;
+            }
+
+            await Promise.all(
+                chatsToDelete.map(async (chat) => {
+                    const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chat.id);
+                    const messagesRef = collection(chatDocRef, FirestoreCollectionEnum.MESSAGES);
+                    const messagesSnapshot = await getDocs(messagesRef);
+                    await Promise.all(
+                        messagesSnapshot.docs.map((messageDoc) => deleteDoc(messageDoc.ref))
+                    );
+                    await deleteDoc(chatDocRef);
+                })
+            );
+        } catch (error) {
+            console.error("Error deleting chats:", error);
+            return rejectWithValue("Error deleting chats");
         }
     }
 );

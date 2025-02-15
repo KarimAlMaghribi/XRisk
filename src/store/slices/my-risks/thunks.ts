@@ -76,9 +76,6 @@ export const updateMyRisk = createAsyncThunk(
                 return rejectWithValue("Publisher information missing");
             }
 
-            console.log("Updating risk:", risk);
-            console.log("User uid:", user.uid);
-
             const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const riskQuery = query(
                 risksCollection,
@@ -87,7 +84,6 @@ export const updateMyRisk = createAsyncThunk(
             );
 
             const riskDocs = await getDocs(riskQuery);
-            console.log("Found riskDocs:", riskDocs.size);
 
             if (riskDocs.empty) {
                 console.error("Risk not found for id:", risk.id);
@@ -95,7 +91,6 @@ export const updateMyRisk = createAsyncThunk(
             }
 
             const riskDocRef = riskDocs.docs[0].ref;
-            console.log("Risk document ref:", riskDocRef.path);
 
             const updatedAt = new Date().toISOString();
             await updateDoc(riskDocRef, {
@@ -103,7 +98,6 @@ export const updateMyRisk = createAsyncThunk(
                 updatedAt,
             });
 
-            console.log("Updated risk-overview", risk.id);
             return { ...risk, updatedAt };
         } catch (error: any) {
             console.error("Error updating risk-overview:", error);
@@ -124,8 +118,6 @@ export const deleteMyRisk = createAsyncThunk(
                 return rejectWithValue("User not authenticated");
             }
 
-            console.log(riskId);
-
             const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
             const riskQuery = query(
                 risksCollection,
@@ -141,8 +133,6 @@ export const deleteMyRisk = createAsyncThunk(
 
             const riskDocRef = riskDocs.docs[0].ref;
             await deleteDoc(riskDocRef);
-
-            console.log("Deleted risk-overview:", riskId);
 
             return riskId;
         } catch (error) {

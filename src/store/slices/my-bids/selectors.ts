@@ -71,3 +71,6 @@ export const selectMyTakenRiskIds = (state: { myBids: MyBidsState }) => {
         .filter(chat => chat.riskTaker.uid === userUid)
         .map(chat => chat.riskId);
 };
+
+export const selectChatsByRiskId = (riskId: string) => (state: { myBids: MyBidsState }): Chat[] =>
+    state.myBids.chats.filter(chat => chat.riskId === riskId) || [];

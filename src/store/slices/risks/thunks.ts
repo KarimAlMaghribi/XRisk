@@ -8,6 +8,41 @@ import {Risk} from "../../../models/Risk";
 import {Publisher} from "../../../models/Publisher";
 import {RootState} from "../../store";
 import {selectMyTakenRiskIds} from "../my-bids/selectors";
+import {RiskStatus} from "../../../types/RiskStatus";
+import {setRisks} from "./reducers";
+
+export let risksUnsubscribe: (() => void) | null = null;
+
+export const subscribeToRisks = createAsyncThunk<void, void, { rejectValue: string }>(
+    "risks/subscribeToRisks",
+    async (_, { dispatch, rejectWithValue }) => {
+        try {
+            if (risksUnsubscribe) {
+                risksUnsubscribe();
+                risksUnsubscribe = null;
+            }
+            const risksRef = collection(db, FirestoreCollectionEnum.RISKS);
+            const q = query(
+                risksRef,
+                where("status", "in", [
+                    RiskStatusEnum.PUBLISHED,
+                    RiskStatusEnum.DEAL,
+                    RiskStatusEnum.AGREEMENT
+                ])
+            );
+
+            risksUnsubscribe = onSnapshot(q, (snapshot) => {
+                const risks = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as Risk[];
+                dispatch(setRisks(risks));
+            });
+        } catch (error) {
+            return rejectWithValue("Error subscribing to risks");
+        }
+    }
+);
 
 export const fetchRisks = createAsyncThunk(
     ActionTypes.FETCH_RISKS,
@@ -112,7 +147,6 @@ export const addRiskType = createAsyncThunk(
                 creator: uid || undefined
             });
 
-            console.log("Added risk-overview type:", docRef.id);
             return newType; // Rückgabe des neuen Typs
         } catch (error) {
             console.error("Error adding risk-overview type:", error);
@@ -182,8 +216,6 @@ export const updateRisk = createAsyncThunk(
                 updatedAt: new Date().toISOString(),
             });
 
-            console.log("Updated risk-overview:", riskToUpdate.id);
-
             return riskToUpdate;
         } catch (error) {
             console.error("Error updating risk-overview:", error);
@@ -218,8 +250,6 @@ export const deleteRisk = createAsyncThunk(
             const riskDocRef = riskDocs.docs[0].ref;
 
             await deleteDoc(riskDocRef);
-
-            console.log("Deleted risk-overview:", riskId);
 
             return riskId;
         } catch (error) {
@@ -259,6 +289,45 @@ export const updateProviderDetails = createAsyncThunk(
         } catch (error: any) {
             console.error("Error updating provider details on all my risks:", error);
             return rejectWithValue("Failed to update provider details on all my risks");
+        }
+    }
+);
+
+export const updateRiskStatus = createAsyncThunk(
+    ActionTypes.UPDATE_RISK_STATUS,
+    async ({ id, status }: { id: string; status: RiskStatus }, { rejectWithValue }) => {
+        try {
+            const user = auth.currentUser;
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const riskQuery = query(
+                risksCollection,
+                where("uid", "==", user.uid),
+                where("id", "==", id)
+            );
+
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return rejectWithValue("Risk not found");
+            }
+
+            const riskDocRef = riskDocs.docs[0].ref;
+
+            await updateDoc(riskDocRef, {
+                status: status,
+                updatedAt: new Date().toISOString(),
+            });
+
+            console.log("Updated risk status:", id);
+
+            return { id, status };
+        } catch (error) {
+            console.error("Error updating risk status:", error);
+            return rejectWithValue("Failed to update risk status due to permissions or other error");
         }
     }
 );

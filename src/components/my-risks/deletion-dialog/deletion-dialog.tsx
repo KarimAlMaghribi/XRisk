@@ -8,6 +8,7 @@ import {Dialog, Button, DialogActions, DialogContent, DialogTitle, Typography} f
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {PaperComponent} from "../../ui/draggable-dialog";
+import {deleteChatsByRiskId} from "../../../store/slices/my-bids/thunks";
 
 export interface MyRiskDeletionDialogProps {
     open: boolean;
@@ -19,6 +20,7 @@ export const MyRiskDeletionDialog = (props: MyRiskDeletionDialogProps) => {
     const dispatch: AppDispatch = useDispatch();
 
     const handleDelete = () => {
+        dispatch(deleteChatsByRiskId(props.risk.id));
         dispatch(deleteMyRisk(props.risk.id))
         dispatch(deleteRisk(props.risk.id))
         props.setOpen(false);

@@ -32,6 +32,7 @@ import {RiskStatus} from "../../types/RiskStatus";
 import Tooltip from "@mui/material/Tooltip";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { MyRiskRowDetails } from "./my-risk-row-details";
+import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -111,6 +112,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 withdrawnAt: new Date().toISOString()
             }
 
+            dispatch(deleteChatsByRiskId(riskToWithdraw.id));
             dispatch(updateMyRisk(riskToWithdraw));
             dispatch(deleteRisk(riskToWithdraw.id));
         }

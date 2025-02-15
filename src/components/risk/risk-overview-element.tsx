@@ -2,27 +2,31 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {Accordion, AccordionDetails, AccordionSummary, Chip, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import React from "react";
-import { Risk } from "../../models/Risk";
-import { FetchStatus } from "../../types/FetchStatus";
+import {Risk} from "../../models/Risk";
+import {FetchStatus} from "../../types/FetchStatus";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import ModeIcon from '@mui/icons-material/Mode';
-import { AppDispatch } from "../../store/store";
-import { useDispatch, useSelector } from "react-redux";
-import { createChat } from "../../store/slices/my-bids/thunks";
-import { ChatStatusEnum } from "../../enums/ChatStatus.enum";
-import { auth } from "../../firebase_config";
-import { useNavigate } from "react-router-dom";
-import { Chat } from "../../store/slices/my-bids/types";
-import { selectChats } from "../../store/slices/my-bids/selectors";
-import { setActiveChat } from "../../store/slices/my-bids/reducers";
+import {AppDispatch} from "../../store/store";
+import {useDispatch, useSelector} from "react-redux";
+import {createChat} from "../../store/slices/my-bids/thunks";
+import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
+import {auth} from "../../firebase_config";
+import {useNavigate} from "react-router-dom";
+import {Chat} from "../../store/slices/my-bids/types";
+import {selectChats} from "../../store/slices/my-bids/selectors";
+import {setActiveChat} from "../../store/slices/my-bids/reducers";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
-import { formatDate } from '../../utils/dateFormatter';
+import {formatDate} from '../../utils/dateFormatter';
 import {Publisher} from "../../models/Publisher";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import {PublisherProfile} from "./publisher-profile";
+import {updateRiskStatus} from "../../store/slices/risks/thunks";
+import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
+
+export const elementBottomMargin: number = 20;
 
 export interface RiskOverviewElementProps {
     risks: Risk[];
@@ -40,8 +44,6 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const { showSnackbar } = useSnackbarContext();
 
     const chats: Chat[] = useSelector(selectChats);
-
-    const elementBottomMargin: number = 20;
 
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
         if (isExpanded) {
@@ -121,6 +123,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             },
         };
 
+        dispatch(updateRiskStatus({id: selectedRisk.id, status: RiskStatusEnum.DEAL}));
         dispatch(createChat(newChat));
         navigate(`/chat`);
     };
