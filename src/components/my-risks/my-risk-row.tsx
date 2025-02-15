@@ -1,6 +1,6 @@
 import {Risk} from "../../models/Risk";
 import React, {useEffect} from "react";
-import {Box, Card, Chip, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Box, Card, Chip, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import Button from "@mui/material/Button";
@@ -28,6 +28,10 @@ import SignLanguageIcon from '@mui/icons-material/SignLanguage';
 import {ROUTES} from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
 import {setActiveChatByRiskId} from "../../store/slices/my-bids/reducers";
+import {RiskStatus} from "../../types/RiskStatus";
+import Tooltip from "@mui/material/Tooltip";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { MyRiskRowDetails } from "./my-risk-row-details";
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -45,6 +49,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
     const [noAddressError, setNoAddressError] = React.useState(false);
     const [noPhoneError, setNoPhoneError] = React.useState(false);
     const [openDeletionDialog, setOpenDeletionDialog] = React.useState(false);
+    const [expanded, setExpanded] = React.useState(false);
 
     useEffect(() => {
         if (noAddressError) {
@@ -150,106 +155,173 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         }
     }
 
+    const mapStatusChipColor = (status: RiskStatus | undefined) => {
+        switch(status) {
+            case RiskStatusEnum.DRAFT:
+                return "info";
+            case RiskStatusEnum.PUBLISHED:
+                return "success";
+            case RiskStatusEnum.AGREEMENT:
+                return "success";
+            case RiskStatusEnum.DEAL:
+                return "error";
+            case RiskStatusEnum.WITHDRAWN:
+                return "warning";
+            default:
+                return "primary";
+        }
+    }
+
+    const mapStatusToolTip = (status: RiskStatus | undefined) => {
+        switch(status) {
+            case RiskStatusEnum.DRAFT:
+                return "Entwurf: Vor dir erstellt, von anderen noch nicht einsehbar.";
+            case RiskStatusEnum.PUBLISHED:
+                return "Veröffentlicht: Von dir zur an der Börse zur Verhandlung freigegeben.";
+            case RiskStatusEnum.AGREEMENT:
+                return "Geeinigt: Von dir und deinem Verhandlungspartner zu übereinstimmenden Konditionen gelangt."
+            case RiskStatusEnum.DEAL:
+                return "In Verhandlung: Du verhandelst um die Konditionen mit deinem Vertragspartner.";
+            case RiskStatusEnum.WITHDRAWN:
+                return "Zurückgezogen: Von dir veröffentlichtes Risiko wieder zurückgezogen";
+            default:
+                return "Unbekannter Status";
+        }
+    }
+
     return (
-        <>
-            <Card elevation={0} sx={{
+        <Accordion
+            TransitionProps={{ style: { transformOrigin: "top" } }}
+            expanded={expanded}
+            onChange={(event, isExpanded) => setExpanded(isExpanded)}
+            elevation={0}
+            sx={{
+                width: "95%",
+                boxSizing: "border-box",
                 border: "1px solid",
                 borderColor: "grey.200",
-                margin: "0 5% 0 0",
-                padding: "30px 40px 30px 40px"
+                paddingRight: "20px",
+                "&:before": { display: "none" }, // Verhindert den doppelten Border-Effekt
             }}>
-                <Grid container>
-                    <Grid size={1}>
-                        {/*TODO: MAP Colors based on Status of the chip*/}
-                        <Chip icon={mapStatusIcon(props.risk.status)} label={mapStatus(props.risk.status)} variant="filled"/>
-                    </Grid>
-                    <Grid size={1} textAlign="center">
-                        <Typography variant="body1" fontWeight="bolder">
-                            {props.risk.name}
-                        </Typography>
-                    </Grid>
-                    <Grid size={4}>
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                marginRight: "5px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis"
-                            }}
-                        >
-                            {props.risk.description}
-                        </Typography>
-                    </Grid>
-                    <Grid size={1} textAlign="center">
-                        {
-                            props.risk.type.map((element, idx) => (
-                                <Chip key={idx} label={element} clickable sx={{
-                                    backgroundColor: '#f3f3f3',
-                                    color: '#343434',
-                                    marginRight: '4px',
-                                    border: '1px solid',
-                                    borderColor: "#d7d7d7",
-                                }}/>
-                            ))
-                        }
-                    </Grid>
-                    <Grid size={1} textAlign="center">
-                        <Typography variant="body1">
-                            {`${props.risk.value.toLocaleString()},00 €`}
-                        </Typography>
-                    </Grid>
-                    <Grid size={1} textAlign="center">
-                        <Typography variant="body1">
-                            {formatDate(new Date(props.risk.declinationDate))}
-                        </Typography>
-                    </Grid>
-                    <Grid size={3}>
-                        {
-                            props.taken &&
-                            <Box display="flex" justifyContent="flex-end">
-                                <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={<SignLanguageIcon />}>
-                                    Verhandeln
-                                </Button>
-                            </Box>
-                        }
-                        {
-                            !props.taken &&
-                            <Box display="flex" justifyContent="flex-end">
-                                {
-                                    RiskStatusEnum.WITHDRAWN === props.risk.status || RiskStatusEnum.DRAFT === props.risk.status
-                                        ?
-                                        <Button color="success" variant="contained" onClick={handlePublish} size="small" startIcon={<SendIcon />}>
-                                            Veröffentlichen
-                                        </Button>
-                                        :
-                                        <Button color="warning" variant="contained" onClick={handleWithdraw} size="small" startIcon={<UndoIcon />}>
-                                            Zurückziehen
-                                        </Button>
-                                }
-                                <Button
-                                    variant="outlined"
-                                    disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
-                                    onClick={() => setOpenRiskEditDialog(true)}
-                                    size="small"
-                                    startIcon={<EditIcon/>}
-                                    sx={{marginLeft: "10px"}}>
-                                    Bearbeiten
-                                </Button>
-                                <IconButton
-                                    size="small"
-                                    disabled={props.risk.status === RiskStatusEnum.PUBLISHED || props.risk.status === RiskStatusEnum.AGREEMENT || props.risk.status === RiskStatusEnum.DEAL}
-                                    onClick={() => setOpenDeletionDialog(true)}
-                                    sx={{marginLeft: "10px"}}>
-                                    <DeleteIcon color="warning"/>
-                                </IconButton>
-                            </Box>
-                        }
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                sx={{
+                    minHeight: 0,
+                    marginRight: "5%",
+                    width: "100%",
+                    padding: 0,
+                    "& .MuiAccordionSummary-content": { margin: 0}
+                }}>
+                <Card
+                    elevation={0}
+                    sx={{
+                        marginRight: "5%",
+                        width: "100%",
+                        cursor: "pointer",
+                        boxSizing: "border-box",
+                        padding: "30px 40px",
+                    }}>
+                    <Grid container>
+                        <Grid size={1}>
+                            <Tooltip title={mapStatusToolTip(props.risk.status)} followCursor sx={{ cursor: "pointer"}}>
+                                <Chip
+                                    icon={mapStatusIcon(props.risk.status)}
+                                    label={mapStatus(props.risk.status)}
+                                    variant="filled"
+                                    color={mapStatusChipColor(props.risk.status)}/>
+                            </Tooltip>
+                        </Grid>
+                        <Grid size={1} textAlign="center">
+                            <Typography variant="body1" fontWeight="bolder">
+                                {props.risk.name}
+                            </Typography>
+                        </Grid>
+                        <Grid size={4}>
+                            <Typography
+                                variant="body1"
+                                sx={{
+                                    marginRight: "5px",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis"
+                                }}>
+                                {props.risk.description}
+                            </Typography>
+                        </Grid>
+                        <Grid size={1} textAlign="center">
+                            {
+                                props.risk.type.map((element, idx) => (
+                                    <Chip key={idx} label={element} clickable sx={{
+                                        backgroundColor: '#f3f3f3',
+                                        color: '#343434',
+                                        marginRight: '4px',
+                                        border: '1px solid',
+                                        borderColor: "#d7d7d7",
+                                    }}/>
+                                ))
+                            }
+                        </Grid>
+                        <Grid size={1} textAlign="center">
+                            <Typography variant="body1">
+                                {`${props.risk.value.toLocaleString()},00 €`}
+                            </Typography>
+                        </Grid>
+                        <Grid size={1} textAlign="center">
+                            <Typography variant="body1">
+                                {formatDate(new Date(props.risk.declinationDate))}
+                            </Typography>
+                        </Grid>
+                        <Grid size={3}>
+                            {
+                                props.taken &&
+                                <Box display="flex" justifyContent="flex-end">
+                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={<SignLanguageIcon />}>
+                                        Verhandeln
+                                    </Button>
+                                </Box>
+                            }
+                            {
+                                !props.taken &&
+                                <Box display="flex" justifyContent="flex-end">
+                                    {
+                                        RiskStatusEnum.WITHDRAWN === props.risk.status || RiskStatusEnum.DRAFT === props.risk.status
+                                            ?
+                                            <Button color="success" variant="contained" onClick={handlePublish} size="small" startIcon={<SendIcon />}>
+                                                Veröffentlichen
+                                            </Button>
+                                            :
+                                            <Button color="warning" variant="contained" onClick={handleWithdraw} size="small" startIcon={<UndoIcon />}>
+                                                Zurückziehen
+                                            </Button>
+                                    }
+                                    <Button
+                                        variant="outlined"
+                                        disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
+                                        onClick={() => setOpenRiskEditDialog(true)}
+                                        size="small"
+                                        startIcon={<EditIcon/>}
+                                        sx={{marginLeft: "10px"}}>
+                                        Bearbeiten
+                                    </Button>
+                                    <IconButton
+                                        size="small"
+                                        disabled={props.risk.status === RiskStatusEnum.PUBLISHED || props.risk.status === RiskStatusEnum.AGREEMENT || props.risk.status === RiskStatusEnum.DEAL}
+                                        onClick={() => setOpenDeletionDialog(true)}
+                                        sx={{marginLeft: "10px"}}>
+                                        <DeleteIcon color="warning"/>
+                                    </IconButton>
+                                </Box>
+                            }
 
 
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Card>
+                </Card>
+
+            </AccordionSummary>
+            <AccordionDetails sx={{padding: 0, borderTop: "none",}}>
+                <MyRiskRowDetails risk={props.risk}/>
+            </AccordionDetails>
             <MyRiskEditDialog
                 open={openRiskEditDialog}
                 setOpen={setOpenRiskEditDialog}
@@ -259,6 +331,6 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 open={openDeletionDialog}
                 setOpen={setOpenDeletionDialog}
                 risk={props.risk} />
-        </>
+        </Accordion>
     )
 }

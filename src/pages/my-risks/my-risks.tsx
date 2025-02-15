@@ -64,7 +64,7 @@ export const MyRisks = () => {
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleTabChange}>
                                     <Tab sx={{fontWeight: "bold"}} label="Angebotene Risiken" value={RiskTypeEnum.OFFERED}/>
-                                    <Tab sx={{fontWeight: "bold"}} label="Angenommene Risiken" value={RiskTypeEnum.TAKEN}/>
+                                    <Tab sx={{fontWeight: "bold"}} label="Übernommene Risiken" value={RiskTypeEnum.TAKEN}/>
                                 </TabList>
                             </Box>
                             <TabPanel value={RiskTypeEnum.OFFERED}>

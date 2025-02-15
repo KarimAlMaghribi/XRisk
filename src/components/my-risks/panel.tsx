@@ -79,8 +79,7 @@ export const Panel = (props: PanelProps) => {
                         variant="button"
                         component="div"
                         fontWeight="bolder"
-                        marginTop="20px"
-                    >
+                        marginTop="20px">
                         {getHeaders(section)}
                     </Typography>
                     {props.risks.map((risk) => getRiskRow(section, risk))}
