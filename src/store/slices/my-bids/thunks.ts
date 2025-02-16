@@ -96,7 +96,7 @@ export const fetchProviderChats = createAsyncThunk<
     void,
     { rejectValue: string }
 >(
-    "myBids/fetchChats",
+    "myBids/fetchProviderChats",
     async (_, {rejectWithValue}) => {
         try {
             const userUid = auth.currentUser?.uid;
@@ -193,11 +193,7 @@ export const fetchMessages = createAsyncThunk<ChatMessage[], string, { rejectVal
     }
 );
 
-export const deleteChatsByRiskId = createAsyncThunk<
-    void,
-    string,
-    { rejectValue: string; state: RootState }
->(
+export const deleteChatsByRiskId = createAsyncThunk<string, string, { rejectValue: string; state: RootState }>(
     "myBids/deleteChatsByRiskId",
     async (riskId, { rejectWithValue, getState }) => {
         try {
@@ -208,7 +204,7 @@ export const deleteChatsByRiskId = createAsyncThunk<
             const chatsToDelete = myChats.filter((chat) => chat.riskId === riskId);
 
             if (chatsToDelete.length === 0) {
-                return;
+                return riskId;
             }
 
             await Promise.all(
@@ -222,9 +218,32 @@ export const deleteChatsByRiskId = createAsyncThunk<
                     await deleteDoc(chatDocRef);
                 })
             );
+
+            return riskId;
         } catch (error) {
             console.error("Error deleting chats:", error);
             return rejectWithValue("Error deleting chats");
+        }
+    }
+);
+
+export const deleteChatById = createAsyncThunk<string, string, { rejectValue: string }>(
+    "myBids/deleteChatById",
+    async (chatId, { rejectWithValue }) => {
+        try {
+            if (!chatId) throw new Error("Chat ID is required");
+
+            const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chatId);
+            const messagesRef = collection(chatDocRef, FirestoreCollectionEnum.MESSAGES);
+            const messagesSnapshot = await getDocs(messagesRef);
+            await Promise.all(
+                messagesSnapshot.docs.map((messageDoc) => deleteDoc(messageDoc.ref))
+            );
+            await deleteDoc(chatDocRef);
+            return chatId;
+        } catch (error) {
+            console.error("Error deleting chat:", error);
+            return rejectWithValue("Error deleting chat");
         }
     }
 );

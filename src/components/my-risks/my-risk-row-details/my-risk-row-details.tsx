@@ -7,7 +7,7 @@ import {Chat} from "../../../store/slices/my-bids/types";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 import {PublishedDetails} from "./published-details";
 import {WithdrawnDetails} from "./withdrawn-details";
-import {DealDetails} from "./deals-details";
+import {DealDetails} from "./deals-details/deals-details";
 
 export interface MyRiskRowDetailsProps {
     risk: Risk;

@@ -14,6 +14,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import {Panel} from "../../components/my-risks/panel";
 import {fetchMyTakenRisks} from "../../store/slices/risks/thunks";
 import {RiskTypeEnum} from "../../enums/RiskType.enum";
+import {fetchMyChats} from "../../store/slices/my-bids/thunks";
 
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -24,6 +25,7 @@ export const MyRisks = () => {
     const [tab, setTab] = React.useState(RiskTypeEnum.OFFERED);
 
     useEffect(() => {
+        dispatch(fetchMyChats());
         dispatch(fetchMyOfferedRisks());
         dispatch(fetchMyTakenRisks());
     }, [dispatch, tab]);
