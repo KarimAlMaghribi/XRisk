@@ -46,13 +46,20 @@ export const subscribeToChats = createAsyncThunk<
                 chatsUnsubscribe();
                 chatsUnsubscribe = null;
             }
+
+            const currentUserId = auth.currentUser?.uid;
+            if (!currentUserId) {
+                return rejectWithValue("User not authenticated");
+            }
+
             const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
             const q = query(chatsRef, orderBy("lastActivity", "desc"));
             chatsUnsubscribe = onSnapshot(q, (snapshot) => {
-                const chats = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                })) as Chat[];
+                const chats = snapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() } as Chat))
+                    .filter(chat =>
+                        chat.riskProvider?.uid === currentUserId || chat.riskTaker?.uid === currentUserId
+                    );
                 dispatch(setChats(chats));
             });
         } catch (error) {

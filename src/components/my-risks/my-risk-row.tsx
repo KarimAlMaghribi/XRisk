@@ -31,7 +31,7 @@ import {setActiveChatByRiskId} from "../../store/slices/my-bids/reducers";
 import {RiskStatus} from "../../types/RiskStatus";
 import Tooltip from "@mui/material/Tooltip";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { MyRiskRowDetails } from "./my-risk-row-details";
+import { MyRiskRowDetails } from "./my-risk-row-details/my-risk-row-details";
 import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
 
 export interface MyRiskRowProps {
@@ -142,6 +142,12 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         dispatch(setActiveChatByRiskId(risk.id));
     }
 
+    const handleDelete = (e: any): void => {
+        e.stopPropagation();
+        e.preventDefault();
+        setOpenDeletionDialog(true);
+    }
+
     const mapStatus = (status: RiskStatusEnum | undefined) => {
         if (!status) return ("Unbekannter Status");
 
@@ -209,6 +215,11 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 return "Unbekannter Status";
         }
     }
+
+    const deletionIsDisabled =
+        props.risk.status === RiskStatusEnum.PUBLISHED ||
+        props.risk.status === RiskStatusEnum.AGREEMENT ||
+        props.risk.status === RiskStatusEnum.DEAL;
 
     return (
         <Accordion
@@ -314,16 +325,8 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                                 startIcon={<SendIcon />}>
                                                 Veröffentlichen
                                             </Button>
-                                        ) : props.risk.status === RiskStatusEnum.DEAL ? (
-                                            <Button
-                                                color="warning"
-                                                variant="contained"
-                                                onClick={(e) => handleWithdraw(e)}
-                                                size="small"
-                                                startIcon={<UndoIcon />}>
-                                                Verhandlung beenden
-                                            </Button>
                                         ) : (
+                                            props.risk.status !== RiskStatusEnum.DEAL &&
                                             <Button
                                                 color="warning"
                                                 variant="contained"
@@ -346,10 +349,10 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                     </Button>
                                     <IconButton
                                         size="small"
-                                        disabled={props.risk.status === RiskStatusEnum.PUBLISHED || props.risk.status === RiskStatusEnum.AGREEMENT || props.risk.status === RiskStatusEnum.DEAL}
-                                        onClick={() => setOpenDeletionDialog(true)}
+                                        disabled={deletionIsDisabled}
+                                        onClick={(e) => handleDelete(e)}
                                         sx={{marginLeft: "10px"}}>
-                                        <DeleteIcon color="warning"/>
+                                        <DeleteIcon color={deletionIsDisabled ? "disabled" : "warning"}/>
                                     </IconButton>
                                 </Box>
                             }
