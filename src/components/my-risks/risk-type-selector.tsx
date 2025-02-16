@@ -6,27 +6,54 @@ import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 import {selectStatus, selectTypes} from "../../store/slices/risks/selectors";
 import {addRiskType, fetchRiskTypes} from "../../store/slices/risks/thunks";
 
+const riskTypes: string[] = [
+    "Sonstiges",
+    "Reise",
+    "Immobilie",
+    "Event",
+    "Landwirtschaft",
+    "Wetter",
+    "IT",
+    "Haustiere",
+    "Fahrzeug",
+    "Recht",
+    "Gesundheit",
+    "Beruf",
+    "Sport",
+    "Technik",
+    "Diebstahl",
+    "Transport",
+    "Finanzen",
+    "Bildung",
+    "Haushalt",
+    "Kunst"
+]
+
 export interface RiskTypeSelectorProps {
     value: string[];
     setValue: (value: any) => void;
     required?: boolean;
     textFieldVariant?: "standard" | "outlined" | "filled";
     label?: string;
+    mode?: "simple" | "complex";
 }
 
 export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
+    const { mode = "simple" } = props;
     const dispatch: AppDispatch = useDispatch();
     const types: string[] = useSelector(selectTypes);
     const status: FetchStatusEnum = useSelector(selectStatus);
 
     useEffect(() => {
-        const unsubscribe: any = dispatch(fetchRiskTypes());
-        return () => {
-            if (typeof unsubscribe === "function") {
-                unsubscribe();
-            }
-        };
-    }, [dispatch]);
+        if (mode === "complex") {
+            const unsubscribe: any = dispatch(fetchRiskTypes());
+            return () => {
+                if (typeof unsubscribe === "function") {
+                    unsubscribe();
+                }
+            };
+        }
+    }, [dispatch, mode]);
 
     const handleTagsChange = async (event: any, newValue: string[]) => {
         const uniqueTypes: string[] = newValue.filter((type) => !types.includes(type));
@@ -42,15 +69,22 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
         props.setValue(newValue);
     };
 
+    const options = mode === "complex" ? types : riskTypes;
+    const freeSolo = mode === "complex";
+
     return (
         <Autocomplete
             sx={{marginTop: "10px"}}
             multiple
-            freeSolo
-            options={types}
+            freeSolo={freeSolo}
+            options={options}
             loading={status === FetchStatusEnum.PENDING}
             value={props.value}
-            onChange={handleTagsChange}
+            onChange={
+                mode === "complex"
+                    ? handleTagsChange
+                    : (event, newValue) => props.setValue(newValue)
+            }
             getOptionLabel={(option: any) => (typeof option === "string" ? option : option?.label || "")}
             renderTags={(value: readonly string[], getTypeProps) =>
                 value.map((option: string, index: number) => {
@@ -73,7 +107,7 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
                     {...params}
                     variant={props.textFieldVariant || "outlined"}
                     label={props.label || "Typ"}
-                    placeholder="Risikotyp hinzufügen"
+                    placeholder={props.mode === "complex" ? "Risikotyp hinzufügen" : "Risikotyp auswählen"}
                 />
             )}
         />
