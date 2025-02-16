@@ -1,4 +1,4 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {MyRisksState} from "./types";
@@ -8,7 +8,9 @@ import {fetchMyTakenRisks} from "../risks/thunks";
 
 const initialState: MyRisksState = {
     offeredRisks: [],
+    filteredOfferedRisks: [],
     takenRisks: [],
+    filteredTakenRisks: [],
     error: undefined,
     status: FetchStatusEnum.IDLE
 };
@@ -16,7 +18,48 @@ const initialState: MyRisksState = {
 export const myRisksSlice = createSlice({
     name: FirestoreCollectionEnum.MY_RISKS,
     initialState: initialState,
-    reducers: {},
+    reducers: {
+        setFilter(state, action: PayloadAction<string>) {
+            const searchTerm = action.payload.toLowerCase();
+
+            if (!searchTerm) {
+                state.filteredOfferedRisks = state.offeredRisks;
+                state.filteredTakenRisks = state.takenRisks;
+                return;
+            }
+
+            state.filteredOfferedRisks = state.offeredRisks.filter(risk => {
+                const searchParams = [
+                    risk.name,
+                    risk.publisher?.name,
+                    risk.type ? risk.type.join(", ") : "",
+                    risk.description,
+                    risk.value ? risk.value.toString() : "",
+                    risk.status,
+                    risk.declinationDate
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
+                return searchParams.includes(searchTerm);
+            });
+            state.filteredTakenRisks = state.takenRisks.filter(risk => {
+                const searchParams = [
+                    risk.name,
+                    risk.publisher?.name,
+                    risk.type ? risk.type.join(", ") : "",
+                    risk.description,
+                    risk.value ? risk.value.toString() : "",
+                    risk.status,
+                    risk.declinationDate
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
+                return searchParams.includes(searchTerm);
+            });
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchMyOfferedRisks.pending, (state) => {
@@ -91,5 +134,7 @@ export const myRisksSlice = createSlice({
             });
     }
 });
+
+export const {setFilter} = myRisksSlice.actions;
 
 export default myRisksSlice.reducer;

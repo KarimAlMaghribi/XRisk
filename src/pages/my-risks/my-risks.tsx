@@ -15,6 +15,7 @@ import {Panel} from "../../components/my-risks/panel";
 import {fetchMyTakenRisks} from "../../store/slices/risks/thunks";
 import {RiskTypeEnum} from "../../enums/RiskType.enum";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
+import {FilterBar} from "../../components/my-risks/filterBar";
 
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -57,8 +58,8 @@ export const MyRisks = () => {
                         RISIKO DEFINIEREN!
                     </Button>
                 </Grid>
-                <Grid size={10}>
-                    <Typography>Filtern und Sortieren</Typography>
+                <Grid size={10} style={{padding: "0 30px 0 30px"}}>
+                    <FilterBar myRisks={[...myTakenRisks, ...myOfferedRisks]}/>
                 </Grid>
                 <Grid size={12}>
                     <Box sx={{ width: '100%', typography: 'body1' }} marginLeft="30px" marginRight="30px" marginTop="10px">

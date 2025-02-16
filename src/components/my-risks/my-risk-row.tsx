@@ -14,11 +14,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import {formatDate} from "../../utils/dateFormatter";
 import IconButton from "@mui/material/IconButton";
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import DraftsIcon from '@mui/icons-material/Drafts';
-import GroupsIcon from '@mui/icons-material/Groups';
-import HandshakeIcon from '@mui/icons-material/Handshake';
-import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import UndoIcon from "@mui/icons-material/Undo";
 import SendIcon from "@mui/icons-material/Send";
 import {UserProfile} from "../../store/slices/user-profile/types";
@@ -28,11 +23,11 @@ import SignLanguageIcon from '@mui/icons-material/SignLanguage';
 import {ROUTES} from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
 import {setActiveChatByRiskId} from "../../store/slices/my-bids/reducers";
-import {RiskStatus} from "../../types/RiskStatus";
 import Tooltip from "@mui/material/Tooltip";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { MyRiskRowDetails } from "./my-risk-row-details/my-risk-row-details";
+import {MyRiskRowDetails} from "./my-risk-row-details/my-risk-row-details";
 import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
+import {mapStatus, mapStatusChipColor, mapStatusIcon, mapStatusToolTip} from "./utils";
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -55,19 +50,28 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
 
     useEffect(() => {
         if (noAddressError) {
-            showSnackbar("Adresse fehlt!", "Bitte vervollständige deine Adresse in deinem Profil, um ein Risiko zu veröffentlichen.", {vertical: "top", horizontal: "center"}, "warning");
+            showSnackbar("Adresse fehlt!", "Bitte vervollständige deine Adresse in deinem Profil, um ein Risiko zu veröffentlichen.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "warning");
             setNoAddressError(false);
             return;
         }
 
         if (noPhoneError) {
-            showSnackbar("Telefonnummer fehlt!", "Bitte vervollständigen deine Telefonnummer in deinem Profil, um ein Risiko zu veröffentlichen.", {vertical: "top", horizontal: "center"}, "warning");
+            showSnackbar("Telefonnummer fehlt!", "Bitte vervollständigen deine Telefonnummer in deinem Profil, um ein Risiko zu veröffentlichen.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "warning");
             setNoPhoneError(false);
             return;
         }
 
         if (noImageError) {
-            showSnackbar("Profilbild fehlt!", "Bitte lade ein Profilbild in deinem Profil hoch, um ein Risiko zu veröffentlichen.", {vertical: "top", horizontal: "center"}, "warning");
+            showSnackbar("Profilbild fehlt!", "Bitte lade ein Profilbild in deinem Profil hoch, um ein Risiko zu veröffentlichen.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "warning");
             setNoImageError(false);
             return;
         }
@@ -80,7 +84,10 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
 
         if (!user || !user.id) {
             console.error("User not authenticated or UID missing:", user);
-            showSnackbar("Nutzer Id unbekannt!", "Risiko kann nicht veröffentlicht werden. Melde dich ab- und wieder an.", {vertical: "top", horizontal: "center"}, "error");
+            showSnackbar("Nutzer Id unbekannt!", "Risiko kann nicht veröffentlicht werden. Melde dich ab- und wieder an.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error");
             return;
         }
 
@@ -148,73 +155,6 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         setOpenDeletionDialog(true);
     }
 
-    const mapStatus = (status: RiskStatusEnum | undefined) => {
-        if (!status) return ("Unbekannter Status");
-
-        switch(status) {
-            case RiskStatusEnum.DRAFT:
-                return "Entwurf";
-            case RiskStatusEnum.PUBLISHED:
-                return "Veröffentlicht";
-            case RiskStatusEnum.AGREEMENT:
-                return "Geeignigt";
-            case RiskStatusEnum.DEAL:
-                return "In Verhandlung";
-            case RiskStatusEnum.WITHDRAWN:
-                return "Zurückgezogen";
-        }
-    }
-
-    const mapStatusIcon = (status: RiskStatusEnum | undefined) => {
-        if (!status) return <QuestionMarkIcon />;
-
-        switch(status) {
-            case RiskStatusEnum.DRAFT:
-                return <DraftsIcon />;
-            case RiskStatusEnum.PUBLISHED:
-                return <GroupsIcon />;
-            case RiskStatusEnum.AGREEMENT:
-                return <HandshakeIcon />;
-            case RiskStatusEnum.DEAL:
-                return <SportsKabaddiIcon />;
-            case RiskStatusEnum.WITHDRAWN:
-                return <UndoIcon />;
-        }
-    }
-
-    const mapStatusChipColor = (status: RiskStatus | undefined) => {
-        switch(status) {
-            case RiskStatusEnum.DRAFT:
-                return "info";
-            case RiskStatusEnum.PUBLISHED:
-                return "success";
-            case RiskStatusEnum.AGREEMENT:
-                return "success";
-            case RiskStatusEnum.DEAL:
-                return "error";
-            case RiskStatusEnum.WITHDRAWN:
-                return "warning";
-            default:
-                return "primary";
-        }
-    }
-
-    const mapStatusToolTip = (status: RiskStatus | undefined) => {
-        switch(status) {
-            case RiskStatusEnum.DRAFT:
-                return "Entwurf: Vor dir erstellt, von anderen noch nicht einsehbar.";
-            case RiskStatusEnum.PUBLISHED:
-                return "Veröffentlicht: Von dir zur an der Börse zur Verhandlung freigegeben.";
-            case RiskStatusEnum.AGREEMENT:
-                return "Geeinigt: Von dir und deinem Verhandlungspartner zu übereinstimmenden Konditionen gelangt."
-            case RiskStatusEnum.DEAL:
-                return "In Verhandlung: Du verhandelst um die Konditionen mit deinem Vertragspartner.";
-            case RiskStatusEnum.WITHDRAWN:
-                return "Zurückgezogen: Von dir veröffentlichtes Risiko wieder zurückgezogen";
-            default:
-                return "Unbekannter Status";
-        }
-    }
 
     const deletionIsDisabled =
         props.risk.status === RiskStatusEnum.PUBLISHED ||
@@ -223,7 +163,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
 
     return (
         <Accordion
-            TransitionProps={{ style: { transformOrigin: "top" } }}
+            TransitionProps={{style: {transformOrigin: "top"}}}
             expanded={expanded}
             onChange={(event, isExpanded) => setExpanded(isExpanded)}
             elevation={0}
@@ -233,16 +173,16 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 border: "1px solid",
                 borderColor: "grey.200",
                 paddingRight: "20px",
-                "&:before": { display: "none" }, // Verhindert den doppelten Border-Effekt
+                "&:before": {display: "none"}, // Verhindert den doppelten Border-Effekt
             }}>
             <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
+                expandIcon={<ExpandMoreIcon/>}
                 sx={{
                     minHeight: 0,
                     marginRight: "5%",
                     width: "100%",
                     padding: 0,
-                    "& .MuiAccordionSummary-content": { margin: 0}
+                    "& .MuiAccordionSummary-content": {margin: 0}
                 }}>
                 <Card
                     elevation={0}
@@ -255,7 +195,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                     }}>
                     <Grid container>
                         <Grid size={1}>
-                            <Tooltip title={mapStatusToolTip(props.risk.status)} followCursor sx={{ cursor: "pointer"}}>
+                            <Tooltip title={mapStatusToolTip(props.risk.status)} followCursor sx={{cursor: "pointer"}}>
                                 <Chip
                                     icon={mapStatusIcon(props.risk.status)}
                                     label={mapStatus(props.risk.status)}
@@ -307,7 +247,8 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             {
                                 props.taken &&
                                 <Box display="flex" justifyContent="flex-end">
-                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={<SignLanguageIcon />}>
+                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small"
+                                            endIcon={<SignLanguageIcon/>}>
                                         Verhandeln
                                     </Button>
                                 </Box>
@@ -322,7 +263,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                                 variant="contained"
                                                 onClick={(e) => handlePublish(e)}
                                                 size="small"
-                                                startIcon={<SendIcon />}>
+                                                startIcon={<SendIcon/>}>
                                                 Veröffentlichen
                                             </Button>
                                         ) : (
@@ -332,7 +273,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                                 variant="contained"
                                                 onClick={(e) => handleWithdraw(e)}
                                                 size="small"
-                                                startIcon={<UndoIcon />}>
+                                                startIcon={<UndoIcon/>}>
                                                 Zurückziehen
                                             </Button>
                                         )
@@ -372,7 +313,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
             <MyRiskDeletionDialog
                 open={openDeletionDialog}
                 setOpen={setOpenDeletionDialog}
-                risk={props.risk} />
+                risk={props.risk}/>
         </Accordion>
     )
 }
