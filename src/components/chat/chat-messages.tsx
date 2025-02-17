@@ -19,6 +19,7 @@ import {
 } from "../../store/slices/my-bids/selectors";
 import {messagesUnsubscribe, subscribeToMessages} from "../../store/slices/my-bids/thunks";
 import {selectImagePath} from "../../store/slices/user-profile/selectors";
+import ReactMarkdown from "react-markdown";
 
 export const ChatMessages = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -88,9 +89,11 @@ export const ChatMessages = () => {
                                                                                 backgroundColor: message.uid === CHATBOT_UID ? 'primary.light' : 'grey.100',
                                                                                 mr: 'auto',
                                                                                 maxWidth: '320px',
-                                                                                fontFamily: 'Roboto'
+                                                                                fontFamily: 'Roboto',
+                                                                                "& p:first-of-type": { marginTop: 0 },
+                                                                                "& p:last-of-type": { marginBottom: 0 }
                                                                             }}>
-                                                                            {message.content}
+                                                                            <ReactMarkdown>{message.content}</ReactMarkdown>
                                                                         </Box>
                                                                     ) : null}
                                                                     {message.type === MessageTypeEnum.IMAGE ? (
@@ -137,10 +140,12 @@ export const ChatMessages = () => {
                                                                                     backgroundColor: 'grey.200',
                                                                                     ml: 'auto',
                                                                                     maxWidth: '320px',
-                                                                                    fontFamily: 'Roboto'
+                                                                                    fontFamily: 'Roboto',
+                                                                                    "& p:first-of-type": { marginTop: 0 },
+                                                                                    "& p:last-of-type": { marginBottom: 0 }
                                                                                 }}
                                                                             >
-                                                                                {message.content}
+                                                                                {<ReactMarkdown>{message.content}</ReactMarkdown>}
                                                                             </Box>
                                                                         ) : null}
                                                                         {message.type === MessageTypeEnum.IMAGE ? (
