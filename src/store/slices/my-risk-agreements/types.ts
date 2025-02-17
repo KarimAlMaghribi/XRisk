@@ -10,6 +10,7 @@ export enum ActionTypes {
 
 export interface MyRiskAgreementsState {
     riskAgreements: RiskAgreement[];
+    activeRiskAgreement: RiskAgreement | null;
     error?: string;
     status: FetchStatus;
 }

@@ -1,9 +1,38 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {ActionTypes} from "./types";
 import {auth, db} from "../../../firebase_config";
-import {addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where} from "firebase/firestore";
+import {addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where} from "firebase/firestore";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskAgreement} from "../../../models/RiskAgreement";
+import {setActiveRiskAgreement} from "./reducers";
+
+export let activeRiskAgreementUnsubscribe: (() => void) | null = null;
+
+export const subscribeToActiveRiskAgreement = createAsyncThunk<void, string, { rejectValue: string }>(
+    "myRiskAgreements/subscribeToActiveRiskAgreement",
+    async (chatId, {dispatch, rejectWithValue}) => {
+        try {
+            if (activeRiskAgreementUnsubscribe) {
+                activeRiskAgreementUnsubscribe();
+                activeRiskAgreementUnsubscribe = null;
+            }
+            const agreementRef = collection(db, FirestoreCollectionEnum.MY_RISK_AGREEMENTS);
+            const q = query(agreementRef,
+                where("chatId", "==", chatId)
+            );
+
+            activeRiskAgreementUnsubscribe = onSnapshot(q, (snapshot) => {
+                const riskAgreement = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as RiskAgreement[];
+                dispatch(setActiveRiskAgreement(riskAgreement[0] || null));
+            });
+        } catch (error) {
+            return rejectWithValue("Error subscribing to active RiskAgreement");
+        }
+    }
+);
 
 export const fetchMyRiskAgreements = createAsyncThunk(
     ActionTypes.FETCH_MY_RISK_AGREEMENTS,

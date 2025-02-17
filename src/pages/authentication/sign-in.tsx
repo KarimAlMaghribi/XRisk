@@ -38,7 +38,7 @@ export const SignIn = () => {
                 dispatch(fetchUserProfile());
                 dispatch(fetchRisks());
                 dispatch(fetchMyChats());
-                dispatch(fetchMyRiskAgreements());
+                //dispatch(fetchMyRiskAgreements());
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
@@ -60,7 +60,7 @@ export const SignIn = () => {
             if (user?.refreshToken) {
                 dispatch(fetchRisks())
                 dispatch(fetchMyChats());
-                dispatch(fetchMyRiskAgreements());
+                //dispatch(fetchMyRiskAgreements());
                 navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
