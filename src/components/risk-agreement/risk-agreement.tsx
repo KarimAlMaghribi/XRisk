@@ -17,7 +17,7 @@ import { selectRisks } from "../../store/slices/risks/selectors";
 import { DataExtractionBot } from "../../extraction/DataExtractionBot";
 import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import { selectAgreementByChatId } from "../../store/slices/my-risk-agreements/selectors";
+import { selectActiveRiskAgreement } from "../../store/slices/my-risk-agreements/selectors";
 import { auth } from "../../firebase_config";
 
 export interface RiskAgreementDialogProps {
@@ -67,7 +67,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const riskTitle = risk?.name ? risk?.name : '';
     const riskType = risk?.type ? risk.type : [];
 
-    const existingAgreement = useSelector((state: any) => selectAgreementByChatId(state, activeChat?.id));
+    const existingAgreement = useSelector(selectActiveRiskAgreement);
     console.log("active chat id: " + activeChat?.id)
     console.log("existing agreement id: " + existingAgreement?.id)
 

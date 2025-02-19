@@ -1,25 +1,40 @@
 import {Badge, Box, Button, Divider, ListItem, ListItemAvatar, ListItemText, Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, { useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {selectActiveChat, selectActiveChatId, selectOpposingImagePath} from "../../store/slices/my-bids/selectors";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {MyRiskAgreementDialog} from "../risk-agreement/risk-agreement";
 import {Chat} from "../../store/slices/my-bids/types";
-import {RootState} from "../../store/store";
+import {AppDispatch, RootState} from "../../store/store";
 import {auth} from "../../firebase_config";
+import { activeRiskAgreementUnsubscribe, subscribeToActiveRiskAgreement } from "../../store/slices/my-risk-agreements/thunks";
 
 export const ChatHeader = () => {
+    const dispatch: AppDispatch = useDispatch();
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
     const opposingImagePath: string = useSelector((state: RootState) =>
         selectOpposingImagePath({myBids: state.myBids}, auth.currentUser?.uid)
     );
     const [openRiskAgreementCreationDialog, setOpenRiskAgreementCreationDialog] = React.useState(false);
+
+    useEffect(() => {
+            if (activeChatId) {
+                console.log("subscribing " + activeChatId)
+                dispatch(subscribeToActiveRiskAgreement(activeChatId));
+            }
+    
+            return () => {
+                if (activeRiskAgreementUnsubscribe) {
+                    activeRiskAgreementUnsubscribe();
+                }
+            };
+        }, [activeChatId, dispatch]);
 
     const handleClose = () => {
         setOpenRiskAgreementCreationDialog(false);

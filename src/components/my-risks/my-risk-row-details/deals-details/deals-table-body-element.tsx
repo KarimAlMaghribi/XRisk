@@ -1,6 +1,6 @@
 import {Chat} from "../../../../store/slices/my-bids/types";
 import React from "react";
-import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Grid from "@mui/material/Grid2";
 import {elementBottomMargin} from "../../../risk/risk-overview-element";
@@ -125,6 +125,41 @@ export const DealsTableBodyElement = (props: DealsTableBodyProps) => {
                     <Typography variant="body2" sx={{color: "grey", fontWeight: "bold"}}>
                         Einigungsdetails
                     </Typography>
+
+                    {/* Tabelle */}
+                    <TableContainer component={Paper} sx={{ borderRadius: 2, boxShadow: 3, maxWidth: "100%" }}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow sx={{ backgroundColor: "#f0f0f0" }}> {/* Kopfzeile farblich abheben */}
+                                    <TableCell></TableCell>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Wert</TableCell>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Versicherungssumme</TableCell>
+                                    <TableCell>{props.chat.riskTaker?.name}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Kosten</TableCell>
+                                    <TableCell>{props.chat.topic}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Zeitspanne</TableCell>
+                                    <TableCell>{new Date(props.chat.created).toLocaleDateString()}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Beweismittel</TableCell>
+                                    <TableCell>{new Date(props.chat.lastActivity).toLocaleDateString()}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: "bold" }}>Weitere Details</TableCell>
+                                    <TableCell>{props.chat.status ?? "Unbekannt"}</TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </AccordionDetails>
             </Accordion>
             <CancelDealDialog

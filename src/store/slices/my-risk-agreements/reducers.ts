@@ -7,14 +7,18 @@ import { RiskAgreement } from "../../../models/RiskAgreement";
 
 const initialState: MyRiskAgreementsState = {
     riskAgreements: [],
+    activeRiskAgreement: null,
     error: undefined,
     status: FetchStatusEnum.IDLE
 };
 
-export const myRiskAgreementsSlice = createSlice({
+const myRiskAgreementsSlice = createSlice({
     name: FirestoreCollectionEnum.MY_RISK_AGREEMENTS,
     initialState: initialState,
     reducers: {
+        setActiveRiskAgreement: (state, action: PayloadAction<RiskAgreement>) => {
+            state.activeRiskAgreement = action.payload;
+          },
         setAgreementData: (state, action: PayloadAction<RiskAgreement>) => {
             const existingIndex = state.riskAgreements.findIndex((a) => a.id === action.payload.id);
             if (existingIndex !== -1) { //es gibt ein agreement mit der id
@@ -23,17 +27,6 @@ export const myRiskAgreementsSlice = createSlice({
               state.riskAgreements.push({ ...action.payload});
             }
           },
-        /*confirmAgreement: (state, action: PayloadAction<{ id: string; userId: string }>) => {
-            const agreement = state.riskAgreements.find((a) => a.id === action.payload.id);
-            if (agreement) {
-                if(agreement.riskGiverId === action.payload.userId){
-                    agreement.riskGiverAgreed = true;
-                }
-                else if(agreement.riskTakerId === action.payload.userId){
-                    agreement.riskTakerAgreed = true;
-                }
-            }
-          },*/
     },
     extraReducers: (builder) => {
         builder
@@ -96,4 +89,5 @@ export const myRiskAgreementsSlice = createSlice({
     }
 });
 
+export const { setActiveRiskAgreement, setAgreementData } = myRiskAgreementsSlice.actions;
 export default myRiskAgreementsSlice.reducer;
