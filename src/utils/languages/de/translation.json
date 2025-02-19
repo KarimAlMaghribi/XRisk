@@ -1,0 +1,42 @@
+{
+      "header": {
+        "risk_exchange": "Riskobörse",
+        "home": "Home",
+        "chat": "Chat",
+        "register": "Registrieren",
+        "sign_in": "Anmelden",
+        "profile": "Profil"
+      },
+
+      "footer": {
+        "product": "Produkt",
+        "pricing": "Preise",
+        "overview": "Übersicht",
+        "browse": "Durchsuchen",
+        "accessibility": "Barrierefreiheit",
+        "solutions": "Lösungen",
+        "brainstroming": "Brainstroming",
+        "ideation": "Ideenfindung",
+        "wireframing": "Wireframing",
+        "research": "Forschung",
+        "resources": "Ressourcen",
+        "help_center": "Hilfe",
+        "blog": "Blog",
+        "tutorials": "Anleitungen",
+        "faqs": "FAQs",
+        "support": "Support",
+        "contact_us": "Kontakt",
+        "developers": "Entwickler",
+        "documentation": "Dokumentation",
+        "integrations": "Integration",
+        "company": "Unternehmen",
+        "about": "Über Uns",
+        "press": "Presse",
+        "events": "Events",
+        "request_demo": "Demo Anfordern",
+        "imprint": "Impressum",
+        "terms": "Konditionen",
+        "privacy": "Datenschutz",
+        "contact": "Contact"
+      }
+}

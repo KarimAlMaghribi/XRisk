@@ -16,6 +16,8 @@ import {Page, pages} from "./pages";
 import {auth} from "../../firebase_config";
 import {theme} from "../../theme";
 import {QuickMenuButtons} from "./header-elements/quick-menu-buttons";
+import { useTranslation, Trans } from "react-i18next";
+import i18n from '../../utils/i18n';
 
 export function Header() {
     const location = useLocation();
@@ -25,6 +27,12 @@ export function Header() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const [activePage, setActivePage] = React.useState<string | null>(pages[0].name);
+    const [language, setLanguage] = React.useState("DE");
+
+    const languages = {
+        en: { label: "EN", name: "English"},
+        de: { label: "DE", name: "Deutsch"}
+    }
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -55,6 +63,15 @@ export function Header() {
         setActivePage(page.name);
         setAnchorElNav(null);
         navigate(page.route);
+    };
+
+
+    useEffect(() => {
+    }, [language]);
+
+    const changeLanguage = (lng: string) => {
+        setLanguage(lng);
+        i18n.changeLanguage(lng);
     };
 
     return (
@@ -118,7 +135,6 @@ export function Header() {
                             textDecoration: 'none',
                         }}>
                     </Typography>
-
                     <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
                         {pages.map((page) => (
                             page.authenticated && !isLoggedIn ? null :
@@ -133,16 +149,26 @@ export function Header() {
                                     textDecorationColor: 'white',
                                     fontWeight: activePage === page.name ? 'bold' : 'normal'
                                 }}>
-                                {page.name}
+                                <Trans i18nKey={`header.${page.name}`} />
                             </Button>
                         ))}
                     </Box>
+                    {Object.entries(languages).map(([code, { label, name }]) => (
+                        <IconButton
+                        key={code}
+                        onClick={() => changeLanguage(code)}
+                        title={name}
+                    >
+                    <Typography variant="h6">{label}</Typography>
+                    </IconButton>
+                    ))}
                     <QuickMenuButtons
                         isLoggedIn={isLoggedIn}
                         anchorElUser={anchorElUser}
                         handleOpenUserMenu={handleOpenUserMenu}
                         setAnchorElUser={() => setAnchorElUser(null)} />
                 </Toolbar>
+                
             </Container>
         </AppBar>
     );

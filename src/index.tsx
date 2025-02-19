@@ -13,6 +13,7 @@ import {ThemeProvider} from "@mui/material";
 import "./index.scss";
 import {BrowserRouter} from "react-router-dom";
 import {SnackbarProvider} from "./components/snackbar/custom-snackbar";
+import i18n from './utils/i18n';
 
 
 const root = ReactDOM.createRoot(

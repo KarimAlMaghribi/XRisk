@@ -28,6 +28,7 @@ import FooterResourceDescriptions from './pages/formalities/resources';
 import FooterSupportDescriptions from './pages/formalities/support';
 import FooterCompanyDescriptions from './pages/formalities/company';
 
+
 function App() {
     return (
         <Layout>

@@ -7,7 +7,12 @@ import XIcon from '@mui/icons-material/X';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+import { useTranslation, Trans } from 'react-i18next';
+import i18n from "../../utils/i18n";
+
 export const Footer = () => {
+
+    const { t } = useTranslation();
 
     const navigate = useNavigate();
     
@@ -222,7 +227,7 @@ export const Footer = () => {
                         to="/product"
                         onClick={goToProduct}
                         sx={{ textDecoration: 'none' }}>
-                        Product
+                        <Trans i18nKey="footer.product"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -233,7 +238,7 @@ export const Footer = () => {
                         to="/product"
                         onClick={goToProductPricing}
                         sx={{ textDecoration: 'none' }}>
-                        Pricing
+                        <Trans i18nKey="footer.pricing"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -244,7 +249,7 @@ export const Footer = () => {
                         to="/product"
                         onClick={goToProductOverview}
                         sx={{ textDecoration: 'none' }}>
-                        Overview
+                        <Trans i18nKey="footer.overview"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -255,7 +260,7 @@ export const Footer = () => {
                         to="/product"
                         onClick={goToProductBrowse}
                         sx={{ textDecoration: 'none' }}>
-                        Browse
+                        <Trans i18nKey="footer.browse"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -267,7 +272,7 @@ export const Footer = () => {
                         to="/product"
                         onClick={goToProductAccessibility}
                         sx={{ textDecoration: 'none' }}>
-                        Accessibility
+                        <Trans i18nKey="footer.accessibility"></Trans>
                     </Typography> &nbsp; &nbsp;
                         <Chip label="BETA" color="primary" size="small" style={{borderRadius: "3px", color: "black"}}/>
                     </div>
@@ -281,7 +286,7 @@ export const Footer = () => {
                         to="/solutions"
                         onClick={goToSolutions}
                         sx={{ textDecoration: 'none' }}>
-                        Solutions
+                        <Trans i18nKey="footer.solutions"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -292,7 +297,7 @@ export const Footer = () => {
                         to="/solutions"
                         onClick={goToSolutionsBrainstroming}
                         sx={{ textDecoration: 'none' }}>
-                        Brainstroming
+                        <Trans i18nKey="footer.brainstroming"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -303,7 +308,7 @@ export const Footer = () => {
                         to="/solutions"
                         onClick={goToSolutionsIdeation}
                         sx={{ textDecoration: 'none' }}>
-                        Ideation
+                        <Trans i18nKey="footer.ideation"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -314,7 +319,7 @@ export const Footer = () => {
                         to="/solutions"
                         onClick={goToSolutionsWireframing}
                         sx={{ textDecoration: 'none' }}>
-                        Wireframing
+                        <Trans i18nKey="footer.wireframing"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -325,7 +330,7 @@ export const Footer = () => {
                         to="/solutions"
                         onClick={goToSolutionsResearch}
                         sx={{ textDecoration: 'none' }}>
-                        Research
+                        <Trans i18nKey="footer.research"></Trans>
                     </Typography>
                 </Grid>
                 <Grid size={2}>
@@ -336,7 +341,7 @@ export const Footer = () => {
                         to="/resources"
                         onClick={goToResources}
                         sx={{ textDecoration: 'none' }}>
-                        Resources
+                        <Trans i18nKey="footer.resources"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -347,7 +352,7 @@ export const Footer = () => {
                         to="/resources"
                         onClick={goToResourcesHelpCenter}
                         sx={{ textDecoration: 'none' }}>
-                        Help Center
+                        <Trans i18nKey="footer.help_center"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -358,7 +363,7 @@ export const Footer = () => {
                         to="/resources"
                         onClick={goToResourcesBlog}
                         sx={{ textDecoration: 'none' }}>
-                        Blog
+                        <Trans i18nKey="footer.blog"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -369,7 +374,7 @@ export const Footer = () => {
                         to="/resources"
                         onClick={goToResourcesTutorials}
                         sx={{ textDecoration: 'none' }}>
-                        Tutorials
+                        <Trans i18nKey="footer.tutorials"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -380,7 +385,7 @@ export const Footer = () => {
                         to="/landingpage#faq"
                         onClick={goToFAQ}
                         sx={{ textDecoration: 'none' }}>
-                        FAQs
+                        <Trans i18nKey="footer.faqs"></Trans>
                     </Typography>
                 </Grid>
                 <Grid size={2}>
@@ -391,7 +396,7 @@ export const Footer = () => {
                         to="/support"
                         onClick={goToSupport}
                         sx={{ textDecoration: 'none' }}>
-                        Support
+                        <Trans i18nKey="footer.support"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -402,7 +407,7 @@ export const Footer = () => {
                         to="contact"
                         onClick={goToSupportContactUs}
                         sx={{ textDecoration: 'none' }}>
-                        Contact Us
+                        <Trans i18nKey="footer.contact_us"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -413,7 +418,7 @@ export const Footer = () => {
                         to="/support"
                         onClick={goToSupportDevelopers}
                         sx={{ textDecoration: 'none' }}>
-                        Developers
+                        <Trans i18nKey="footer.developers"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -424,7 +429,7 @@ export const Footer = () => {
                         to="/support"
                         onClick={goToSupportDocumentation}
                         sx={{ textDecoration: 'none' }}>
-                        Documentation
+                        <Trans i18nKey="footer.documentation"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -435,7 +440,7 @@ export const Footer = () => {
                         to="/support"
                         onClick={goToSupportIntegrations}
                         sx={{ textDecoration: 'none' }}>
-                        Integrations
+                        <Trans i18nKey="footer.integrations"></Trans>
                     </Typography>
                 </Grid>
                 <Grid size={2}>
@@ -446,7 +451,7 @@ export const Footer = () => {
                         to="/company"
                         onClick={goToCompany}
                         sx={{ textDecoration: 'none' }}>
-                        Company
+                        <Trans i18nKey="footer.company"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -457,7 +462,7 @@ export const Footer = () => {
                         to="about"
                         onClick={goToCompanyAboutUs}
                         sx={{ textDecoration: 'none' }}>
-                        About
+                        <Trans i18nKey="footer.about"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -468,7 +473,7 @@ export const Footer = () => {
                         to="/company"
                         onClick={goToCompanyPress}
                         sx={{ textDecoration: 'none' }}>
-                        Press
+                        <Trans i18nKey="footer.press"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -479,7 +484,7 @@ export const Footer = () => {
                         to="/company"
                         onClick={goToCompanyEvents}
                         sx={{ textDecoration: 'none' }}>
-                        Events
+                        <Trans i18nKey="footer.events"></Trans>
                     </Typography>
                     <br />
                     <br />
@@ -490,7 +495,7 @@ export const Footer = () => {
                         to="/company"
                         onClick={goToCompanyRequestDemo}
                         sx={{ textDecoration: 'none' }}>
-                        Request Demo
+                        <Trans i18nKey="footer.request_demo"></Trans>
                     </Typography>
                 </Grid>
                 <Grid size={12} style={{marginTop: "50px"}}>
@@ -508,7 +513,7 @@ export const Footer = () => {
                         onClick={goToImprint}
                         sx={{ textDecoration: 'none' }}
                         style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        Imprint
+                        <Trans i18nKey="footer.imprint"></Trans>
                     </Typography>
                     <Typography 
                         color="white" 
@@ -518,7 +523,7 @@ export const Footer = () => {
                         onClick={goToTerms}
                         sx={{ textDecoration: 'none' }}
                         style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        Terms
+                        <Trans i18nKey="footer.terms"></Trans>
                     </Typography>
                     <Typography 
                         color="white" 
@@ -528,7 +533,7 @@ export const Footer = () => {
                         onClick={goToPrivacy}
                         sx={{ textDecoration: 'none' }}
                         style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        Privacy
+                        <Trans i18nKey="footer.privacy"></Trans>
                     </Typography>
                     <Typography 
                         color="white" 
@@ -538,7 +543,7 @@ export const Footer = () => {
                         onClick={goToSupport}
                         sx={{ textDecoration: 'none' }}
                         style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        Support
+                        <Trans i18nKey="footer.support"></Trans>
                     </Typography>
                     <Typography 
                         color="white" 
@@ -548,7 +553,7 @@ export const Footer = () => {
                         onClick={goToCompanyAboutUs}
                         sx={{ textDecoration: 'none' }}
                         style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        About
+                        <Trans i18nKey="footer.about"></Trans>
                     </Typography>
                     <Typography 
                         color="white" 
@@ -558,7 +563,7 @@ export const Footer = () => {
                         onClick={goToSupportContactUs}
                         sx={{ textDecoration: 'none' }}
                         style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        Contact
+                        <Trans i18nKey="footer.contact_us"></Trans>
                     </Typography>
                     <LinkedInIcon style={{color: "white", marginLeft: "10px", marginRight: "10px"}}/>
                     <XIcon style={{color: "white", marginLeft: "10px", marginRight: "10px"}}/>

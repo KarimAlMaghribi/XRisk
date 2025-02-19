@@ -1,0 +1,44 @@
+{
+      "header": {
+        "risk_exchange": "Risk Exchange",
+        "home": "Home",
+        "chat": "Chat",
+        "register": "Registration",
+        "sign_in": "Sign In",
+        "profile": "Profile"
+      },
+      "homepage": {
+
+      },
+      "footer": {
+        "product": "Product",
+        "pricing": "Pricing",
+        "overview": "Overview",
+        "browse": "Browse",
+        "accessibility": "Accessibility",
+        "solutions": "Solutions",
+        "brainstroming": "Brainstroming",
+        "ideation": "Ideation",
+        "wireframing": "Wireframing",
+        "research": "Research",
+        "resources": "Resources",
+        "help_center": "Help Center",
+        "blog": "Blog",
+        "tutorials": "Tutorials",
+        "faqs": "FAQs",
+        "support": "Support",
+        "contact_us": "Contact Us",
+        "developers": "Developers",
+        "documentation": "Documentation",
+        "integrations": "Integrations",
+        "company": "Company",
+        "about": "About",
+        "press": "Press",
+        "events": "Events",
+        "request_demo": "Request Demo",
+        "imprint": "Imprint",
+        "terms": "Terms",
+        "privacy": "Privacy",
+        "contact": "Contact"
+  }
+}

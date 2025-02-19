@@ -18,6 +18,7 @@ import {selectImagePath, selectName} from "../../../store/slices/user-profile/se
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {useSelector} from "react-redux";
 import { ProfileDialog } from "../../profile/profile-dialog";
+import { Trans } from "react-i18next";
 
 export interface AuthenticationButtonsProps {
     isLoggedIn: boolean;
@@ -79,7 +80,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                         <AccountCircleIcon />
                                     </ListItemIcon>
                                     <Typography sx={{textAlign: 'center'}}>
-                                        Profil
+                                        <Trans i18nKey="header.profile"></Trans>
                                     </Typography>
                                 </MenuItem>
                             ]}
@@ -89,7 +90,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                             variant="outlined"
                             style={{color: "white", borderColor: "white", marginLeft: "20px"}}
                             startIcon={<West/>}>
-                            Abmelden
+                            <Trans i18nKey="header.sign_out"></Trans>
                         </Button>
                     </Box>
                 ) : (
@@ -105,7 +106,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                     visibility: location.pathname === `/${ROUTES.SIGN_IN}` ? "hidden" : "visible"
                                 }}
                                 endIcon={<East/>}>
-                                Anmelden
+                                <Trans i18nKey="header.sign_in"></Trans>
                             </Button>
                         </Grid>
                         <Grid size={6}>
@@ -117,7 +118,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                     visibility: location.pathname === `/${ROUTES.SIGN_UP}` ? "hidden" : "visible"
                                 }}
                                 endIcon={<East/>}>
-                                Registrieren
+                                <Trans i18nKey="header.register"></Trans>
                             </Button>
                         </Grid>
                     </Grid>
