@@ -113,7 +113,7 @@ export function Header() {
                             {pages.map((page, index) => (
                                 page.authenticated && !isLoggedIn ? null :
                                 <MenuItem key={index + "_" + page.name} onClick={() => handleCloseNavMenu(page)}>
-                                    <Typography sx={{textAlign: 'center'}}><Trans i18nKey={`header.${page.name}`} /></Typography>
+                                    <Typography sx={{textAlign: 'center'}}>{page.name}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -149,7 +149,7 @@ export function Header() {
                                     textDecorationColor: 'white',
                                     fontWeight: activePage === page.name ? 'bold' : 'normal'
                                 }}>
-                                {page.name}
+                                <Trans i18nKey={`header.${page.name}`} />
                             </Button>
                         ))}
                     </Box>

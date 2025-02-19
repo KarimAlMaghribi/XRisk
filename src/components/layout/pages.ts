@@ -20,16 +20,16 @@ export const pages: Page[] = [
     // { name: 'Meine Risiken', route: ROUTES.MY_RISKS, authenticated: true },
     // { name: 'Chat', route: ROUTES.CHAT },
 
-    { name: "Home", route: '/' },
-    { name: 'Risik Exchange', route: ROUTES.RISK_OVERVIEW },
-    { name: 'My Risks', route: ROUTES.MY_RISKS, authenticated: true },
-    { name: 'Chat', route: ROUTES.CHAT },
+    { name: 'home', route: '/' },
+    { name: 'risk_exchange', route: ROUTES.RISK_OVERVIEW },
+    { name: 'my_risks', route: ROUTES.MY_RISKS, authenticated: true },
+    { name: 'chat', route: ROUTES.CHAT },
 
     
 ];
 
 export const settings: Page[] = [
-    { name: 'Profil', route: ROUTES.PROFILE, icon: AccountCircleIcon },
+    { name: 'profile', route: ROUTES.PROFILE, icon: AccountCircleIcon },
     // { name: 'Konto', route: ROUTES.ACCOUNT, icon: AccountCircleIcon },
     // { name: 'Einstellungen', route: ROUTES.SETTINGS, icon: SettingsIcon },
 ];
