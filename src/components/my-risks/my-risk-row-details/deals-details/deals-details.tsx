@@ -1,6 +1,6 @@
 import {Risk} from "../../../../models/Risk";
 import {Chat} from "../../../../store/slices/my-bids/types";
-import React from "react";
+import React, { useEffect } from "react";
 import {useSnackbarContext} from "../../../snackbar/custom-snackbar";
 import {auth} from "../../../../firebase_config";
 import Grid from "@mui/material/Grid2";
@@ -11,12 +11,30 @@ import {Publisher} from "../../../../models/Publisher";
 import {PublisherProfile} from "../../../risk/publisher-profile";
 import {DealsTableHeader} from "./deals-table-header";
 import {DealsTableBodyElement} from "./deals-table-body-element";
+import { riskAgreementsUnsubscribe, subscribeToRiskAgreements } from "../../../../store/slices/my-risk-agreements/thunks";
+import { AppDispatch } from "../../../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { selectActiveRiskAgreement, selectRiskAgreements } from "../../../../store/slices/my-risk-agreements/selectors";
+import { RiskAgreement } from "../../../../models/RiskAgreement";
 
 
 export const DealDetails = ({risk, chats}: { risk: Risk, chats: Chat[] }) => {
+    const dispatch: AppDispatch = useDispatch();
     const riskTaker: boolean = risk.publisher?.uid !== auth.currentUser?.uid;
     const [openPublisherProfileDialog, setOpenPublisherProfileDialog] = React.useState<boolean>(false);
     const [publisherProfile, setPublisherProfile] = React.useState<Publisher | null | undefined>(null);
+
+    useEffect(() => {
+        dispatch(subscribeToRiskAgreements());
+        
+        return () => {
+            if (riskAgreementsUnsubscribe) {
+                riskAgreementsUnsubscribe();
+            }
+        };
+    }, [dispatch]);
+
+    const riskAgreements: RiskAgreement[] = useSelector(selectRiskAgreements);
 
     const {showSnackbar} = useSnackbarContext();
     const uid: string | undefined = auth.currentUser?.uid;
@@ -88,9 +106,10 @@ export const DealDetails = ({risk, chats}: { risk: Risk, chats: Chat[] }) => {
                             </Typography>
                             <DealsTableHeader/>
                             {
-                                chats.map((chat, index) => (
-                                    <DealsTableBodyElement key={chat.id} chat={chat} index={index}/>
-                                ))
+                                chats.map((chat, index) => {
+                                    const riskAgreement = riskAgreements.find((ra) => ra.chatId === chat.id) || null;
+                                    return <DealsTableBodyElement key={chat.id} chat={chat} riskAgreement={riskAgreement} index={index}/>
+                                })
                             }
                         </>
                     }

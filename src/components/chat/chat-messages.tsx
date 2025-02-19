@@ -93,8 +93,8 @@ export const ChatMessages = () => {
                                                                                 "& p:first-of-type": { marginTop: 0 },
                                                                                 "& p:last-of-type": { marginBottom: 0 }
                                                                             }}>
-                                                                            <ReactMarkdown>{message.content}</ReactMarkdown>
-                                                                        </Box>
+                                                                            <ReactMarkdown>{message.content}</ReactMarkdown> 
+                                                                        </Box> //so mit Markdown???
                                                                     ) : null}
                                                                     {message.type === MessageTypeEnum.IMAGE ? (
                                                                         <Box mb={1}

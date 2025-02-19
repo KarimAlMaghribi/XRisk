@@ -1,6 +1,6 @@
 import {Chat} from "../../../../store/slices/my-bids/types";
 import React from "react";
-import {Accordion, AccordionDetails, AccordionSummary, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Chip, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Grid from "@mui/material/Grid2";
 import {elementBottomMargin} from "../../../risk/risk-overview-element";
@@ -15,11 +15,28 @@ import {useDispatch} from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import {CancelDealDialog} from "./cancel-deal-dialog";
+import { RiskAgreement } from "../../../../models/RiskAgreement";
+import { auth } from "../../../../firebase_config";
+import { NumericFormat } from "react-number-format";
 
 export interface DealsTableBodyProps {
     chat: Chat;
+    riskAgreement: RiskAgreement | null;
     index: number;
 }
+
+const formatEuro = (value?: number) => {
+    if (value == null) return "-";
+    return (
+        <NumericFormat 
+            value={value} 
+            displayType="text" 
+            thousandSeparator="." 
+            decimalSeparator="," 
+            suffix="€ " 
+        />
+    );
+};
 
 export const DealsTableBodyElement = (props: DealsTableBodyProps) => {
     const navigate = useNavigate();
@@ -38,6 +55,35 @@ export const DealsTableBodyElement = (props: DealsTableBodyProps) => {
         navigate(`/${ROUTES.CHAT}`);
         dispatch(setActiveChatByRiskId(riskId));
     }
+
+    const getStatus = (field: keyof RiskAgreement["riskGiverApprovals"], riskAgreement: RiskAgreement | null): { text: string; color: string; } => {
+        if (!riskAgreement) return { text: "Kein Vertrag", color: "gray" };
+
+        const uid: string | undefined = auth.currentUser?.uid;
+
+        var selfApproved: boolean;
+        var partnerApproved: boolean;
+        var otherUser: string;
+    
+        if(uid === riskAgreement.riskGiverId){
+            selfApproved = riskAgreement.riskGiverApprovals?.[field];
+            partnerApproved = riskAgreement.riskTakerApprovals?.[field];
+            otherUser = "Risikonehmer";
+        }
+        else{
+            selfApproved = riskAgreement.riskTakerApprovals?.[field];
+            partnerApproved = riskAgreement.riskGiverApprovals?.[field];
+            otherUser = "Risikogeber";
+        }
+    
+        if (selfApproved && partnerApproved) {
+            return { text: "Akzeptiert", color: "green" };
+        } else if (!partnerApproved) {
+            return { text: "Warten auf " + otherUser, color: "yellow" };
+        } else {
+            return { text: "Zustimmung ausstehend", color: "blue" };
+        }
+    };
 
     return (
         <>
@@ -139,23 +185,28 @@ export const DealsTableBodyElement = (props: DealsTableBodyProps) => {
                             <TableBody>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: "bold" }}>Versicherungssumme</TableCell>
-                                    <TableCell>{props.chat.riskTaker?.name}</TableCell>
+                                    <TableCell>{formatEuro(props.riskAgreement?.insuranceSum)}</TableCell>
+                                    <TableCell>{getStatus("insuranceSum", props.riskAgreement).text}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: "bold" }}>Kosten</TableCell>
-                                    <TableCell>{props.chat.topic}</TableCell>
+                                    <TableCell>{formatEuro(props.riskAgreement?.costs)}</TableCell>
+                                    <TableCell>{getStatus("costs", props.riskAgreement).text}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: "bold" }}>Zeitspanne</TableCell>
-                                    <TableCell>{new Date(props.chat.created).toLocaleDateString()}</TableCell>
+                                    <TableCell>{props.riskAgreement?.timeframe}</TableCell>
+                                    <TableCell>{getStatus("timeframe", props.riskAgreement).text}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: "bold" }}>Beweismittel</TableCell>
-                                    <TableCell>{new Date(props.chat.lastActivity).toLocaleDateString()}</TableCell>
+                                    <TableCell>{props.riskAgreement?.evidence}</TableCell>
+                                    <TableCell>{getStatus("evidence", props.riskAgreement).text}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: "bold" }}>Weitere Details</TableCell>
-                                    <TableCell>{props.chat.status ?? "Unbekannt"}</TableCell>
+                                    <TableCell>{props.riskAgreement?.details}</TableCell>
+                                    <TableCell>{getStatus("details", props.riskAgreement).text}</TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
