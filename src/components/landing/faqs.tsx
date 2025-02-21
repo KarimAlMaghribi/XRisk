@@ -1,6 +1,7 @@
 import React from "react";
 import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Trans } from "react-i18next";
 
 export const FAQs = () => {
     const faqs: { question: string, answer: string }[] = [
@@ -48,7 +49,7 @@ export const FAQs = () => {
     return (
         <div style={{margin: "50px"}}>
             <Typography variant="h3" style={{textAlign: "center", marginBottom: "50px"}}>
-                Antworten auf deine Fragen
+                <Trans i18nKey="faq.title"></Trans>
             </Typography>
 
             {
@@ -64,12 +65,12 @@ export const FAQs = () => {
                             aria-controls="panel1bh-content"
                             id="panel1bh-header">
                             <Typography variant="h6" sx={{width: '33%', flexShrink: 0, color: 'text.secondary'}}>
-                                {faq.question}
+                                <Trans  i18nKey={`faq.question${index+1}`}></Trans>
                             </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                                {faq.answer}
+                                <Trans  i18nKey={`faq.answer${index+1}`}></Trans>
                             </Typography>
                         </AccordionDetails>
                     </Accordion>

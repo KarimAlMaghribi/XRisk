@@ -25,7 +25,7 @@ export const ChatHeader = () => {
 
     useEffect(() => {
             if (activeChatId) {
-                console.log("subscribing " + activeChatId)
+                //console.log("subscribing " + activeChatId)
                 dispatch(subscribeToActiveRiskAgreement(activeChatId));
             }
     

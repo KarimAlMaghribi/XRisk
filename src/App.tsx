@@ -27,9 +27,19 @@ import FooterSolutionDescriptions from './pages/formalities/solutions';
 import FooterResourceDescriptions from './pages/formalities/resources';
 import FooterSupportDescriptions from './pages/formalities/support';
 import FooterCompanyDescriptions from './pages/formalities/company';
-
+import i18n from './utils/i18n';
+import { useState, useEffect } from 'react';
 
 function App() {
+
+    const [language, setLanguage] = useState(i18n.language);
+
+    useEffect(() => {
+        i18n.on("languageChanged", (lng) => {
+            setLanguage(lng); // This will force a re-render
+        });
+    }, []);
+
     return (
         <Layout>
             <Routes>

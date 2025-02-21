@@ -14,6 +14,8 @@ import {fetchUserCount} from "../../store/slices/meta/thunks";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {selectUserCount} from "../../store/slices/meta/selectors";
+import { Trans } from 'react-i18next';
+
 
 const item = {
     display: 'flex',
@@ -52,7 +54,7 @@ function MarketingStats() {
                                 sx={{ height: 150, borderRadius: "10px" }}
                             />
                             <Typography variant="h5" sx={{ my: 5 }}>
-                                Glückliche User
+                                <Trans i18nKey="homepage.user_figure_text"></Trans>
                             </Typography>
                             <Typography variant="h4">
                                 {userCount}
@@ -68,7 +70,7 @@ function MarketingStats() {
                                 sx={{ height: 150, borderRadius: "10px"  }}
                             />
                             <Typography variant="h5" sx={{ my: 5 }}>
-                                Betrag in Absicherung
+                                <Trans i18nKey="homepage.couple_figure_text"></Trans>
                             </Typography>
                             <Typography variant="h4">
                                 100€
@@ -84,7 +86,7 @@ function MarketingStats() {
                                 sx={{ height: 150, borderRadius: "10px"  }}
                             />
                             <Typography variant="h5" sx={{ my: 5 }} textAlign="center">
-                                Geschlossene Verträge/ Risikotransfers
+                            <Trans i18nKey="homepage.contract_figure_text"></Trans>
                             </Typography>
                             <Typography variant="h4">
                                 7

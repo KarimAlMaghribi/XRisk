@@ -2,6 +2,7 @@ import cover from "../../assests/imgs/desert_1-min.png";
 import React from "react";
 import Box from "@mui/material/Box";
 import {Typography} from "@mui/material";
+import { Trans } from "react-i18next";
 
 export const Banner = () => {
         return (
@@ -16,14 +17,14 @@ export const Banner = () => {
                     variant="h2"
                     color="white"
                     style={{width: "40%", paddingTop: "200px", paddingLeft: "100px"}}>
-                    <b>Wir machen Risiken handelbar!</b>
+                    <b><Trans i18nKey="homepage.figure_text" /></b>
                 </Typography>
 
                 <Typography
                     variant="h4"
                     color="white"
                     style={{width: "40%", paddingLeft: "100px"}}>
-                    Wir sind die intelligente Plattform für Partner-basierte Risiko-Transformation!
+                    <Trans i18nKey="homepage.figure_text2" />
                 </Typography>
             </Box>
         )

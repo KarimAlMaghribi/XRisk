@@ -18,6 +18,7 @@ import {theme} from "../../theme";
 import {QuickMenuButtons} from "./header-elements/quick-menu-buttons";
 import { useTranslation, Trans } from "react-i18next";
 import i18n from '../../utils/i18n';
+import ReactCountryFlag from "react-country-flag";
 
 export function Header() {
     const location = useLocation();
@@ -153,7 +154,7 @@ export function Header() {
                             </Button>
                         ))}
                     </Box>
-                    {Object.entries(languages).map(([code, { label, name }]) => (
+                    {/* {Object.entries(languages).map(([code, { label, name }]) => (
                         <IconButton
                         key={code}
                         onClick={() => changeLanguage(code)}
@@ -161,7 +162,37 @@ export function Header() {
                     >
                     <Typography variant="h6">{label}</Typography>
                     </IconButton>
-                    ))}
+                    ))} */}
+                    <IconButton
+                        //key={"US"}
+                        //onClick={() => changeLanguage("US")}
+                    >
+                        <ReactCountryFlag
+                            countryCode="US"
+                            svg
+                            style={{
+                                width: '1.5em',
+                                height: '1.5em',
+                            }}
+                            title="EN"
+                            onClick={() => changeLanguage("en")}
+                        />
+                    </IconButton>
+                    <IconButton
+                        //key={"DE"}
+                        //onClick={() => changeLanguage("EN")}
+                    >
+                        <ReactCountryFlag
+                            countryCode="DE"
+                            svg
+                            style={{
+                                width: '1.5em',
+                                height: '1.5em',
+                            }}
+                            title="DE"
+                            onClick={() => changeLanguage("de")}
+                        />
+                    </IconButton>
                     <QuickMenuButtons
                         isLoggedIn={isLoggedIn}
                         anchorElUser={anchorElUser}

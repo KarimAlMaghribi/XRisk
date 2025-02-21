@@ -11,6 +11,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import IconButton from "@mui/material/IconButton";
 import {theme} from "../../theme";
+import { Trans, useTranslation} from "react-i18next";
 
 interface RiskExample {
     img: string;
@@ -21,17 +22,17 @@ interface RiskExample {
 const iconSize = 50;
 const riskExamples: RiskExample[] = [
     {
-        title: "Weg absichern",
+        title: "way",
         img: route,
         icon: <RouteIcon sx={{fontSize: iconSize}}/>
     },
     {
-        title: "Prozess absichern",
+        title: "process",
         img: process,
         icon: <GavelIcon sx={{fontSize: iconSize}} />
     },
     {
-        title: "Event absichern",
+        title: "event",
         img: event,
         icon: <CalendarMonthIcon sx={{fontSize: iconSize}}/>
     }
@@ -59,20 +60,19 @@ export const RiskElement = (props: RiskExample) => {
 
 export const RiskCarousel = () => {
     const orange = theme.palette.primary.main;
-
-
-
+    const { t, i18n } = useTranslation();
 
     return (
         <React.Fragment>
             <Typography variant="h5" color="grey" style={{textAlign: "center", marginTop: "50px"}}>
-                MIT <span style={{ color: orange }}>X</span>RISK
+                <Trans  i18nKey="homepage.middle_page_text"></Trans> <span style={{ color: orange }}>X</span>RISK
             </Typography>
             <Typography variant="h3" style={{textAlign: "center", marginBottom: "50px"}}>
-                <b>Jetzt <span style={{ color: orange }}>Deine Risiken anbieten.</span></b>
+                {(i18n.language === "en") && <b><span style={{ color: orange }}>Offer your Risks</span> now.</b>}
+                {(i18n.language === "de") && <b>Jetzt <span style={{ color: orange }}>Deine Risiken anbieten.</span></b>}
             </Typography>
             <Typography variant="h5" color="black" style={{textAlign: "center", marginBottom: "50px"}}>
-                Sieh dir an, welche Risiken andere Nutzer abgesichert haben
+            <Trans  i18nKey="homepage.middle_page_text3"></Trans>
             </Typography>
 
 
@@ -95,7 +95,7 @@ export const RiskCarousel = () => {
                             style={{margin: "40px"}}>
                             <RiskElement
                                 img={riskExample.img}
-                                title={riskExample.title}
+                                title={t(`homepage.${riskExample.title}_figure_text`)}
                                 icon={riskExample.icon} />
                         </Grid>
                     ))

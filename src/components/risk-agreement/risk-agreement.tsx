@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {NumericFormat} from 'react-number-format';
@@ -19,6 +19,9 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import { selectActiveRiskAgreement } from "../../store/slices/my-risk-agreements/selectors";
 import { auth } from "../../firebase_config";
+import ToolTip from '@mui/material/Tooltip';
+import { doc, collection, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase_config";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -47,7 +50,7 @@ const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, 
 });
 
 export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
-    const navigate = useNavigate();
+
     const dispatch: AppDispatch = useDispatch();
 
     const [costs, setCosts] = useState<number>(0);
@@ -59,6 +62,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const [insuranceSumRequiredError, setInsuranceSumRequiredError] = useState<boolean>(false);
     const [costsRequiredError, setCostsRequiredError] = useState<boolean>(false);
 
+
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
 
     const riskId = useSelector(selectRiskId);
@@ -68,9 +72,106 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const riskType = risk?.type ? risk.type : [];
 
     const existingAgreement = useSelector(selectActiveRiskAgreement);
-    console.log("active chat id: " + activeChat?.id)
-    console.log("existing agreement id: " + existingAgreement?.id)
 
+    // colors
+    const [timeframeColor, SetTimeframeColor] = useState("grey");
+    const [evidenceColor, SetEvidenceColor] = useState("grey");
+    const [insuranceSumColor, SetInsuranceSumColor] = useState("grey");
+    const [costsColor, SetCostsColor] = useState("grey");
+    const [detailsColor, SetDetailsColor] = useState("grey");
+
+    const [agreement, SetAgreement] = useState(false);
+
+    const previousAgreementRef = useRef<RiskAgreement | null>(null); // Store previous agreeme
+
+    const checkEquality = () => {
+        let checkValid : boolean = true;
+
+        if (existingAgreement?.riskGiverApprovals.timeframe === existingAgreement?.riskTakerApprovals.timeframe){
+            SetTimeframeColor("grey")
+            checkValid = checkValid && true;
+        }
+        else {
+            checkValid = checkValid && false;
+        }
+        if (existingAgreement?.riskGiverApprovals.evidence === existingAgreement?.riskTakerApprovals.evidence){
+            SetEvidenceColor("grey");
+            checkValid = checkValid && true;
+        }
+        else {
+            checkValid = checkValid && false;
+        }
+        if (existingAgreement?.riskGiverApprovals.costs === existingAgreement?.riskTakerApprovals.costs){
+            SetCostsColor("grey");
+            checkValid = checkValid && true;
+        }
+        else {
+            checkValid = checkValid && false;
+        }
+        if (existingAgreement?.riskGiverApprovals.insuranceSum === existingAgreement?.riskTakerApprovals.insuranceSum){
+            SetInsuranceSumColor("grey");
+            checkValid = checkValid && true;
+        }
+        else {
+            checkValid = checkValid && false;
+        }
+        if (existingAgreement?.riskGiverApprovals.details === existingAgreement?.riskTakerApprovals.details){
+            SetDetailsColor("grey");
+            checkValid = checkValid && true;
+        }
+        else {
+            checkValid = checkValid && false;
+        }
+        
+        SetAgreement(checkValid);
+    }
+
+    useEffect(() => {
+
+        checkEquality();
+
+        if ((!(existingAgreement?.riskGiverApprovals.timeframe) || !(existingAgreement?.riskTakerApprovals.timeframe))){
+            SetTimeframeColor("red");
+        }
+
+        if ((!(existingAgreement?.riskGiverApprovals.evidence) || !(existingAgreement?.riskTakerApprovals.evidence))){
+            SetEvidenceColor("red");
+        }
+
+        if ((!(existingAgreement?.riskGiverApprovals.costs) || !(existingAgreement?.riskTakerApprovals.costs))){
+            SetCostsColor("red");
+        }
+
+        if ((!(existingAgreement?.riskGiverApprovals.insuranceSum) || !(existingAgreement?.riskTakerApprovals.insuranceSum))){
+            SetInsuranceSumColor("red");
+        }
+
+        if ((!(existingAgreement?.riskGiverApprovals.details) || !(existingAgreement?.riskTakerApprovals.details))){
+            SetDetailsColor("red");
+        }
+        
+    }, [
+        existingAgreement?.timeframe,
+        existingAgreement?.evidence,
+        existingAgreement?.costs,
+        existingAgreement?.insuranceSum,
+        existingAgreement?.details,
+        existingAgreement?.riskGiverApprovals.costs,
+        existingAgreement?.riskGiverApprovals.details,
+        existingAgreement?.riskGiverApprovals.evidence,
+        existingAgreement?.riskGiverApprovals.insuranceSum,
+        existingAgreement?.riskGiverApprovals.timeframe,
+        existingAgreement?.riskTakerApprovals.costs,
+        existingAgreement?.riskTakerApprovals.details,
+        existingAgreement?.riskTakerApprovals.evidence,
+        existingAgreement?.riskTakerApprovals.insuranceSum,
+        existingAgreement?.riskTakerApprovals.timeframe,
+    ]);
+    
+    
+    
+    
+    
     React.useEffect(() => {
         if (existingAgreement) {
             setCosts(existingAgreement.costs);
@@ -100,6 +201,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         evidence : z.string(),
         details : z.string(),
     })
+
 
     const handleDataExtraction = async (e: any) => {
         const dataExtractionBot = new DataExtractionBot(risk, activeMessages);
@@ -242,7 +344,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             }
         }
 
-        handleClose();
+        //handleClose();
     }
 
     return (
@@ -300,6 +402,12 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     onChange={(event) => handleTimeframeChange(event.target.value)}
                     name="timeFrame"
                     id="timeFrame"
+                    sx={{
+                        input: { color: "black" }, // Change text color
+                        "& .MuiOutlinedInput-root": {
+                            "& fieldset": { borderColor: timeframeColor }, // Change border color
+                        },
+                    }}
                 />
                 <TextField
                     margin="dense"
@@ -309,17 +417,30 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     onChange={(event) => handleEvidenceChange(event.target.value)}
                     name="evidence"
                     id="evidence"
+                    sx={{
+                        input: { color: "black" }, // Change text color
+                        "& .MuiOutlinedInput-root": {
+                            "& fieldset": { borderColor: evidenceColor }, // Change border color
+                        },
+                    }}
                 />
                 <TextField
                     margin="dense"
                     fullWidth
                     label="Kosten"
+                    color="secondary"
                     value={costs}
                     onChange={(event) => handleCostsChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
                     name="costs"
                     id="costs"
                     InputProps={{
                         inputComponent: EuroNumberFormat,
+                    }}
+                    sx={{
+                        input: { color: "black" }, // Change text color
+                        "& .MuiOutlinedInput-root": {
+                            "& fieldset": { borderColor: costsColor }, // Change border color
+                        },
                     }}
                 />
                 <TextField
@@ -333,6 +454,13 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     InputProps={{
                         inputComponent: EuroNumberFormat,
                     }}
+                    sx={{
+                        input: { color: "black" }, // Change text color
+                        "& .MuiOutlinedInput-root": {
+                            "& fieldset": { borderColor: insuranceSumColor }, // Change border color
+                        },
+                    }}
+                    
                 />
                 <TextField
                     margin="dense"
@@ -342,9 +470,23 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     onChange={(event) => handleDetailsChange(event.target.value)}
                     name="details"
                     id="details"
+                    sx={{
+                        input: { color: "black" }, // Change text color
+                        "& .MuiOutlinedInput-root": {
+                            "& fieldset": { borderColor: detailsColor }, // Change border color
+                        },
+                    }}
                 />
             </DialogContent>
             <DialogActions>
+                <Button
+                    disabled={!agreement}
+                    variant="contained"
+                    onClick={() => {}}
+                    color="success"
+                    >
+                    Abschließen
+                </Button>
                 <Button
                     variant="contained"
                     onClick={handleDataExtraction}>
@@ -354,7 +496,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     disabled={insuranceSumRequiredError || costsRequiredError}
                     variant="contained"
                     onClick={handleAffirmRiskAgreement}>
-                    Vereinbaren
+                    Bestätigen
                 </Button>
                 <Button
                     onClick={handleClose}
