@@ -7,3 +7,7 @@ export const selectAgreementById = (state: RootState, id: string) => {
 export const selectActiveRiskAgreement = (state: RootState) => {
     return state.myRiskAgreements.activeRiskAgreement
 };
+
+export const selectRiskAgreements = (state: RootState) => {
+    return state.myRiskAgreements.riskAgreements;
+};

@@ -16,6 +16,9 @@ const myRiskAgreementsSlice = createSlice({
     name: FirestoreCollectionEnum.MY_RISK_AGREEMENTS,
     initialState: initialState,
     reducers: {
+        setRiskAgreements: (state, action: PayloadAction<RiskAgreement[]>) => {
+            state.riskAgreements = action.payload;
+          },
         setActiveRiskAgreement: (state, action: PayloadAction<RiskAgreement>) => {
             state.activeRiskAgreement = action.payload;
           },
@@ -89,5 +92,5 @@ const myRiskAgreementsSlice = createSlice({
     }
 });
 
-export const { setActiveRiskAgreement, setAgreementData } = myRiskAgreementsSlice.actions;
+export const { setActiveRiskAgreement, setAgreementData , setRiskAgreements} = myRiskAgreementsSlice.actions;
 export default myRiskAgreementsSlice.reducer;

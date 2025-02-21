@@ -4,7 +4,45 @@ import {auth, db} from "../../../firebase_config";
 import {addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where} from "firebase/firestore";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskAgreement} from "../../../models/RiskAgreement";
-import {setActiveRiskAgreement} from "./reducers";
+import {setActiveRiskAgreement, setRiskAgreements} from "./reducers";
+
+export let riskAgreementsUnsubscribe: (() => void) | null = null;
+
+export const subscribeToRiskAgreements = createAsyncThunk<void, void, { rejectValue: string }>(
+    "myRiskAgreements/subscribeToRiskAgreements",
+    async (_, {dispatch, rejectWithValue}) => {
+        try {
+            if (riskAgreementsUnsubscribe) {
+                riskAgreementsUnsubscribe();
+                riskAgreementsUnsubscribe = null;
+            }
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const riskAgreementsCollection = collection(db, FirestoreCollectionEnum.MY_RISK_AGREEMENTS);
+
+            const unsubscribe = onSnapshot(riskAgreementsCollection, (snapshot) => {
+                const allRiskAgreements = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as RiskAgreement[];
+
+                const userRiskAgreements = allRiskAgreements.filter(
+                    (ra) => ra.riskGiverId === user.uid || ra.riskTakerId === user.uid
+                );
+
+                dispatch(setRiskAgreements(userRiskAgreements));
+            });
+
+            riskAgreementsUnsubscribe = unsubscribe;
+        } catch (error) {
+            return rejectWithValue("Error subscribing to RiskAgreements");
+        }
+    }
+);
 
 export let activeRiskAgreementUnsubscribe: (() => void) | null = null;
 
