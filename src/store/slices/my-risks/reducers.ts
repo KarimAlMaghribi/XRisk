@@ -58,7 +58,11 @@ export const myRisksSlice = createSlice({
                     .toLowerCase();
                 return searchParams.includes(searchTerm);
             });
-        }
+        },
+        clearMyRiskFilter(state) {
+            state.filteredOfferedRisks = [];
+            state.filteredTakenRisks = [];
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -135,6 +139,6 @@ export const myRisksSlice = createSlice({
     }
 });
 
-export const {setFilter} = myRisksSlice.actions;
+export const {setFilter, clearMyRiskFilter} = myRisksSlice.actions;
 
 export default myRisksSlice.reducer;
