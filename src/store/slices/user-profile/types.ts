@@ -6,6 +6,7 @@ export enum ActionTypes {
     UPDATE_PROFILE = "userProfile/updateProfile",
     CHECK_USER_PROFILE_WITH_GOOGLE = "userProfile/checkUserProfileWithGoogle",
     UPDATE_IMAGE_PATH = "userProfile/updateImagePath",
+    FETCH_PROFILE_BY_ID = "userProfile/fetchProfileById",
 }
 
 export interface ProfileInformation {
@@ -33,6 +34,7 @@ export interface ProfileInformation {
 export interface UserProfile {
     id: string | null;
     profile: ProfileInformation;
+    opposingProfile?: ProfileInformation;
     createdAt?: string;
     updatedAt?: string;
     error?: string;

@@ -1,5 +1,4 @@
 import {RiskOverviewState} from "./types";
-import {RootState} from "../../store";
 
 export const selectRisks = (state: { risks: RiskOverviewState }) => state.risks.risks;
 export const selectFilteredRisks = (state: { risks: RiskOverviewState }) => state.risks.filteredRisks;
@@ -10,5 +9,5 @@ export const selectFilterValue = (state: { risks: RiskOverviewState }) => state.
 export const selectRemainingTerm = (state: { risks: RiskOverviewState }) => state.risks.filters.remainingTerm;
 export const selectTypes = (state: { risks: RiskOverviewState }) => state.risks.types;
 
-export const selectStatusById = (state: RootState, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id)?.status;
-export const selectNameById = (state: RootState, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id)?.name;
+export const selectRiskById = (state: { risks: RiskOverviewState }, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id);
+export const selectStatusById = (state: { risks: RiskOverviewState }, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id)?.status;

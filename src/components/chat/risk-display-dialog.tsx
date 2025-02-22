@@ -6,24 +6,25 @@ import React, {useEffect} from "react";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import Grid from "@mui/material/Grid2";
 import Avatar from "@mui/material/Avatar";
+import {Risk} from "../../models/Risk";
+import {mapStatus} from "../my-risks/utils";
 
-export interface PublisherProfileProps {
+export interface RiskDisplayDialogProps {
     open: boolean;
     setOpen: (open: boolean) => void;
-    publisher: Publisher | undefined | null;
-    setPublisher?: (publisher: Publisher | null | undefined) => void;
+    risk: Risk | undefined;
 }
 
-export const PublisherProfile = (props: PublisherProfileProps) => {
+export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
     const { showSnackbar } = useSnackbarContext();
     const elementBottomMargin: number = 20;
 
     useEffect(() => {
-        if (props.open && !props.publisher) {
-            console.error("Publisher not found!");
-            showSnackbar("Darstellung fehlerhaft!", "Anbieterdaten konnten nicht dargestellt werden", {vertical: "top", horizontal: "center"},"error");
+        if (props.open && !props.risk) {
+            console.error("Risk not found!");
+            showSnackbar("Darstellung fehlerhaft!", "Risikodaten konnten nicht dargestellt werden", {vertical: "top", horizontal: "center"},"error");
         }
-    }, [props.publisher]);
+    }, [props.risk]);
 
     const handleClose = () => {
         props.setOpen(false);
@@ -44,46 +45,45 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                 },
             }}>
             <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                {props.publisher?.name}
+                {props.risk?.name}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    <Box marginBottom="20px">
-                        <Avatar sx={{width: 70, height: 70}} src={props.publisher?.imagePath} />
-                    </Box>
                     <Grid container>
                         <Grid size={4}>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}} >
-                                Anbieter
+                                Typ
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                Telefonnummer
+                                Absicherungssumme
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                E-Mail
+                                Fällig am
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                Adresse
+                                Status
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                Vorstellung
+                                Beschreibung
                             </Typography>
                         </Grid>
                         <Grid size={8}>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.name || "-"}
+                                {props.risk?.type.map((type) => type).join(", ") || "-"}
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.phoneNumber || "-"}
+                                {props.risk?.value
+                                    ? new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(props.risk.value)
+                                    : "-"}
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.email || "-"}
+                                {new Date(props.risk?.declinationDate || "").toLocaleString() || "-"}
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.address || "-"}
+                                {mapStatus(props.risk?.status) || "-"}
                             </Typography>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.description || "-"}
+                                {props.risk?.description || "-"}
                             </Typography>
                         </Grid>
                     </Grid>
