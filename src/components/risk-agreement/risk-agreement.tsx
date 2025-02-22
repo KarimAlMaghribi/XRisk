@@ -22,6 +22,10 @@ import { auth } from "../../firebase_config";
 import ToolTip from '@mui/material/Tooltip';
 import { doc, collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase_config";
+import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
+import {updateRiskStatus} from "../../store/slices/risks/thunks";
+import {deleteUnagreedChats} from "../../store/slices/my-bids/thunks";
+import {useSnackbarContext} from "../snackbar/custom-snackbar";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -50,7 +54,6 @@ const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, 
 });
 
 export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
-
     const dispatch: AppDispatch = useDispatch();
 
     const [costs, setCosts] = useState<number>(0);
@@ -61,7 +64,6 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
 
     const [insuranceSumRequiredError, setInsuranceSumRequiredError] = useState<boolean>(false);
     const [costsRequiredError, setCostsRequiredError] = useState<boolean>(false);
-
 
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
 
@@ -74,49 +76,51 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const existingAgreement = useSelector(selectActiveRiskAgreement);
 
     // colors
-    const [timeframeColor, SetTimeframeColor] = useState("grey");
-    const [evidenceColor, SetEvidenceColor] = useState("grey");
-    const [insuranceSumColor, SetInsuranceSumColor] = useState("grey");
-    const [costsColor, SetCostsColor] = useState("grey");
-    const [detailsColor, SetDetailsColor] = useState("grey");
+    const [timeframeColor, setTimeframeColor] = useState("grey");
+    const [evidenceColor, setEvidenceColor] = useState("grey");
+    const [insuranceSumColor, setInsuranceSumColor] = useState("grey");
+    const [costsColor, setCostsColor] = useState("grey");
+    const [detailsColor, setDetailsColor] = useState("grey");
 
     const [agreement, SetAgreement] = useState(false);
 
     const previousAgreementRef = useRef<RiskAgreement | null>(null); // Store previous agreeme
 
+    const { showSnackbar } = useSnackbarContext();
+
     const checkEquality = () => {
         let checkValid : boolean = true;
 
         if (existingAgreement?.riskGiverApprovals.timeframe === existingAgreement?.riskTakerApprovals.timeframe){
-            SetTimeframeColor("grey")
+            setTimeframeColor("grey")
             checkValid = checkValid && true;
         }
         else {
             checkValid = checkValid && false;
         }
         if (existingAgreement?.riskGiverApprovals.evidence === existingAgreement?.riskTakerApprovals.evidence){
-            SetEvidenceColor("grey");
+            setEvidenceColor("grey");
             checkValid = checkValid && true;
         }
         else {
             checkValid = checkValid && false;
         }
         if (existingAgreement?.riskGiverApprovals.costs === existingAgreement?.riskTakerApprovals.costs){
-            SetCostsColor("grey");
+            setCostsColor("grey");
             checkValid = checkValid && true;
         }
         else {
             checkValid = checkValid && false;
         }
         if (existingAgreement?.riskGiverApprovals.insuranceSum === existingAgreement?.riskTakerApprovals.insuranceSum){
-            SetInsuranceSumColor("grey");
+            setInsuranceSumColor("grey");
             checkValid = checkValid && true;
         }
         else {
             checkValid = checkValid && false;
         }
         if (existingAgreement?.riskGiverApprovals.details === existingAgreement?.riskTakerApprovals.details){
-            SetDetailsColor("grey");
+            setDetailsColor("grey");
             checkValid = checkValid && true;
         }
         else {
@@ -131,23 +135,23 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         checkEquality();
 
         if ((!(existingAgreement?.riskGiverApprovals.timeframe) || !(existingAgreement?.riskTakerApprovals.timeframe))){
-            SetTimeframeColor("red");
+            setTimeframeColor("red");
         }
 
         if ((!(existingAgreement?.riskGiverApprovals.evidence) || !(existingAgreement?.riskTakerApprovals.evidence))){
-            SetEvidenceColor("red");
+            setEvidenceColor("red");
         }
 
         if ((!(existingAgreement?.riskGiverApprovals.costs) || !(existingAgreement?.riskTakerApprovals.costs))){
-            SetCostsColor("red");
+            setCostsColor("red");
         }
 
         if ((!(existingAgreement?.riskGiverApprovals.insuranceSum) || !(existingAgreement?.riskTakerApprovals.insuranceSum))){
-            SetInsuranceSumColor("red");
+            setInsuranceSumColor("red");
         }
 
         if ((!(existingAgreement?.riskGiverApprovals.details) || !(existingAgreement?.riskTakerApprovals.details))){
-            SetDetailsColor("red");
+            setDetailsColor("red");
         }
         
     }, [
@@ -274,7 +278,6 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     }
 
     const handleAffirmRiskAgreement = () => {
-
         if(activeChat){
 
             if (existingAgreement) {
@@ -345,6 +348,39 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         }
 
         //handleClose();
+    }
+
+    const handleComingToTherms = () => {
+        if (!existingAgreement) {
+            showSnackbar(
+                "Einigung Fehlgeschlagen!",
+                "Bestehende Einigung konnte nicht gefunden werden!",
+                { vertical: "top", horizontal: "center" },
+                "error"
+            );
+            return;
+        }
+
+        if (!riskId) {
+            showSnackbar(
+                "Einigung Fehlgeschlagen!",
+                "Risiko konnte nicht gefunden werden!",
+                { vertical: "top", horizontal: "center" },
+                "error"
+            );
+            return;
+        }
+
+        dispatch(updateMyRiskAgreement({ ...existingAgreement!, agreed: true }));
+        dispatch(updateRiskStatus({status: RiskStatusEnum.AGREEMENT, id: existingAgreement.riskId}));
+        dispatch(deleteUnagreedChats({riskId: riskId, chatId: existingAgreement.chatId}));
+
+
+        // remove risk from riskOverview
+        // Grey out Riskargreement Infos and Buttons
+        // move to my-risks/geeinigt
+
+
     }
 
     return (
@@ -482,10 +518,9 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                 <Button
                     disabled={!agreement}
                     variant="contained"
-                    onClick={() => {}}
-                    color="success"
-                    >
-                    Abschließen
+                    onClick={handleComingToTherms}
+                    color="success">
+                    Einigen
                 </Button>
                 <Button
                     variant="contained"

@@ -36,7 +36,7 @@ export const FilterBar = (props: FilterbarProps) => {
     }, [props.searchInput, dispatch]);
 
     return (
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" marginLeft="0">
             <div style={{borderLeft: "1px solid lightgrey", margin: "0 0px 0 0"}}></div>
             <Autocomplete
                 inputValue={props.searchInput}
@@ -44,7 +44,7 @@ export const FilterBar = (props: FilterbarProps) => {
                 size="small"
                 disablePortal
                 options={uniqueSearchParams}
-                sx={{width: 300}}
+                sx={{width: "35%"}}
                 renderInput={(params) => (
                     <TextField
                         {...params}

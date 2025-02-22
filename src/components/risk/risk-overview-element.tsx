@@ -131,7 +131,13 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     return (
         <React.Fragment>
             {
-                props.risks && props.risks.map((risk: Risk, index) => (
+                props.risks && [...props.risks]
+                    .sort((a: Risk, b: Risk) => {
+                        const aIsAgreement = a.status === RiskStatusEnum.AGREEMENT ? 1 : 0;
+                        const bIsAgreement = b.status === RiskStatusEnum.AGREEMENT ? 1 : 0;
+                        return aIsAgreement - bIsAgreement;
+                    })
+                    .map((risk: Risk, index) => (
                     <Accordion
                         sx={{
                             margin: 0,
@@ -147,7 +153,6 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                         expanded={expandedPanels.includes(risk.id!)}
                         onChange={handleChange(risk.id!)}>
                         <AccordionSummary
-
                             expandIcon={<ExpandMoreIcon />}
                             sx={{
                                 borderTop: '1px solid #f3f3f3',
@@ -158,8 +163,11 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                             id={`panel-header-${risk.id}`}>
                             <Grid container size={12} spacing={2} alignItems="center">
                                 <Grid size={3}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer', fontWeight: "bolder"}}>
-                                        {risk.name}
+                                    <Typography variant="body1" sx={{ cursor: 'pointer', fontWeight: "bolder", color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
+                                        {risk.name} {risk.status === RiskStatusEnum.AGREEMENT ?
+                                        <Tooltip title={"Risiko wurde bereits übernommen"} followCursor>
+                                            <Chip label="Übernommen" color="error" variant="outlined" style={{marginLeft: "10px"}}/>
+                                        </Tooltip> : ""}
                                     </Typography>
                                 </Grid>
 
@@ -167,9 +175,9 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
                                         {
                                              risk.type.map((element, idx) => (
-                                                <Chip key={idx} label={element} clickable sx={{
-                                                    backgroundColor: '#f3f3f3',
-                                                    color: '#343434',
+                                                <Chip key={idx} label={element} clickable={risk.status !== RiskStatusEnum.AGREEMENT} sx={{
+                                                    backgroundColor: risk.status === RiskStatusEnum.AGREEMENT ? "white" :'#f3f3f3',
+                                                    color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : '#343434',
                                                     marginRight: '4px',
                                                     border: '1px solid',
                                                     borderColor: "#d7d7d7",
@@ -179,12 +187,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     </Typography>
                                 </Grid>
                                 <Grid size={2} sx={{ marginLeft: "20px" }}>
-                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer'}}>
+                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer'}} style={{color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
                                         {`${risk.value.toLocaleString()},00 €`}
                                     </Typography>
                                 </Grid>
                                 <Grid size={2}>
-                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer' }}>
+                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer' }} style={{color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
                                         {formatDate(new Date(risk.declinationDate))}
                                     </Typography>
                                 </Grid>
@@ -201,7 +209,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     size={12}
                                     style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
                                     <Button
-                                        disabled={risk.publisher?.uid === user?.uid}
+                                        disabled={risk.publisher?.uid === user?.uid || risk.status === RiskStatusEnum.AGREEMENT}
                                         onClick={() => openBid(index)}
                                         variant="contained"
                                         endIcon={<ModeIcon />}

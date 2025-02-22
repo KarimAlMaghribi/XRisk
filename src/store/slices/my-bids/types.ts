@@ -2,6 +2,20 @@ import {MessageType} from "../../../types/MessageType";
 import {ChatStatus} from "../../../types/ChatStatus";
 import {FetchStatus} from "../../../types/FetchStatus";
 
+export enum ActionTypes {
+    SUBSCRIBE_TO_MESSAGES = "myBids/subscribeToMessages",
+    SUBSCRIBE_TO_CHATS = "myBids/subscribeToChats",
+    CREATE_CHAT = "myBids/createChat",
+    FETCH_PROVIDER_CHATS = "myBids/fetchProviderChats",
+    FETCH_MY_CHATS = "myBids/fetchMyChats",
+    SEND_MESSAGE = "myBids/sendMessage",
+    FETCH_MESSAGES = "myBids/fetchMessages",
+    DELETE_CHATS_BY_RISK_ID = "myBids/deleteChatsByRiskId",
+    DELETE_CHAT_BY_ID = "myBids/deleteChatById",
+    UPDATE_LAST_MESSAGE = "myBids/updateLastMessage",
+    DELETE_UNAGREED_CHATS = "myBids/deleteUnagreedChats",
+}
+
 export interface ChatMessage {
     id: string;
     created: string;

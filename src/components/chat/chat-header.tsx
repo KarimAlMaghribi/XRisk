@@ -13,6 +13,7 @@ import {Chat} from "../../store/slices/my-bids/types";
 import {AppDispatch, RootState} from "../../store/store";
 import {auth} from "../../firebase_config";
 import { activeRiskAgreementUnsubscribe, subscribeToActiveRiskAgreement } from "../../store/slices/my-risk-agreements/thunks";
+import {Trans} from "react-i18next";
 
 export const ChatHeader = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -25,7 +26,6 @@ export const ChatHeader = () => {
 
     useEffect(() => {
             if (activeChatId) {
-                //console.log("subscribing " + activeChatId)
                 dispatch(subscribeToActiveRiskAgreement(activeChatId));
             }
     
@@ -83,7 +83,7 @@ export const ChatHeader = () => {
                                 sx={{whiteSpace: "nowrap"}}
                                 onClick={() => setOpenRiskAgreementCreationDialog(true)}
                                 startIcon={<HandshakeIcon/>}>
-                                Einigung erreicht
+                                <Trans i18nKey="chat.agreement"></Trans>
                             </Button>
                             <IconButton>
                                 <MoreVertIcon/>

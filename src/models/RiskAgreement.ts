@@ -19,4 +19,6 @@ export interface RiskAgreement {
     riskGiverApprovals: {
         [attribute: string]: boolean;
     };
+
+    agreed?: boolean;
 }
