@@ -28,6 +28,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {MyRiskRowDetails} from "./my-risk-row-details/my-risk-row-details";
 import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
 import {mapStatus, mapStatusChipColor, mapStatusIcon, mapStatusToolTip} from "./utils";
+import InterpreterModeIcon from '@mui/icons-material/InterpreterMode';
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -247,8 +248,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             {
                                 props.taken &&
                                 <Box display="flex" justifyContent="flex-end">
-                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small"
-                                            endIcon={<SignLanguageIcon/>}>
+                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={<SignLanguageIcon/>}>
                                         Verhandeln
                                     </Button>
                                 </Box>
@@ -267,7 +267,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                                 Veröffentlichen
                                             </Button>
                                         ) : (
-                                            props.risk.status !== RiskStatusEnum.DEAL &&
+                                            props.risk.status !== RiskStatusEnum.DEAL && props.risk.status !== RiskStatusEnum.AGREEMENT &&
                                             <Button
                                                 color="warning"
                                                 variant="contained"
@@ -277,6 +277,17 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                                 Zurückziehen
                                             </Button>
                                         )
+                                    }
+                                    {
+                                        props.risk.status === RiskStatusEnum.AGREEMENT &&
+                                        <Button
+                                            onClick={() => handleDeal(props.risk)}
+                                            variant="outlined"
+                                            size="small"
+                                            startIcon={<InterpreterModeIcon/>}
+                                            sx={{marginLeft: "10px"}}>
+                                            Besprechen
+                                        </Button>
                                     }
 
                                     <Button
