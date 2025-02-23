@@ -18,6 +18,7 @@ import {
     selectStatus
 } from "../../store/slices/risks/selectors";
 import {subscribeToRisks} from "../../store/slices/risks/thunks";
+import {fetchHighestRiskValue} from "../../store/slices/meta/thunks";
 
 export const RiskOverview = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -31,6 +32,7 @@ export const RiskOverview = () => {
     useEffect(() => {
         dispatch(subscribeToRisks());
         dispatch(fetchProviderChats());
+        dispatch(fetchHighestRiskValue());
     }, [dispatch]);
 
     const handleClose = () => {

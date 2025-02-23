@@ -26,12 +26,10 @@ export const AgreementElement = (props: AgreementElementProps) => {
                     <Grid size={4}>
                         <Typography variant="subtitle1" fontWeight="bold">Risikonehmer</Typography>
                         <Typography variant="subtitle1" fontWeight="bold">Letzte Aktivität</Typography>
-                        <Typography variant="subtitle1" fontWeight="bold">Beschreibung</Typography>
                     </Grid>
                     <Grid size={8}>
                         <Typography variant="subtitle1">{props.chat?.riskProvider?.name}</Typography>
                         <Typography variant="subtitle1">{new Date(props.chat?.lastActivity || "").toLocaleString()}</Typography>
-                        <Typography variant="subtitle1">{props.risk.description}</Typography>
                     </Grid>
                 </Grid>
 

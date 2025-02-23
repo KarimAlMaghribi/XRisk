@@ -4,7 +4,7 @@ import {NumericFormat} from "react-number-format";
 import {RiskAgreement} from "../../../../models/RiskAgreement";
 import {auth} from "../../../../firebase_config";
 
-const formatEuro = (value?: number) => {
+export const formatEuro = (value?: number) => {
     if (value == null) return "-";
     return (
         <NumericFormat
