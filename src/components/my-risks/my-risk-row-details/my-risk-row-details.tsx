@@ -8,6 +8,7 @@ import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
 import {PublishedDetails} from "./published-details";
 import {WithdrawnDetails} from "./withdrawn-details";
 import {DealDetails} from "./deals-details/deals-details";
+import {AgreementDetails} from "./agreement-details/agreement-details";
 
 export interface MyRiskRowDetailsProps {
     risk: Risk;
@@ -25,6 +26,8 @@ export const MyRiskRowDetails = (props: MyRiskRowDetailsProps) => {
                 return <WithdrawnDetails risk={props.risk}/>;
             case RiskStatusEnum.DEAL:
                 return <DealDetails risk={props.risk} chats={riskRelatedChats}/>;
+            case RiskStatusEnum.AGREEMENT:
+                return <AgreementDetails risk={props.risk} chats={riskRelatedChats}/>;
             default:
                 return <></>;
         }
