@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useEffect} from 'react';
+import { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,11 +11,11 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
-import {useLocation, useNavigate} from "react-router-dom";
-import {Page, pages} from "./pages";
-import {auth} from "../../firebase_config";
-import {theme} from "../../theme";
-import {QuickMenuButtons} from "./header-elements/quick-menu-buttons";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Page, pages } from "./pages";
+import { auth } from "../../firebase_config";
+import { theme } from "../../theme";
+import { QuickMenuButtons } from "./header-elements/quick-menu-buttons";
 import { useTranslation, Trans } from "react-i18next";
 import i18n from '../../utils/i18n';
 import ReactCountryFlag from "react-country-flag";
@@ -24,22 +24,22 @@ export function Header() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>(false);
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-    const [activePage, setActivePage] = React.useState<string | null>(pages[0].name);
-    const [language, setLanguage] = React.useState("DE");
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+    const [anchorElLanguage, setAnchorElLanguage] = useState<null | HTMLElement>(null);
+    const [activePage, setActivePage] = useState<string | null>(pages[0].name);
+    const [language, setLanguage] = React.useState<"en" | "de">("de");
 
-    const languages = {
-        en: { label: "EN", name: "English"},
-        de: { label: "DE", name: "Deutsch"}
-    }
+    const languages: Record<"en" | "de", { label: string; name: string; countryCode: string }> = {
+        en: { label: "EN", name: "English", countryCode: "US" },
+        de: { label: "DE", name: "Deutsch", countryCode: "DE" }
+    };
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             setIsLoggedIn(!!user);
         });
-
         return () => unsubscribe();
     }, []);
 
@@ -66,26 +66,36 @@ export function Header() {
         navigate(page.route);
     };
 
+    const handleLanguageClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorElLanguage(event.currentTarget);
+    };
 
-    useEffect(() => {
-    }, [language]);
+    const handleLanguageClose = () => {
+        setAnchorElLanguage(null);
+    };
 
     const changeLanguage = (lng: string) => {
-        setLanguage(lng);
+        setLanguage(lng as "en" | "de");
         i18n.changeLanguage(lng);
     };
 
+    const countryFlagStyle = {
+        borderRadius: '5px',
+        width: '30px',
+        height: '20px',
+        marginRight: '8px',
+    }
+
     return (
-        <AppBar position="static" elevation={0} sx={{backgroundColor: "#1F271B"}}>
+        <AppBar position="static" elevation={0} sx={{ backgroundColor: "#1F271B" }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box
                         onClick={() => navigate('/')}
                         component="img"
-                        sx={{maxWidth: '50px', display: {xs: 'none', md: 'flex'}, mr: 6, cursor: 'pointer'}}
-                        src={Logo}/>
-
-                    <Box sx={{flexGrow: 1, display: {xs: 'flex', md: 'none'}}}>
+                        sx={{ maxWidth: '50px', display: { xs: 'none', md: 'flex' }, mr: 6, cursor: 'pointer' }}
+                        src={Logo} />
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
@@ -93,7 +103,7 @@ export function Header() {
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
                             color="inherit">
-                            <MenuIcon/>
+                            <MenuIcon />
                         </IconButton>
                         <Menu
                             id="menu-appbar"
@@ -109,17 +119,15 @@ export function Header() {
                             }}
                             open={Boolean(anchorElNav)}
                             onClose={() => setAnchorElNav(null)}
-                            sx={{display: {xs: 'block', md: 'none'}}}>
-
+                            sx={{ display: { xs: 'block', md: 'none' } }}>
                             {pages.map((page, index) => (
                                 page.authenticated && !isLoggedIn ? null :
-                                <MenuItem key={index + "_" + page.name} onClick={() => handleCloseNavMenu(page)}>
-                                    <Typography sx={{textAlign: 'center'}}>{page.name}</Typography>
-                                </MenuItem>
+                                    <MenuItem key={index + "_" + page.name} onClick={() => handleCloseNavMenu(page)}>
+                                        <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
+                                    </MenuItem>
                             ))}
                         </Menu>
                     </Box>
-
                     <Typography
                         variant="h5"
                         noWrap
@@ -127,7 +135,7 @@ export function Header() {
                         href="#app-bar-with-responsive-menu"
                         sx={{
                             mr: 2,
-                            display: {xs: 'flex', md: 'none'},
+                            display: { xs: 'flex', md: 'none' },
                             flexGrow: 1,
                             fontFamily: 'monospace',
                             fontWeight: 700,
@@ -136,70 +144,60 @@ export function Header() {
                             textDecoration: 'none',
                         }}>
                     </Typography>
-                    <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             page.authenticated && !isLoggedIn ? null :
-                            <Button
-                                key={page.name}
-                                onClick={() => handleCloseNavMenu(page)}
-                                sx={{
-                                    my: 2,
-                                    color: activePage === page.name ? theme.palette.primary.main : 'white',
-                                    display: 'block',
-                                    textDecoration: 'none',
-                                    textDecorationColor: 'white',
-                                    fontWeight: activePage === page.name ? 'bold' : 'normal'
-                                }}>
-                                <Trans i18nKey={`header.${page.name}`} />
-                            </Button>
+                                <Button
+                                    key={page.name}
+                                    onClick={() => handleCloseNavMenu(page)}
+                                    sx={{
+                                        my: 2,
+                                        color: activePage === page.name ? theme.palette.primary.main : 'white',
+                                        display: 'block',
+                                        textDecoration: 'none',
+                                        textDecorationColor: 'white',
+                                        fontWeight: activePage === page.name ? 'bold' : 'normal'
+                                    }}>
+                                    <Trans i18nKey={`header.${page.name}`} />
+                                </Button>
                         ))}
                     </Box>
-                    {/* {Object.entries(languages).map(([code, { label, name }]) => (
-                        <IconButton
-                        key={code}
-                        onClick={() => changeLanguage(code)}
-                        title={name}
-                    >
-                    <Typography variant="h6">{label}</Typography>
-                    </IconButton>
-                    ))} */}
-                    <IconButton
-                        //key={"US"}
-                        //onClick={() => changeLanguage("US")}
-                    >
+                    <IconButton onClick={handleLanguageClick}>
                         <ReactCountryFlag
-                            countryCode="US"
+                            countryCode={languages[language].countryCode}
                             svg
                             style={{
-                                width: '1.5em',
-                                height: '1.5em',
+                                borderRadius: '5px',
+                                width: '1.0em',
+                                height: '1.0em',
                             }}
-                            title="EN"
-                            onClick={() => changeLanguage("en")}
+                            title={languages[language].label}
                         />
                     </IconButton>
-                    <IconButton
-                        //key={"DE"}
-                        //onClick={() => changeLanguage("EN")}
-                    >
-                        <ReactCountryFlag
-                            countryCode="DE"
-                            svg
-                            style={{
-                                width: '1.5em',
-                                height: '1.5em',
-                            }}
-                            title="DE"
-                            onClick={() => changeLanguage("de")}
-                        />
-                    </IconButton>
+                    <Menu
+                        id="language-menu"
+                        anchorEl={anchorElLanguage}
+                        open={Boolean(anchorElLanguage)}
+                        onClose={handleLanguageClose}>
+                        {Object.entries(languages).map(([lng, details]) => (
+                            <MenuItem key={lng} onClick={() => { changeLanguage(lng); handleLanguageClose(); }}>
+                                <ReactCountryFlag
+                                    countryCode={details.countryCode}
+                                    svg
+                                    style={countryFlagStyle}
+                                    title={details.label}
+                                />
+                                {details.name}
+                            </MenuItem>
+                        ))}
+                    </Menu>
                     <QuickMenuButtons
                         isLoggedIn={isLoggedIn}
                         anchorElUser={anchorElUser}
                         handleOpenUserMenu={handleOpenUserMenu}
-                        setAnchorElUser={() => setAnchorElUser(null)} />
+                        setAnchorElUser={() => setAnchorElUser(null)}
+                    />
                 </Toolbar>
-                
             </Container>
         </AppBar>
     );

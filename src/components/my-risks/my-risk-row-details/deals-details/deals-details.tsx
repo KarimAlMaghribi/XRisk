@@ -1,6 +1,6 @@
 import {Risk} from "../../../../models/Risk";
 import {Chat} from "../../../../store/slices/my-bids/types";
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import {useSnackbarContext} from "../../../snackbar/custom-snackbar";
 import {auth} from "../../../../firebase_config";
 import Grid from "@mui/material/Grid2";
@@ -11,11 +11,11 @@ import {Publisher} from "../../../../models/Publisher";
 import {PublisherProfile} from "../../../risk/publisher-profile";
 import {DealsTableHeader} from "./deals-table-header";
 import {DealsTableBodyElement} from "./deals-table-body-element";
-import { riskAgreementsUnsubscribe, subscribeToRiskAgreements } from "../../../../store/slices/my-risk-agreements/thunks";
-import { AppDispatch } from "../../../../store/store";
-import { useDispatch, useSelector } from "react-redux";
-import { selectActiveRiskAgreement, selectRiskAgreements } from "../../../../store/slices/my-risk-agreements/selectors";
-import { RiskAgreement } from "../../../../models/RiskAgreement";
+import {riskAgreementsUnsubscribe, subscribeToRiskAgreements} from "../../../../store/slices/my-risk-agreements/thunks";
+import {AppDispatch} from "../../../../store/store";
+import {useDispatch, useSelector} from "react-redux";
+import {selectRiskAgreements} from "../../../../store/slices/my-risk-agreements/selectors";
+import {RiskAgreement} from "../../../../models/RiskAgreement";
 
 
 export const DealDetails = ({risk, chats}: { risk: Risk, chats: Chat[] }) => {
@@ -26,7 +26,7 @@ export const DealDetails = ({risk, chats}: { risk: Risk, chats: Chat[] }) => {
 
     useEffect(() => {
         dispatch(subscribeToRiskAgreements());
-        
+
         return () => {
             if (riskAgreementsUnsubscribe) {
                 riskAgreementsUnsubscribe();
@@ -108,7 +108,8 @@ export const DealDetails = ({risk, chats}: { risk: Risk, chats: Chat[] }) => {
                             {
                                 chats.map((chat, index) => {
                                     const riskAgreement = riskAgreements.find((ra) => ra.chatId === chat.id) || null;
-                                    return <DealsTableBodyElement key={chat.id} chat={chat} riskAgreement={riskAgreement} index={index}/>
+                                    return <DealsTableBodyElement key={chat.id} chat={chat} riskAgreement={riskAgreement}
+                                                                  index={index}/>
                                 })
                             }
                         </>

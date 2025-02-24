@@ -1,19 +1,22 @@
 import {Autocomplete, Box, InputAdornment, TextField} from "@mui/material";
-import React from "react";
+import React, {useEffect} from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import {Risk} from "../../models/Risk";
 import {mapStatus} from "./utils";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 import {setFilter} from "../../store/slices/my-risks/reducers";
+import {RiskTypeEnum} from "../../enums/RiskType.enum";
 
 export interface FilterbarProps {
     myRisks: Risk[];
+    type: RiskTypeEnum;
+    searchInput: string;
+    setSearchInput: (searchInput: string) => void;
 }
 
 export const FilterBar = (props: FilterbarProps) => {
     const dispatch: AppDispatch = useDispatch();
-    const [searchInput, setSearchInput] = React.useState("");
 
     const searchParams: string[] = props.myRisks.reduce((acc: string[], risk) => {
         if (risk.name) acc.push(risk.name);
@@ -28,28 +31,29 @@ export const FilterBar = (props: FilterbarProps) => {
 
     const uniqueSearchParams = Array.from(new Set(searchParams));
 
+    useEffect(() => {
+        dispatch(setFilter(props.searchInput));
+    }, [props.searchInput, dispatch]);
+
     return (
-        <Box display="flex" alignItems="center">
-            <div style={{borderLeft: "1px solid lightgrey", margin: "0 50px 0 0"}}></div>
+        <Box display="flex" alignItems="center" marginLeft="0">
+            <div style={{borderLeft: "1px solid lightgrey", margin: "0 0px 0 0"}}></div>
             <Autocomplete
-                inputValue={searchInput}
-                onInputChange={(event, newInputValue) => {
-                    setSearchInput(newInputValue);
-                }}
+                inputValue={props.searchInput}
+                onInputChange={(event, newInputValue) => {props.setSearchInput(newInputValue);}}
                 size="small"
                 disablePortal
                 options={uniqueSearchParams}
-                sx={{width: 300}}
+                sx={{width: "35%"}}
                 renderInput={(params) => (
                     <TextField
                         {...params}
                         label="Suche"
-                        onBlur={() => dispatch(setFilter(searchInput))}
                         InputProps={{
                             ...params.InputProps,
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <SearchIcon />
+                                    <SearchIcon/>
                                 </InputAdornment>
                             ),
                         }}

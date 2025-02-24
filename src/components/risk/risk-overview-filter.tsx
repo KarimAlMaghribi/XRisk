@@ -1,22 +1,37 @@
-import React, {useState} from "react";
-import {Box, Divider, Paper, SelectChangeEvent, Typography} from "@mui/material";
+import React, { useState } from "react";
+import {
+    Box,
+    Divider,
+    Paper,
+    SelectChangeEvent,
+    Typography,
+    TextField
+} from "@mui/material";
 import Slider from '@mui/material/Slider';
-import {RiskOverviewFilterType} from "../../models/RiskOverviewFilterType";
-import {AppDispatch} from "../../store/store";
-import {changeFilterValue, changeRemainingTerm, clearFilters, setFilterType} from "../../store/slices/risks/reducers";
-import {useDispatch, useSelector} from "react-redux";
+import { RiskOverviewFilterType } from "../../models/RiskOverviewFilterType";
+import { AppDispatch } from "../../store/store";
+import {
+    changeFilterValue,
+    changeRemainingTerm,
+    clearFilters,
+    setFilterType
+} from "../../store/slices/risks/reducers";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "@mui/material/Button";
-import {RiskTypeSelector} from "../my-risks/risk-type-selector";
-import {selectFilterTypes} from "../../store/slices/risks/selectors";
-import {formatDate} from "../../utils/dateFormatter";
+import { RiskTypeSelector } from "../my-risks/risk-type-selector";
+import { selectFilterTypes } from "../../store/slices/risks/selectors";
+import { formatDate } from "../../utils/dateFormatter";
+import { selectHighestRiskValue } from "../../store/slices/meta/selectors";
+import { formatEuro } from "../my-risks/my-risk-row-details/agreement-details/agreement-table";
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const dispatch: AppDispatch = useDispatch();
     const [sliderValue, setSliderValue] = useState<number[]>(props.value);
     const [termValue, setTermValue] = useState<number[]>(props.remainingTerm);
+    const highestRiskValue: number | null = useSelector(selectHighestRiskValue);
     const filterTypes: string[] = useSelector(selectFilterTypes);
 
-    const handleTypeChange = (type: string[]) => { // for complex type selector
+    const handleTypeChange = (type: string[]) => {
         dispatch(setFilterType(type));
     };
 
@@ -54,18 +69,50 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
         dispatch(clearFilters());
         setSliderValue([0, 200000]);
         setTermValue([0, 24]);
-    }
+    };
+
+    const handleSliderLowerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newLower = Number(e.target.value);
+        if (newLower < 0) return;
+
+        setSliderValue([newLower, sliderValue[1]]);
+    };
+
+    const handleSliderUpperInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newUpper = Number(e.target.value);
+        if (highestRiskValue && newUpper > highestRiskValue || newUpper > 10000000) return;
+        setSliderValue([sliderValue[0], newUpper]);
+    };
+
+    const commitSliderInput = () => {
+        dispatch(changeFilterValue(sliderValue));
+    };
+
+    const handleTermLowerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newLower = Number(e.target.value);
+        if (newLower < 0) return;
+        setTermValue([newLower, termValue[1]]);
+    };
+
+    const handleTermUpperInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newUpper = Number(e.target.value);
+        setTermValue([termValue[0], newUpper]);
+    };
+
+    const commitTermInput = () => {
+        dispatch(changeRemainingTerm(termValue));
+    };
 
     return (
-        <Paper square={false} style={{margin: "5px", padding: "30px", marginTop: "10px"}} elevation={0}>
+        <Paper square={false} style={{ margin: "5px", padding: "30px", marginTop: "10px" }} elevation={0}>
             <Typography variant="h6"><b>Filter</b></Typography>
             <Typography variant="caption">Filter die Risiken nach deinen Wünschen und Interessen</Typography>
 
-            <br/>
+            <br />
 
-            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} textFieldVariant="standard" label="Risikoart"/>
+            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} textFieldVariant="standard" label="Risikoart" />
 
-            <br/>
+            <br />
 
             <Typography variant="body1">Nennwert</Typography>
             <Typography variant="caption">Absicherungssumme des Risikos</Typography>
@@ -76,13 +123,15 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                     onChange={handleValueChange}
                     onChangeCommitted={handleValueChangeCommitted}
                     min={0}
-                    max={200000}
+                    max={highestRiskValue || 100000000}
                     step={100}
                     marks={[
-                        {value: 0, label: '0€'},
-                        {value: 75000, label: '75.000€'},
-                        {value: 135000, label: '135.000€'},
-                        {value: 200000, label: '200.000€'}
+                        { value: 0, label: '0€' },
+                        {
+                            value: (highestRiskValue && highestRiskValue / 2) || 50000000,
+                            label: formatEuro((highestRiskValue && highestRiskValue / 2) || 50000000)
+                        },
+                        { value: highestRiskValue || 100000000, label: formatEuro(highestRiskValue || 100000000) }
                     ]}
                     valueLabelDisplay="auto"
                     valueLabelFormat={(value) => `${value.toLocaleString("de-DE")}€`}
@@ -90,13 +139,31 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
             </Box>
 
             <Box textAlign="center">
-                <Typography variant="caption" sx={{color: "grey"}}>
+                <Typography variant="caption" sx={{ color: "grey" }}>
                     {`${sliderValue[0].toLocaleString("de-DE")}€ bis ${sliderValue[1].toLocaleString("de-DE")}€`}
                 </Typography>
             </Box>
 
+            <Box sx={{ display: "flex", width: "100%" }}>
+                <TextField
+                    size="small"
+                    type="number"
+                    value={sliderValue[0]}
+                    onChange={handleSliderLowerInputChange}
+                    onBlur={commitSliderInput}
+                    sx={{ flex: 1 }}
+                />
+                <TextField
+                    size="small"
+                    type="number"
+                    value={sliderValue[1]}
+                    onChange={handleSliderUpperInputChange}
+                    onBlur={commitSliderInput}
+                    sx={{ flex: 1 }}
+                />
+            </Box>
 
-            <br/>
+            <br />
 
             <Typography variant="body1">Restlaufzeit</Typography>
             <Typography variant="caption">Zeitpunkt zu dem das Risiko verfällt</Typography>
@@ -110,15 +177,15 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                     min={0}
                     max={24}
                     marks={[
-                        {value: 0, label: '< 1 Monat'},
-                        {value: 12, label: '1 Jahr'},
-                        {value: 24, label: '2 Jahre'},
+                        { value: 0, label: '< 1 Monat' },
+                        { value: 12, label: '1 Jahr' },
+                        { value: 24, label: '2 Jahre' },
                     ]}
                 />
             </Box>
 
             <Box textAlign="center">
-                <Typography variant="caption" sx={{color: "grey"}}>
+                <Typography variant="caption" sx={{ color: "grey" }}>
                     {`vom ${
                         Array.isArray(termValue)
                             ? formatDate(addMonths(new Date(), termValue[0]))
@@ -131,9 +198,28 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 </Typography>
             </Box>
 
-            <br/>
-            <Divider sx={{margin: 0, padding: 0}}/>
-            <br/>
+            <Box sx={{ display: "flex", width: "100%" }}>
+                <TextField
+                    size="small"
+                    type="number"
+                    value={termValue[0]}
+                    onChange={handleTermLowerInputChange}
+                    onBlur={commitTermInput}
+                    sx={{ flex: 1 }}
+                />
+                <TextField
+                    size="small"
+                    type="number"
+                    value={termValue[1]}
+                    onChange={handleTermUpperInputChange}
+                    onBlur={commitTermInput}
+                    sx={{ flex: 1 }}
+                />
+            </Box>
+
+            <br />
+            <Divider sx={{ margin: 0, padding: 0 }} />
+            <br />
 
             <Button
                 variant="outlined"
@@ -142,5 +228,5 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 Zurücksetzen
             </Button>
         </Paper>
-    )
-}
+    );
+};

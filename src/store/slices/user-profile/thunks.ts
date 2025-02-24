@@ -210,3 +210,24 @@ export const updateProfile = createAsyncThunk(
     }
 );
 
+export const fetchUserProfileById = createAsyncThunk(
+    ActionTypes.FETCH_PROFILE_BY_ID,
+    async (id: string, {rejectWithValue}) => {
+        try {
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
+            const userProfileQuery = query(userProfilesCollection, where("id", "==", id));
+
+            const userProfileDocs = await getDocs(userProfileQuery);
+
+            if (userProfileDocs.empty) {
+                return rejectWithValue("Profile not found");
+            }
+
+            const userProfileDoc = userProfileDocs.docs[0];
+            return userProfileDoc.data();
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+            return rejectWithValue(error);
+        }
+    }
+);

@@ -5,6 +5,7 @@ export interface MetaState {
     riskCount: number | null;
     totalRiskInvestmentValue: number | null;
     risksTaken: number | null;
+    highestRiskValue: number | null;
     status: FetchStatus;
     error?: string;
 }

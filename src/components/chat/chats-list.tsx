@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {Alert, Badge, List, ListItemAvatar, ListItemButton, ListItemText} from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,16 +10,11 @@ import Scrollbar from "./scrollbar";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {useDispatch, useSelector} from "react-redux";
 import {setActiveChat, setChatSort} from "../../store/slices/my-bids/reducers";
-import {AppDispatch, RootState} from "../../store/store";
+import {AppDispatch} from "../../store/store";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {formatLastActivity} from "./utils";
 import {Chat} from "../../store/slices/my-bids/types";
-import {
-    selectActiveChatId,
-    selectChats,
-    selectChatsToDisplay,
-    selectFilteredChats, selectOpposingImagePath
-} from "../../store/slices/my-bids/selectors";
+import {selectActiveChatId, selectChatsToDisplay} from "../../store/slices/my-bids/selectors";
 import {auth} from "../../firebase_config";
 import {chatsUnsubscribe, subscribeToChats} from "../../store/slices/my-bids/thunks";
 
@@ -62,7 +57,7 @@ export const ChatsList = () => {
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 
     return (
-        <List sx={{ px: 0 }}>
+        <List sx={{px: 0}}>
             <Box px={2.5} pb={1}>
                 <Button
                     id="basic-button"
@@ -71,7 +66,7 @@ export const ChatsList = () => {
                     aria-expanded={isMenuOpen ? 'true' : undefined}
                     onClick={handleClick}
                     color="inherit">
-                    Letzte Chats <ExpandMoreIcon />
+                    Letzte Chats <ExpandMoreIcon/>
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -85,7 +80,7 @@ export const ChatsList = () => {
                     <MenuItem onClick={() => handleSetChatSort(ChatSort.OLDEST)}>Älteste Chats</MenuItem>
                 </Menu>
             </Box>
-            <Scrollbar sx={{ height: { lg: 'calc(100vh - 100px)', md: '100vh' }, maxHeight: '600px' }}>
+            <Scrollbar sx={{height: {lg: 'calc(100vh - 100px)', md: '100vh'}, maxHeight: '600px'}}>
                 {chats ? (
                     chats.map((chat) => (
                         <ListItemButton
@@ -115,7 +110,9 @@ export const ChatsList = () => {
                                         horizontal: 'right',
                                     }}
                                     overlap="circular">
-                                    <Avatar src={chat.riskTaker.uid === uid ? chat.riskProvider.imagePath : chat.riskTaker.imagePath} sx={{ width: 42, height: 42 }} />
+                                    <Avatar
+                                        src={chat.riskTaker.uid === uid ? chat.riskProvider.imagePath : chat.riskTaker.imagePath}
+                                        sx={{width: 42, height: 42}}/>
                                 </Badge>
                             </ListItemAvatar>
                             <ListItemText
@@ -128,9 +125,9 @@ export const ChatsList = () => {
                                 secondaryTypographyProps={{
                                     noWrap: true,
                                 }}
-                                sx={{ my: 0 }}
+                                sx={{my: 0}}
                             />
-                            <Box sx={{ flexShrink: '0' }} mt={0.5}>
+                            <Box sx={{flexShrink: '0'}} mt={0.5}>
                                 <Typography variant="body2">
                                     {formatLastActivity(chat?.lastActivity) || ""}
                                 </Typography>
@@ -139,7 +136,7 @@ export const ChatsList = () => {
                     ))
                 ) : (
                     <Box m={2}>
-                        <Alert severity="error" variant="filled" sx={{ color: 'white' }}>
+                        <Alert severity="error" variant="filled" sx={{color: 'white'}}>
                             Keine Chats gefunden!
                         </Alert>
                     </Box>

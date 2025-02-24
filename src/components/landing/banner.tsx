@@ -15,14 +15,14 @@ export const Banner = () => {
                 }}>
                 <Typography
                     variant="h2"
-                    color="white"
+                    color="black"
                     style={{width: "40%", paddingTop: "200px", paddingLeft: "100px"}}>
                     <b><Trans i18nKey="homepage.figure_text" /></b>
                 </Typography>
 
                 <Typography
                     variant="h4"
-                    color="white"
+                    color="black"
                     style={{width: "40%", paddingLeft: "100px"}}>
                     <Trans i18nKey="homepage.figure_text2" />
                 </Typography>

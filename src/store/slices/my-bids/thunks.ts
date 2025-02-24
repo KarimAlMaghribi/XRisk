@@ -2,14 +2,14 @@ import {createAsyncThunk} from "@reduxjs/toolkit";
 import {collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, setDoc, where} from "firebase/firestore";
 import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
-import {Chat, ChatMessage} from "./types";
+import {ActionTypes, Chat, ChatMessage} from "./types";
 import {setChats, setMessages} from "./reducers";
 import {RootState} from "../../store";
 
 export let messagesUnsubscribe: (() => void) | null = null;
 
 export const subscribeToMessages = createAsyncThunk<void, string, { rejectValue: string }>(
-    "myBids/subscribeToMessages",
+    ActionTypes.SUBSCRIBE_TO_MESSAGES,
     async (chatId, {dispatch, rejectWithValue}) => {
         try {
             if (messagesUnsubscribe) {
@@ -39,7 +39,7 @@ export const subscribeToChats = createAsyncThunk<
     void,
     { rejectValue: string }
 >(
-    "myBids/subscribeToChats",
+    ActionTypes.SUBSCRIBE_TO_CHATS,
     async (_, { dispatch, rejectWithValue }) => {
         try {
             if (chatsUnsubscribe) {
@@ -69,7 +69,7 @@ export const subscribeToChats = createAsyncThunk<
 );
 
 export const createChat = createAsyncThunk<Chat, Omit<Chat, "id">, { rejectValue: string }>(
-    "myBids/createChat",
+    ActionTypes.CREATE_CHAT,
     async (chatData, {rejectWithValue}) => {
         try {
             const chatRef = doc(collection(db, FirestoreCollectionEnum.CHATS));
@@ -96,7 +96,7 @@ export const fetchProviderChats = createAsyncThunk<
     void,
     { rejectValue: string }
 >(
-    "myBids/fetchProviderChats",
+    ActionTypes.FETCH_PROVIDER_CHATS,
     async (_, {rejectWithValue}) => {
         try {
             const userUid = auth.currentUser?.uid;
@@ -119,7 +119,7 @@ export const fetchProviderChats = createAsyncThunk<
 );
 
 export const fetchMyChats = createAsyncThunk<Chat[], void, { rejectValue: string }>(
-    "myBids/fetchMyChats",
+    ActionTypes.FETCH_MY_CHATS,
     async (_, {rejectWithValue}) => {
         try {
             const userUid = auth.currentUser?.uid;
@@ -155,7 +155,7 @@ export const sendMessage = createAsyncThunk<
     { chatId: string; message: Omit<ChatMessage, "id" | "created"> },
     { rejectValue: string }
 >(
-    "myBids/sendMessage",
+    ActionTypes.SEND_MESSAGE,
     async ({chatId, message}, {rejectWithValue}) => {
         try {
             const messageRef = doc(collection(db, FirestoreCollectionEnum.CHATS, chatId, FirestoreCollectionEnum.MESSAGES));
@@ -174,7 +174,7 @@ export const sendMessage = createAsyncThunk<
 );
 
 export const fetchMessages = createAsyncThunk<ChatMessage[], string, { rejectValue: string }>(
-    "myBids/fetchMessages",
+    ActionTypes.FETCH_MESSAGES,
     async (chatId, {rejectWithValue}) => {
         try {
             const messagesRef = collection(db, FirestoreCollectionEnum.CHATS, chatId, FirestoreCollectionEnum.MESSAGES);
@@ -194,7 +194,7 @@ export const fetchMessages = createAsyncThunk<ChatMessage[], string, { rejectVal
 );
 
 export const deleteChatsByRiskId = createAsyncThunk<string, string, { rejectValue: string; state: RootState }>(
-    "myBids/deleteChatsByRiskId",
+    ActionTypes.DELETE_CHATS_BY_RISK_ID,
     async (riskId, { rejectWithValue, getState }) => {
         try {
             if (!riskId) throw new Error("Risk ID is required");
@@ -228,7 +228,7 @@ export const deleteChatsByRiskId = createAsyncThunk<string, string, { rejectValu
 );
 
 export const deleteChatById = createAsyncThunk<string, string, { rejectValue: string }>(
-    "myBids/deleteChatById",
+    ActionTypes.DELETE_CHAT_BY_ID,
     async (chatId, { rejectWithValue }) => {
         try {
             if (!chatId) throw new Error("Chat ID is required");
@@ -253,7 +253,7 @@ export const updateLastMessage = createAsyncThunk<
     { chatId: string; lastMessage: string },
     { rejectValue: string }
 >(
-    "myBids/updateLastMessage",
+    ActionTypes.UPDATE_LAST_MESSAGE,
     async ({chatId, lastMessage}, {rejectWithValue}) => {
         try {
             const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chatId);
@@ -261,6 +261,46 @@ export const updateLastMessage = createAsyncThunk<
         } catch (error) {
             console.error("Error updating last message:", error);
             return rejectWithValue("Error updating last message");
+        }
+    }
+);
+
+export const deleteUnagreedChats = createAsyncThunk<
+    string,
+    { riskId: string; chatId: string },
+    { rejectValue: string; state: RootState }
+>(
+    ActionTypes.DELETE_UNAGREED_CHATS,
+    async ({ riskId, chatId }, { rejectWithValue }) => {
+        try {
+            if (!riskId) throw new Error("Risk ID is required");
+            if (!chatId) throw new Error("Chat ID is required");
+
+            const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
+            const q = query(chatsRef);
+            const chatsSnapshot = await getDocs(q);
+
+            const chats = chatsSnapshot.docs
+                .map((doc) => ({ id: doc.id, ...doc.data() } as Chat))
+                .filter((chat) => chat.riskId === riskId && chat.id !== chatId);
+
+            await Promise.all(
+                chats.map(async (chat) => {
+                    const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chat.id);
+                    const messagesRef = collection(chatDocRef, FirestoreCollectionEnum.MESSAGES);
+                    const messagesSnapshot = await getDocs(messagesRef);
+                    await Promise.all(
+                        messagesSnapshot.docs.map((messageDoc) => deleteDoc(messageDoc.ref))
+                    );
+                    await deleteDoc(chatDocRef);
+                })
+            );
+
+            console.log("Unagreed chats deleted");
+            return "Unagreed chats deleted";
+        } catch (error) {
+            console.error("Error deleting chats:", error);
+            return rejectWithValue("Error deleting chats");
         }
     }
 );

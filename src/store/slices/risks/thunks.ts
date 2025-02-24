@@ -52,7 +52,11 @@ export const fetchRisks = createAsyncThunk(
 
             const publishedRisksQuery = query(
                 risksCollection,
-                where("status", "==", RiskStatusEnum.PUBLISHED)
+                where("status", "in", [
+                    RiskStatusEnum.PUBLISHED,
+                    RiskStatusEnum.DEAL,
+                    RiskStatusEnum.AGREEMENT,
+                ])
             );
 
             return new Promise<Risk[]>((resolve, reject) => {
