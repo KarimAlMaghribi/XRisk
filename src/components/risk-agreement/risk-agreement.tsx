@@ -62,9 +62,6 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const [insuranceSum, setInsuranceSum] = useState<number>(0);
     const [riskDetails, setRiskDetails] = useState<string>('');
 
-    const [insuranceSumRequiredError, setInsuranceSumRequiredError] = useState<boolean>(false);
-    const [costsRequiredError, setCostsRequiredError] = useState<boolean>(false);
-
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
 
     const riskId = useSelector(selectRiskId);
@@ -82,52 +79,58 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const [costsColor, setCostsColor] = useState("grey");
     const [detailsColor, setDetailsColor] = useState("grey");
 
-    const [agreement, SetAgreement] = useState(false);
+    const [agreement, setAgreement] = useState(false);
 
     const previousAgreementRef = useRef<RiskAgreement | null>(null); // Store previous agreeme
 
     const { showSnackbar } = useSnackbarContext();
 
     const checkEquality = () => {
-        let checkValid : boolean = true;
 
-        if (existingAgreement?.riskGiverApprovals.timeframe === existingAgreement?.riskTakerApprovals.timeframe){
-            setTimeframeColor("grey")
-            checkValid = checkValid && true;
+        if(existingAgreement){
+            let checkValid : boolean = true;
+
+            if (existingAgreement?.riskGiverApprovals.timeframe === existingAgreement?.riskTakerApprovals.timeframe){
+                setTimeframeColor("grey")
+                checkValid = checkValid && true;
+            }
+            else {
+                checkValid = checkValid && false;
+            }
+            if (existingAgreement?.riskGiverApprovals.evidence === existingAgreement?.riskTakerApprovals.evidence){
+                setEvidenceColor("grey");
+                checkValid = checkValid && true;
+            }
+            else {
+                checkValid = checkValid && false;
+            }
+            if (existingAgreement?.riskGiverApprovals.costs === existingAgreement?.riskTakerApprovals.costs){
+                setCostsColor("grey");
+                checkValid = checkValid && true;
+            }
+            else {
+                checkValid = checkValid && false;
+            }
+            if (existingAgreement?.riskGiverApprovals.insuranceSum === existingAgreement?.riskTakerApprovals.insuranceSum){
+                setInsuranceSumColor("grey");
+                checkValid = checkValid && true;
+            }
+            else {
+                checkValid = checkValid && false;
+            }
+            if (existingAgreement?.riskGiverApprovals.details === existingAgreement?.riskTakerApprovals.details){
+                setDetailsColor("grey");
+                checkValid = checkValid && true;
+            }
+            else {
+                checkValid = checkValid && false;
+            }
+            
+            setAgreement(checkValid);
         }
-        else {
-            checkValid = checkValid && false;
+        else{
+            setAgreement(false)
         }
-        if (existingAgreement?.riskGiverApprovals.evidence === existingAgreement?.riskTakerApprovals.evidence){
-            setEvidenceColor("grey");
-            checkValid = checkValid && true;
-        }
-        else {
-            checkValid = checkValid && false;
-        }
-        if (existingAgreement?.riskGiverApprovals.costs === existingAgreement?.riskTakerApprovals.costs){
-            setCostsColor("grey");
-            checkValid = checkValid && true;
-        }
-        else {
-            checkValid = checkValid && false;
-        }
-        if (existingAgreement?.riskGiverApprovals.insuranceSum === existingAgreement?.riskTakerApprovals.insuranceSum){
-            setInsuranceSumColor("grey");
-            checkValid = checkValid && true;
-        }
-        else {
-            checkValid = checkValid && false;
-        }
-        if (existingAgreement?.riskGiverApprovals.details === existingAgreement?.riskTakerApprovals.details){
-            setDetailsColor("grey");
-            checkValid = checkValid && true;
-        }
-        else {
-            checkValid = checkValid && false;
-        }
-        
-        SetAgreement(checkValid);
     }
 
     useEffect(() => {
@@ -304,6 +307,13 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
 
                 const updatedRiskAgreement: RiskAgreement = {
                     ...existingAgreement,
+                    previousState: {
+                        insuranceSum: existingAgreement.insuranceSum,
+                        costs: existingAgreement.costs,
+                        timeframe: existingAgreement.timeframe,
+                        evidence: existingAgreement.evidence,
+                        details: existingAgreement.details,
+                    },
                     insuranceSum: insuranceSum,
                     costs: costs,
                     timeframe: timeframe,
@@ -347,7 +357,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             }
         }
 
-        //handleClose();
+        handleClose();
     }
 
     const handleComingToTherms = () => {
@@ -528,7 +538,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     Automatisch füllen
                 </Button>
                 <Button
-                    disabled={insuranceSumRequiredError || costsRequiredError}
+                    disabled={!(insuranceSum && costs && timeframe && evidence && riskDetails)}
                     variant="contained"
                     onClick={handleAffirmRiskAgreement}>
                     Bestätigen

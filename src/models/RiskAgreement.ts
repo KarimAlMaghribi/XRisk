@@ -21,4 +21,6 @@ export interface RiskAgreement {
     };
 
     agreed?: boolean;
+
+    previousState?: Pick<RiskAgreement, "insuranceSum" | "costs" | "timeframe" | "evidence" | "details">;
 }
