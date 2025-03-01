@@ -15,6 +15,19 @@ import {
 } from "./thunks";
 import {RiskOverviewFilterType} from "../../../models/RiskOverviewFilterType";
 import {Risk} from "../../../models/Risk";
+import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
+
+const defaultSortRisks = (risks: Risk[]): Risk[] => {
+    return risks.slice().sort((a, b) => {
+        const isAAgreement = a.status === RiskStatusEnum.AGREEMENT;
+        const isBAgreement = b.status === RiskStatusEnum.AGREEMENT;
+        if (isAAgreement && !isBAgreement) return 1;
+        if (!isAAgreement && isBAgreement) return -1;
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateA - dateB;
+    });
+};
 
 const initialState: RiskOverviewState = {
     risks: [],
@@ -135,7 +148,9 @@ export const riskOverviewSlice = createSlice({
         },
         setRisks: (state, action: PayloadAction<Risk[]>) => {
             state.risks = action.payload;
-            state.filteredRisks = applyAllFilters(action.payload, state.filters as RiskOverviewFilterType);
+            state.filteredRisks = defaultSortRisks(
+                applyAllFilters(action.payload, state.filters as RiskOverviewFilterType)
+            );
         }
     },
     extraReducers: (builder) => {
@@ -145,7 +160,9 @@ export const riskOverviewSlice = createSlice({
             })
             .addCase(fetchRisks.fulfilled, (state, action) => {
                 state.risks = action.payload;
-                state.filteredRisks = applyAllFilters(action.payload, state.filters as RiskOverviewFilterType);
+                state.filteredRisks = defaultSortRisks(
+                    applyAllFilters(action.payload, state.filters as RiskOverviewFilterType)
+                );
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(fetchRisks.rejected, (state, action) => {
@@ -161,7 +178,7 @@ export const riskOverviewSlice = createSlice({
                     return;
                 }
                 state.risks.push(action.payload);
-                state.filteredRisks = applyAllFilters(state.risks, state.filters);
+                state.filteredRisks = defaultSortRisks(applyAllFilters(state.risks, state.filters));
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(addRisk.rejected, (state, action) => {

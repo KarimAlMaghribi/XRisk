@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
@@ -21,6 +21,7 @@ import {auth} from "../../../firebase_config";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {PaperComponent} from "../../ui/draggable-dialog";
+import {formatEuro} from "../my-risk-row-details/agreement-details/agreement-table";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -29,6 +30,7 @@ export interface RiskCreationDialogProps {
 
 export const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, ref) {
     const {onChange, ...other} = props;
+
     return (
         <NumericFormat
             {...other}
@@ -57,12 +59,30 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [value, setValue] = useState<number>(0);
     const [date, setDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
     const userProfile: UserProfile = useSelector(selectUserProfile);
+    const [pushedCreateButton, setPushedCreateButton] = useState<boolean>(false);
+
+    const descriptionLength: number = 5;
+    const maxValue: number = 100000000;
+
+    const [nameError, setNameError] = useState<boolean>(false);
+    const [descriptionError, setDescriptionError] = useState<boolean>(false);
+    const [valueError, setValueError] = useState<boolean>(false);
+    const [riskTypeError, setRiskTypeError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (pushedCreateButton) {
+            setNameError(name.length === 0);
+            setDescriptionError(description.length <= descriptionLength);
+            setValueError(value > maxValue || value < 0);
+            setRiskTypeError(riskType.length === 0);
+        }
+    }, [name, description, value, riskType, pushedCreateButton]);
 
     const handleValueChange = (newValue: number) => {
         if (!isNaN(newValue)) {
             setValue(newValue);
         }
-    }
+    };
 
     const handleClose = () => {
         setName('');
@@ -70,10 +90,27 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
         setRiskType([]);
         setValue(0);
         setDate(dayjs().add(1, "month"));
+        setPushedCreateButton(false);
+        setNameError(false);
+        setDescriptionError(false);
+        setValueError(false);
+        setRiskTypeError(false);
         props.handleClose();
-    }
+    };
 
     const handleCreateRisk = () => {
+        setPushedCreateButton(true);
+
+        if (
+            name.length === 0 ||
+            description.length <= descriptionLength ||
+            value > maxValue ||
+            value < 0 ||
+            riskType.length === 0
+        ) {
+            return;
+        }
+
         const newRisk: Risk = {
             id: uuidv4(),
             createdAt: new Date().toISOString(),
@@ -87,12 +124,12 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 name: userProfile.profile.name,
             },
             declinationDate: date?.toISOString() || 'kein Ablaufdatum',
-        }
+        };
 
         dispatch(addMyRisk(newRisk));
         navigate(`/${ROUTES.MY_RISKS}`);
         handleClose();
-    }
+    };
 
     return (
         <Dialog
@@ -106,7 +143,9 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     m: 0,
                 },
             }}>
-            <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title">Risiko definieren</DialogTitle>
+            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                Risiko definieren
+            </DialogTitle>
             <IconButton
                 aria-label="close"
                 onClick={handleClose}
@@ -116,18 +155,18 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     top: 8,
                     color: theme.palette.grey[500],
                 })}>
-                <CloseIcon/>
+                <CloseIcon />
             </IconButton>
 
             <DialogContent>
                 <DialogContentText>
-                    Definiere dein eignes Risiko, dass du später veröffentlichen kannst!
+                    Definiere dein eignes Risiko, das du später veröffentlichen kannst!
                 </DialogContentText>
 
                 <TextField
-                    error={name.length === 0}
-                    helperText={name.length === 0 ? "Bitte gib einen Namen ein" : ""}
-                    sx={{marginTop: "10px"}}
+                    error={nameError}
+                    helperText={nameError ? "Bitte gib einen Namen ein" : ""}
+                    sx={{ marginTop: "10px" }}
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     autoFocus
@@ -139,8 +178,14 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     fullWidth
                 />
                 <TextField
-                    error={description.length <= 20}
-                    helperText={description.length === 0 ? "Bitte füge eine Beschreibung hinzu" : description.length <= 20 ? "Bitte füge eine längere Beschreibung hinzu" : ""}
+                    error={descriptionError}
+                    helperText={
+                        descriptionError
+                            ? description.length === 0
+                                ? "Bitte füge eine Beschreibung hinzu"
+                                : "Bitte füge eine längere Beschreibung hinzu"
+                            : ""
+                    }
                     required
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
@@ -152,19 +197,29 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     rows={4}
                 />
                 <RiskTypeSelector
+                    riskTypeError={riskTypeError}
+                    setRiskTypeError={setRiskTypeError}
                     textFieldVariant="outlined"
                     value={riskType}
                     setValue={setRiskType}
                     required={true}
                 />
                 <TextField
-                    error={value > 999999}
-                    helperText={value > 999999 ? "Maximal 999.999,00 € möglich" : value < 0 ? "Bitte gib einen positiven Betrag ein" : ""}
+                    error={valueError}
+                    helperText={
+                        valueError
+                            ? value > maxValue
+                                ? `Maximal ${formatEuro(maxValue)} möglich`
+                                : "Bitte gib einen positiven Betrag ein"
+                            : ""
+                    }
                     margin="dense"
                     fullWidth
                     label="Absicherungssumme"
                     value={value}
-                    onChange={(event) => handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
+                    onChange={(event) =>
+                        handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))
+                    }
                     name="value"
                     id="value"
                     InputProps={{
@@ -173,7 +228,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{marginTop: "10px", width: "100%"}}
+                        sx={{ marginTop: "10px", width: "100%" }}
                         format="DD.MM.YYYY"
                         label="Laufzeitende"
                         value={date}
@@ -187,19 +242,14 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 </LocalizationProvider>
             </DialogContent>
             <DialogActions>
-                <Button
-                    disabled={name.length === 0 || riskType.length === 0 || description.length <= 20 || value > 999999 || value < 0}
-                    variant="contained"
-                    onClick={handleCreateRisk}>
+                <Button variant="contained" onClick={handleCreateRisk}>
                     Definieren
                 </Button>
-                <Button
-                    onClick={handleClose}
-                    variant="outlined">
+                <Button onClick={handleClose} variant="outlined">
                     Abbrechen
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
+};
 
-}

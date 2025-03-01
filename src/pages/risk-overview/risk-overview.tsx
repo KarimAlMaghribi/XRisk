@@ -30,9 +30,21 @@ export const RiskOverview = () => {
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
 
     useEffect(() => {
-        dispatch(subscribeToRisks());
         dispatch(fetchProviderChats());
         dispatch(fetchHighestRiskValue());
+    }, [dispatch]);
+
+    useEffect(() => {
+        let unsubscribeFn: (() => void) | void;
+        (async () => {
+            unsubscribeFn = await dispatch(subscribeToRisks()).unwrap();
+        })();
+
+        return () => {
+            if (unsubscribeFn) {
+                unsubscribeFn();
+            }
+        };
     }, [dispatch]);
 
     const handleClose = () => {

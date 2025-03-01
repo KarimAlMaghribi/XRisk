@@ -36,6 +36,8 @@ export interface RiskTypeSelectorProps {
     textFieldVariant?: "standard" | "outlined" | "filled";
     label?: string;
     mode?: "simple" | "complex";
+    riskTypeError?: boolean;
+    setRiskTypeError?: (value: boolean) => void;
 }
 
 export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
@@ -101,8 +103,8 @@ export const RiskTypeSelector = (props: RiskTypeSelectorProps) => {
             }
             renderInput={(params) => (
                 <TextField
-                    error={props.required && props.value.length === 0}
-                    helperText={props.required && props.value.length === 0 ? "Bitte wähle mindestens einen Typ" : ""}
+                    error={props.required && props.riskTypeError}
+                    helperText={props.required && props.riskTypeError && "Bitte wähle mindestens einen Typen aus"}
                     required={props.required}
                     {...params}
                     variant={props.textFieldVariant || "outlined"}

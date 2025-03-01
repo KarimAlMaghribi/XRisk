@@ -66,6 +66,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     }
 
     const openBid = (riskIndex: number) => {
+        console.log(riskIndex)
         if (!user || !user.uid) {
             console.error("User not authenticated or UID missing:", user);
             showSnackbar("Nutzer nicht authentifiziert!","Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.", { vertical: "top", horizontal: "center" }, "error");
@@ -131,13 +132,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     return (
         <React.Fragment>
             {
-                props.risks && [...props.risks]
-                    .sort((a: Risk, b: Risk) => {
-                        const aIsAgreement = a.status === RiskStatusEnum.AGREEMENT ? 1 : 0;
-                        const bIsAgreement = b.status === RiskStatusEnum.AGREEMENT ? 1 : 0;
-                        return aIsAgreement - bIsAgreement;
-                    })
-                    .map((risk: Risk, index) => (
+                props.risks && props.risks.map((risk: Risk, index) => (
                     <Accordion
                         sx={{
                             margin: 0,
