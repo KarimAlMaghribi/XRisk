@@ -2,8 +2,9 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {MyRisksState} from "./types";
-import {addMyRisk, deleteMyRisk, fetchMyOfferedRisks, updateMyRisk} from "./thunks";
+import {addMyRisk, deleteMyRisk, fetchMyOfferedRisks, updateMyRisk, updateMyRiskStatus} from "./thunks";
 import {fetchMyTakenRisks} from "../risks/thunks";
+import {deleteChatById} from "../my-bids/thunks";
 
 
 const initialState: MyRisksState = {
@@ -116,6 +117,11 @@ export const myRisksSlice = createSlice({
                 state.offeredRisks = state.offeredRisks.map(risk =>
                     risk.id === action.payload.id ? {...risk, ...action.payload} : risk
                 );
+
+                state.filteredOfferedRisks = state.filteredOfferedRisks.map(risk =>
+                    risk.id === action.payload.id ? {...risk, ...action.payload} : risk
+                );
+
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(updateMyRisk.rejected, (state, action) => {
@@ -135,8 +141,27 @@ export const myRisksSlice = createSlice({
                 state.takenRisks = [];
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
-            });
-    }
+            })
+            .addCase(updateMyRiskStatus.pending, (state) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(updateMyRiskStatus.fulfilled, (state, action) => {
+                state.offeredRisks = state.offeredRisks.map(risk =>
+                    risk.id === action.payload.riskId ? {...risk, ...action.payload} : risk
+                );
+
+                state.filteredOfferedRisks = state.filteredOfferedRisks.map(risk =>
+                    risk.id === action.payload.riskId ? {...risk, ...action.payload} : risk
+                );
+
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(updateMyRiskStatus.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            })
+        }
 });
 
 export const {setFilter, clearMyRiskFilter} = myRisksSlice.actions;

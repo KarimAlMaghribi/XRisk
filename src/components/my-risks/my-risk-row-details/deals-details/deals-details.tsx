@@ -108,8 +108,7 @@ export const DealDetails = ({risk, chats}: { risk: Risk, chats: Chat[] }) => {
                             {
                                 chats.map((chat, index) => {
                                     const riskAgreement = riskAgreements.find((ra) => ra.chatId === chat.id) || null;
-                                    return <DealsTableBodyElement key={chat.id} chat={chat} riskAgreement={riskAgreement}
-                                                                  index={index}/>
+                                    return <DealsTableBodyElement key={chat.id} chat={chat} riskAgreement={riskAgreement} index={index}/>
                                 })
                             }
                         </>

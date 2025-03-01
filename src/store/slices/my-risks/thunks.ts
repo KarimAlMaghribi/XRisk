@@ -142,3 +142,38 @@ export const deleteMyRisk = createAsyncThunk(
     }
 );
 
+export const updateMyRiskStatus = createAsyncThunk(
+    ActionTypes.UPDATE_MY_RISK_STATUS,
+    async ({riskId, status}: {riskId: string, status: RiskStatusEnum}, {rejectWithValue}) => {
+        try {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const risksCollection = collection(db, FirestoreCollectionEnum.MY_RISKS);
+            const riskQuery = query(
+                risksCollection,
+                where("uid", "==", user.uid),
+                where("id", "==", riskId)
+            );
+
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return rejectWithValue("Risk not found");
+            }
+
+            const riskDocRef = riskDocs.docs[0].ref;
+            await updateDoc(riskDocRef, {status});
+
+            console.debug("Successfully updated risk status:", riskId, status);
+
+            return {riskId, status};
+        } catch (error) {
+            console.error("Error updating risk status:", error);
+            return rejectWithValue("Failed to update risk status due to permissions or other error");
+        }
+    }
+);
