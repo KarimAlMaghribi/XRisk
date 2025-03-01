@@ -69,7 +69,7 @@ export const RiskCarousel = () => {
             </Typography>
             <Typography variant="h3" style={{textAlign: "center", marginBottom: "50px"}}>
                 {(i18n.language === "en") && <b><span style={{ color: orange }}>Offer your Risks</span> now.</b>}
-                {(i18n.language === "de") && <b>Jetzt <span style={{ color: orange }}>Deine Risiken anbieten.</span></b>}
+                {(i18n.language === "de") && <b>Jetzt <span style={{ color: orange }}>mit Risiken handeln!</span></b>}
             </Typography>
             <Typography variant="h5" color="black" style={{textAlign: "center", marginBottom: "50px"}}>
             <Trans  i18nKey="homepage.middle_page_text3"></Trans>
