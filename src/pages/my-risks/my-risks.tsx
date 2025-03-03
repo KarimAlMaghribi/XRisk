@@ -21,7 +21,8 @@ import {RiskTypeEnum} from "../../enums/RiskType.enum";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
 import {FilterBar} from "../../components/my-risks/filterBar";
 import {clearMyRiskFilter} from "../../store/slices/my-risks/reducers";
-
+import { Trans, useTranslation } from "react-i18next";
+import i18next from "i18next";
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
     const myOfferedRisks: Risk[] = useSelector(selectMyOfferedRisks);
@@ -32,6 +33,8 @@ export const MyRisks = () => {
 
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
     const [tab, setTab] = React.useState<RiskTypeEnum>(RiskTypeEnum.OFFERED);
+
+    const t = i18next.t;
 
     useEffect(() => {
         dispatch(fetchMyChats());
@@ -66,7 +69,7 @@ export const MyRisks = () => {
                         fullWidth
                         variant="outlined"
                         style={{borderRadius: "5px"}}>
-                        RISIKO DEFINIEREN!
+                        <Trans i18nKey="risk_exchange.define_risk"></Trans>
                     </Button>
                 </Grid>
                 <Grid size={10} style={{padding: "0 30px 0 30px"}}>
@@ -82,8 +85,8 @@ export const MyRisks = () => {
                         <TabContext value={tab}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList onChange={handleTabChange}>
-                                    <Tab sx={{fontWeight: "bold"}} label="Angebotene Risiken" value={RiskTypeEnum.OFFERED}/>
-                                    <Tab sx={{fontWeight: "bold"}} label="Übernommene Risiken" value={RiskTypeEnum.TAKEN}/>
+                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.OFFERED_RISKS")}`} value={RiskTypeEnum.OFFERED}/>
+                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.TAKEN_RISKS")}`} value={RiskTypeEnum.TAKEN}/>
                                 </TabList>
                             </Box>
                             <TabPanel value={RiskTypeEnum.OFFERED}>

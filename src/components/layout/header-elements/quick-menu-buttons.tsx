@@ -19,6 +19,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {useSelector} from "react-redux";
 import { ProfileDialog } from "../../profile/profile-dialog";
 import { Trans } from "react-i18next";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { Height } from "@mui/icons-material";
 
 export interface AuthenticationButtonsProps {
     isLoggedIn: boolean;
@@ -39,11 +41,20 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
         props.setAnchorElUser();
     }
 
+    const openNotificationDialog = () => {
+        ;
+    }
+
     return (
         <>
             {
                 props.isLoggedIn ? (
                     <Box sx={{flexGrow: 0}}>
+                        <IconButton
+                            onClick={openNotificationDialog} 
+                            sx={{p: 0, width:50, height:50}}>
+                            <NotificationsIcon color="primary"  sx={{p: 0, width:37, height:37}}/>
+                        </IconButton>
                         <IconButton onClick={props.handleOpenUserMenu} sx={{p: 0}}>
                             <Avatar src={imagePath} sx={{width: 42, height: 42}}/>
                         </IconButton>

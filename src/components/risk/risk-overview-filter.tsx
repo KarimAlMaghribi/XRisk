@@ -23,6 +23,7 @@ import { selectFilterTypes } from "../../store/slices/risks/selectors";
 import { formatDate } from "../../utils/dateFormatter";
 import { selectHighestRiskValue } from "../../store/slices/meta/selectors";
 import { formatEuro } from "../my-risks/my-risk-row-details/agreement-details/agreement-table";
+import { Trans, useTranslation } from "react-i18next";
 
 export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const dispatch: AppDispatch = useDispatch();
@@ -30,6 +31,8 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const [termValue, setTermValue] = useState<number[]>(props.remainingTerm);
     const highestRiskValue: number | null = useSelector(selectHighestRiskValue);
     const filterTypes: string[] = useSelector(selectFilterTypes);
+
+    const {t} = useTranslation();
 
     const handleTypeChange = (type: string[]) => {
         dispatch(setFilterType(type));
@@ -106,16 +109,16 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     return (
         <Paper square={false} style={{ margin: "5px", padding: "30px", marginTop: "10px" }} elevation={0}>
             <Typography variant="h6"><b>Filter</b></Typography>
-            <Typography variant="caption">Filter die Risiken nach deinen Wünschen und Interessen</Typography>
+            <Typography variant="caption"><Trans i18nKey="risk_exchange.filter_message"></Trans></Typography>
 
             <br />
 
-            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} textFieldVariant="standard" label="Risikoart" />
+            <RiskTypeSelector value={filterTypes} setValue={handleTypeChange} textFieldVariant="standard" label="" />
 
             <br />
 
-            <Typography variant="body1">Nennwert</Typography>
-            <Typography variant="caption">Absicherungssumme des Risikos</Typography>
+            <Typography variant="body1"><Trans i18nKey="risk_exchange.nominal_value"></Trans></Typography>
+            <Typography variant="caption"><Trans i18nKey="risk_exchange.insured_sum_risk"></Trans></Typography>
 
             <Box margin="15px">
                 <Slider
@@ -140,7 +143,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
 
             <Box textAlign="center">
                 <Typography variant="caption" sx={{ color: "grey" }}>
-                    {`${sliderValue[0].toLocaleString("de-DE")}€ bis ${sliderValue[1].toLocaleString("de-DE")}€`}
+                    {`${sliderValue[0].toLocaleString("de-DE")}€ ${t("risk_exchange.to")} ${sliderValue[1].toLocaleString("de-DE")}€`}
                 </Typography>
             </Box>
 
@@ -165,8 +168,8 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
 
             <br />
 
-            <Typography variant="body1">Restlaufzeit</Typography>
-            <Typography variant="caption">Zeitpunkt zu dem das Risiko verfällt</Typography>
+            <Typography variant="body1"><Trans i18nKey="risk_exchange.remaining_term"></Trans></Typography>
+            <Typography variant="caption"><Trans i18nKey="risk_exchange.risk_expire_time"></Trans></Typography>
 
             <Box margin="15px">
                 <Slider
@@ -186,11 +189,11 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
 
             <Box textAlign="center">
                 <Typography variant="caption" sx={{ color: "grey" }}>
-                    {`vom ${
+                    {`${t("risk_exchange.from")} ${
                         Array.isArray(termValue)
                             ? formatDate(addMonths(new Date(), termValue[0]))
                             : formatDate(new Date())
-                    } bis zum ${
+                    } ${t("risk_exchange.until")} ${
                         Array.isArray(termValue)
                             ? formatDate(addMonths(new Date(), termValue[1]))
                             : formatDate(addMonths(new Date(), termValue))
@@ -225,7 +228,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 variant="outlined"
                 fullWidth
                 onClick={handleClearFilters}>
-                Zurücksetzen
+                <Trans i18nKey="risk_exchange.reset"></Trans>
             </Button>
         </Paper>
     );

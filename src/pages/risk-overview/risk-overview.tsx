@@ -19,6 +19,7 @@ import {
 } from "../../store/slices/risks/selectors";
 import {subscribeToRisks} from "../../store/slices/risks/thunks";
 import {fetchHighestRiskValue} from "../../store/slices/meta/thunks";
+import { Trans } from "react-i18next";
 
 export const RiskOverview = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -52,7 +53,7 @@ export const RiskOverview = () => {
                     }}>
                         <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)} fullWidth
                                 style={{borderRadius: "5px"}}>
-                            RISIKO DEFINIEREN!
+                            <Trans i18nKey="risk_exchange.define_risk"></Trans>
                         </Button>
                     </Grid>
 

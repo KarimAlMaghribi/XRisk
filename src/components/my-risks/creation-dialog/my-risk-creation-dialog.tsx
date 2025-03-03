@@ -21,6 +21,9 @@ import {auth} from "../../../firebase_config";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {PaperComponent} from "../../ui/draggable-dialog";
+import { Trans, useTranslation } from "react-i18next";
+import i18next from "i18next";
+
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -57,6 +60,8 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [value, setValue] = useState<number>(0);
     const [date, setDate] = useState<Dayjs | null>(dayjs().add(1, "month"));
     const userProfile: UserProfile = useSelector(selectUserProfile);
+
+    const t = i18next.t;
 
     const handleValueChange = (newValue: number) => {
         if (!isNaN(newValue)) {
@@ -106,7 +111,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     m: 0,
                 },
             }}>
-            <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title">Risiko definieren</DialogTitle>
+            <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title"><Trans i18nKey="define_risk.title"></Trans></DialogTitle>
             <IconButton
                 aria-label="close"
                 onClick={handleClose}
@@ -121,12 +126,12 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
 
             <DialogContent>
                 <DialogContentText>
-                    Definiere dein eignes Risiko, dass du später veröffentlichen kannst!
+                    <Trans i18nKey="define_risk.title_text"></Trans>
                 </DialogContentText>
 
                 <TextField
                     error={name.length === 0}
-                    helperText={name.length === 0 ? "Bitte gib einen Namen ein" : ""}
+                    helperText={name.length === 0 ? `${t("define_risk.name_description")}` : ""}
                     sx={{marginTop: "10px"}}
                     value={name}
                     onChange={(event) => setName(event.target.value)}
@@ -140,14 +145,14 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <TextField
                     error={description.length <= 20}
-                    helperText={description.length === 0 ? "Bitte füge eine Beschreibung hinzu" : description.length <= 20 ? "Bitte füge eine längere Beschreibung hinzu" : ""}
+                    helperText={description.length === 0 ? `${t("define_risk.brief_description_description")}` : description.length <= 20 ? `${t("define_risk.brief_description_error")}` : ""}
                     required
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
                     margin="dense"
                     fullWidth
                     id="description"
-                    label="Kurzbeschreibung"
+                    label= {`${t("define_risk.brief_description")}`}
                     multiline
                     rows={4}
                 />
@@ -159,10 +164,10 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <TextField
                     error={value > 999999}
-                    helperText={value > 999999 ? "Maximal 999.999,00 € möglich" : value < 0 ? "Bitte gib einen positiven Betrag ein" : ""}
+                    helperText={value > 999999 ? `${t("define_risk.insurance_sum_error1")}` : value < 0 ? `${t("define_risk.insurance_sum_error2")}` : ""}
                     margin="dense"
                     fullWidth
-                    label="Absicherungssumme"
+                    label={`${t("terms.insurance_sum")}`}
                     value={value}
                     onChange={(event) => handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
                     name="value"
@@ -175,7 +180,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     <DatePicker
                         sx={{marginTop: "10px", width: "100%"}}
                         format="DD.MM.YYYY"
-                        label="Laufzeitende"
+                        label={`${t("define_risk.end_of_term")}`}
                         value={date}
                         onChange={(newValue) => {
                             if (newValue && newValue.isAfter(dayjs())) {
@@ -191,12 +196,12 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     disabled={name.length === 0 || riskType.length === 0 || description.length <= 20 || value > 999999 || value < 0}
                     variant="contained"
                     onClick={handleCreateRisk}>
-                    Definieren
+                    {`${t("terms.define")}`}
                 </Button>
                 <Button
                     onClick={handleClose}
                     variant="outlined">
-                    Abbrechen
+                    {`${t("terms.cancel")}`}
                 </Button>
             </DialogActions>
         </Dialog>

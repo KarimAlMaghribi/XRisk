@@ -30,7 +30,10 @@ import FooterCompanyDescriptions from './pages/formalities/company';
 import i18n from './utils/i18n';
 import { useState, useEffect } from 'react';
 
+
 function App() {
+
+    const [userId, setUserId] = useState<string | null>(null);
 
     const [language, setLanguage] = useState(i18n.language);
 

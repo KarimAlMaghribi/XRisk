@@ -10,6 +10,7 @@ import {RiskOverviewSort} from "../../models/RiskOverviewSort";
 import {RiskOverviewHeaderEnum} from "../../enums/RiskOverviewHeader.enum";
 import {SortDirectionEnum} from "../../enums/SortDirection.enum";
 import {selectSorts} from "../../store/slices/risks/selectors";
+import { Trans } from "react-i18next";
 
 export const RiskOverviewHeader = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -28,25 +29,25 @@ export const RiskOverviewHeader = () => {
             </Grid>
             <Grid size={3} sx={{ display: 'flex', alignItems: 'center', marginLeft: "5px" }}>
                 <Tooltip title="Zugeordneter Typ des Risikos">
-                    <Typography sx={{ cursor: 'pointer', marginLeft: "10px" }} variant="button">Risikoart</Typography>
+                    <Typography sx={{ cursor: 'pointer', marginLeft: "10px" }} variant="button"><Trans i18nKey="terms.RISK_TYPE"></Trans></Typography>
                 </Tooltip>
                 <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.TYPE)?.direction === SortDirectionEnum.ASC ?'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.TYPE)}/>
             </Grid>
             <Grid size={2} sx={{display: 'flex', alignItems: 'center'}}>
                 <Tooltip title="Die Höhe, mit der das Risiko...">
-                    <Typography style={{cursor: "pointer"}} variant="button">Absicherungssumme</Typography>
+                    <Typography style={{cursor: "pointer"}} variant="button"> <Trans i18nKey="terms.INSURANCE_SUM"></Trans></Typography>
                 </Tooltip>
                 <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.VALUE)?.direction === SortDirectionEnum.ASC ? 'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.VALUE)}/>
             </Grid>
             <Grid size={2} sx={{display: 'flex', alignItems: 'center'}}>
                 <Tooltip title="Zeitpunkt, an dem das Risiko...">
-                    <Typography style={{cursor: "pointer"}} variant="button">Fällig am</Typography>
+                    <Typography style={{cursor: "pointer"}} variant="button"><Trans i18nKey="terms.DUE_ON"></Trans></Typography>
                 </Tooltip>
                 <SwapVertIcon sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.DECLINATION_DATE)?.direction === SortDirectionEnum.ASC ? 'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.DECLINATION_DATE)}/>
             </Grid>
             <Grid size={1} sx={{display: 'flex', alignItems: 'center'}}>
                 <Tooltip title="Person, die das Risiko erstellt und veröffentlicht hat">
-                    <Typography style={{cursor: "pointer"}} variant="button">Anbieter</Typography>
+                    <Typography style={{cursor: "pointer"}} variant="button"><Trans i18nKey="terms.PROVIDER"></Trans></Typography>
                 </Tooltip>
                 <SwapVertIcon  sx={{cursor: 'pointer', transition: 'transform 0.5s', transform: sorts.find(sort => sort.name === RiskOverviewHeaderEnum.PUBLISHER)?.direction === SortDirectionEnum.ASC ? 'rotate(180deg)' : 'rotate(0deg)'}} onClick={() => sortCol(RiskOverviewHeaderEnum.PUBLISHER)}/>
             </Grid>

@@ -26,6 +26,8 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {updateRiskStatus} from "../../store/slices/risks/thunks";
 import {deleteUnagreedChats} from "../../store/slices/my-bids/thunks";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
+import { addNotification } from "../../store/slices/my-notifications/thunks";
+import { NotificationStatusEnum } from "../../enums/Notifications.enum";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -154,6 +156,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             setDetailsColor("red");
         }
         
+        
     }, [
         existingAgreement?.timeframe,
         existingAgreement?.evidence,
@@ -206,6 +209,18 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         details : z.string(),
     })
 
+    const handleNotificationsUpdate = async () => {
+        const recipient = activeChat?.riskTaker.uid === auth.currentUser?.uid ? activeChat?.riskProvider.uid : activeChat?.riskTaker.uid;
+        const chatroomId = activeChat?.id;
+        
+        const newNotification = {
+            message: "Agreement was updated",
+            chatroomId: chatroomId!,
+            status: NotificationStatusEnum.UNREAD
+            };
+        
+        dispatch(addNotification({uid: recipient, newNotification: newNotification}));
+    }
 
     const handleDataExtraction = async (e: any) => {
         const dataExtractionBot = new DataExtractionBot(risk, activeMessages);
@@ -277,7 +292,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         props.handleClose();
     }
 
-    const handleAffirmRiskAgreement = () => {
+    const handleAffirmRiskAgreement = async () => {
         if(activeChat){
 
             if (existingAgreement) {
@@ -312,7 +327,11 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     riskGiverApprovals: riskGiverApprovals,
                     riskTakerApprovals: riskTakerApprovals,
                 };
-                dispatch(updateMyRiskAgreement(updatedRiskAgreement));
+                dispatch(updateMyRiskAgreement(updatedRiskAgreement))
+
+                handleNotificationsUpdate();
+
+
             } else {
 
                 var riskGiverApprovals;
@@ -344,6 +363,8 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     riskTakerApprovals: riskTakerApprovals,
                 }
                 dispatch(addMyRiskAgreement(newRiskAgreement));
+
+    
             }
         }
 
