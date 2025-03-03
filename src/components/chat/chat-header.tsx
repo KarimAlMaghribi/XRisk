@@ -26,6 +26,10 @@ import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectOpposingProfile} from "../../store/slices/user-profile/selectors";
 import {RiskDisplayDialog} from "./risk-display-dialog";
 import {Risk} from "../../models/Risk";
+import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
+import {useSnackbarContext} from "../snackbar/custom-snackbar";
+import ToolTip from "@mui/material/Tooltip";
+import {CancelDealDialog} from "../my-risks/my-risk-row-details/deals-details/cancel-deal-dialog";
 
 export const ChatHeader = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -41,6 +45,8 @@ export const ChatHeader = () => {
     const [openProfile, setOpenProfile] = React.useState(false);
     const [opposingPublisherProfile, setOpposingPublisherProfile] = React.useState<Publisher | null>(null);
     const [openRiskDetails, setOpenRiskDetails] = React.useState(false);
+    const [openCancelDealDialog, setOpenCancelDealDialog] = React.useState(false);
+    const { showSnackbar } = useSnackbarContext();
 
     useEffect(() => {
         const mappedProfile: Publisher = {
@@ -77,6 +83,10 @@ export const ChatHeader = () => {
 
     const handleClose = () => {
         setOpenRiskAgreementCreationDialog(false);
+    }
+
+    const deleteChat = () => {
+        setOpenCancelDealDialog(true);
     }
 
     return (
@@ -135,9 +145,13 @@ export const ChatHeader = () => {
                                     startIcon={<HandshakeIcon/>}>
                                     <Trans i18nKey="chat.agreement"></Trans>
                                 </Button>
-                                <IconButton disabled={risk?.status === RiskStatusEnum.AGREEMENT || uid !== activeChat?.riskProvider?.uid}>
-                                    <NotInterestedIcon/>
-                                </IconButton>
+                                <ToolTip title="Verhandlung abbrechen" followCursor>
+                                    <IconButton
+                                        onClick={deleteChat}
+                                        disabled={risk?.status === RiskStatusEnum.AGREEMENT}>
+                                        <NotInterestedIcon/>
+                                    </IconButton>
+                                </ToolTip>
                             </Stack>
                         </Box>
                     </Box>
@@ -147,6 +161,9 @@ export const ChatHeader = () => {
             <RiskDisplayDialog open={openRiskDetails} setOpen={setOpenRiskDetails} risk={risk}/>
             <PublisherProfile open={openProfile} setOpen={setOpenProfile} publisher={opposingPublisherProfile}/>
             <MyRiskAgreementDialog open={openRiskAgreementCreationDialog} handleClose={handleClose}/>
+            {
+                activeChat && <CancelDealDialog open={openCancelDealDialog} setOpen={setOpenCancelDealDialog} chat={activeChat}/>
+            }
         </Box>
     )
 }

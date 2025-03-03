@@ -5,7 +5,8 @@ export enum ActionTypes {
     FETCH_MY_RISKS = "myRisks/fetchMyRisks",
     ADD_MY_RISK = "myRisks/addRisk",
     DELETE_MY_RISK = "myRisks/deleteRisk",
-    UPDATE_MY_RISK = "myRisks/updateRisk"
+    UPDATE_MY_RISK = "myRisks/updateRisk",
+    UPDATE_MY_RISK_STATUS = "myRisks/updateRiskStatus",
 }
 
 export interface MyRisksState {

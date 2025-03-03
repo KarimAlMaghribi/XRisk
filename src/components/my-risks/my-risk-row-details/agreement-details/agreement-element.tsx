@@ -18,7 +18,6 @@ export const AgreementElement = (props: AgreementElementProps) => {
         selectRiskAgreementByChatId(props.chat.id)
     );
 
-
     return (
         <Grid container>
             <Grid size={4}>

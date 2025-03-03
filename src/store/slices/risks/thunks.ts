@@ -1,6 +1,18 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {ActionTypes} from "./types";
-import {addDoc, collection, deleteDoc, getDocs, onSnapshot, query, updateDoc, where, writeBatch} from "firebase/firestore";
+import {
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    query, setDoc,
+    updateDoc,
+    where,
+    writeBatch
+} from "firebase/firestore";
 import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {RiskStatusEnum} from "../../../enums/RiskStatus.enum";
@@ -11,33 +23,38 @@ import {selectMyTakenRiskIds} from "../my-bids/selectors";
 import {RiskStatus} from "../../../types/RiskStatus";
 import {setRisks} from "./reducers";
 
-export let risksUnsubscribe: (() => void) | null = null;
-
-export const subscribeToRisks = createAsyncThunk<void, void, { rejectValue: string }>(
+export const subscribeToRisks = createAsyncThunk<
+    () => (() => void) | void,
+    void,
+    { rejectValue: string }
+>(
     "risks/subscribeToRisks",
     async (_, { dispatch, rejectWithValue }) => {
         try {
-            if (risksUnsubscribe) {
-                risksUnsubscribe();
-                risksUnsubscribe = null;
-            }
             const risksRef = collection(db, FirestoreCollectionEnum.RISKS);
             const q = query(
                 risksRef,
                 where("status", "in", [
                     RiskStatusEnum.PUBLISHED,
                     RiskStatusEnum.DEAL,
-                    RiskStatusEnum.AGREEMENT
+                    RiskStatusEnum.AGREEMENT,
                 ])
             );
 
-            risksUnsubscribe = onSnapshot(q, (snapshot) => {
-                const risks = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                })) as Risk[];
-                dispatch(setRisks(risks));
-            });
+            const unsubscribe = onSnapshot(
+                q,
+                (snapshot) => {
+                    const risks = snapshot.docs.map((doc) => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    })) as Risk[];
+                    dispatch(setRisks(risks));
+                },
+                (error) => {
+                    console.error("Error subscribing to risks:", error);
+                }
+            );
+            return unsubscribe;
         } catch (error) {
             return rejectWithValue("Error subscribing to risks");
         }
@@ -161,34 +178,38 @@ export const addRiskType = createAsyncThunk(
 
 export const addRisk = createAsyncThunk(
     ActionTypes.ADD_RISK,
-    async (riskToPublish: Omit<Risk, "id">, {rejectWithValue}) => {
+    async (riskToPublish: Risk, { rejectWithValue }) => {
         try {
             const user = auth.currentUser;
-
             if (!user) {
-                return rejectWithValue("User not authenticated")
+                return rejectWithValue("User not authenticated");
             }
-
             if (!riskToPublish.publisher?.name || !riskToPublish.publisher?.imagePath) {
                 return rejectWithValue("Publisher information missing");
             }
 
             const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const riskDocRef = doc(risksCollection, riskToPublish.id);
 
-            const docRef = await addDoc(risksCollection, {
+            const existingRiskSnapshot = await getDoc(riskDocRef);
+            if (existingRiskSnapshot.exists()) {
+                console.error("Risk already exists with id:", riskToPublish.id);
+                return rejectWithValue("Risk already exists");
+            }
+
+            await setDoc(riskDocRef, {
                 ...riskToPublish,
                 publishedAt: new Date().toISOString(),
-                uid: user.uid
+                uid: user.uid,
             });
 
-            return {id: docRef.id, ...riskToPublish} as Risk;
-
+            return riskToPublish;
         } catch (error) {
-            console.error("Error adding risk-overview: ", error);
+            console.error("Error adding risk:", error);
             return rejectWithValue(error);
         }
     }
-)
+);
 
 export const updateRisk = createAsyncThunk(
     ActionTypes.UPDATE_RISK,

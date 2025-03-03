@@ -25,7 +25,7 @@ export const FilterBar = (props: FilterbarProps) => {
         if (risk.description) acc.push(risk.description);
         if (risk.value) acc.push(risk.value.toString());
         if (risk.status) acc.push(mapStatus(risk.status));
-        if (risk.declinationDate) acc.push(risk.declinationDate);
+        if (risk.declinationDate) acc.push(new Date(risk.declinationDate).toLocaleDateString());
         return acc;
     }, []);
 

@@ -286,7 +286,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                             size="small"
                                             startIcon={<InterpreterModeIcon/>}
                                             sx={{marginLeft: "10px"}}>
-                                            Besprechen
+                                            Kontaktieren
                                         </Button>
                                     }
 

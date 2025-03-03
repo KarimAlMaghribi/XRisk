@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
@@ -24,6 +24,7 @@ import {PaperComponent} from "../../ui/draggable-dialog";
 import { Trans, useTranslation } from "react-i18next";
 import i18next from "i18next";
 
+import {formatEuro} from "../my-risk-row-details/agreement-details/agreement-table";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -32,6 +33,7 @@ export interface RiskCreationDialogProps {
 
 export const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, ref) {
     const {onChange, ...other} = props;
+
     return (
         <NumericFormat
             {...other}
@@ -62,12 +64,30 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const userProfile: UserProfile = useSelector(selectUserProfile);
 
     const t = i18next.t;
+    const [pushedCreateButton, setPushedCreateButton] = useState<boolean>(false);
+
+    const descriptionLength: number = 5;
+    const maxValue: number = 100000000;
+
+    const [nameError, setNameError] = useState<boolean>(false);
+    const [descriptionError, setDescriptionError] = useState<boolean>(false);
+    const [valueError, setValueError] = useState<boolean>(false);
+    const [riskTypeError, setRiskTypeError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (pushedCreateButton) {
+            setNameError(name.length === 0);
+            setDescriptionError(description.length <= descriptionLength);
+            setValueError(value > maxValue || value < 0);
+            setRiskTypeError(riskType.length === 0);
+        }
+    }, [name, description, value, riskType, pushedCreateButton]);
 
     const handleValueChange = (newValue: number) => {
         if (!isNaN(newValue)) {
             setValue(newValue);
         }
-    }
+    };
 
     const handleClose = () => {
         setName('');
@@ -75,10 +95,27 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
         setRiskType([]);
         setValue(0);
         setDate(dayjs().add(1, "month"));
+        setPushedCreateButton(false);
+        setNameError(false);
+        setDescriptionError(false);
+        setValueError(false);
+        setRiskTypeError(false);
         props.handleClose();
-    }
+    };
 
     const handleCreateRisk = () => {
+        setPushedCreateButton(true);
+
+        if (
+            name.length === 0 ||
+            description.length <= descriptionLength ||
+            value > maxValue ||
+            value < 0 ||
+            riskType.length === 0
+        ) {
+            return;
+        }
+
         const newRisk: Risk = {
             id: uuidv4(),
             createdAt: new Date().toISOString(),
@@ -92,12 +129,12 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 name: userProfile.profile.name,
             },
             declinationDate: date?.toISOString() || 'kein Ablaufdatum',
-        }
+        };
 
         dispatch(addMyRisk(newRisk));
         navigate(`/${ROUTES.MY_RISKS}`);
         handleClose();
-    }
+    };
 
     return (
         <Dialog
@@ -121,7 +158,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     top: 8,
                     color: theme.palette.grey[500],
                 })}>
-                <CloseIcon/>
+                <CloseIcon />
             </IconButton>
 
             <DialogContent>
@@ -157,6 +194,8 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     rows={4}
                 />
                 <RiskTypeSelector
+                    riskTypeError={riskTypeError}
+                    setRiskTypeError={setRiskTypeError}
                     textFieldVariant="outlined"
                     value={riskType}
                     setValue={setRiskType}
@@ -169,7 +208,9 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     fullWidth
                     label={`${t("terms.insurance_sum")}`}
                     value={value}
-                    onChange={(event) => handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
+                    onChange={(event) =>
+                        handleValueChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))
+                    }
                     name="value"
                     id="value"
                     InputProps={{
@@ -178,7 +219,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{marginTop: "10px", width: "100%"}}
+                        sx={{ marginTop: "10px", width: "100%" }}
                         format="DD.MM.YYYY"
                         label={`${t("define_risk.end_of_term")}`}
                         value={date}
@@ -205,6 +246,6 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 </Button>
             </DialogActions>
         </Dialog>
-    )
+    );
+};
 
-}

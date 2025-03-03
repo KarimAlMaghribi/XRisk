@@ -111,7 +111,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
         try {
             dispatch(
                 updateProfile({
-                    imagePath: imagePath || userProfile.profile.imagePath,
+                    imagePath: imagePath || userProfile.profile.imagePath || "",
                     email,
                     name,
                     gender,
