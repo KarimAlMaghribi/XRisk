@@ -1,9 +1,10 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import {MyNotificationsState} from "./types";
 import {Notification} from "../../../models/Notification";
-import { fetchNotifications, addNotification, markAsRead } from "./thunks";
+import { fetchNotifications, addNotification } from "./thunks";
 import { NotificationStatusEnum } from "../../../enums/Notifications.enum";
+
 
 const initialState: MyNotificationsState = {
     notifications: [],
@@ -15,13 +16,17 @@ const initialState: MyNotificationsState = {
 
 // Notification Slice
 const notificationsSlice = createSlice({
-    name: "notifications",
+    name: "notification",
     initialState: {
       list: [] as Notification[],
       loading: false,
       error: null as string | null,
     },
-    reducers: {},
+    reducers: {
+      setNotifications(state, action: PayloadAction<Notification[]>) {
+        state.list = action.payload;
+    },
+    },
     extraReducers: (builder) => {
       builder
         .addCase(fetchNotifications.pending, (state) => {
@@ -38,14 +43,15 @@ const notificationsSlice = createSlice({
         .addCase(addNotification.fulfilled, (state, action) => {
           state.list.push(action.payload);
         })
-        .addCase(markAsRead.fulfilled, (state, action) => {
-          const notification = state.list.find((n) => n.id === action.payload.id);
-          if (notification) {
-            notification.status = NotificationStatusEnum.READ;
-          }
-        });
+        // .addCase(markAsRead.fulfilled, (state, action) => {
+        //   const notification = state.list.find((n) => n.id === action.payload.id);
+        //   if (notification) {
+        //     notification.status = NotificationStatusEnum.READ;
+        //   }
+        //});
     },
   });
   
 
 export default notificationsSlice.reducer;
+export const {setNotifications} = notificationsSlice.actions;

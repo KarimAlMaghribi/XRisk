@@ -28,6 +28,7 @@ import {deleteUnagreedChats} from "../../store/slices/my-bids/thunks";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import { addNotification } from "../../store/slices/my-notifications/thunks";
 import { NotificationStatusEnum } from "../../enums/Notifications.enum";
+import { Timestamp } from "firebase/firestore";
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -214,9 +215,10 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         const chatroomId = activeChat?.id;
         
         const newNotification = {
-            message: "Agreement was updated",
+            message: `${activeChat?.topic} agreement was updated by ${auth.currentUser?.displayName}`,
             chatroomId: chatroomId!,
-            status: NotificationStatusEnum.UNREAD
+            status: NotificationStatusEnum.UNREAD,
+            createdAt: Timestamp.now()
             };
         
         dispatch(addNotification({uid: recipient, newNotification: newNotification}));

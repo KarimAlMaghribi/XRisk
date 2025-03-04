@@ -15,7 +15,7 @@ export const store = configureStore({
         myRiskAgreements: myRiskAgreementsReducer,
         risks: riskOverviewReducer,
         userProfile: userProfilesReducer,
-        notification: notificationReducer
+        notifications: notificationReducer
     },
     devTools: true
 });
