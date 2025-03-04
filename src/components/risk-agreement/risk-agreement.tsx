@@ -20,7 +20,7 @@ import { z } from "zod";
 import { selectActiveRiskAgreement } from "../../store/slices/my-risk-agreements/selectors";
 import { auth } from "../../firebase_config";
 import ToolTip from '@mui/material/Tooltip';
-import { doc, collection, onSnapshot } from "firebase/firestore";
+import { doc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { db } from "../../firebase_config";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {updateRiskStatus} from "../../store/slices/risks/thunks";
@@ -212,13 +212,14 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
 
     const handleNotificationsUpdate = async () => {
         const recipient = activeChat?.riskTaker.uid === auth.currentUser?.uid ? activeChat?.riskProvider.uid : activeChat?.riskTaker.uid;
+        const senderName = activeChat?.riskTaker.uid !== auth.currentUser?.uid ? activeChat?.riskProvider.name : activeChat?.riskTaker.name;
         const chatroomId = activeChat?.id;
         
         const newNotification = {
-            message: `${activeChat?.topic} agreement was updated by ${auth.currentUser?.displayName}`,
+            message: `${activeChat?.topic} agreement was updated by ${senderName}`,
             chatroomId: chatroomId!,
             status: NotificationStatusEnum.UNREAD,
-            createdAt: Timestamp.now()
+            createdAt: serverTimestamp()
             };
         
         dispatch(addNotification({uid: recipient, newNotification: newNotification}));
