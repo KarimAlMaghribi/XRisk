@@ -88,9 +88,9 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
   const [costsColor, setCostsColor] = useState("grey");
   const [detailsColor, setDetailsColor] = useState("grey");
 
-    const [agreement, SetAgreement] = useState(false);
+  const [agreement, setAgreement] = useState(false);
 
-    const [affirmation, SetAffirmation] = useState(false);
+  const [affirmation, SetAffirmation] = useState(false);
 
   const previousAgreementRef = useRef<RiskAgreement | null>(null); // Store previous agreeme
 
@@ -315,8 +315,8 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         if (!isNaN(newCostsNumber)) {
             setCosts(newCostsNumber);
         }
-    }
-  };
+    };
+  
 
     const handleInsuranceSumChange = (newInsuranceSum: string | undefined) => {
         if (!newInsuranceSum) {
@@ -327,14 +327,12 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         if (!isNaN(newInsuranceSumNumber)) {
             setInsuranceSum(newInsuranceSumNumber);
         }
-    }
-  };
+    };
 
   const handleDetailsChange = (newDetails: string) => {
     if (riskDetails !== newDetails) {
       setRiskDetails(newDetails);
-    }
-  };
+    };
 
   const handleClose = () => {
     props.handleClose();
@@ -636,7 +634,7 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     Automatisch füllen
                 </Button>
                 <Button
-                    disabled={insuranceSumRequiredError || costsRequiredError}
+                    /*disabled={insuranceSumRequiredError || costsRequiredError}*/
                     variant="contained"
                     onClick={handleAffirmRiskAgreement}>
                     Bestätigen
@@ -649,5 +647,5 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             </DialogActions>
         </Dialog>
     )
-
+    }
 }
