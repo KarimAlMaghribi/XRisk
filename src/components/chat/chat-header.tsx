@@ -30,6 +30,7 @@ import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import ToolTip from "@mui/material/Tooltip";
 import {CancelDealDialog} from "../my-risks/my-risk-row-details/deals-details/cancel-deal-dialog";
+import ProcessStepper from "../risk-agreement/risk-agreement-stepper/Stepper";
 
 export const ChatHeader = () => {
     const dispatch: AppDispatch = useDispatch();
