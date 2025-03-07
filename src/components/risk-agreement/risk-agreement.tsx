@@ -1,17 +1,31 @@
-import React, {useEffect, useState, useRef} from "react";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import Button from "@mui/material/Button";
-import {NumericFormat} from 'react-number-format';
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch} from "../../store/store";
-import {v4 as uuidv4} from 'uuid';
-import {useNavigate} from "react-router-dom";
-import {ROUTES} from "../../routing/routes";
-import {RiskAgreement} from "../../models/RiskAgreement";
-import {addMyRiskAgreement, updateMyRiskAgreement} from "../../store/slices/my-risk-agreements/thunks";
-import {Risk} from "../../models/Risk";
+import { NumericFormat } from "react-number-format";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../store/store";
+import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../routing/routes";
+import { RiskAgreement } from "../../models/RiskAgreement";
+import {
+  addMyRiskAgreement,
+  updateMyRiskAgreement,
+} from "../../store/slices/my-risk-agreements/thunks";
+import { Risk } from "../../models/Risk";
 import OpenAI from "openai";
-import { selectActiveChat, selectActiveMessages, selectRiskId } from "../../store/slices/my-bids/selectors";
+import {
+  selectActiveChat,
+  selectActiveMessages,
+  selectRiskId,
+} from "../../store/slices/my-bids/selectors";
 import { Chat, ChatMessage } from "../../store/slices/my-bids/types";
 import { selectRisks } from "../../store/slices/risks/selectors";
 import { DataExtractionBot } from "../../extraction/DataExtractionBot";
@@ -19,45 +33,53 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
 import { selectActiveRiskAgreement } from "../../store/slices/my-risk-agreements/selectors";
 import { auth } from "../../firebase_config";
-import ToolTip from '@mui/material/Tooltip';
-import { doc, collection, onSnapshot, serverTimestamp } from "firebase/firestore";
+import ToolTip from "@mui/material/Tooltip";
+import {
+  doc,
+  collection,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../../firebase_config";
-import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
-import {updateRiskStatus} from "../../store/slices/risks/thunks";
-import {deleteUnagreedChats} from "../../store/slices/my-bids/thunks";
-import {useSnackbarContext} from "../snackbar/custom-snackbar";
+import { RiskStatusEnum } from "../../enums/RiskStatus.enum";
+import { updateRiskStatus } from "../../store/slices/risks/thunks";
+import { deleteUnagreedChats } from "../../store/slices/my-bids/thunks";
+import { useSnackbarContext } from "../snackbar/custom-snackbar";
 import { addNotification } from "../../store/slices/my-notifications/thunks";
 import { NotificationStatusEnum } from "../../enums/Notifications.enum";
 import { Timestamp } from "firebase/firestore";
 
 export interface RiskAgreementDialogProps {
-    open: boolean;
-    handleClose: () => void;
+  open: boolean;
+  handleClose: () => void;
 }
 
-const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props: any, ref) {
-    const {onChange, ...other} = props;
-    return (
-        <NumericFormat
-            {...other}
-            getInputRef={ref}
-            onValueChange={(values: any) => {
-                onChange({
-                    target: {
-                        value: values.value,
-                        name: props.name
-                    }
-                });
-            }}
-            thousandSeparator="."
-            decimalSeparator=","
-            prefix="€ "
-        />
-    );
+const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(
+  props: any,
+  ref
+) {
+  const { onChange, ...other } = props;
+  return (
+    <NumericFormat
+      {...other}
+      getInputRef={ref}
+      onValueChange={(values: any) => {
+        onChange({
+          target: {
+            value: values.value,
+            name: props.name,
+          },
+        });
+      }}
+      thousandSeparator="."
+      decimalSeparator=","
+      prefix="€ "
+    />
+  );
 });
 
 export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
-    const dispatch: AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const [costs, setCosts] = useState<number>(0);
   const [timeframe, setTimeframe] = useState<string>("");
@@ -175,49 +197,45 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
       setInsuranceSumColor("red");
     }
 
-        if ((!(existingAgreement?.riskGiverApprovals.details) || !(existingAgreement?.riskTakerApprovals.details))){
-            setDetailsColor("red");
-        }
-        
+    if (
+      !existingAgreement?.riskGiverApprovals.details ||
+      !existingAgreement?.riskTakerApprovals.details
+    ) {
+      setDetailsColor("red");
+    }
+  }, [
+    existingAgreement?.timeframe,
+    existingAgreement?.evidence,
+    existingAgreement?.costs,
+    existingAgreement?.insuranceSum,
+    existingAgreement?.details,
+    existingAgreement?.riskGiverApprovals.costs,
+    existingAgreement?.riskGiverApprovals.details,
+    existingAgreement?.riskGiverApprovals.evidence,
+    existingAgreement?.riskGiverApprovals.insuranceSum,
+    existingAgreement?.riskGiverApprovals.timeframe,
+    existingAgreement?.riskTakerApprovals.costs,
+    existingAgreement?.riskTakerApprovals.details,
+    existingAgreement?.riskTakerApprovals.evidence,
+    existingAgreement?.riskTakerApprovals.insuranceSum,
+    existingAgreement?.riskTakerApprovals.timeframe,
+  ]);
 
-    }, [
-        existingAgreement?.timeframe,
-        existingAgreement?.evidence,
-        existingAgreement?.costs,
-        existingAgreement?.insuranceSum,
-        existingAgreement?.details,
-        existingAgreement?.riskGiverApprovals.costs,
-        existingAgreement?.riskGiverApprovals.details,
-        existingAgreement?.riskGiverApprovals.evidence,
-        existingAgreement?.riskGiverApprovals.insuranceSum,
-        existingAgreement?.riskGiverApprovals.timeframe,
-        existingAgreement?.riskTakerApprovals.costs,
-        existingAgreement?.riskTakerApprovals.details,
-        existingAgreement?.riskTakerApprovals.evidence,
-        existingAgreement?.riskTakerApprovals.insuranceSum,
-        existingAgreement?.riskTakerApprovals.timeframe,
-    ]);
-    
-    
-    
-    
-    
-    React.useEffect(() => {
-        if (existingAgreement) {
-            setCosts(existingAgreement.costs);
-            setTimeframe(existingAgreement.timeframe);
-            setEvidence(existingAgreement.evidence);
-            setInsuranceSum(existingAgreement.insuranceSum);
-            setRiskDetails(existingAgreement.details);
-        }
-        else {
-            setCosts(0);
-            setTimeframe('');
-            setEvidence('');
-            setInsuranceSum(risk?.value || 0);
-            setRiskDetails('');
-        }
-    }, [existingAgreement]);
+  React.useEffect(() => {
+    if (existingAgreement) {
+      setCosts(existingAgreement.costs);
+      setTimeframe(existingAgreement.timeframe);
+      setEvidence(existingAgreement.evidence);
+      setInsuranceSum(existingAgreement.insuranceSum);
+      setRiskDetails(existingAgreement.details);
+    } else {
+      setCosts(0);
+      setTimeframe("");
+      setEvidence("");
+      setInsuranceSum(risk?.value || 0);
+      setRiskDetails("");
+    }
+  }, [existingAgreement]);
 
   //data extraction
 
@@ -235,20 +253,28 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     details: z.string(),
   });
 
-    const handleNotificationsUpdate = async () => {
-        const recipient = activeChat?.riskTaker.uid === auth.currentUser?.uid ? activeChat?.riskProvider.uid : activeChat?.riskTaker.uid;
-        const senderName = activeChat?.riskTaker.uid !== auth.currentUser?.uid ? activeChat?.riskProvider.name : activeChat?.riskTaker.name;
-        const chatroomId = activeChat?.id;
+  const handleNotificationsUpdate = async () => {
+    const recipient =
+      activeChat?.riskTaker.uid === auth.currentUser?.uid
+        ? activeChat?.riskProvider.uid
+        : activeChat?.riskTaker.uid;
+    const senderName =
+      activeChat?.riskTaker.uid !== auth.currentUser?.uid
+        ? activeChat?.riskProvider.name
+        : activeChat?.riskTaker.name;
+    const chatroomId = activeChat?.id;
 
-        const newNotification = {
-            message: `${activeChat?.topic} agreement was updated by ${senderName}`,
-            chatroomId: chatroomId!,
-            status: NotificationStatusEnum.UNREAD,
-            createdAt: serverTimestamp()
-            };
+    const newNotification = {
+      message: `${activeChat?.topic} agreement was updated by ${senderName}`,
+      chatroomId: chatroomId!,
+      status: NotificationStatusEnum.UNREAD,
+      createdAt: serverTimestamp(),
+    };
 
-        dispatch(addNotification({uid: recipient, newNotification: newNotification}));
-    }
+    dispatch(
+      addNotification({ uid: recipient, newNotification: newNotification })
+    );
+  };
 
   const handleDataExtraction = async (e: any) => {
     const dataExtractionBot = new DataExtractionBot(risk, activeMessages);
@@ -406,7 +432,6 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         };
         dispatch(updateMyRiskAgreement(updatedRiskAgreement));
         handleNotificationsUpdate();
-
       } else {
         var riskGiverApprovals;
         var riskTakerApprovals;
@@ -467,8 +492,8 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
       }
     }
 
-        //handleClose();
-    }
+    //handleClose();
+  };
 
   const handleComingToTherms = () => {
     if (!existingAgreement) {
@@ -502,12 +527,10 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
       deleteUnagreedChats({ riskId: riskId, chatId: existingAgreement.chatId })
     );
 
-        // remove risk from riskOverview
-        // Grey out Riskargreement Infos and Buttons
-        // move to my-risks/geeinigt
-
-
-    }
+    // remove risk from riskOverview
+    // Grey out Riskargreement Infos and Buttons
+    // move to my-risks/geeinigt
+  };
 
   return (
     <Dialog open={props.open} onClose={props.handleClose}>
