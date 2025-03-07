@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import {NumericFormat} from 'react-number-format';
 import {useDispatch, useSelector} from "react-redux";
@@ -16,7 +16,7 @@ import { Chat, ChatMessage } from "../../store/slices/my-bids/types";
 import { selectRisks } from "../../store/slices/risks/selectors";
 import { DataExtractionBot } from "../../extraction/DataExtractionBot";
 import { zodResponseFormat } from "openai/helpers/zod";
-import { z } from "zod";
+import { number, z } from "zod";
 import { selectActiveRiskAgreement } from "../../store/slices/my-risk-agreements/selectors";
 import { auth } from "../../firebase_config";
 import ToolTip from '@mui/material/Tooltip';
@@ -29,6 +29,12 @@ import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import { addNotification } from "../../store/slices/my-notifications/thunks";
 import { NotificationStatusEnum } from "../../enums/Notifications.enum";
 import { Timestamp } from "firebase/firestore";
+import {Accordion, AccordionSummary, AccordionDetails} from "@mui/material";
+import { Trans, useTranslation } from "react-i18next";
+import { Typography } from "@mui/material/styles/createTypography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandableTextField from "./expandable-textfield";
+
 
 export interface RiskAgreementDialogProps {
     open: boolean;
@@ -85,11 +91,17 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
     const [costsColor, setCostsColor] = useState("grey");
     const [detailsColor, setDetailsColor] = useState("grey");
 
+
+
     const [agreement, SetAgreement] = useState(false);
+
+    const [affirmation, SetAffirmation] = useState(false);
 
     const previousAgreementRef = useRef<RiskAgreement | null>(null); // Store previous agreeme
 
     const { showSnackbar } = useSnackbarContext();
+
+
 
     const checkEquality = () => {
         let checkValid : boolean = true;
@@ -157,6 +169,12 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
             setDetailsColor("red");
         }
         
+        // Check whose turn it is
+        let currentUser = (auth.currentUser?.uid === existingAgreement?.riskGiverId) ? "riskGiver" : "riskTaker";
+
+        if (currentUser === "riskGiver"){
+            
+        }
         
     }, [
         existingAgreement?.timeframe,
@@ -273,15 +291,25 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
         setEvidence(newEvidence);
     }
 
-    const handleCostsChange = (newCosts: number) => {
-        if(!isNaN(newCosts)){
-            setCosts(newCosts);
+    const handleCostsChange = (newCosts: string | undefined) => {
+        if (!newCosts) {
+            return; // Exit function if undefined or null
+        }
+    
+        let newCostsNumber = Number(newCosts.replace(/€\s?|(,*)/g, ''));
+        if (!isNaN(newCostsNumber)) {
+            setCosts(newCostsNumber);
         }
     }
 
-    const handleInsuranceSumChange = (newInsuranceSum: number) => {
-        if(!isNaN(newInsuranceSum)){
-            setInsuranceSum(newInsuranceSum);
+    const handleInsuranceSumChange = (newInsuranceSum: string | undefined) => {
+        if (!newInsuranceSum) {
+            return; // Exit function if undefined or null
+        }
+    
+        let newInsuranceSumNumber = Number(newInsuranceSum.replace(/€\s?|(,*)/g, ''));
+        if (!isNaN(newInsuranceSumNumber)) {
+            setInsuranceSum(newInsuranceSumNumber);
         }
     }
 
@@ -454,89 +482,53 @@ export const MyRiskAgreementDialog = (props: RiskAgreementDialogProps) => {
                     name="riskTaker"
                     id="riskTaker"
                 />
-                <TextField
-                    margin="dense"
-                    fullWidth
+                <ExpandableTextField 
+                    name = "timeframe"
+                    id = "timeframe"
                     label="Zeitspanne"
                     value={timeframe}
-                    onChange={(event) => handleTimeframeChange(event.target.value)}
-                    name="timeFrame"
-                    id="timeFrame"
-                    sx={{
-                        input: { color: "black" }, // Change text color
-                        "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: timeframeColor }, // Change border color
-                        },
-                    }}
+                    borderColor={timeframeColor}
+                    handlerFunction={handleTimeframeChange}
                 />
-                <TextField
-                    margin="dense"
-                    fullWidth
+                <ExpandableTextField 
+                    name = "evidence"
+                    id = "evidence"
                     label="Beweismittel"
                     value={evidence}
-                    onChange={(event) => handleEvidenceChange(event.target.value)}
-                    name="evidence"
-                    id="evidence"
-                    sx={{
-                        input: { color: "black" }, // Change text color
-                        "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: evidenceColor }, // Change border color
-                        },
-                    }}
+                    borderColor={evidenceColor}
+                    handlerFunction={handleEvidenceChange}
                 />
-                <TextField
-                    margin="dense"
-                    fullWidth
-                    label="Kosten"
-                    color="secondary"
-                    value={costs}
-                    onChange={(event) => handleCostsChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
-                    name="costs"
-                    id="costs"
-                    InputProps={{
-                        inputComponent: EuroNumberFormat,
-                    }}
-                    sx={{
-                        input: { color: "black" }, // Change text color
-                        "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: costsColor }, // Change border color
-                        },
-                    }}
+                <ExpandableTextField 
+                name = "costs"
+                id = "costs"
+                label="Kosten"
+                value={costs}
+                borderColor={costsColor}
+                handlerFunction={handleCostsChange}
+                inputProps={{
+                    inputComponent: EuroNumberFormat,
+                }}
                 />
-                <TextField
-                    margin="dense"
-                    fullWidth
+                <ExpandableTextField 
+                    name = "insuranceSum"
+                    id = "insuranceSum"
                     label="Absicherungssumme"
                     value={insuranceSum}
-                    onChange={(event) => handleInsuranceSumChange(Number(event.target.value.replace(/€\s?|(,*)/g, '')))}
-                    name="insuranceSum"
-                    id="insuranceSum"
-                    InputProps={{
+                    borderColor={insuranceSumColor}
+                    handlerFunction={handleInsuranceSumChange}
+                    inputProps={{
                         inputComponent: EuroNumberFormat,
                     }}
-                    sx={{
-                        input: { color: "black" }, // Change text color
-                        "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: insuranceSumColor }, // Change border color
-                        },
-                    }}
-                    
                 />
-                <TextField
-                    margin="dense"
-                    fullWidth
+                <ExpandableTextField 
+                    name = "details"
+                    id = "details"
                     label="Sonstige Anmerkungen"
                     value={riskDetails}
-                    onChange={(event) => handleDetailsChange(event.target.value)}
-                    name="details"
-                    id="details"
-                    sx={{
-                        input: { color: "black" }, // Change text color
-                        "& .MuiOutlinedInput-root": {
-                            "& fieldset": { borderColor: detailsColor }, // Change border color
-                        },
-                    }}
+                    borderColor={detailsColor}
+                    handlerFunction={handleDetailsChange}
                 />
+
             </DialogContent>
             <DialogActions>
                 <Button
