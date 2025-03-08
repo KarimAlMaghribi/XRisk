@@ -4,15 +4,14 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import {Chat} from "../../../../store/slices/my-bids/types";
-import {deleteChatById} from "../../../../store/slices/my-bids/thunks";
+import {deleteChatById, fetchChatCountByRiskId} from "../../../../store/slices/my-bids/thunks";
 import {AppDispatch, store} from "../../../../store/store";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {useSnackbarContext} from "../../../snackbar/custom-snackbar";
 import {auth} from "../../../../firebase_config";
 import {RiskStatusEnum} from "../../../../enums/RiskStatus.enum";
-import {selectChats} from "../../../../store/slices/my-bids/selectors";
-import {updateMyRiskStatus} from "../../../../store/slices/my-risks/thunks";
-import {updateRisk, updateRiskStatus} from "../../../../store/slices/risks/thunks";
+import {deleteMyRisk, updateMyRiskStatus} from "../../../../store/slices/my-risks/thunks";
+import {updateRiskStatus} from "../../../../store/slices/risks/thunks";
 
 export interface CancelDealDialogProps {
     open: boolean;
@@ -25,34 +24,35 @@ export const CancelDealDialog = (props: CancelDealDialogProps) => {
     const dispatch: AppDispatch = useDispatch();
     const {showSnackbar} = useSnackbarContext();
 
-    const handleAbort = async () => {
+    const handleDealAbortion = async () => {
         await dispatch(deleteChatById(props.chat.id));
 
         if (!uid) {
             console.error("User is not authenticated. Could not update myRisk status.");
         }
 
-        const state = store.getState();
-        const updatedChats: Chat[] = state.myBids.chats;
-        const chatCount: number = updatedChats.filter(chat => chat.riskId === props.chat.riskId).length;
+        const resultAction = await dispatch(fetchChatCountByRiskId(props.chat.riskId));
+        if (fetchChatCountByRiskId.fulfilled.match(resultAction)) {
+            const chatCount = resultAction.payload;
+            if (chatCount === 0) {
+                await dispatch(updateRiskStatus({ id: props.chat.riskId, status: RiskStatusEnum.PUBLISHED}));
 
-        // if you provided the risks and there are no chats left, myRisk status should be set to PUBLISHED again
-        if (props.chat.riskProvider?.uid === uid && chatCount === 0) {
-            await dispatch(updateRiskStatus({
-                id: props.chat.riskId,
-                status: RiskStatusEnum.PUBLISHED
-            }));
-
-            await dispatch(updateMyRiskStatus({
-                riskId: props.chat.riskId,
-                status: RiskStatusEnum.PUBLISHED
-            }));
+                if (props.chat.riskProvider?.uid === uid) { // if you are the provider, the risk will change its status to published
+                    await dispatch(updateMyRiskStatus({ riskId: props.chat.riskId, status: RiskStatusEnum.PUBLISHED }));
+                } else { // if you are the taker, the risk will disappear from your list
+                    await dispatch(deleteMyRisk(props.chat.riskId));
+                }
+            } else {
+                await dispatch(deleteMyRisk(props.chat.riskId));
+            }
+        } else {
+            console.error("Fehler beim Abrufen der Chat-Anzahl.");
         }
 
         props.setOpen(false);
         showSnackbar(
             "Verhandlung abgebrochen!",
-            "Die Verhandlung wurde erfolgreich abgebrochen.",
+            `Die Verhandlung mit ${props.chat.riskTaker.uid === uid ? props.chat.riskProvider.name : props.chat.riskTaker.name} wurde erfolgreich abgebrochen.`,
             {vertical: "top", horizontal: "center"},
             "success"
         );
@@ -91,7 +91,7 @@ export const CancelDealDialog = (props: CancelDealDialogProps) => {
                 </Typography>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleAbort} variant="contained">Ja</Button>
+                <Button onClick={handleDealAbortion} variant="contained">Ja</Button>
                 <Button onClick={() => props.setOpen(false)} variant="outlined">Nein</Button>
             </DialogActions>
         </Dialog>

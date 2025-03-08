@@ -30,6 +30,11 @@ import {MyRiskRowDetails} from "./my-risk-row-details/my-risk-row-details";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import {MyRiskDeletionDialog} from "./deletion-dialog/deletion-dialog";
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import NotInterestedIcon from "@mui/icons-material/NotInterested";
+import ToolTip from "@mui/material/Tooltip";
+import {CancelDealDialog} from "./my-risk-row-details/deals-details/cancel-deal-dialog";
+import {Chat} from "../../store/slices/my-bids/types";
+import {selectChatByRiskId, selectChatsByRiskId} from "../../store/slices/my-bids/selectors";
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -49,6 +54,8 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
     const [noImageError, setNoImageError] = React.useState(false);
     const [openDeletionDialog, setOpenDeletionDialog] = React.useState(false);
     const [expanded, setExpanded] = React.useState(false);
+    const [openCancelDealDialog, setOpenCancelDealDialog] = React.useState(false);
+    const riskRelatedChat: Chat | undefined = useSelector(selectChatByRiskId(props.risk.id));
 
     useEffect(() => {
         if (noAddressError) {
@@ -162,6 +169,9 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         setOpenDeletionDialog(true);
     }
 
+    const cancelDeal = () => {
+        setOpenCancelDealDialog(true);
+    };
 
     const deletionIsDisabled =
         props.risk.status === RiskStatusEnum.PUBLISHED ||
@@ -254,15 +264,20 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             {
                                 props.taken && (
                                     <Box display="flex" justifyContent="flex-end" gap="5px">
-                                        <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={props.risk.status === RiskStatusEnum.AGREEMENT ? <InterpreterModeIcon/> : <SignLanguageIcon />}>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => handleDeal(props.risk)}
+                                            size="small"
+                                            endIcon={props.risk.status === RiskStatusEnum.AGREEMENT ? <InterpreterModeIcon/> : <SignLanguageIcon />}>
                                             {props.risk.status === RiskStatusEnum.AGREEMENT ? "Kontaktieren" : "Verhandeln"}
                                         </Button>
-                                        {
-                                            props.risk.status === RiskStatusEnum.AGREEMENT &&
-                                            <Button variant="outlined" onClick={(e) => handleReportDamage(e, props.risk)} endIcon={<FeedbackIcon />} color="error">
-                                                Schaden melden
-                                            </Button>
-                                        }
+                                        <ToolTip title="Verhandlung abbrechen" followCursor>
+                                            <IconButton
+                                                onClick={cancelDeal}
+                                                disabled={props.risk.status === RiskStatusEnum.AGREEMENT}>
+                                                <NotInterestedIcon/>
+                                            </IconButton>
+                                        </ToolTip>
                                     </Box>
                                 )
                             }
@@ -303,15 +318,28 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                         </Button>
                                     }
 
-                                    <Button
-                                        variant="outlined"
-                                        disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
-                                        onClick={() => setOpenRiskEditDialog(true)}
-                                        size="small"
-                                        startIcon={<EditIcon/>}
-                                        sx={{marginLeft: "10px"}}>
-                                        Bearbeiten
-                                    </Button>
+                                    {
+                                        props.risk.status !== RiskStatusEnum.AGREEMENT
+                                            ?   <Button
+                                                    variant="outlined"
+                                                    disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
+                                                    onClick={() => setOpenRiskEditDialog(true)}
+                                                    size="small"
+                                                    startIcon={<EditIcon/>}
+                                                    sx={{marginLeft: "10px"}}>
+                                                    Bearbeiten
+                                                </Button>
+                                            :   <Button
+                                                    style={{marginLeft: "5px"}}
+                                                    variant="outlined"
+                                                    onClick={(e) => handleReportDamage(e, props.risk)}
+                                                    startIcon={<FeedbackIcon />}
+                                                    color="error">
+                                                    Schaden melden
+                                                </Button>
+                                    }
+
+
                                     <IconButton
                                         size="small"
                                         disabled={deletionIsDisabled}
@@ -338,6 +366,13 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 open={openDeletionDialog}
                 setOpen={setOpenDeletionDialog}
                 risk={props.risk}/>
+            {
+                riskRelatedChat &&
+                <CancelDealDialog
+                    open={openCancelDealDialog}
+                    setOpen={setOpenCancelDealDialog}
+                    chat={riskRelatedChat}/>
+            }
         </Accordion>
     )
 }

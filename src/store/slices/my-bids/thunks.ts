@@ -304,3 +304,18 @@ export const deleteUnagreedChats = createAsyncThunk<
         }
     }
 );
+
+export const fetchChatCountByRiskId = createAsyncThunk<number, string, { rejectValue: string }>(
+    "chats/fetchChatCountByRiskId",
+    async (riskId, { rejectWithValue }) => {
+        try {
+            const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
+            const q = query(chatsRef, where("riskId", "==", riskId));
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.size; // oder querySnapshot.docs.length
+        } catch (error) {
+            console.error("Error fetching chat count:", error);
+            return rejectWithValue("Error fetching chat count");
+        }
+    }
+);

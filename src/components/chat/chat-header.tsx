@@ -144,14 +144,12 @@ export const ChatHeader = () => {
                         </Box>
                         <Box
                             sx={{flexGrow: 1, textAlign: "center"}}
-                            onClick={() => setOpenRiskDetails(true)}
-                        >
+                            onClick={() => setOpenRiskDetails(true)}>
                             <Typography
                                 variant="h5"
                                 fontWeight={600}
                                 ml={2}
-                                style={{cursor: "pointer"}}
-                            >
+                                style={{cursor: "pointer"}}>
                                 {activeChat?.topic}
                             </Typography>
                         </Box>

@@ -52,8 +52,6 @@ export const selectRiskId = (state: { myBids: MyBidsState }) => {
     return activeChat?.riskId;
 };
 
-export const selectFilteredChats = (state: { myBids: MyBidsState }) => state.myBids.filteredChats;
-
 export const selectChatsToDisplay = (state: RootState) => {
     if (state.myBids.filteredChats === null) {
         return [];
@@ -74,3 +72,6 @@ export const selectMyTakenRiskIds = (state: { myBids: MyBidsState }) => {
 
 export const selectChatsByRiskId = (riskId: string) => (state: { myBids: MyBidsState }): Chat[] =>
     state.myBids.chats.filter(chat => chat.riskId === riskId) || [];
+
+export const selectChatByRiskId = (riskId: string) => (state: { myBids: MyBidsState }): Chat | undefined =>
+    state.myBids.chats.find(chat => chat.riskId === riskId);
