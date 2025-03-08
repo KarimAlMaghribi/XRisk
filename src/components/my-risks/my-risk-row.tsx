@@ -2,7 +2,6 @@ import {Risk} from "../../models/Risk";
 import React, {useEffect} from "react";
 import {Accordion, AccordionDetails, AccordionSummary, Box, Card, Chip, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import Button from "@mui/material/Button";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,17 +17,18 @@ import UndoIcon from "@mui/icons-material/Undo";
 import SendIcon from "@mui/icons-material/Send";
 import {UserProfile} from "../../store/slices/user-profile/types";
 import {selectUserProfile} from "../../store/slices/user-profile/selectors";
-import {MyRiskDeletionDialog} from "./deletion-dialog/deletion-dialog";
 import SignLanguageIcon from '@mui/icons-material/SignLanguage';
 import {ROUTES} from "../../routing/routes";
 import {useNavigate} from "react-router-dom";
 import {setActiveChatByRiskId} from "../../store/slices/my-bids/reducers";
 import Tooltip from "@mui/material/Tooltip";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {MyRiskRowDetails} from "./my-risk-row-details/my-risk-row-details";
 import {deleteChatsByRiskId} from "../../store/slices/my-bids/thunks";
 import {mapStatus, mapStatusChipColor, mapStatusIcon, mapStatusToolTip} from "./utils";
 import InterpreterModeIcon from '@mui/icons-material/InterpreterMode';
+import {MyRiskRowDetails} from "./my-risk-row-details/my-risk-row-details";
+import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
+import {MyRiskDeletionDialog} from "./deletion-dialog/deletion-dialog";
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -245,14 +245,13 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             </Typography>
                         </Grid>
                         <Grid size={3}>
-                            {
-                                props.taken &&
+                            {props.taken && (
                                 <Box display="flex" justifyContent="flex-end">
-                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={<SignLanguageIcon/>}>
-                                        Verhandeln
+                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={props.risk.status === RiskStatusEnum.AGREEMENT ? <InterpreterModeIcon/> : <SignLanguageIcon />}>
+                                        {props.risk.status === RiskStatusEnum.AGREEMENT ? "Kontaktieren" : "Verhandeln"}
                                     </Button>
                                 </Box>
-                            }
+                            )}
                             {
                                 !props.taken &&
                                 <Box display="flex" justifyContent="flex-end">
