@@ -103,6 +103,9 @@ export const myRisksSlice = createSlice({
             })
             .addCase(deleteMyRisk.fulfilled, (state, action) => {
                 state.offeredRisks = state.offeredRisks.filter(risk => risk.id !== action.payload);
+                state.filteredOfferedRisks = state.filteredOfferedRisks.filter(risk => risk.id !== action.payload);
+                state.takenRisks = state.takenRisks.filter(risk => risk.id !== action.payload);
+                state.filteredTakenRisks = state.filteredTakenRisks.filter(risk => risk.id !== action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(deleteMyRisk.rejected, (state, action) => {
@@ -118,7 +121,15 @@ export const myRisksSlice = createSlice({
                     risk.id === action.payload.id ? {...risk, ...action.payload} : risk
                 );
 
+                state.takenRisks = state.takenRisks.map(risk =>
+                    risk.id === action.payload.id ? {...risk, ...action.payload} : risk
+                );
+
                 state.filteredOfferedRisks = state.filteredOfferedRisks.map(risk =>
+                    risk.id === action.payload.id ? {...risk, ...action.payload} : risk
+                );
+
+                state.filteredTakenRisks = state.filteredTakenRisks.map(risk =>
                     risk.id === action.payload.id ? {...risk, ...action.payload} : risk
                 );
 
@@ -151,7 +162,15 @@ export const myRisksSlice = createSlice({
                     risk.id === action.payload.riskId ? {...risk, ...action.payload} : risk
                 );
 
+                state.takenRisks = state.takenRisks.map(risk =>
+                    risk.id === action.payload.riskId ? {...risk, ...action.payload} : risk
+                );
+
                 state.filteredOfferedRisks = state.filteredOfferedRisks.map(risk =>
+                    risk.id === action.payload.riskId ? {...risk, ...action.payload} : risk
+                );
+
+                state.filteredTakenRisks = state.filteredTakenRisks.map(risk =>
                     risk.id === action.payload.riskId ? {...risk, ...action.payload} : risk
                 );
 

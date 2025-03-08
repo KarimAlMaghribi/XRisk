@@ -8,7 +8,6 @@ import CurvyLines from "../../assests/imgs/appCurvyLines.png";
 import contracts from "../../assests/imgs/commercial/running_contracts.jpg";
 import happyUsers from "../../assests/imgs/commercial/users-min.jpg";
 import secured from "../../assests/imgs/commercial/secured.jpg";
-import { collection, getCountFromServer } from "firebase/firestore";
 import {useEffect} from "react";
 import {fetchUserCount} from "../../store/slices/meta/thunks";
 import {useDispatch, useSelector} from "react-redux";
