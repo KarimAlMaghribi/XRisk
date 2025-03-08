@@ -167,8 +167,8 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 </DialogContentText>
 
                 <TextField
-                    error={name.length === 0}
-                    helperText={name.length === 0 ? `${t("define_risk.name_description")}` : ""}
+                    error={nameError}
+                    helperText={nameError ? `${t("define_risk.name_description")}` : ""}
                     sx={{marginTop: "10px"}}
                     value={name}
                     onChange={(event) => setName(event.target.value)}
@@ -181,8 +181,8 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     fullWidth
                 />
                 <TextField
-                    error={description.length <= 20}
-                    helperText={description.length === 0 ? `${t("define_risk.brief_description_description")}` : description.length <= 20 ? `${t("define_risk.brief_description_error")}` : ""}
+                    error={descriptionError}
+                    helperText={descriptionError ? `${t("define_risk.brief_description_description")}` : description.length <= 20 ? `${t("define_risk.brief_description_error")}` : ""}
                     required
                     value={description}
                     onChange={(event) => setDescription(event.target.value)}
@@ -202,8 +202,8 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     required={true}
                 />
                 <TextField
-                    error={value > 999999}
-                    helperText={value > 999999 ? `${t("define_risk.insurance_sum_error1")}` : value < 0 ? `${t("define_risk.insurance_sum_error2")}` : ""}
+                    error={valueError}
+                    helperText={valueError ? `${t("define_risk.insurance_sum_error1")}` : value < 0 ? `${t("define_risk.insurance_sum_error2")}` : ""}
                     margin="dense"
                     fullWidth
                     label={`${t("terms.insurance_sum")}`}
@@ -234,7 +234,6 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button
-                    disabled={name.length === 0 || riskType.length === 0 || description.length <= 20 || value > 999999 || value < 0}
                     variant="contained"
                     onClick={handleCreateRisk}>
                     {`${t("terms.define")}`}
