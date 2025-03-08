@@ -25,7 +25,6 @@ import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectOpposingProfile} from "../../store/slices/user-profile/selectors";
 import {RiskDisplayDialog} from "./risk-display-dialog";
 import {Risk} from "../../models/Risk";
-import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import ToolTip from "@mui/material/Tooltip";
 import {CancelDealDialog} from "../my-risks/my-risk-row-details/deals-details/cancel-deal-dialog";
 import RiskStepperDialog from "../risk-agreement/risk-agreement-stepper";

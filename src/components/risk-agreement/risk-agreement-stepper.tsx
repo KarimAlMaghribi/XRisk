@@ -156,7 +156,7 @@ export default function RiskStepperDialog(props: RiskStepperDialogProps) {
 
     return (
         <Dialog open={props.open} onClose={props.handleClose} fullWidth maxWidth="md">
-            <DialogTitle>Risk Management</DialogTitle>
+            <DialogTitle marginBottom="20px">Risiko Vereinbarung</DialogTitle>
             <DialogContent>
                 <Stepper activeStep={activeStep} alternativeLabel>
                     {stepLabels.map((label, index) => (

@@ -10,9 +10,11 @@ import {serverTimestamp} from "firebase/firestore";
 import {addNotification} from "../../../store/slices/my-notifications/thunks";
 import {Chat} from "../../../store/slices/my-bids/types";
 import {selectActiveChat} from "../../../store/slices/my-bids/selectors";
-import {Button, DialogActions, DialogContentText} from "@mui/material";
+import {Box, Button, Chip, DialogActions, DialogContentText} from "@mui/material";
 import {RiskAgreementHeader} from "./risk-agreement-header";
 import {RiskAgreementForm} from "./risk-agreement-form";
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 
 export interface RiskAgreementDiscussionProps {
     hasApprovedExistingAgreement: boolean;
@@ -205,7 +207,16 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
                 </DialogContentText>
             )}
 
-            <RiskAgreementHeader riskTitle={props.riskTitle} riskType={props.riskType}/>
+            <Box position="relative">
+                <RiskAgreementHeader riskTitle={props.riskTitle} riskType={props.riskType} />
+                <Chip
+                    icon={props.hasApprovedExistingAgreement ? <TaskAltIcon /> : <ReportGmailerrorredIcon />}
+                    label={props.hasApprovedExistingAgreement ? "Dein Angebot wird geprüft" : "Neues Angebot prüfen"}
+                    color={!props.hasApprovedExistingAgreement ? "success" : "warning"}
+                    sx={{position: "absolute", bottom: 0, right: 0}}
+                />
+            </Box>
+
 
             <RiskAgreementForm
                 timeframe={props.timeframe}
