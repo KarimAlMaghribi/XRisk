@@ -79,8 +79,6 @@ export const createChat = createAsyncThunk<Chat, Omit<Chat, "id">, { rejectValue
                 id: chatRef.id,
             };
 
-            console.log(newChat);
-
             await setDoc(chatRef, newChat);
 
             return newChat;
@@ -261,46 +259,6 @@ export const updateLastMessage = createAsyncThunk<
         } catch (error) {
             console.error("Error updating last message:", error);
             return rejectWithValue("Error updating last message");
-        }
-    }
-);
-
-export const deleteUnagreedChats = createAsyncThunk<
-    string,
-    { riskId: string; chatId: string },
-    { rejectValue: string; state: RootState }
->(
-    ActionTypes.DELETE_UNAGREED_CHATS,
-    async ({ riskId, chatId }, { rejectWithValue }) => {
-        try {
-            if (!riskId) throw new Error("Risk ID is required");
-            if (!chatId) throw new Error("Chat ID is required");
-
-            const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
-            const q = query(chatsRef);
-            const chatsSnapshot = await getDocs(q);
-
-            const chats = chatsSnapshot.docs
-                .map((doc) => ({ id: doc.id, ...doc.data() } as Chat))
-                .filter((chat) => chat.riskId === riskId && chat.id !== chatId);
-
-            await Promise.all(
-                chats.map(async (chat) => {
-                    const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chat.id);
-                    const messagesRef = collection(chatDocRef, FirestoreCollectionEnum.MESSAGES);
-                    const messagesSnapshot = await getDocs(messagesRef);
-                    await Promise.all(
-                        messagesSnapshot.docs.map((messageDoc) => deleteDoc(messageDoc.ref))
-                    );
-                    await deleteDoc(chatDocRef);
-                })
-            );
-
-            console.log("Unagreed chats deleted");
-            return "Unagreed chats deleted";
-        } catch (error) {
-            console.error("Error deleting chats:", error);
-            return rejectWithValue("Error deleting chats");
         }
     }
 );

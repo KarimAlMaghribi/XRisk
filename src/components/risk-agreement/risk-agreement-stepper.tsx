@@ -217,7 +217,9 @@ export default function RiskStepperDialog(props: RiskStepperDialogProps) {
                     }
                     {
                         activeStep === 2 &&
-                        <RiskAgreementFinalisation handleClose={props.handleClose} riskAgreement={existingAgreement}/>
+                        <RiskAgreementFinalisation
+                            handleClose={props.handleClose}
+                            riskAgreement={existingAgreement}/>
                     }
                 </Box>
             </DialogContent>

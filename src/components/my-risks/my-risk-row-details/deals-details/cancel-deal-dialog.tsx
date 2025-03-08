@@ -20,6 +20,7 @@ export interface CancelDealDialogProps {
 }
 
 export const CancelDealDialog = (props: CancelDealDialogProps) => {
+
     const uid = auth.currentUser?.uid;
     const dispatch: AppDispatch = useDispatch();
     const {showSnackbar} = useSnackbarContext();

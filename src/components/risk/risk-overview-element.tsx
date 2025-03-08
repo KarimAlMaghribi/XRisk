@@ -66,7 +66,6 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     }
 
     const openBid = (riskIndex: number) => {
-        console.log(riskIndex)
         if (!user || !user.uid) {
             console.error("User not authenticated or UID missing:", user);
             showSnackbar("Nutzer nicht authentifiziert!","Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.", { vertical: "top", horizontal: "center" }, "error");
