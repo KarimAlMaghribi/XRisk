@@ -4,7 +4,6 @@ import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {MyRisksState} from "./types";
 import {addMyRisk, deleteMyRisk, fetchMyOfferedRisks, updateMyRisk, updateMyRiskStatus} from "./thunks";
 import {fetchMyTakenRisks} from "../risks/thunks";
-import {deleteChatById} from "../my-bids/thunks";
 
 
 const initialState: MyRisksState = {
@@ -91,6 +90,7 @@ export const myRisksSlice = createSlice({
                 }
 
                 state.offeredRisks.push(action.payload);
+                state.filteredOfferedRisks.push(action.payload);
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(addMyRisk.rejected, (state, action) => {
@@ -161,7 +161,7 @@ export const myRisksSlice = createSlice({
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             })
-        }
+    }
 });
 
 export const {setFilter, clearMyRiskFilter} = myRisksSlice.actions;

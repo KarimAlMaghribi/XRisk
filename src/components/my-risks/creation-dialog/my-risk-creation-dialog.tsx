@@ -21,10 +21,8 @@ import {auth} from "../../../firebase_config";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {PaperComponent} from "../../ui/draggable-dialog";
-import { Trans, useTranslation } from "react-i18next";
+import {Trans} from "react-i18next";
 import i18next from "i18next";
-
-import {formatEuro} from "../my-risk-row-details/agreement-details/agreement-table";
 
 export interface RiskCreationDialogProps {
     open: boolean;
@@ -148,7 +146,8 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     m: 0,
                 },
             }}>
-            <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title"><Trans i18nKey="define_risk.title"></Trans></DialogTitle>
+            <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title"><Trans
+                i18nKey="define_risk.title"></Trans></DialogTitle>
             <IconButton
                 aria-label="close"
                 onClick={handleClose}
@@ -158,7 +157,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     top: 8,
                     color: theme.palette.grey[500],
                 })}>
-                <CloseIcon />
+                <CloseIcon/>
             </IconButton>
 
             <DialogContent>
@@ -189,7 +188,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                     margin="dense"
                     fullWidth
                     id="description"
-                    label= {`${t("define_risk.brief_description")}`}
+                    label={`${t("define_risk.brief_description")}`}
                     multiline
                     rows={4}
                 />
@@ -219,7 +218,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                        sx={{ marginTop: "10px", width: "100%" }}
+                        sx={{marginTop: "10px", width: "100%"}}
                         format="DD.MM.YYYY"
                         label={`${t("define_risk.end_of_term")}`}
                         value={date}
