@@ -34,7 +34,7 @@ import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ToolTip from "@mui/material/Tooltip";
 import {CancelDealDialog} from "./my-risk-row-details/deals-details/cancel-deal-dialog";
 import {Chat} from "../../store/slices/my-bids/types";
-import {selectChatByRiskId, selectChatsByRiskId} from "../../store/slices/my-bids/selectors";
+import {selectChatByRiskId} from "../../store/slices/my-bids/selectors";
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -211,7 +211,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                         padding: "30px 40px",
                     }}>
                     <Grid container>
-                        <Grid size={1}>
+                        <Grid size={{xs: 3, lg: 2, xl: 1}}>
                             <Tooltip title={mapStatusToolTip(props.risk.status)} followCursor sx={{cursor: "pointer"}}>
                                 <Chip
                                     icon={mapStatusIcon(props.risk.status)}
@@ -220,12 +220,12 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                     color={mapStatusChipColor(props.risk.status)}/>
                             </Tooltip>
                         </Grid>
-                        <Grid size={1} textAlign="center">
+                        <Grid size={{xs: 3, lg: 2, xl: 2}} textAlign="center">
                             <Typography variant="body1" fontWeight="bolder">
                                 {props.risk.name}
                             </Typography>
                         </Grid>
-                        <Grid size={4}>
+                        <Grid size={{xs: 0, lg: 0, xl: 2}}>
                             <Typography
                                 variant="body1"
                                 sx={{
@@ -237,7 +237,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                 {props.risk.description}
                             </Typography>
                         </Grid>
-                        <Grid size={1} textAlign="center">
+                        <Grid size={{xs: 0, lg: 4, xl: 3}} textAlign="center" sx={{ display: { xs: "none", lg: "block", xl: "block" }}}>
                             {
                                 props.risk.type.map((element, idx) => (
                                     <Chip key={idx} label={element} clickable sx={{
@@ -250,17 +250,12 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                 ))
                             }
                         </Grid>
-                        <Grid size={1} textAlign="center">
+                        <Grid size={{xs: 0, lg: 0, xl: 1 }} textAlign="left" sx={{ display: {xs: "none", lg: "none", xl: "block" } }}>
                             <Typography variant="body1">
-                                {`${props.risk.value.toLocaleString()},00 €`}
+                                {props.risk.value.toLocaleString()},00 €
                             </Typography>
                         </Grid>
-                        <Grid size={1} textAlign="center">
-                            <Typography variant="body1">
-                                {formatDate(new Date(props.risk.declinationDate))}
-                            </Typography>
-                        </Grid>
-                        <Grid size={3}>
+                        <Grid size={{xs: 6, lg: 4, xl: 3}}>
                             {
                                 props.taken && (
                                     <Box display="flex" justifyContent="flex-end" gap="5px">
