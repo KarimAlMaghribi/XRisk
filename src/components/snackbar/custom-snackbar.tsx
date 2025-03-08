@@ -23,7 +23,7 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
     const [snackbarTitle, setSnackbarTitle] = useState("");
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarOrigin, setSnackbarOrigin] = useState<SnackbarOrigin>({
-        vertical: "bottom",
+        vertical: "top",
         horizontal: "center",
     });
     const [severity, setSeverity] = useState<"success" | "info" | "warning" | "error">("info");
@@ -41,7 +41,7 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
         if (anchorOrigin) {
             setSnackbarOrigin(anchorOrigin);
         } else {
-            setSnackbarOrigin({ vertical: "bottom", horizontal: "center" });
+            setSnackbarOrigin({ vertical: "top", horizontal: "center" });
         }
 
         setOpen(true);

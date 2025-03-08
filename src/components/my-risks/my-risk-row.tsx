@@ -29,6 +29,7 @@ import InterpreterModeIcon from '@mui/icons-material/InterpreterMode';
 import {MyRiskRowDetails} from "./my-risk-row-details/my-risk-row-details";
 import {MyRiskEditDialog} from "./edit-dialog/my-risk-edit-dialog";
 import {MyRiskDeletionDialog} from "./deletion-dialog/deletion-dialog";
+import FeedbackIcon from '@mui/icons-material/Feedback';
 
 export interface MyRiskRowProps {
     risk: Risk;
@@ -150,6 +151,11 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         dispatch(setActiveChatByRiskId(risk.id));
     }
 
+    const handleReportDamage = (e: any, risk: Risk): void => {
+        e.stopPropagation();
+        showSnackbar(`Schaden zu Risiko ${risk.name} melden`, "Noch nicht implementiert!");
+    }
+
     const handleDelete = (e: any): void => {
         e.stopPropagation();
         e.preventDefault();
@@ -245,13 +251,21 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             </Typography>
                         </Grid>
                         <Grid size={3}>
-                            {props.taken && (
-                                <Box display="flex" justifyContent="flex-end">
-                                    <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={props.risk.status === RiskStatusEnum.AGREEMENT ? <InterpreterModeIcon/> : <SignLanguageIcon />}>
-                                        {props.risk.status === RiskStatusEnum.AGREEMENT ? "Kontaktieren" : "Verhandeln"}
-                                    </Button>
-                                </Box>
-                            )}
+                            {
+                                props.taken && (
+                                    <Box display="flex" justifyContent="flex-end" gap="5px">
+                                        <Button variant="outlined" onClick={() => handleDeal(props.risk)} size="small" endIcon={props.risk.status === RiskStatusEnum.AGREEMENT ? <InterpreterModeIcon/> : <SignLanguageIcon />}>
+                                            {props.risk.status === RiskStatusEnum.AGREEMENT ? "Kontaktieren" : "Verhandeln"}
+                                        </Button>
+                                        {
+                                            props.risk.status === RiskStatusEnum.AGREEMENT &&
+                                            <Button variant="outlined" onClick={(e) => handleReportDamage(e, props.risk)} endIcon={<FeedbackIcon />} color="error">
+                                                Schaden melden
+                                            </Button>
+                                        }
+                                    </Box>
+                                )
+                            }
                             {
                                 !props.taken &&
                                 <Box display="flex" justifyContent="flex-end">
