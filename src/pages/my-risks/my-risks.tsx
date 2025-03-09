@@ -1,10 +1,11 @@
 import React, {useEffect} from "react";
 import Grid from "@mui/material/Grid2";
-import {Box, Tab, Typography} from "@mui/material";
+import {Box, Tab} from "@mui/material";
 import {Risk} from "../../models/Risk";
 import {useDispatch, useSelector} from "react-redux";
 import {
-    selectMyFilteredOfferedRisks, selectMyFilteredTakenRisks,
+    selectMyFilteredOfferedRisks,
+    selectMyFilteredTakenRisks,
     selectMyOfferedRisks,
     selectMyTakenRisks
 } from "../../store/slices/my-risks/selectors";
@@ -21,13 +22,9 @@ import {RiskTypeEnum} from "../../enums/RiskType.enum";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
 import {FilterBar} from "../../components/my-risks/filterBar";
 import {clearMyRiskFilter} from "../../store/slices/my-risks/reducers";
-import { Trans, useTranslation } from "react-i18next";
+import {Trans} from "react-i18next";
 import i18next from "i18next";
-import {
-    fetchMyRiskAgreements,
-    riskAgreementsUnsubscribe,
-    subscribeToRiskAgreements
-} from "../../store/slices/my-risk-agreements/thunks";
+
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
     const myOfferedRisks: Risk[] = useSelector(selectMyOfferedRisks);
@@ -45,7 +42,6 @@ export const MyRisks = () => {
         dispatch(fetchMyChats());
         dispatch(fetchMyOfferedRisks());
         dispatch(fetchMyTakenRisks());
-        dispatch(fetchMyRiskAgreements());
     }, [dispatch, tab]);
 
 
@@ -64,12 +60,12 @@ export const MyRisks = () => {
         <React.Fragment>
             <Grid container style={{padding: "10px 0 10px 0"}}>
                 <Grid size={2}
-                  style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: "0 30px 0 30px"
-                    }}>
+                      style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: "0 30px 0 30px"
+                      }}>
                     <Button
                         onClick={() => setOpenRiskCreationDialog(true)}
                         fullWidth
@@ -87,19 +83,25 @@ export const MyRisks = () => {
                         type={tab}/>
                 </Grid>
                 <Grid size={12}>
-                    <Box sx={{ width: '100%', typography: 'body1' }} marginLeft="30px" marginRight="30px" marginTop="10px">
+                    <Box sx={{width: '100%', typography: 'body1'}} marginLeft="30px" marginRight="30px"
+                         marginTop="10px">
                         <TabContext value={tab}>
-                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                                 <TabList onChange={handleTabChange}>
-                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.OFFERED_RISKS")}`} value={RiskTypeEnum.OFFERED}/>
-                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.TAKEN_RISKS")}`} value={RiskTypeEnum.TAKEN}/>
+                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.OFFERED_RISKS")}`}
+                                         value={RiskTypeEnum.OFFERED}/>
+                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.TAKEN_RISKS")}`}
+                                         value={RiskTypeEnum.TAKEN}/>
                                 </TabList>
                             </Box>
                             <TabPanel value={RiskTypeEnum.OFFERED}>
-                                <Panel risks={myFilteredOfferedRisks.length > 0  ? myFilteredOfferedRisks : myOfferedRisks} type={RiskTypeEnum.OFFERED}/>
+                                <Panel
+                                    risks={myFilteredOfferedRisks.length > 0 ? myFilteredOfferedRisks : myOfferedRisks}
+                                    type={RiskTypeEnum.OFFERED}/>
                             </TabPanel>
                             <TabPanel value={RiskTypeEnum.TAKEN}>
-                                <Panel risks={myFilteredTakenRisks.length > 0 ? myFilteredTakenRisks : myTakenRisks} type={RiskTypeEnum.TAKEN}/>
+                                <Panel risks={myFilteredTakenRisks.length > 0 ? myFilteredTakenRisks : myTakenRisks}
+                                       type={RiskTypeEnum.TAKEN}/>
                             </TabPanel>
                         </TabContext>
                     </Box>

@@ -12,7 +12,6 @@ import {ChatSender} from "../../components/chat/chat-sender";
 import {selectActiveChatId, selectChats} from "../../store/slices/my-bids/selectors";
 import {Chat as ChatModel} from "../../store/slices/my-bids/types";
 import {clearActiveChat} from "../../store/slices/my-bids/reducers";
-import {fetchMyRiskAgreements} from "../../store/slices/my-risk-agreements/thunks";
 
 
 export const Chat = () => {
@@ -22,7 +21,6 @@ export const Chat = () => {
 
     useEffect(() => {
         dispatch(fetchMyChats());
-        dispatch(fetchMyRiskAgreements());
 
         return () => {
             dispatch(clearActiveChat());
