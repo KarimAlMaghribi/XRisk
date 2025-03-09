@@ -5,7 +5,6 @@ import {MyRisksState} from "./types";
 import {addMyRisk, deleteMyRisk, fetchMyOfferedRisks, updateMyRisk, updateMyRiskStatus} from "./thunks";
 import {fetchMyTakenRisks} from "../risks/thunks";
 
-
 const initialState: MyRisksState = {
     offeredRisks: [],
     filteredOfferedRisks: [],
@@ -58,6 +57,10 @@ export const myRisksSlice = createSlice({
                     .toLowerCase();
                 return searchParams.includes(searchTerm);
             });
+        },
+        deleteTakenRisk(state, action: PayloadAction<string>) {
+            state.takenRisks = state.takenRisks.filter(risk => risk.id !== action.payload);
+            state.filteredTakenRisks = state.filteredTakenRisks.filter(risk => risk.id !== action.payload);
         },
         clearMyRiskFilter(state) {
             state.filteredOfferedRisks = [];
@@ -176,6 +179,6 @@ export const myRisksSlice = createSlice({
     }
 });
 
-export const {setFilter, clearMyRiskFilter} = myRisksSlice.actions;
+export const {setFilter, clearMyRiskFilter, deleteTakenRisk} = myRisksSlice.actions;
 
 export default myRisksSlice.reducer;

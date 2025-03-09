@@ -3,10 +3,10 @@ import {FetchStatus} from "../../../types/FetchStatus";
 
 export enum ActionTypes {
     FETCH_MY_RISKS = "myRisks/fetchMyRisks",
-    ADD_MY_RISK = "myRisks/addRisk",
-    DELETE_MY_RISK = "myRisks/deleteRisk",
-    UPDATE_MY_RISK = "myRisks/updateRisk",
-    UPDATE_MY_RISK_STATUS = "myRisks/updateRiskStatus",
+    ADD_MY_RISK = "myRisks/addMyRisk",
+    DELETE_MY_RISK = "myRisks/deleteMyRisk",
+    UPDATE_MY_RISK = "myRisks/updateMyRisk",
+    UPDATE_MY_RISK_STATUS = "myRisks/updateMyRiskStatus",
 }
 
 export interface MyRisksState {

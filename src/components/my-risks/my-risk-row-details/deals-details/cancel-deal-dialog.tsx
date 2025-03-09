@@ -5,13 +5,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import React from "react";
 import {Chat} from "../../../../store/slices/my-bids/types";
 import {deleteChatById, fetchChatCountByRiskId} from "../../../../store/slices/my-bids/thunks";
-import {AppDispatch, store} from "../../../../store/store";
+import {AppDispatch} from "../../../../store/store";
 import {useDispatch} from "react-redux";
 import {useSnackbarContext} from "../../../snackbar/custom-snackbar";
 import {auth} from "../../../../firebase_config";
 import {RiskStatusEnum} from "../../../../enums/RiskStatus.enum";
 import {deleteMyRisk, updateMyRiskStatus} from "../../../../store/slices/my-risks/thunks";
 import {updateRiskStatus} from "../../../../store/slices/risks/thunks";
+import {deleteTakenRisk} from "../../../../store/slices/my-risks/reducers";
 
 export interface CancelDealDialogProps {
     open: boolean;
@@ -32,20 +33,33 @@ export const CancelDealDialog = (props: CancelDealDialogProps) => {
             console.error("User is not authenticated. Could not update myRisk status.");
         }
 
+        if (!props.chat.riskId) {
+            console.error("Risk ID not found. Could not update myRisk status.");
+        }
+
         const resultAction = await dispatch(fetchChatCountByRiskId(props.chat.riskId));
+
         if (fetchChatCountByRiskId.fulfilled.match(resultAction)) {
             const chatCount = resultAction.payload;
-            if (chatCount === 0) {
-                await dispatch(updateRiskStatus({ id: props.chat.riskId, status: RiskStatusEnum.PUBLISHED}));
+            const isProvider: boolean = props.chat.riskProvider?.uid === uid;
 
-                if (props.chat.riskProvider?.uid === uid) { // if you are the provider, the risk will change its status to published
-                    await dispatch(updateMyRiskStatus({ riskId: props.chat.riskId, status: RiskStatusEnum.PUBLISHED }));
+            if (chatCount === 0) {
+                await dispatch(updateRiskStatus({id: props.chat.riskId, status: RiskStatusEnum.PUBLISHED}));
+
+                if (isProvider) { // if you are the provider, the risk will change its status to published
+                    await dispatch(updateMyRiskStatus({riskId: props.chat.riskId, status: RiskStatusEnum.PUBLISHED}));
                 } else { // if you are the taker, the risk will disappear from your list
-                    await dispatch(deleteMyRisk(props.chat.riskId));
+                    dispatch(deleteTakenRisk(props.chat.riskId));
                 }
-            } else {
-                await dispatch(deleteMyRisk(props.chat.riskId));
             }
+
+            if (chatCount > 0){
+                if (!isProvider){ // if you are the taker, the risk will disappear from your list
+                    dispatch(deleteTakenRisk(props.chat.riskId));
+                }
+                // if you are the provider, the deletion of the chat, already removed the risk from your list
+            }
+
         } else {
             console.error("Fehler beim Abrufen der Chat-Anzahl.");
         }

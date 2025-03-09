@@ -169,7 +169,8 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         setOpenDeletionDialog(true);
     }
 
-    const cancelDeal = () => {
+    const cancelDeal = (e: any) => {
+        e.stopPropagation();
         setOpenCancelDealDialog(true);
     };
 
@@ -268,7 +269,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                         </Button>
                                         <ToolTip title="Verhandlung abbrechen" followCursor>
                                             <IconButton
-                                                onClick={cancelDeal}
+                                                onClick={(e) => cancelDeal(e)}
                                                 disabled={props.risk.status === RiskStatusEnum.AGREEMENT}>
                                                 <NotInterestedIcon/>
                                             </IconButton>
@@ -363,10 +364,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                 risk={props.risk}/>
             {
                 riskRelatedChat &&
-                <CancelDealDialog
-                    open={openCancelDealDialog}
-                    setOpen={setOpenCancelDealDialog}
-                    chat={riskRelatedChat}/>
+                <CancelDealDialog open={openCancelDealDialog} setOpen={setOpenCancelDealDialog} chat={riskRelatedChat}/>
             }
         </Accordion>
     )
