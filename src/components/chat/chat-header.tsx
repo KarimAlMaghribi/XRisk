@@ -177,16 +177,32 @@ export const ChatHeader = () => {
                                         const partnerAgreed = isRiskProvider
                                             ? activeChat?.riskTaker?.agreement
                                             : activeChat?.riskProvider?.agreement;
-                                        return partnerAgreed && !(activeChat?.riskTaker?.agreement && activeChat?.riskProvider?.agreement) && (
-                                            <ToolTip title="Dein Verhandlungspartner hat schon einen Vorschlag zur Einigung unterbreitet, klicke auf den Button um dir diese anzusehen." followCursor>
-                                                <Typography
-                                                    variant="body2"
-                                                    color="textSecondary"
-                                                    sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
-                                                    Verhandlungspartner hat eine Einigung signalisiert
-                                                </Typography>
-                                            </ToolTip>
-                                        );
+                                        if (partnerAgreed && !(activeChat?.riskTaker?.agreement && activeChat?.riskProvider?.agreement)) {
+                                            return (
+                                                <ToolTip title="Dein Verhandlungspartner hat schon einen Vorschlag zur Einigung unterbreitet, klicke auf den Button um dir diese anzusehen." followCursor>
+                                                    <Typography
+                                                        variant="body2"
+                                                        color="textSecondary"
+                                                        sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
+                                                        Verhandlungspartner hat eine Einigung signalisiert
+                                                    </Typography>
+                                                </ToolTip>
+                                            )
+                                        }
+
+                                        if (risk?.status === RiskStatusEnum.AGREEMENT) {
+                                            return (
+                                                <ToolTip title="Einigung erzielt beide Teilnehmer haben der Einigung zugestimmt" followCursor>
+                                                    <Typography
+                                                        onClick={() => setOpenRiskDetails(true)}
+                                                        variant="body2"
+                                                        color="textSecondary"
+                                                        sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
+                                                        Beide Teilnehmer haben der Einigung zugestimmt
+                                                    </Typography>
+                                                </ToolTip>
+                                            )
+                                        }
                                     })()
                                 }
                                 <Button

@@ -1,27 +1,18 @@
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary, Box, Collapse,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Tooltip,
-    Typography,
-} from "@mui/material";
+import {Accordion, Box, Collapse, IconButton, InputAdornment, TextField, Tooltip, Typography,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RestoreSharpIcon from "@mui/icons-material/RestoreSharp";
 import React, {useEffect, useState} from "react";
 
 export const ExpandableTextField = ({
-    label,
-    name,
-    id,
-    value,
-    oldValue,
-    borderColor,
-    handlerFunction,
-    inputProps,
-}: {
+                                        label,
+                                        name,
+                                        id,
+                                        value,
+                                        oldValue,
+                                        borderColor,
+                                        handlerFunction,
+                                        inputProps,
+                                    }: {
     label: string;
     name: string;
     id: string;
@@ -113,18 +104,19 @@ export const ExpandableTextField = ({
                         expanded={expanded}
                         onChange={handleExpandClick}
                         elevation={0}
-                        TransitionProps={{ timeout: 250 }}
-                        sx={{ margin: "0 10px" }}>
+                        TransitionProps={{timeout: 250}}
+                        sx={{margin: "0 10px"}}>
                         <Box display="flex" alignItems="center" margin="0 10px">
                             <Typography variant="subtitle1" color="secondary">
                                 <i>Vorheriger Eintrag:</i>
                             </Typography>
-                            <Typography variant="subtitle1" fontWeight="bold" marginLeft="10px" marginRight="10px" color="secondary">
+                            <Typography variant="subtitle1" fontWeight="bold" marginLeft="10px" marginRight="10px"
+                                        color="secondary">
                                 {oldValue ? oldValue.toString() : "Kein vorheriger Eintrag verfügbar"}
                             </Typography>
                             <Tooltip title="Setze den vorherigen Eintrag erneut">
                                 <IconButton onClick={handleRestore}>
-                                    <RestoreSharpIcon />
+                                    <RestoreSharpIcon/>
                                 </IconButton>
                             </Tooltip>
                         </Box>

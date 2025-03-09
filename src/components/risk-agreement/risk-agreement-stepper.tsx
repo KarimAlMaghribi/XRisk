@@ -376,4 +376,4 @@ export default function RiskStepperDialog(props: RiskStepperDialogProps) {
             </DialogContent>
         </Dialog>
     );
-}
+};
