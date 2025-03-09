@@ -23,6 +23,11 @@ import {FilterBar} from "../../components/my-risks/filterBar";
 import {clearMyRiskFilter} from "../../store/slices/my-risks/reducers";
 import { Trans, useTranslation } from "react-i18next";
 import i18next from "i18next";
+import {
+    fetchMyRiskAgreements,
+    riskAgreementsUnsubscribe,
+    subscribeToRiskAgreements
+} from "../../store/slices/my-risk-agreements/thunks";
 export const MyRisks = () => {
     const dispatch: AppDispatch = useDispatch();
     const myOfferedRisks: Risk[] = useSelector(selectMyOfferedRisks);
@@ -40,6 +45,7 @@ export const MyRisks = () => {
         dispatch(fetchMyChats());
         dispatch(fetchMyOfferedRisks());
         dispatch(fetchMyTakenRisks());
+        dispatch(fetchMyRiskAgreements());
     }, [dispatch, tab]);
 
 
