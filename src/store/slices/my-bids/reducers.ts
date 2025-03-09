@@ -8,7 +8,7 @@ import {
     deleteChatsByRiskId,
     fetchMyChats,
     fetchProviderChats,
-    subscribeToMessages
+    subscribeToMessages, updateRiskProviderAgreement, updateRiskTakerAgreement
 } from "./thunks";
 import {ChatSort} from "../../../components/chat/chats-list";
 
@@ -168,6 +168,44 @@ const myBidsSlice = createSlice({
                 state.chats = state.chats.filter((chat) => chat.riskId !== action.payload);
             })
             .addCase(deleteChatsByRiskId.rejected, (state, action) => {
+                state.loading = FetchStatusEnum.FAILED;
+                state.error = action.payload as string;
+            })
+            .addCase(updateRiskProviderAgreement.pending, (state) => {
+                state.loading = FetchStatusEnum.PENDING;
+                state.error = null;
+            })
+            .addCase(updateRiskProviderAgreement.fulfilled, (state, action) => {
+                state.loading = FetchStatusEnum.SUCCEEDED;
+                const { chatId, agreement } = action.meta.arg;
+                const chatIndex = state.chats.findIndex((chat) => chat.id === chatId);
+                if (chatIndex !== -1) {
+                    state.chats[chatIndex].riskProvider = {
+                        ...state.chats[chatIndex].riskProvider,
+                        agreement,
+                    };
+                }
+            })
+            .addCase(updateRiskProviderAgreement.rejected, (state, action) => {
+                state.loading = FetchStatusEnum.FAILED;
+                state.error = action.payload as string;
+            })
+            .addCase(updateRiskTakerAgreement.pending, (state) => {
+                state.loading = FetchStatusEnum.PENDING;
+                state.error = null;
+            })
+            .addCase(updateRiskTakerAgreement.fulfilled, (state, action) => {
+                state.loading = FetchStatusEnum.SUCCEEDED;
+                const { chatId, agreement } = action.meta.arg;
+                const chatIndex = state.chats.findIndex((chat) => chat.id === chatId);
+                if (chatIndex !== -1) {
+                    state.chats[chatIndex].riskTaker = {
+                        ...state.chats[chatIndex].riskTaker,
+                        agreement,
+                    };
+                }
+            })
+            .addCase(updateRiskTakerAgreement.rejected, (state, action) => {
                 state.loading = FetchStatusEnum.FAILED;
                 state.error = action.payload as string;
             });

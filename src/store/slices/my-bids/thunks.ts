@@ -264,7 +264,7 @@ export const updateLastMessage = createAsyncThunk<
 );
 
 export const fetchChatCountByRiskId = createAsyncThunk<number, string, { rejectValue: string }>(
-    "chats/fetchChatCountByRiskId",
+    "myBids/fetchChatCountByRiskId",
     async (riskId, { rejectWithValue }) => {
         try {
             const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
@@ -274,6 +274,40 @@ export const fetchChatCountByRiskId = createAsyncThunk<number, string, { rejectV
         } catch (error) {
             console.error("Error fetching chat count:", error);
             return rejectWithValue("Error fetching chat count");
+        }
+    }
+);
+
+export const updateRiskProviderAgreement = createAsyncThunk<
+    void,
+    { chatId: string; agreement: boolean },
+    { rejectValue: string }
+>(
+    "myBids/updateRiskProviderAgreement",
+    async ({ chatId, agreement }, { rejectWithValue }) => {
+        try {
+            const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chatId);
+            await setDoc(chatDocRef, { riskProvider: { agreement } }, { merge: true });
+        } catch (error) {
+            console.error("Error updating risk provider agreement:", error);
+            return rejectWithValue("Error updating risk provider agreement");
+        }
+    }
+);
+
+export const updateRiskTakerAgreement = createAsyncThunk<
+    void,
+    { chatId: string; agreement: boolean },
+    { rejectValue: string }
+>(
+    "myBids/updateRiskTakerAgreement",
+    async ({ chatId, agreement }, { rejectWithValue }) => {
+        try {
+            const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chatId);
+            await setDoc(chatDocRef, { riskTaker: { agreement } }, { merge: true });
+        } catch (error) {
+            console.error("Error updating risk taker agreement:", error);
+            return rejectWithValue("Error updating risk taker agreement");
         }
     }
 );

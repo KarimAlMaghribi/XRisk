@@ -37,11 +37,13 @@ export interface Chat {
         name?: string;
         uid?: string;
         imagePath?: string;
+        agreement?: boolean; // true if provider started RiskAgreement
     };
     riskTaker: {
         name?: string;
         uid?: string;
         imagePath?: string;
+        agreement?: boolean; // true if riskTaker started RiskAgreement
     };
     lastMessage?: string;
     lastActivity: string;

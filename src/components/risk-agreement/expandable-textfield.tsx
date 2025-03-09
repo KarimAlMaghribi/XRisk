@@ -1,132 +1,136 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Tooltip,
-  Typography,
+    Accordion,
+    AccordionDetails,
+    AccordionSummary, Box, Collapse,
+    IconButton,
+    InputAdornment,
+    TextField,
+    Tooltip,
+    Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RestoreSharpIcon from "@mui/icons-material/RestoreSharp";
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 
 export const ExpandableTextField = ({
-  label,
-  name,
-  id,
-  value,
-  oldValue,
-  borderColor,
-  handlerFunction,
-  inputProps,
+    label,
+    name,
+    id,
+    value,
+    oldValue,
+    borderColor,
+    handlerFunction,
+    inputProps,
 }: {
-  label: string;
-  name: string;
-  id: string;
-  value: unknown | string | number;
-  oldValue: unknown | string | number;
-  borderColor: string;
-  handlerFunction: Function;
-  inputProps?: object;
+    label: string;
+    name: string;
+    id: string;
+    value: unknown | string | number;
+    oldValue: unknown | string | number;
+    borderColor: string;
+    handlerFunction: Function;
+    inputProps?: object;
 }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [expand, setExpand] = useState(borderColor == "grey" ? true : false);
+    const [expanded, setExpanded] = useState(false);
+    const [expand, setExpand] = useState(borderColor == "grey");
 
-  useEffect(() => {
-    if (borderColor === "grey") {
-      setExpand(false);
-    }
-    if (borderColor === "red") {
-      setExpand(true);
-    }
-  }, [borderColor]);
+    useEffect(() => {
+        if (borderColor === "grey") {
+            setExpand(false);
+        }
+        if (borderColor === "red") {
+            setExpand(true);
+        }
+    }, [borderColor]);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+    const handleExpandClick = () => {
+        setExpanded(!expanded);
+    };
 
-  const handleRestore = () => {
-    handlerFunction(oldValue);
-  };
+    const handleRestore = () => {
+        handlerFunction(oldValue);
+    };
 
-  return (
-    <>
-      {!expand ? (
-        <TextField
-          margin="dense"
-          fullWidth
-          name={name}
-          id={id}
-          onChange={(event) =>
-            handlerFunction((event.target as HTMLInputElement).value)
-          }
-          value={value}
-          variant="outlined"
-          label={label}
-          InputProps={{
-            ...inputProps,
-          }}
-        />
-      ) : (
-        <TextField
-          fullWidth
-          margin="dense"
-          name={name}
-          id={id}
-          value={value}
-          onChange={(event) =>
-            handlerFunction((event.target as HTMLInputElement).value)
-          }
-          variant="outlined"
-          label={label}
-          InputProps={{
-            ...inputProps,
-            endAdornment: (
-              <InputAdornment position="end">
-                <Tooltip title="View previous Changes">
-                  <IconButton onClick={handleExpandClick} edge="end">
-                    <ExpandMoreIcon
-                      style={{
-                        transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 0.2s",
-                      }}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            input: { color: "black" }, // Change text color
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": { borderColor: borderColor }, // Change border color
-            },
-          }}
-        />
-      )}
+    return (
+        <>
+            {!expand ? (
+                <TextField
+                    margin="dense"
+                    fullWidth
+                    name={name}
+                    id={id}
+                    onChange={(event) =>
+                        handlerFunction((event.target as HTMLInputElement).value)
+                    }
+                    value={value}
+                    variant="outlined"
+                    label={label}
+                    InputProps={{
+                        ...inputProps,
+                    }}
+                />
+            ) : (
+                <TextField
+                    fullWidth
+                    margin="dense"
+                    name={name}
+                    id={id}
+                    value={value}
+                    onChange={(event) =>
+                        handlerFunction((event.target as HTMLInputElement).value)
+                    }
+                    variant="outlined"
+                    label={label}
+                    InputProps={{
+                        ...inputProps,
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <Tooltip title="Schaue dir den vorher festgelegten Eintrag an">
+                                    <IconButton onClick={handleExpandClick} edge="end">
+                                        <ExpandMoreIcon
+                                            style={{
+                                                transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                                                transition: "transform 0.2s",
+                                            }}
+                                        />
+                                    </IconButton>
+                                </Tooltip>
+                            </InputAdornment>
+                        ),
+                    }}
+                    sx={{
+                        input: {color: "black"},
+                        "& .MuiOutlinedInput-root": {
+                            "& fieldset": {borderColor: borderColor},
+                        },
+                    }}
+                />
+            )}
 
-      {/* Accordion appears only when expanded is true */}
-      {expand && expanded && (
-        <Accordion expanded={expanded} onChange={handleExpandClick}>
-          <AccordionSummary>
-            <Typography>Old value</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography>
-              {oldValue
-                ? oldValue.toString()
-                : "Kein vorheriger Wert verfügbar"}
-              <Tooltip title="Restore the previous value">
-                <IconButton onClick={handleRestore}>
-                  <RestoreSharpIcon></RestoreSharpIcon>
-                </IconButton>
-              </Tooltip>
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-      )}
-    </>
-  );
+            {expand && (
+                <Collapse in={expanded} timeout={250} unmountOnExit>
+                    <Accordion
+                        expanded={expanded}
+                        onChange={handleExpandClick}
+                        elevation={0}
+                        TransitionProps={{ timeout: 250 }}
+                        sx={{ margin: "0 10px" }}>
+                        <Box display="flex" alignItems="center" margin="0 10px">
+                            <Typography variant="subtitle1" color="secondary">
+                                <i>Vorheriger Eintrag:</i>
+                            </Typography>
+                            <Typography variant="subtitle1" fontWeight="bold" marginLeft="10px" marginRight="10px" color="secondary">
+                                {oldValue ? oldValue.toString() : "Kein vorheriger Eintrag verfügbar"}
+                            </Typography>
+                            <Tooltip title="Setze den vorherigen Eintrag erneut">
+                                <IconButton onClick={handleRestore}>
+                                    <RestoreSharpIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    </Accordion>
+                </Collapse>
+            )}
+        </>
+    );
 };

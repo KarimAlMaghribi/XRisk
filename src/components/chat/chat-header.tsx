@@ -28,6 +28,7 @@ import {Risk} from "../../models/Risk";
 import ToolTip from "@mui/material/Tooltip";
 import {CancelDealDialog} from "../my-risks/my-risk-row-details/deals-details/cancel-deal-dialog";
 import RiskStepperDialog from "../risk-agreement/risk-agreement-stepper";
+import {updateRiskProviderAgreement, updateRiskTakerAgreement} from "../../store/slices/my-bids/thunks";
 
 export const ChatHeader = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -87,6 +88,22 @@ export const ChatHeader = () => {
         };
     }, [activeChatId, dispatch]);
 
+    const handleAgreeNowButton = () => {
+        setOpenRiskAgreementDialog(true);
+
+        if (!activeChatId) {
+            console.error("No active chat found.");
+            return;
+        }
+
+        if (uid === activeChat?.riskProvider?.uid) {
+            dispatch(updateRiskProviderAgreement({ chatId: activeChatId, agreement: true }));
+        } else {
+            dispatch(updateRiskTakerAgreement({ chatId: activeChatId, agreement: true }));
+        }
+
+    };
+
     const handleClose = () => {
         setOpenRiskAgreementDialog(false);
     };
@@ -118,8 +135,7 @@ export const ChatHeader = () => {
                                             vertical: "bottom",
                                             horizontal: "right",
                                         }}
-                                        overlap="circular"
-                                    >
+                                        overlap="circular">
                                         <Avatar
                                             style={{cursor: "pointer"}}
                                             onClick={() => setOpenProfile(true)}
@@ -154,14 +170,44 @@ export const ChatHeader = () => {
                             </Typography>
                         </Box>
                         <Box sx={{display: "flex", alignItems: "center"}}>
-                            <Stack direction={"row"}>
+                            <Stack direction={"row"} alignItems="center">
+                                {
+                                    (() => {
+                                        const isRiskProvider = activeChat?.riskProvider?.uid === uid;
+                                        const partnerAgreed = isRiskProvider
+                                            ? activeChat?.riskTaker?.agreement
+                                            : activeChat?.riskProvider?.agreement;
+                                        return partnerAgreed && !(activeChat?.riskTaker?.agreement && activeChat?.riskProvider?.agreement) && (
+                                            <ToolTip title="Dein Verhandlungspartner hat schon einen Vorschlag zur Einigung unterbreitet, klicke auf den Button um dir diese anzusehen." followCursor>
+                                                <Typography
+                                                    variant="body2"
+                                                    color="textSecondary"
+                                                    sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
+                                                    Verhandlungspartner hat eine Einigung signalisiert
+                                                </Typography>
+                                            </ToolTip>
+                                        );
+                                    })()
+                                }
                                 <Button
                                     disabled={risk?.status === RiskStatusEnum.AGREEMENT}
                                     variant="contained"
                                     sx={{whiteSpace: "nowrap"}}
-                                    onClick={() => setOpenRiskAgreementDialog(true)}
+                                    onClick={handleAgreeNowButton}
                                     startIcon={<HandshakeIcon/>}>
-                                    <Trans i18nKey="chat.agreement"></Trans>
+                                    {(() => {
+                                        const isRiskProvider = activeChat?.riskProvider?.uid === uid;
+                                        const myAgreement = isRiskProvider
+                                            ? activeChat?.riskProvider?.agreement
+                                            : activeChat?.riskTaker?.agreement;
+                                        const partnerAgreement = isRiskProvider
+                                            ? activeChat?.riskTaker?.agreement
+                                            : activeChat?.riskProvider?.agreement;
+                                        if (partnerAgreement) {
+                                            return myAgreement ? "Vorschlag bearbeiten" : "Vorschlag prüfen!";
+                                        }
+                                        return <Trans i18nKey="chat.agreement" />;
+                                    })()}
                                 </Button>
                                 <ToolTip title="Verhandlung abbrechen" followCursor>
                                     <IconButton
