@@ -1,112 +1,125 @@
 import React from "react";
 import Grid from "@mui/material/Grid2";
-import RouteIcon from '@mui/icons-material/Route';
-import GavelIcon from '@mui/icons-material/Gavel';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import {Card, CardMedia, Typography} from "@mui/material";
-import route from "../../assests/imgs/risk-examples/wings.jpg"
-import process from "../../assests/imgs/risk-examples/process.jpg"
-import event from "../../assests/imgs/risk-examples/event.jpg"
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import RouteIcon from "@mui/icons-material/Route";
+import GavelIcon from "@mui/icons-material/Gavel";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { Card, CardMedia, Typography } from "@mui/material";
+import route from "../../assests/imgs/risk-examples/wings.jpg";
+import process from "../../assests/imgs/risk-examples/process.jpg";
+import event from "../../assests/imgs/risk-examples/event.jpg";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import IconButton from "@mui/material/IconButton";
-import {theme} from "../../theme";
-import { Trans, useTranslation} from "react-i18next";
+import { theme } from "../../theme";
+import { Trans, useTranslation } from "react-i18next";
 
 interface RiskExample {
-    img: string;
-    title: string;
-    icon: any;
+  img: string;
+  title: string;
+  icon: any;
 }
 
 const iconSize = 50;
 const riskExamples: RiskExample[] = [
-    {
-        title: "way",
-        img: route,
-        icon: <RouteIcon sx={{fontSize: iconSize}}/>
-    },
-    {
-        title: "process",
-        img: process,
-        icon: <GavelIcon sx={{fontSize: iconSize}} />
-    },
-    {
-        title: "event",
-        img: event,
-        icon: <CalendarMonthIcon sx={{fontSize: iconSize}}/>
-    }
+  {
+    title: "way",
+    img: route,
+    icon: <RouteIcon sx={{ fontSize: iconSize }} />,
+  },
+  {
+    title: "process",
+    img: process,
+    icon: <GavelIcon sx={{ fontSize: iconSize }} />,
+  },
+  {
+    title: "event",
+    img: event,
+    icon: <CalendarMonthIcon sx={{ fontSize: iconSize }} />,
+  },
 ];
 
 export const RiskElement = (props: RiskExample) => {
-    return (
-        <Card sx={{textAlign: "center", cursor: "pointer"}} elevation={2}>
-            <CardMedia
-                sx={{height: 270}}
-                title={props.title}
-                image={props.img} />
+  return (
+    <Card sx={{ textAlign: "center", cursor: "pointer" }} elevation={2}>
+      <CardMedia sx={{ height: 270 }} title={props.title} image={props.img} />
 
-            <div style={{margin: "60px"}}>
-                {props.icon}
-            </div>
+      <div style={{ margin: "60px" }}>{props.icon}</div>
 
-            <Typography gutterBottom variant="h5" component="div">
-                {props.title}
-            </Typography>
-        </Card>
-    )
-
-}
+      <Typography gutterBottom variant="h5" component="div">
+        {props.title}
+      </Typography>
+    </Card>
+  );
+};
 
 export const RiskCarousel = () => {
-    const orange = theme.palette.primary.main;
-    const { t, i18n } = useTranslation();
+  const orange = theme.palette.primary.main;
+  const { t, i18n } = useTranslation();
 
-    return (
-        <React.Fragment>
-            <Typography variant="h5" color="grey" style={{textAlign: "center", marginTop: "50px"}}>
-                <Trans  i18nKey="homepage.middle_page_text"></Trans> <span style={{ color: orange }}>X</span>RISK
-            </Typography>
-            <Typography variant="h3" style={{textAlign: "center", marginBottom: "50px"}}>
-                {(i18n.language === "en") && <b><span style={{ color: orange }}>Offer your Risks</span> now.</b>}
-                {(i18n.language === "de") && <b>Jetzt <span style={{ color: orange }}>mit Risiken handeln!</span></b>}
-            </Typography>
-            <Typography variant="h5" color="black" style={{textAlign: "center", marginBottom: "50px"}}>
-            <Trans  i18nKey="homepage.middle_page_text3"></Trans>
-            </Typography>
+  return (
+    <React.Fragment>
+      <Typography
+        variant="h5"
+        color="grey"
+        style={{ textAlign: "center", marginTop: "50px" }}
+      >
+        <Trans i18nKey="homepage.middle_page_text"></Trans>{" "}
+        <span style={{ color: orange }}>X</span>RISK
+      </Typography>
+      <Typography
+        variant="h3"
+        style={{ textAlign: "center", marginBottom: "50px" }}
+      >
+        {i18n.language === "en" && (
+          <b>
+            <span style={{ color: orange }}>Offer your Risks</span> now.
+          </b>
+        )}
+        {i18n.language === "de" && (
+          <b>
+            Jetzt <span style={{ color: orange }}>mit Risiken handeln!</span>
+          </b>
+        )}
+      </Typography>
+      <Typography
+        variant="h5"
+        color="black"
+        style={{ textAlign: "center", marginBottom: "50px" }}
+      >
+        <Trans i18nKey="homepage.middle_page_text3"></Trans>
+      </Typography>
 
-
-            <Grid
-                container
-                style={{margin: "0 40px 100px 40px"}}
-                display="flex"
-                justifyContent="center"
-                alignItems="center">
-                <Grid size={1} style={{textAlign: "right"}}>
-                    <IconButton>
-                        <KeyboardArrowLeftIcon sx={{fontSize: 40}}/>
-                    </IconButton>
-                </Grid>
-                {
-                    riskExamples.map((riskExample: RiskExample) => (
-                        <Grid
-                            size={{xs: 12, sm: 6, md: 4, lg: 3, xl: 2}}
-                            key={riskExample.title}
-                            style={{margin: "40px"}}>
-                            <RiskElement
-                                img={riskExample.img}
-                                title={t(`homepage.${riskExample.title}_figure_text`)}
-                                icon={riskExample.icon} />
-                        </Grid>
-                    ))
-                }
-                <Grid size={1}>
-                    <IconButton>
-                        <KeyboardArrowRightIcon sx={{fontSize: 40}}/>
-                    </IconButton>
-                </Grid>
-            </Grid>
-        </React.Fragment>
-
-    )
-}
+      <Grid
+        container
+        style={{ margin: "0 40px 100px 40px" }}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Grid size={1} style={{ textAlign: "right" }}>
+          <IconButton>
+            <KeyboardArrowLeftIcon sx={{ fontSize: 40 }} />
+          </IconButton>
+        </Grid>
+        {riskExamples.map((riskExample: RiskExample) => (
+          <Grid
+            size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
+            key={riskExample.title}
+            style={{ margin: "40px" }}
+          >
+            <RiskElement
+              img={riskExample.img}
+              title={t(`homepage.${riskExample.title}_figure_text`)}
+              icon={riskExample.icon}
+            />
+          </Grid>
+        ))}
+        <Grid size={1}>
+          <IconButton>
+            <KeyboardArrowRightIcon sx={{ fontSize: 40 }} />
+          </IconButton>
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
+};
