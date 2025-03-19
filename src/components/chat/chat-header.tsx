@@ -14,7 +14,7 @@ import {
     activeRiskAgreementUnsubscribe,
     subscribeToActiveRiskAgreement,
 } from "../../store/slices/my-risk-agreements/thunks";
-import {Trans} from "react-i18next";
+import {Trans, useTranslation} from "react-i18next";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {selectRiskById,} from "../../store/slices/risks/selectors";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
@@ -29,6 +29,7 @@ import ToolTip from "@mui/material/Tooltip";
 import {CancelDealDialog} from "../my-risks/my-risk-row-details/deals-details/cancel-deal-dialog";
 import RiskStepperDialog from "../risk-agreement/risk-agreement-stepper";
 import {updateRiskProviderAgreement, updateRiskTakerAgreement} from "../../store/slices/my-bids/thunks";
+import i18next from "i18next";
 
 export const ChatHeader = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -50,6 +51,8 @@ export const ChatHeader = () => {
         React.useState<Publisher | null>(null);
     const [openRiskDetails, setOpenRiskDetails] = React.useState(false);
     const [openCancelDealDialog, setOpenCancelDealDialog] = React.useState(false);
+
+    const t = i18next.t;
 
     useEffect(() => {
         const mappedProfile: Publisher = {
@@ -179,12 +182,12 @@ export const ChatHeader = () => {
                                             : activeChat?.riskProvider?.agreement;
                                         if (partnerAgreed && !(activeChat?.riskTaker?.agreement && activeChat?.riskProvider?.agreement)) {
                                             return (
-                                                <ToolTip title="Dein Verhandlungspartner hat schon einen Vorschlag zur Einigung unterbreitet, klicke auf den Button um dir diese anzusehen." followCursor>
+                                                <ToolTip title={`${t("chat.chat_header.take_a_look_at_the_edited_agreement")}`} followCursor>
                                                     <Typography
                                                         variant="body2"
                                                         color="textSecondary"
                                                         sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
-                                                        Verhandlungspartner hat eine Einigung signalisiert
+                                                        <Trans i18nKey={"chat.chat_header.negotiation_partner_signaled"}></Trans>
                                                     </Typography>
                                                 </ToolTip>
                                             )
@@ -192,13 +195,13 @@ export const ChatHeader = () => {
 
                                         if (risk?.status === RiskStatusEnum.AGREEMENT) {
                                             return (
-                                                <ToolTip title="Einigung erzielt beide Teilnehmer haben der Einigung zugestimmt" followCursor>
+                                                <ToolTip title={`${t("chat.chat_header.both_party_agreed_tooltip")}`} followCursor>
                                                     <Typography
                                                         onClick={() => setOpenRiskDetails(true)}
                                                         variant="body2"
                                                         color="textSecondary"
                                                         sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
-                                                        Beide Teilnehmer haben der Einigung zugestimmt
+                                                        <Trans i18nKey={"chat.chat_header.both_party_agreed"}></Trans>
                                                     </Typography>
                                                 </ToolTip>
                                             )
@@ -220,12 +223,12 @@ export const ChatHeader = () => {
                                             ? activeChat?.riskTaker?.agreement
                                             : activeChat?.riskProvider?.agreement;
                                         if (partnerAgreement) {
-                                            return myAgreement ? "Vorschlag bearbeiten" : "Vorschlag prüfen!";
+                                            return myAgreement ? `${t("chat.chat_header.edit_proposal")}` : `${t("chat.chat_header.check_proposal")}`;
                                         }
-                                        return <Trans i18nKey="chat.agreement" />;
+                                        return <Trans i18nKey="chat.chat_header.agreement" />;
                                     })()}
                                 </Button>
-                                <ToolTip title="Verhandlung abbrechen" followCursor>
+                                <ToolTip title={`${t("chat.chat_header.cancel_negotiation")}`} followCursor>
                                     <IconButton
                                         onClick={deleteChat}
                                         disabled={risk?.status === RiskStatusEnum.AGREEMENT}>

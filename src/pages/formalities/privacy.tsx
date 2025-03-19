@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-
+import { Trans } from "react-i18next";
 export const Privacy = () => {
   return (
       <div>
@@ -10,7 +10,7 @@ export const Privacy = () => {
               color="black" 
               variant="h4"
               style={{ marginLeft: "10px", marginRight: "10px" }}>
-              Datenschutz
+              <Trans i18nKey={"footer.privacy_elements.data_protection"}/>
           </Typography>
           </div>
           <br/>
@@ -19,13 +19,13 @@ export const Privacy = () => {
               color="black" 
               variant="h6"
               style={{ marginLeft: "10px", marginRight: "10px" }}>
-              Einleitung
+              <Trans i18nKey={"footer.privacy_elements.introduction"}/>
           </Typography>
           <Typography
               variant="body1"
               component="p"
               style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Der Schutz deiner persönlichen Daten ist uns besonders wichtig. In dieser Datenschutzerklärung erläutern wir, welche Daten wir erfassen, wie wir sie verwenden und welche Rechte du als Nutzer hast. Unsere Chat-Anwendung wurde mit höchsten Sicherheitsstandards entwickelt, um deine Daten zu schützen und eine transparente Nutzung zu gewährleisten.
+            <Trans i18nKey={"footer.privacy_elements.intro_line_1"}/>
           </Typography>
           <br/>
           <br/>
@@ -33,17 +33,17 @@ export const Privacy = () => {
               color="black" 
               variant="h6"
               style={{ marginLeft: "10px", marginRight: "10px" }}>
-              Welche Daten wir erheben
+              <Trans i18nKey={"footer.privacy_elements.second_paragraph"}/>
           </Typography>
           <Typography
               variant="body1"
               component="p"
               style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Bei der Nutzung unserer Anwendung erfassen wir verschiedene Arten von Daten, darunter:
+            <Trans i18nKey={"footer.privacy_elements.sec_par_line_1"}/>
           <ul>
-              <li>Persönliche Daten: Name, E-Mail-Adresse oder Kontaktinformationen, falls du diese im Chat bereitstellst.</li>
-              <li>Kommunikationsdaten: Nachrichten, die zwischen Versicherern und Nutzern ausgetauscht werden, um eine optimale Beratung zu gewährleisten.</li>
-              <li>Technische Daten: IP-Adresse, Gerätetyp und Browserinformationen zur Verbesserung der Benutzererfahrung und zur Sicherheitsüberwachung.</li>
+              <li><Trans i18nKey={"footer.privacy_elements.sec_par_line_1_1"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.sec_par_line_1_2"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.sec_par_line_1_3"}/></li>
 
           </ul>
 
@@ -54,20 +54,20 @@ export const Privacy = () => {
               color="black" 
               variant="h6"
               style={{ marginLeft: "10px", marginRight: "10px" }}>
-              Wie wir deine Daten nutzen
+              <Trans i18nKey={"footer.privacy_elements.third_paragraph"}/>
           </Typography>
           <Typography
               variant="body1"
               component="p"
               style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Wir nutzen deine Daten ausschließlich, um dir eine sichere und effiziente Nutzung unserer Chat-Anwendung zu ermöglichen. Dazu gehören:
+          <Trans i18nKey={"footer.privacy_elements.thrd_par_line_1"}/>
           <ul>
-              <li>Bereitstellung und Verbesserung unserer Plattform </li>
-              <li>Kommunikation zwischen Versicherern und Kunden</li>
-              <li>Personalisierte Angebote basierend auf deinen Angaben</li>
-              <li>Einhaltung gesetzlicher Anforderungen und Sicherheit</li>
+              <li><Trans i18nKey={"footer.privacy_elements.thrd_par_line_1_1"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.thrd_par_line_1_2"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.thrd_par_line_1_3"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.thrd_par_line_1_4"}/></li>
           </ul>
-          Deine Daten werden niemals ohne deine Zustimmung für Werbezwecke an Dritte weitergegeben.
+          <Trans i18nKey={"footer.privacy_elements.thrd_par_line_2"}/>
           </Typography>
           <br/>
           <br/>
@@ -75,13 +75,13 @@ export const Privacy = () => {
               color="black" 
               variant="h6"
               style={{ marginLeft: "10px", marginRight: "10px" }}>
-              Speicherung und Löschung von Daten
+              <Trans i18nKey={"footer.privacy_elements.fourth_paragraph"}/>
           </Typography>
           <Typography
               variant="body1"
               component="p"
               style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Wir speichern deine Daten nur so lange, wie es für die Erbringung unserer Dienste notwendig oder gesetzlich vorgeschrieben ist. Auf Wunsch kannst du jederzeit eine Löschung deiner persönlichen Daten beantragen, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
+          <Trans i18nKey={"footer.privacy_elements.fourth_par_line_1"}/>
           </Typography>
           <br/>
           <br/>
@@ -89,20 +89,20 @@ export const Privacy = () => {
               color="black" 
               variant="h6"
               style={{ marginLeft: "10px", marginRight: "10px" }}>
-              Deine Rechte
+              <Trans i18nKey={"footer.privacy_elements.fifth_paragraph"}/>
           </Typography>
           <Typography
               variant="body1"
               component="p"
               style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Als Nutzer hast du das Recht auf:
+          <Trans i18nKey={"footer.privacy_elements.fifth_par_line_1"}/>
           <ul>
-              <li>Auskunft: Welche Daten wir über dich gespeichert haben. </li>
-              <li>Berichtigung: Falls deine Daten fehlerhaft oder unvollständig sind.</li>
-              <li>Die Entfernung deiner Daten, sofern dies gesetzlich zulässig ist.</li>
-              <li>Du kannst der Verarbeitung deiner Daten widersprechen, insbesondere für Marketingzwecke.</li>
+              <li><Trans i18nKey={"footer.privacy_elements.fifth_par_line_1_1"}/> </li>
+              <li><Trans i18nKey={"footer.privacy_elements.fifth_par_line_1_2"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.fifth_par_line_1_3"}/></li>
+              <li><Trans i18nKey={"footer.privacy_elements.fifth_par_line_1_4"}/></li>
           </ul>
-          Bei Fragen zur Datennutzung oder zur Ausübung deiner Rechte kannst du uns jederzeit kontaktieren.
+          <Trans i18nKey={"footer.privacy_elements.fifth_par_line_2"}/>
           </Typography>
           <br/>
           <br/>

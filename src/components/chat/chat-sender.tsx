@@ -21,6 +21,7 @@ import {selectRisks} from "../../store/slices/risks/selectors";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {v4 as uuid} from "uuid"
+import i18next from "i18next";
 
 export const ChatSender = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -170,7 +171,7 @@ export const ChatSender = () => {
                     id="msg-sent"
                     fullWidth
                     value={msg}
-                    placeholder="Gebe eine Nachricht ein..."
+                    placeholder={`${i18next.t("chat.chat_sender.placeholder")}`}
                     size="small"
                     type="text"
                     inputProps={{'aria-label': 'Type a Message'}}

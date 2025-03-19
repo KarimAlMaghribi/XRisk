@@ -9,6 +9,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {searchChats} from "../../store/slices/my-bids/reducers";
 import {selectImagePath, selectMail, selectName} from "../../store/slices/user-profile/selectors";
+import i18next from "i18next";
 
 const drawerWidth = 320;
 
@@ -49,7 +50,7 @@ export const ChatSidebar = () => {
             <Box px={3} py={1}>
                 <TextField
                     id="outlined-search"
-                    placeholder="Durchsuche Chats"
+                    placeholder={`${i18next.t("chat.chat_sidebar.search_chats")}`}
                     size="small"
                     type="search"
                     variant="outlined"

@@ -16,6 +16,7 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {updateMyRiskStatus} from "../../store/slices/my-risks/thunks";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import {RiskAgreement} from "../../models/RiskAgreement";
+import { Trans } from "react-i18next";
 
 interface RiskStepperDialogProps {
     open: boolean;
@@ -299,7 +300,7 @@ export default function RiskStepperDialog(props: RiskStepperDialogProps) {
             fullWidth
             maxWidth="md"
         >
-            <DialogTitle marginBottom="20px">Risiko Vereinbarung</DialogTitle>
+            <DialogTitle marginBottom="20px"><Trans i18nKey={"risk_agreement.risk_agreement"}/></DialogTitle>
             <DialogContent>
                 <Stepper activeStep={activeStep} alternativeLabel>
                     {stepLabels.map((label, index) => (

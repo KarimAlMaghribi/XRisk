@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { Trans } from "react-i18next";
 
 function FooterSolutionDescriptions() {
   return (
@@ -10,7 +11,7 @@ function FooterSolutionDescriptions() {
             color="black" 
             variant="h4"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Solutions
+            <Trans i18nKey={"footer.solutions"}></Trans>
         </Typography>
         </div>
         <br/>
@@ -20,14 +21,14 @@ function FooterSolutionDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Brainstroming
+            <Trans i18nKey={"footer.brainstroming"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          In unserer Chat-Anwendung nutzen wir Brainstorming. Der Risikonehmer kann im Chat gezielt Fragen stellen, um die Anforderungen des Risikogebers besser zu verstehen, während der Risikogeber seine individuellen Wünsche äußern kann. So entsteht ein interaktiver Austausch, bei dem gemeinsam die beste Lösung erarbeitet werden. Durch diese direkte Kommunikation vermeiden wir Missverständnisse und ermöglichen maßgeschneiderte Lösungen.
+          <Trans i18nKey={"footer.solution_elements.brainstroming_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -36,14 +37,14 @@ function FooterSolutionDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Ideation
+            <Trans i18nKey={"footer.ideation"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Sobald erste Vorstellungen zur Risiken geklärt sind, geht es in die Ideation-Phase. Hier hilft unser Chat dabei, konkrete Angebote zu entwickeln. Der Risikogeber kann verschiedene Tarife und Leistungen präsentieren, während der Risikonehmer Feedback gibt und Anpassungen vornimmt. Durch diese iterative Vorgehensweise wird sichergestellt, dass das finale Angebot genau den Erwartungen entspricht. Unsere Anwendung macht diesen Prozess einfach und effizient, sodass Nutzer schnell zu einer passenden Lösung kommen.
+          <Trans i18nKey={"footer.solution_elements.ideation_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -52,14 +53,14 @@ function FooterSolutionDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Wireframing
+            <Trans i18nKey={"footer.wireframing"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Um eine transparente und verständliche Darstellung der Risiken zu gewährleisten, setzen wir auf eine intuitive Benutzerführung. Innerhalb der Website werden Tarife, Leistungen und Vertragsdetails übersichtlich präsentiert, sodass Nutzer eine klare Vorstellung von ihrem Versicherungspaket erhalten. Mit interaktiven Elementen, wie klickbaren Angeboten oder Vergleichstabellen, helfen wir den Kunden, die beste Entscheidung zu treffen. Dadurch bleibt der Prozess nicht nur informativ, sondern auch benutzerfreundlich und visuell ansprechend.
+          <Trans i18nKey={"footer.solution_elements.wireframing_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -68,14 +69,14 @@ function FooterSolutionDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Research
+            <Trans i18nKey={"footer.research"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Unsere Anwendung unterstützt Nutzer dabei, sich fundiert zu informieren. Im Chat können Vergleiche zu ähnlichen Tarifen angestellt, Kundenbewertungen eingesehen oder häufig gestellte Fragen beantwortet werden. Zudem kann der Risikonehmer gezielt individuelle Empfehlungen auf Basis der Kundenangaben geben. So sorgen wir dafür, dass jeder Nutzer eine fundierte Entscheidung treffen kann – basierend auf Daten, Expertenwissen und persönlicher Beratung.
+          <Trans i18nKey={"footer.solution_elements.research_text"}></Trans>
         </Typography>
         <br/>
         <br/>

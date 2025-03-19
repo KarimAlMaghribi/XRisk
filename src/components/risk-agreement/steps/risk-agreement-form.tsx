@@ -2,6 +2,7 @@ import React from "react";
 import { TextField } from "@mui/material";
 import { EuroNumberFormat } from "../../my-risks/creation-dialog/my-risk-creation-dialog";
 import {InfoTooltip} from "./info-tooltip";
+import i18next from "i18next";
 
 export interface RiskAgreementFormProps {
     timeframe: string;
@@ -33,38 +34,38 @@ export const RiskAgreementForm: React.FC<RiskAgreementFormProps> = ({
             <TextField
                 margin="dense"
                 fullWidth
-                label="Zeitspanne"
+                label={i18next.t("risk_agreement.risk_agreement_form.timeframe")}
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value)}
             />
             <TextField
                 margin="dense"
                 fullWidth
-                label="Beweismittel"
+                label={i18next.t("risk_agreement.risk_agreement_form.evidence")}
                 value={evidence}
                 onChange={(e) => setEvidence(e.target.value)}
-                InputProps={{ endAdornment: <InfoTooltip title="Beweise für den Schadenfall" /> }}
+                InputProps={{ endAdornment: <InfoTooltip title={i18next.t("risk_agreement.risk_agreement_form.evidence_tooltip")} /> }}
             />
             <TextField
                 margin="dense"
                 fullWidth
-                label="Kosten"
+                label={i18next.t("risk_agreement.risk_agreement_form.costs")}
                 color="secondary"
                 value={costs}
                 onChange={(e) => setCosts(Number(e.target.value.replace(/€\s?|(,*)/g, "")))}
                 InputProps={{
-                    endAdornment: <InfoTooltip title="Kosten des Risikogeber" />,
+                    endAdornment: <InfoTooltip title={i18next.t("risk_agreement.risk_agreement_form.costs_tooltip")} />,
                     inputComponent: EuroNumberFormat,
                 }}
             />
             <TextField
                 margin="dense"
                 fullWidth
-                label="Absicherungssumme"
+                label={i18next.t("risk_agreement.risk_agreement_form.insuranceSum")}
                 value={insuranceSum}
                 onChange={(e) => setInsuranceSum(Number(e.target.value.replace(/€\s?|(,*)/g, "")))}
                 InputProps={{
-                    endAdornment: <InfoTooltip title="Maximal auszuzahlende Summe" />,
+                    endAdornment: <InfoTooltip title={i18next.t("risk_agreement.risk_agreement_form.insuranceSum_tooltip")} />,
                     inputComponent: EuroNumberFormat,
                 }}
             />
@@ -72,10 +73,10 @@ export const RiskAgreementForm: React.FC<RiskAgreementFormProps> = ({
                 margin="dense"
                 fullWidth
                 multiline
-                label="Sonstige Anmerkungen"
+                label={i18next.t("risk_agreement.risk_agreement_form.details")}
                 value={riskDetails}
                 onChange={(e) => setRiskDetails(e.target.value)}
-                InputProps={{ endAdornment: <InfoTooltip title="Vertraglich relevante Informationen" /> }}
+                InputProps={{ endAdornment: <InfoTooltip title={i18next.t("risk_agreement.risk_agreement_form.details_tooltip")} /> }}
             />
         </>
     );

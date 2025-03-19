@@ -19,6 +19,7 @@ import {addNotification} from "../../../store/slices/my-notifications/thunks";
 import {useSnackbarContext} from "../../snackbar/custom-snackbar";
 import {RiskAgreementHeader} from "./risk-agreement-header";
 import {RiskAgreementForm} from "./risk-agreement-form";
+import { Trans } from "react-i18next";
 
 export interface RiskAgreementDefinitionProps {
     risk: Risk | undefined;
@@ -169,10 +170,10 @@ export const RiskAgreementDefinition = (props: RiskAgreementDefinitionProps) => 
     return (
         <>
             <DialogContentText>
-                Haltet nochmal fest, was vereinbart wurde! <br/>
-                Diese Informationen werden später Bestandteil des Vertrags. <br/>
-                Nutze die KI, um das Formular basierend auf dem Chat automatisch
-                auszufüllen, oder gib die Daten manuell ein.
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_context_1"}/> <br/>
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_context_2"}/> <br/>
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_context_3"}/>
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_context_4"}/>
             </DialogContentText>
 
             <RiskAgreementHeader riskTitle={props.riskTitle} riskType={props.riskType}/>
@@ -196,11 +197,14 @@ export const RiskAgreementDefinition = (props: RiskAgreementDefinitionProps) => 
                     onClick={handleDataExtraction}>
                     {loadingExtractInformation &&
                         <CircularProgress size={24} color="inherit" style={{marginRight: "5px"}}/>}
-                    Informationen Aus Chat übernehmen
+                    <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_action_button1"}/>
                 </Button>
-                <Button onClick={handleRiskAgreementProposition} variant="contained" color="primary">Vereinbarung
-                    vorschlagen</Button>
-                <Button onClick={props.handleClose} variant="contained">Abbrechen</Button>
+                <Button onClick={handleRiskAgreementProposition} variant="contained" color="primary">
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_action_button2"}/>
+                </Button>
+                <Button onClick={props.handleClose} variant="contained">
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_action_button3"}/>
+                </Button>
             </DialogActions>
         </>
     )

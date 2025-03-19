@@ -41,7 +41,7 @@ function App() {
         i18n.on("languageChanged", (lng) => {
             setLanguage(lng); // This will force a re-render
         });
-    }, []);
+    }, [i18n.language]);
 
     return (
         <Layout>

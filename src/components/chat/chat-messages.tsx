@@ -20,6 +20,7 @@ import {
 import {messagesUnsubscribe, subscribeToMessages} from "../../store/slices/my-bids/thunks";
 import {selectImagePath} from "../../store/slices/user-profile/selectors";
 import ReactMarkdown from "react-markdown";
+import { Trans, useTranslation } from "react-i18next";
 
 export const ChatMessages = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -50,6 +51,7 @@ export const ChatMessages = () => {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
     }, [messages]);
+    
 
     return (
         <>
@@ -77,7 +79,7 @@ export const ChatMessages = () => {
                                                                         <Typography variant="body2" color="grey.400" mb={1}>
                                                                             {message.uid === CHATBOT_UID ? "XRisk-Chabot" : otherChatMemberName},{' '}
                                                                             {formatLastActivity(message.created)}{' '}
-                                                                            her
+                                                                            <Trans i18nKey={"chat.chat_messages.ago"}></Trans>
                                                                         </Typography>
                                                                     ) : null}
                                                                     {message.type === MessageTypeEnum.TEXT ? (
@@ -127,7 +129,7 @@ export const ChatMessages = () => {
                                                                                 mb={1}
                                                                                 textAlign="right"
                                                                             >
-                                                                                Du, vor {formatLastActivity(message.created)}
+                                                                                <Trans i18nKey={"chat.chat_messages.you_before"}/> {formatLastActivity(message.created)}
                                                                             </Typography>
                                                                         ) : null}
                                                                         {message.type === MessageTypeEnum.TEXT ? (
@@ -188,7 +190,7 @@ export const ChatMessages = () => {
                         </Box>
                     </Box> :
                     <Box display="flex" alignItems="center" p={2} pb={1} pt={1}>
-                        <Typography variant="h4">Wähle einen Chat</Typography>
+                        <Typography variant="h4"><Trans i18nKey={"chat.chats_list.choose_a_chat"}/></Typography>
                     </Box>
             }
         </>

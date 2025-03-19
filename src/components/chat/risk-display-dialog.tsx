@@ -18,7 +18,7 @@ import { AgreementTable } from "../my-risks/my-risk-row-details/agreement-detail
 import { RiskAgreement } from "../../models/RiskAgreement";
 import { useSelector } from "react-redux";
 import { selectRiskAgreements } from "../../store/slices/my-risk-agreements/selectors";
-import { t } from "i18next";
+import { Trans } from "react-i18next";
 
 export interface RiskDisplayDialogProps {
   open: boolean;
@@ -81,31 +81,31 @@ export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                Typ
+                <Trans i18nKey={"terms.Type"} />
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                Absicherungssumme
+                <Trans i18nKey={"terms.Insured_sum"} />
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                Fällig am
+                <Trans i18nKey={"terms.Due_on"} />
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                Status
+                <Trans i18nKey={"terms.Status"} />
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                Beschreibung
+                <Trans i18nKey={"terms.Description"} />
               </Typography>
             </Grid>
             <Grid size={8}>
@@ -137,7 +137,7 @@ export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                {mapStatus(t, props.risk?.status) || "-"}
+                {mapStatus(props.risk?.status) || "-"}
               </Typography>
               <Typography
                 variant="body2"
@@ -155,7 +155,7 @@ export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button autoFocus onClick={handleClose}>
-          Schließen
+          <Trans i18nKey={"terms.Close"} />
         </Button>
       </DialogActions>
     </Dialog>

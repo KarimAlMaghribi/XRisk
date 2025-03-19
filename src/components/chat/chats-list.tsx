@@ -17,6 +17,7 @@ import {Chat} from "../../store/slices/my-bids/types";
 import {selectActiveChatId, selectChatsToDisplay} from "../../store/slices/my-bids/selectors";
 import {auth} from "../../firebase_config";
 import {chatsUnsubscribe, subscribeToChats} from "../../store/slices/my-bids/thunks";
+import { Trans } from "react-i18next";
 
 export enum ChatSort {
     LATEST = 'LATEST',
@@ -66,7 +67,7 @@ export const ChatsList = () => {
                     aria-expanded={isMenuOpen ? 'true' : undefined}
                     onClick={handleClick}
                     color="inherit">
-                    Letzte Chats <ExpandMoreIcon/>
+                    <Trans i18nKey={"chat.chats_list.last_chats"}/> <ExpandMoreIcon/>
                 </Button>
                 <Menu
                     id="basic-menu"
@@ -76,8 +77,8 @@ export const ChatsList = () => {
                     MenuListProps={{
                         'aria-labelledby': 'basic-button',
                     }}>
-                    <MenuItem onClick={() => handleSetChatSort(ChatSort.LATEST)}>Neuste Chats</MenuItem>
-                    <MenuItem onClick={() => handleSetChatSort(ChatSort.OLDEST)}>Älteste Chats</MenuItem>
+                    <MenuItem onClick={() => handleSetChatSort(ChatSort.LATEST)}><Trans i18nKey={"chat.chats_list.new_chats"}/></MenuItem>
+                    <MenuItem onClick={() => handleSetChatSort(ChatSort.OLDEST)}><Trans i18nKey={"chat.chats_list.oldest_chats"}/></MenuItem>
                 </Menu>
             </Box>
             <Scrollbar sx={{height: {lg: 'calc(100vh - 100px)', md: '100vh'}, maxHeight: '600px'}}>
@@ -137,7 +138,7 @@ export const ChatsList = () => {
                 ) : (
                     <Box m={2}>
                         <Alert severity="error" variant="filled" sx={{color: 'white'}}>
-                            Keine Chats gefunden!
+                        <Trans i18nKey={"chat.chats_list.no_chats_found"}/>
                         </Alert>
                     </Box>
                 )}
