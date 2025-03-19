@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { Trans } from "react-i18next";
 
 function FooterResourceDescriptions() {
   return (
@@ -10,7 +11,7 @@ function FooterResourceDescriptions() {
             color="black" 
             variant="h4"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Resources
+            <Trans i18nKey={"footer.company"}></Trans>
         </Typography>
         </div>
         <br/>
@@ -20,14 +21,14 @@ function FooterResourceDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Help Center
+            <Trans i18nKey={"footer.help_center"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Unser Help Center bietet schnelle und unkomplizierte Unterstützung direkt in der Chat-Anwendung. Nutzer können hier häufig gestellte Fragen durchstöbern, Anleitungen zur Nutzung der Plattform finden oder direkt mit einem Support-Mitarbeiter chatten. Unser Ziel ist es, Probleme effizient zu lösen und unseren Kunden jederzeit eine verlässliche Anlaufstelle für ihre Anliegen zu bieten. So bleibt der gesamte Risikoabsicherungprozess einfach und verständlich.
+          <Trans i18nKey={"footer.resources_elements.help_center_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -36,14 +37,14 @@ function FooterResourceDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Blog
+            <Trans i18nKey={"footer.blog"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          In unserem Blog teilen wir wertvolle Einblicke in die Versicherungswelt, geben Tipps zur Auswahl der richtigen Tarife und informieren über aktuelle Trends. Nutzer können sich hier über relevante Themen informieren und besser verstehen, welche Optionen am besten zu ihren Bedürfnissen passen. Unser Blog hilft dabei, komplexe Risikenfragen verständlich aufzubereiten und so die Entscheidungsfindung zu erleichtern.
+          <Trans i18nKey={"footer.resources_elements.blog_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -52,14 +53,14 @@ function FooterResourceDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Tutorials
+            <Trans i18nKey={"footer.tutorials"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Mit unseren Tutorials machen wir es Nutzern einfach, alle Funktionen unserer Chat-Anwendung optimal zu nutzen. In interaktiven Schritt-für-Schritt-Anleitungen erklären wir, wie man Risiken inseriert und individuelle Verträge abschließt. Egal ob Anfänger oder erfahrener Nutzer – unsere Tutorials sorgen dafür, dass jeder die Plattform effizient und problemlos verwenden kann.
+          <Trans i18nKey={"footer.resources_elements.tutorials_text"}></Trans>
         </Typography>
         <br/>
         <br/>

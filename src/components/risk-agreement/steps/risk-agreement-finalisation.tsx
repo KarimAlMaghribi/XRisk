@@ -3,6 +3,7 @@ import {Button, DialogActions, Typography} from "@mui/material";
 import {AgreementTable} from "../../my-risks/my-risk-row-details/agreement-details/agreement-table";
 import {RiskAgreement} from "../../../models/RiskAgreement";
 import confetti from 'canvas-confetti';
+import { Trans } from "react-i18next";
 
 export interface RiskAgreementFinalisationProps {
     handleClose: () => void;
@@ -41,15 +42,15 @@ export const RiskAgreementFinalisation = (props: RiskAgreementFinalisationProps)
                 }}
             />
             <Typography variant="body1" margin="20px">
-                Hier kannst du nochmal einen Blick auf eure Vereinbarung werfen.
+                <Trans i18nKey={"risk_agreement.risk_agreement_finalisation.final_glance"}/>
             </Typography>
             <AgreementTable riskAgreement={props.riskAgreement} />
             <DialogActions sx={{ marginTop: "20px" }}>
                 <Button onClick={props.handleClose} variant="contained" color="primary">
-                    Fertigstellen
+                    <Trans i18nKey={"risk_agreement.risk_agreement_finalisation.done"}/>
                 </Button>
                 <Button onClick={props.handleClose} variant="contained">
-                    Schließen
+                    <Trans i18nKey={"risk_agreement.risk_agreement_finalisation.close"}/>
                 </Button>
             </DialogActions>
         </>

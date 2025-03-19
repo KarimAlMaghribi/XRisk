@@ -12,7 +12,15 @@
     "PROVIDER": "PROVIDER",
     "define": "Define",
     "cancel": "Cancel",
-    "edit": "Edit"
+    "edit": "Edit",
+    "riskgiver": "Risk Giver",
+    "risktaker": "Risk Taker",
+    "Type": "Type",
+    "Insured_sum": "Insured sum",
+    "Due_on": "Due on",
+    "Status": "Status",
+    "Description": "Description",
+    "Close": "Schließen"
   },
   "risk_type": {
     "other": "Other",
@@ -155,10 +163,212 @@
     "request_demo": "Request Demo",
     "imprint": "Imprint",
     "terms": "Terms",
+    "terms_fullform": "General Terms and Conditions",
     "privacy": "Privacy",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contact_elements": {
+      "send_message": "Send us a message",
+      "adress": "Adress",
+      "street": "Street",
+      "telephone": "Telephone",
+      "email": "Email",
+      "website": "Website"
+    },
+    "imprint_elements": {
+      "board_of_directors": "Board of the directors",
+      "chairman": "Chairman"
+    },
+    "privacy_elements": {
+      "data_protection": "Data protection",
+      "introduction": "Introduction",
+      "intro_line_1":"The protection of your personal data is particularly important to us. In this privacy policy, we explain what data we collect, how we use it and what rights you have as a user. Our chat application has been developed with the highest security standards to protect your data and ensure transparent use.",
+      "second_paragraph": "Which data we collect",
+      "sec_par_line_1": "When you use our application, we collect various types of data, including:",
+      "sec_par_line_1_1": "Personal data: Name, email address or contact information if you provide it in the chat.",
+      "sec_par_line_1_2": "Communication data: Messages that are exchanged between insurers and users to ensure optimal advice.",
+      "sec_par_line_1_3": "Technical data: IP address, device type and browser information to improve the user experience and for security monitoring.",
+      "third_paragraph": "How we use your data",
+      "thrd_par_line_1": "We only use your data to enable you to use our chat application securely and efficiently. This includes:",
+      "thrd_par_line_1_1": "Provision and improvement of our platform ",
+      "thrd_par_line_1_2": "Communication between insurers and customers",
+      "thrd_par_line_1_3": "Personalised offers based on your details",
+      "thrd_par_line_1_4": "Compliance with legal requirements and safety",
+      "thrd_par_line_2": "Your data will never be passed on to third parties for advertising purposes without your consent.",
+      "fourth_paragraph": "Storage and deletion of data",
+      "fourth_par_line_1": "We only store your data for as long as is necessary for the provision of our services or as required by law. If you wish, you can request the deletion of your personal data at any time, provided there are no statutory retention obligations to the contrary.",
+      "fifth_paragraph": "Your rights",
+      "fifth_par_line_1": "As a user, you have the right to:",
+      "fifth_par_line_1_1": "Information: What data we have stored about you. ",
+      "fifth_par_line_1_2": "Correction: If your data is incorrect or incomplete.",
+      "fifth_par_line_1_3": "The removal of your data, insofar as this is permitted by law.",
+      "fifth_par_line_1_4": "You can object to the processing of your data, in particular for marketing purposes.",
+      "fifth_par_line_2": "If you have any questions about the use of data or the exercise of your rights, you can contact us at any time."
+    },
+    "terms_elements": {
+      "scope_of_application": "Scope of application",
+      "scope_text": "Our General Terms and Conditions (GTC) govern the use of our chat application for risk providers and risk takers. They apply to all functions and services offered via our platform. By registering or using the application, users agree to these terms and conditions. The GTC ensure that all parties have clear guidelines for the use of our services.",
+      "subject_matter": "Subject matter of the contract",
+      "subject_matter_text": "Our platform enables direct communication between risk providers and risk takers in order to efficiently present, compare and conclude risk products. It is used via a secure chat environment in which information is exchanged and contracts are presented transparently. The exact functions and availability of the services are regulated in the respective contractual conditions.",
+      "obligations_parties": "Obligations of the parties",
+      "obligations_parties_text": "Both risk providers and risk takers undertake to use the platform responsibly. Risk providers must ensure that they provide correct and complete information about their products. Users are obliged to provide truthful information and not to misuse the platform. In addition, all parties are required to comply with the applicable data protection regulations.",
+      "disclaimer": "Disclaimer",
+      "disclaimer_text": "We provide our chat application to the best of our knowledge and belief, but cannot guarantee the accuracy, completeness or permanent availability of the information provided. The final decision to take out insurance always lies with the user. We are not liable for damage caused by miscommunication or incomplete information.",
+      "final_provisions": "Final provisions",
+      "final_provision_text": "Should individual provisions of these GTC be or become invalid, the validity of the remaining provisions shall remain unaffected. Users will be notified of changes to the GTC in good time. The applicable law at the registered office of our company shall apply. If you have any questions or uncertainties regarding our GTC, please do not hesitate to contact us at any time for further information."
+    },
+    "about_elements": {
+      "our_mission": "Our Mission",
+      "our_mission_text": "Our mission is to make the insurance process simpler, more transparent and more customer-friendly. With our chat application, we create a direct link between insurers and customers so that questions can be clarified quickly, tariffs can be compared and contracts can be concluded easily. We rely on modern technology to make insurance solutions more accessible and efficient - for a better customer experience and optimised advice.",
+      "our_values": "Our Values",
+      "our_values_text": "Transparency, innovation and customer-centricity are our top priorities. We believe that insurance should be simple and easy to understand. That's why we develop solutions that put users at the centre. Respect, trust and open communication characterise our actions - both within the team and in our dealings with our customers and partners. Our values are the basis for a future-orientated and sustainable insurance world.",
+      "our_team": "Our Team",
+      "our_team_text": "Behind our chat application is a dedicated team of experts in the fields of technology, insurance and customer experience. Together, we are working to revolutionise the insurance market with innovative solutions. Our team brings together creative minds, developers, consultants and industry experts - all with the goal of providing the best possible user experience. We believe in collaboration, passion and continuous improvement.",
+      "our_story": "Our Story",
+      "our_story_text": "Our journey began with the vision of modernising the insurance market. We realised that many customers wanted a simpler, faster and more direct way to take out and manage insurance policies. This idea gave rise to our chat application - a solution that brings insurers and customers closer together. Since then, we have continuously developed our product, built valuable partnerships and helped many users to insure the right risks. And this is just the beginning."
+    },
+    "product_elements": {
+      "pricing_text": "We attach great importance to transparent and fair prices. In our chat application, risk takers can receive and compare information on the available risks directly. The risk provider can create customised offers and communicate discounts or special conditions directly in the chat. This makes the entire pricing process straightforward and easy to understand, so that every customer can find the best insurance for their budget.",
+      "overview_text": "To give users a quick overview of their options, our application offers a clear and structured presentation of all relevant information. Rates, benefits and advantages can be compared directly in the chat with Hilder the chatbot. Risk takers can use targeted messages or interactive suggestions to help them find the perfect solution for their individual needs. In this way, we ensure that every user can make an informed decision.",
+      "browse_text": "Our application makes it easy to browse through various risks. Users can ask questions about specific tariffs directly in the chat or discover suitable risks using intelligent filter options. The risk taker can also make targeted recommendations based on the risk provider's preferences and needs. This makes the selection process efficient and customised.",
+      "accessibility_text": "Everyone should be able to take their risks - that's why we are committed to making our application accessible. In the BETA version of our accessibility features, we offer an optimised display for people with visual or hearing impairments as well as adaptable texts and contrasts for better readability. We also support voice-activated input so that everyone can use our application effortlessly. Our goal is to create an inclusive platform that allows all users to interact easily and understandably."
+    },
+    "solution_elements": {
+      "brainstroming_text": "We use brainstorming in our chat application. The risk taker can ask specific questions in the chat to better understand the risk provider's requirements, while the risk provider can express their individual wishes. This creates an interactive exchange in which the best solution is worked out together. This direct communication enables us to avoid misunderstandings and provide customised solutions.",
+      "ideation_text": "As soon as initial ideas about the risks have been clarified, we move on to the ideation phase. This is where our chat helps to develop concrete offers. The risk provider can present various tariffs and benefits, while the risk taker provides feedback and makes adjustments. This iterative approach ensures that the final offer exactly meets expectations. Our application makes this process simple and efficient so that users can quickly find a suitable solution.",
+      "wireframing_text": "To ensure a transparent and comprehensible presentation of the risks, we rely on intuitive user guidance. Rates, benefits and contract details are clearly presented on the website so that users have a clear idea of their insurance package. With interactive elements, such as clickable offers or comparison tables, we help customers to make the best decision. This keeps the process not only informative, but also user-friendly and visually appealing.",
+      "research_text": "Our application helps users to obtain well-founded information. In the chat, comparisons can be made with similar tariffs, customer reviews can be viewed and frequently asked questions can be answered. In addition, the risk taker can make personalised recommendations based on customer information. In this way, we ensure that every user can make an informed decision - based on data, expert knowledge and personalised advice."
+    },
+    "resources_elements": {
+      "help_center_text": "Our Help Centre offers quick and uncomplicated support directly in the chat application. Users can browse through frequently asked questions, find instructions on how to use the platform or chat directly with a support employee. Our aim is to solve problems efficiently and offer our customers a reliable point of contact for their concerns at all times. This keeps the entire risk protection process simple and easy to understand.",
+      "blog_text": "In our blog, we share valuable insights into the world of insurance, give tips on choosing the right tariffs and provide information on current trends. Users can find out about relevant topics and better understand which options best suit their needs. Our blog helps to explain complex risk issues in an understandable way, making it easier to make decisions.",
+      "tutorials_text": "With our tutorials, we make it easy for users to make the most of all the functions of our chat application. In interactive step-by-step instructions, we explain how to advertise risks and conclude individual contracts. Whether you are a beginner or an experienced user, our tutorials ensure that everyone can use the platform efficiently and easily."
+    },
+    "support_elements": {
+      "developers_text": "Our developer support ensures that technical teams receive the best possible support when integrating and using our platform. Whether it's APIs, webhooks or customisation, developers can find detailed guides, code examples and direct access to our technical support. Our goal is to enable a seamless and efficient implementation of our chat application.",
+      "documentation_text": "Our comprehensive documentation provides detailed instructions on how to use and integrate our platform. From initial set-up steps to advanced functions - developers and companies will find all the relevant information here. Clearly structured content, examples and frequently asked questions help to quickly solve challenges and optimise the use of the application.",
+      "integrations_text": "Our chat application can be seamlessly integrated into existing systems and tools. Whether CRM systems, payment services or analytics platforms - we offer flexible interfaces to efficiently integrate the insurance process into existing workflows. Users can find an overview of all available integrations here, as well as instructions for quick implementation to ensure everything runs smoothly."
+    },
+    "company_elements":{
+      "press_text": "Our chat application is revolutionising the way in which risk providers and risk takers communicate with each other. Journalists and media representatives can find the latest press releases, company updates and images in our press area. We stand for innovation, transparency and a modern solution in the insurance sector - and are happy to share our story with the world. Press enquiries are always welcome!",
+      "events_text": "We are represented at industry events, trade fairs and digital conferences to actively shape the future of the insurance industry. In our events section, interested parties can find information on upcoming events, webinars and networking opportunities. We look forward to engaging in direct dialogue with insurers, partners and interested parties and providing exciting insights into our solution.",
+      "request_demo_text": "Would you like to see our chat application in action? With our live demo, we show how risk providers and risk takers can communicate seamlessly with each other, compare tariffs and take out insurance simply via chat. Our experts will guide you through the functions and answer all your questions - without obligation and in a practical way. Arrange a demo now and discover how our solution can optimise your insurance process."
+    } 
+  },
+  "sign_in": {
+    "we_make_risks_tradeable": "We make risks tradeable",
+    "signin_text": "Please login!",
+    "use_email_and_password": "Use your email address and password to log in",
+    "SignIn": "Sign In",
+    "or_login_with": "OR LOG IN WITH",
+    "registration_text_1" : "By registering, you automatically agree to our",
+    "conditions": "Terms and Conditions",
+    "and_our": "and our ",
+    "data_protection_guidelines": "Data-protection guidelines",
+    "to": ""
   },
   "chat": {
-    "agreement": "Agree now!"
+    "chat_header": {
+      "agreement": "Agree now!",
+      "edit_proposal": "Edit Proposal",
+      "check_proposal": "Check Proposal",
+      "cancel_negotiation": "Cancel Negotiation",
+      "negotiaion_partner_signaled": "Negotiating partner has signaled an agreement",
+      "take_a_look_at_the_edited_agreement": "Your negotiating partner has already submitted a proposal for an agreement, click on the button to view it.",
+      "both_party_agreed": "Both participants have agreed to the settlement",
+      "both_party_agreed_tooltip": "Agreement reached. Both participants have agreed to the agreement"
+    },
+    "chat_messages": {
+      "choose_a_chat": "Choose a chat!",
+      "ago": "ago",
+      "you_before": "You, before "
+    },
+    "chat_sender": {
+      "placeholder": "Type a message..."
+    },
+    "chat_sidebar": {
+      "search_chats": "Search Chats"
+    },
+    "chats_list": {
+      "last_chats": "Last Chats",
+      "new_chats": "Recent Chats",
+      "oldest_chats": "Oldest Chats",
+      "no_chats_found": " No Chats Found!"
+    }
+  },
+  "risk_agreement": {
+    "could_not_refresh_risk_status": "Risk status not updated!",
+    "could_not_refresh_risk_status_inconsistency": "Risk status could not be updated. RiskId inconsistent.",
+    "risk_agreement": "Risk Agreement",
+    "risk_agreement_definition": {
+      "mistake_data_extraction": "Error during data extraction!",
+      "data_could_not_be_loaded": "The data could not be extracted from the chat. Try it manually.",
+      "risk_agreement_sent": "Risk agreement sent!",
+      "notification_sending_error": "Error sending the notification!",
+      "notification_sending_error_continued": "Your suggestion could not be sent. Please try again.",
+      "dialog_context_1": "Take a look on the agreement status!",
+      "dialog_context_2": "This information will later become part of the contract.",
+      "dialog_context_3": "Use the AI to automatically create the form based on the chat",
+      "dialog_context_4": " or enter the data manually.",
+      "dialog_action_button1": "Transfer information from chat",
+      "dialog_action_button2": "Propose agreement",
+      "dialog_action_button3": "Cancel"
+    },
+    "risk_agreement_discussion": {
+      "dialog_context_1": "This information will later become part of the contract.",
+      "dialog_context_2": "You have submitted your offer.",
+      "dialog_context_3": "Wait for the agreement of your negotiating partner.",
+      "dialog_context_4": "The following agreement was proposed.",
+      "dialog_context_5": "Agree to the current risk agreement or adjust the points,",
+      "dialog_context_6": "with which you do not agree.",
+      "box_chip_label1": "Your offer will be checked",
+      "box_chip_label2": "Check new offer",
+      "dialog_action_button1": "Withdraw consent",
+      "dialog_action_button2": "Adapt proposal",
+      "dialog_action_button3": "Agree to the agreement",
+      "dialog_action_button4": "Cancel"
+    },
+    "risk_agreement_finalisation": {
+      "final_glance": "Here you can take another look at your agreement.",
+      "done": "Finish",
+      "close": "Close"
+    },
+    "risk_agreement_form": {
+      "timeframe": "Timeframe",
+      "evidence": "Evidence",
+      "costs": "Cost",
+      "insuranceSum": "Insurance sum",
+      "details": "Details",
+      "evidence_tooltip": "Evidence for the claim",
+      "costs_tooltip": "Costs based on the risk provider",
+      "insuranceSum_tooltip": "Maximum amount to be paid out",
+      "details_tooltip": "Maximum amount to be paid out"
+    },
+    "risk_agreement_header": {
+      "Title" : "Title",
+      "Type_of_risk": "Type of Risk"
+    },
+    "expandable_textfield": {
+      "adornment_tooltip_title": "Take a look at the previously defined entry",
+      "previous_entry": "Previous entry",
+      "no_prev_entry_message": "No previous entry available",
+      "set_prev_entry_again": "Set the previous entry again"
+    }
+  },
+  "profile_information": {
+    "profile": "Profile",
+    "update_profile_text": "Customise your profile information that you present in the risk exchange",
+    "name_label": "Name",
+    "email_label": "Email",
+    "sex_label": "Sex",
+    "introduction_label": "Brief Introduction",
+    "birthdate_label": "Birthdate",
+    "telephone_label": "Telephone",
+    "adress": "Adress",
+    "street_label": "Street",
+    "house_number_label": "House number",
+    "city_label": "City",
+    "zip_label": "Zip code",
+    "cancel": "Cancel",
+    "save": "Save"
   }
 }

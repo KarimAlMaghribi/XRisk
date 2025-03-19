@@ -14,7 +14,13 @@
     "cancel": "Abbrechen",
     "edit": "Bearbeiten",
     "riskgiver": "Risikogeber",
-    "risktaker": "Risikonehmer"
+    "risktaker": "Risikonehmer",
+    "Type": "Typ",
+    "Insured_sum": "Absicherungssumme",
+    "Due_on": "Fällig am",
+    "Status": "Status",
+    "Description": "Beschreibung",
+    "Close": "Close"
   },
   "risk_type": {
     "other": "Sonstiges",
@@ -118,7 +124,7 @@
     "question5": "Welche Arten von Risiken kann ich auf dieser Plattform managen?",
     "question6": "Gibt es eine mobile App für diese Plattform?",
     "question7": "Wie werden meine Daten auf dieser Plattform geschützt?",
-    "quesiton8": "Kann ich die Plattform vor der Registrierung testen?",
+    "question8": "Kann ich die Plattform vor der Registrierung testen?",
     "answer1": "Diese Plattform ist darauf ausgelegt, Ihnen ein effizientes Management Ihrer privaten Risiken zu ermöglichen. Sie bietet Werkzeuge und Ressourcen, die Sie bei der Bewertung, Überwachung und Minimierung von Risiken unterstützen.",
     "answer2": "Um diese Plattform zu nutzen, müssen Sie sich zunächst registrieren und einloggen. Nach der Registrierung können Sie Ihr Risikoprofil anlegen und die verschiedenen Funktionen zur Risikoverwaltung nutzen.",
     "answer3": "Sie können Hilfe erhalten, indem Sie unser Support-Team über das bereitgestellte Kontaktformular auf unserer Webseite kontaktieren. Unser Team steht Ihnen für alle Fragen zur Verfügung und hilft Ihnen gerne weiter.",
@@ -156,10 +162,212 @@
     "request_demo": "Demo Anfordern",
     "imprint": "Impressum",
     "terms": "Konditionen",
+    "terms_fullform": "Allgemeine Geschäftsbedingungen",
     "privacy": "Datenschutz",
-    "contact": "Contact"
+    "contact": "Contact",
+    "contact_elements": {
+      "send_message": "Senden Sie uns eine Nachricht",
+      "adress": "Anschrift",
+      "street": "Straße",
+      "telephone": "Telefon",
+      "email": "Email",
+      "website": "Webseite"
+    },
+    "imprint_elements": {
+      "board_of_directors": "Verwaltungsrat",
+      "chairman": "Vorsitzender"
+    },
+    "privacy_elements": {
+      "data_protection": "Datenschutz",
+      "introduction": "Einleitung",
+      "intro_line_1":"Der Schutz deiner persönlichen Daten ist uns besonders wichtig. In dieser Datenschutzerklärung erläutern wir, welche Daten wir erfassen, wie wir sie verwenden und welche Rechte du als Nutzer hast. Unsere Chat-Anwendung wurde mit höchsten Sicherheitsstandards entwickelt, um deine Daten zu schützen und eine transparente Nutzung zu gewährleisten.",
+      "second_paragraph": "Welche Daten wir erheben",
+      "sec_par_line_1": "Bei der Nutzung unserer Anwendung erfassen wir verschiedene Arten von Daten, darunter:",
+      "sec_par_line_1_1": "Persönliche Daten: Name, E-Mail-Adresse oder Kontaktinformationen, falls du diese im Chat bereitstellst.",
+      "sec_par_line_1_2": "Kommunikationsdaten: Nachrichten, die zwischen Versicherern und Nutzern ausgetauscht werden, um eine optimale Beratung zu gewährleisten.",
+      "sec_par_line_1_3": "Technische Daten: IP-Adresse, Gerätetyp und Browserinformationen zur Verbesserung der Benutzererfahrung und zur Sicherheitsüberwachung.",
+      "third_paragraph": "Wie wir deine Daten nutzen",
+      "thrd_par_line_1": "Wir nutzen deine Daten ausschließlich, um dir eine sichere und effiziente Nutzung unserer Chat-Anwendung zu ermöglichen. Dazu gehören:",
+      "thrd_par_line_1_1": "Bereitstellung und Verbesserung unserer Plattform ",
+      "thrd_par_line_1_2": "Kommunikation zwischen Versicherern und Kunden",
+      "thrd_par_line_1_3": "Personalisierte Angebote basierend auf deinen Angaben",
+      "thrd_par_line_1_4": "Einhaltung gesetzlicher Anforderungen und Sicherheit",
+      "thrd_par_line_2": "Deine Daten werden niemals ohne deine Zustimmung für Werbezwecke an Dritte weitergegeben.",
+      "fourth_paragraph": "Speicherung und Löschung von Daten",
+      "fourth_par_line_1": "Wir speichern deine Daten nur so lange, wie es für die Erbringung unserer Dienste notwendig oder gesetzlich vorgeschrieben ist. Auf Wunsch kannst du jederzeit eine Löschung deiner persönlichen Daten beantragen, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen.",
+      "fifth_paragraph": "Deine Rechte",
+      "fifth_par_line_1": "Als Nutzer hast du das Recht auf:",
+      "fifth_par_line_1_1": "Auskunft: Welche Daten wir über dich gespeichert haben. ",
+      "fifth_par_line_1_2": "Berichtigung: Falls deine Daten fehlerhaft oder unvollständig sind.",
+      "fifth_par_line_1_3": "Die Entfernung deiner Daten, sofern dies gesetzlich zulässig ist.",
+      "fifth_par_line_1_4": "Du kannst der Verarbeitung deiner Daten widersprechen, insbesondere für Marketingzwecke.",
+      "fifth_par_line_2": "Bei Fragen zur Datennutzung oder zur Ausübung deiner Rechte kannst du uns jederzeit kontaktieren."
+    },
+    "terms_elements": {
+      "scope_of_application": "Geltungsbereich",
+      "scope_text": "Unsere Allgemeinen Geschäftsbedingungen (AGB) regeln die Nutzung unserer Chat-Anwendung für Risikogeber und Risikonehmer. Sie gelten für alle Funktionen und Services, die über unsere Plattform angeboten werden. Durch die Registrierung oder Nutzung der Anwendung erklären sich die Nutzer mit diesen Bedingungen einverstanden. Die AGB stellen sicher, dass alle Parteien klare Richtlinien für die Nutzung unserer Dienste haben.",
+      "subject_matter": "Vertragsgegenstand",
+      "subject_matter_text": "Unsere Plattform ermöglicht die direkte Kommunikation zwischen Risikogeber und Risikonehmer, um Risikoprodukte effizient zu präsentieren, zu vergleichen und abzuschließen. Die Nutzung erfolgt über eine sichere Chat-Umgebung, in der Informationen ausgetauscht und Verträge transparent dargestellt werden. Die genauen Funktionen und Verfügbarkeiten der Dienste sind in den jeweiligen Vertragsbedingungen geregelt.",
+      "obligations_parties": "Pflichten der Parteien",
+      "obligations_parties_text": "Sowohl Risikogeber als auch Risikonehmer verpflichten sich, die Plattform verantwortungsvoll zu nutzen. Risikogeber müssen sicherstellen, dass sie korrekte und vollständige Informationen zu ihren Produkten bereitstellen. Nutzer sind verpflichtet, wahrheitsgemäße Angaben zu machen und die Plattform nicht missbräuchlich zu verwenden. Zudem sind alle Parteien dazu angehalten, die geltenden Datenschutzbestimmungen einzuhalten.",
+      "disclaimer": "Haftungsausschluss",
+      "disclaimer_text": "Wir stellen unsere Chat-Anwendung nach bestem Wissen und Gewissen zur Verfügung, können jedoch keine Garantie für die Richtigkeit, Vollständigkeit oder permanente Verfügbarkeit der angebotenen Informationen übernehmen. Die finale Entscheidung über einen Versicherungsabschluss liegt stets beim Nutzer. Wir haften nicht für Schäden, die durch Fehlkommunikation oder unvollständige Angaben entstehen.",
+      "final_provisions": "Schlussbestimmungen",
+      "final_provision_text": "Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, bleibt die Gültigkeit der übrigen Bestimmungen unberührt. Änderungen an den AGB werden den Nutzern rechtzeitig mitgeteilt. Es gilt das jeweils anwendbare Recht am Sitz unseres Unternehmens. Bei Fragen oder Unklarheiten zu unseren AGB stehen wir jederzeit für weitere Informationen zur Verfügung."
+    },
+    "about_elements": {
+      "our_mission": "Unsere Mission",
+      "our_mission_text": "Unsere Mission ist es, den Versicherungsprozess einfacher, transparenter und kundenfreundlicher zu gestalten. Mit unserer Chat-Anwendung schaffen wir eine direkte Verbindung zwischen Versicherern und Kunden, sodass Fragen schnell geklärt, Tarife verglichen und Verträge unkompliziert abgeschlossen werden können. Wir setzen auf moderne Technologie, um Versicherungslösungen zugänglicher und effizienter zu machen – für eine bessere Kundenerfahrung und eine optimierte Beratung.",
+      "our_values": "Unsere Werte",
+      "our_values_text": "Transparenz, Innovation und Kundenzentrierung stehen bei uns an erster Stelle. Wir glauben daran, dass Versicherungen einfach und verständlich sein sollten. Deshalb entwickeln wir Lösungen, die Nutzer in den Mittelpunkt stellen. Respekt, Vertrauen und eine offene Kommunikation prägen unser Handeln – sowohl im Team als auch im Umgang mit unseren Kunden und Partnern. Unsere Werte sind die Basis für eine zukunftsorientierte und nachhaltige Versicherungswelt.",
+      "our_team": "Unser Team",
+      "our_team_text": "Hinter unserer Chat-Anwendung steht ein engagiertes Team aus Experten in den Bereichen Technologie, Versicherungen und Kundenerfahrung. Gemeinsam arbeiten wir daran, den Versicherungsmarkt mit innovativen Lösungen zu revolutionieren. Unser Team vereint kreative Köpfe, Entwickler, Berater und Branchenkenner – alle mit dem Ziel, die bestmögliche Nutzererfahrung zu bieten. Wir setzen auf Zusammenarbeit, Leidenschaft und kontinuierliche Verbesserung.",
+      "our_story": "Unsere Geschichte",
+      "our_story_text": "Unsere Reise begann mit der Vision, den Versicherungsmarkt zu modernisieren. Wir haben erkannt, dass viele Kunden sich eine einfachere, schnellere und direktere Möglichkeit wünschen, Versicherungen abzuschließen und zu verwalten. Aus dieser Idee entstand unsere Chat-Anwendung – eine Lösung, die Versicherer und Kunden näher zusammenbringt. Seitdem haben wir unser Produkt stetig weiterentwickelt, wertvolle Partnerschaften aufgebaut und vielen Nutzern geholfen, die passende Risiken abzusichern. Und das ist erst der Anfang."
+    },
+    "product_elements": {
+      "pricing_text": "Wir legen Wert auf transparente und faire Preise. In unserer Chat-Anwendung können Risikonehmer direkt Informationen zu den verfügbaren Risiken erhalten und vergleichen. Der Risikogeber kann individuell angepasste Angebote erstellen und Rabatte oder Sonderkonditionen direkt im Chat kommunizieren. So wird der gesamte Preisfindungsprozess unkompliziert und verständlich, damit jeder Kunde die beste Versicherung für sein Budget findet.",
+      "overview_text": "Damit Nutzer schnell einen Überblick über ihre Optionen erhalten, bietet unsere Anwendung eine klare und strukturierte Darstellung aller relevanten Informationen. Direkt im Chat können Tarife, Leistungen und Vorteile mit Hilder der Chatbot verglichen werden. Risikonehmer können durch gezielte Nachrichten oder interaktive Vorschläge dabei helfen, die perfekte Lösung für den individuellen Bedarf zu finden. So stellen wir sicher, dass jeder Nutzer eine fundierte Entscheidung treffen kann.",
+      "browse_text": "Unsere Anwendung macht es einfach, durch verschiedene Risiken zu stöbern. Nutzer können direkt im Chat Fragen zu bestimmten Tarifen stellen oder durch intelligente Filteroptionen passende Risiken entdecken. Der Risikonehmer kann zudem gezielte Empfehlungen aussprechen, basierend auf den Präferenzen und Bedürfnissen des Risikogebers. So wird der Auswahlprozess effizient und individuell zugeschnitten.",
+      "accessibility_text": "Jeder sollte in der Lage sein seine/ihre Risiken bereitzustellen – deshalb setzen wir auf eine barrierefreie Nutzung unserer Anwendung. In der BETA-Version unserer Accessibility-Funktionen bieten wir eine optimierte Darstellung für Menschen mit Seh- oder Hörbeeinträchtigungen sowie anpassbare Texte und Kontraste für eine bessere Lesbarkeit. Zudem unterstützen wir sprachgesteuerte Eingaben, damit jeder unsere Anwendung mühelos nutzen kann. Unser Ziel ist es, eine inklusive Plattform zu schaffen, die allen Nutzern eine einfache und verständliche Interaktion ermöglicht."
+    },
+    "solution_elements": {
+      "brainstroming_text": "In unserer Chat-Anwendung nutzen wir Brainstorming. Der Risikonehmer kann im Chat gezielt Fragen stellen, um die Anforderungen des Risikogebers besser zu verstehen, während der Risikogeber seine individuellen Wünsche äußern kann. So entsteht ein interaktiver Austausch, bei dem gemeinsam die beste Lösung erarbeitet werden. Durch diese direkte Kommunikation vermeiden wir Missverständnisse und ermöglichen maßgeschneiderte Lösungen.",
+      "ideation_text": "Sobald erste Vorstellungen zur Risiken geklärt sind, geht es in die Ideation-Phase. Hier hilft unser Chat dabei, konkrete Angebote zu entwickeln. Der Risikogeber kann verschiedene Tarife und Leistungen präsentieren, während der Risikonehmer Feedback gibt und Anpassungen vornimmt. Durch diese iterative Vorgehensweise wird sichergestellt, dass das finale Angebot genau den Erwartungen entspricht. Unsere Anwendung macht diesen Prozess einfach und effizient, sodass Nutzer schnell zu einer passenden Lösung kommen.",
+      "wireframing_text": "Um eine transparente und verständliche Darstellung der Risiken zu gewährleisten, setzen wir auf eine intuitive Benutzerführung. Innerhalb der Website werden Tarife, Leistungen und Vertragsdetails übersichtlich präsentiert, sodass Nutzer eine klare Vorstellung von ihrem Versicherungspaket erhalten. Mit interaktiven Elementen, wie klickbaren Angeboten oder Vergleichstabellen, helfen wir den Kunden, die beste Entscheidung zu treffen. Dadurch bleibt der Prozess nicht nur informativ, sondern auch benutzerfreundlich und visuell ansprechend.",
+      "research_text": "Unsere Anwendung unterstützt Nutzer dabei, sich fundiert zu informieren. Im Chat können Vergleiche zu ähnlichen Tarifen angestellt, Kundenbewertungen eingesehen oder häufig gestellte Fragen beantwortet werden. Zudem kann der Risikonehmer gezielt individuelle Empfehlungen auf Basis der Kundenangaben geben. So sorgen wir dafür, dass jeder Nutzer eine fundierte Entscheidung treffen kann – basierend auf Daten, Expertenwissen und persönlicher Beratung."
+    },
+    "resources_elements": {
+      "help_center_text": "Unser Help Center bietet schnelle und unkomplizierte Unterstützung direkt in der Chat-Anwendung. Nutzer können hier häufig gestellte Fragen durchstöbern, Anleitungen zur Nutzung der Plattform finden oder direkt mit einem Support-Mitarbeiter chatten. Unser Ziel ist es, Probleme effizient zu lösen und unseren Kunden jederzeit eine verlässliche Anlaufstelle für ihre Anliegen zu bieten. So bleibt der gesamte Risikoabsicherungprozess einfach und verständlich.",
+      "blog_text": "In unserem Blog teilen wir wertvolle Einblicke in die Versicherungswelt, geben Tipps zur Auswahl der richtigen Tarife und informieren über aktuelle Trends. Nutzer können sich hier über relevante Themen informieren und besser verstehen, welche Optionen am besten zu ihren Bedürfnissen passen. Unser Blog hilft dabei, komplexe Risikenfragen verständlich aufzubereiten und so die Entscheidungsfindung zu erleichtern.",
+      "tutorials_text": "Mit unseren Tutorials machen wir es Nutzern einfach, alle Funktionen unserer Chat-Anwendung optimal zu nutzen. In interaktiven Schritt-für-Schritt-Anleitungen erklären wir, wie man Risiken inseriert und individuelle Verträge abschließt. Egal ob Anfänger oder erfahrener Nutzer – unsere Tutorials sorgen dafür, dass jeder die Plattform effizient und problemlos verwenden kann."
+    },
+    "support_elements": {
+      "developers_text": "Unser Entwickler-Support stellt sicher, dass technische Teams die bestmögliche Unterstützung bei der Integration und Nutzung unserer Plattform erhalten. Ob es um APIs, Webhooks oder individuelle Anpassungen geht – Entwickler finden hier detaillierte Anleitungen, Codebeispiele und direkten Zugang zu unserem technischen Support. Unser Ziel ist es, eine nahtlose und effiziente Implementierung unserer Chat-Anwendung zu ermöglichen.",
+      "documentation_text": "Unsere umfassende Dokumentation bietet eine detaillierte Anleitung zur Nutzung und Integration unserer Plattform. Von ersten Einrichtungsschritten bis hin zu erweiterten Funktionen – hier finden Entwickler und Unternehmen alle relevanten Informationen. Klar strukturierte Inhalte, Beispiele und häufig gestellte Fragen helfen dabei, Herausforderungen schnell zu lösen und die Anwendung optimal zu nutzen.",
+      "integrations_text": "Unsere Chat-Anwendung lässt sich nahtlos in bestehende Systeme und Tools integrieren. Ob CRM-Systeme, Zahlungsdienste oder Analyseplattformen – wir bieten flexible Schnittstellen, um den Versicherungsprozess effizient in bestehende Workflows einzubinden. Nutzer finden hier eine Übersicht über alle verfügbaren Integrationen sowie Anleitungen zur schnellen Implementierung, damit alles reibungslos funktioniert."
+    },
+    "company_elements":{
+      "press_text": "Unsere Chat-Anwendung revolutioniert die Art und Weise, wie Risikogeber und Risikonehmer miteinander kommunizieren. In unserem Pressebereich finden Journalisten und Medienvertreter aktuelle Pressemeldungen, Unternehmensupdates und Bildmaterial. Wir stehen für Innovation, Transparenz und eine moderne Lösung im Versicherungsbereich – und freuen uns, unsere Geschichte mit der Welt zu teilen. Presseanfragen sind jederzeit willkommen!",
+      "events_text": "Wir sind auf Branchenveranstaltungen, Messen und digitalen Konferenzen vertreten, um die Zukunft der Versicherungsbranche aktiv mitzugestalten. In unserem Event-Bereich finden Interessierte Informationen zu bevorstehenden Veranstaltungen, Webinaren und Networking-Möglichkeiten. Wir freuen uns darauf, mit Versicherern, Partnern und Interessenten in den direkten Austausch zu gehen und spannende Einblicke in unsere Lösung zu geben.",
+      "request_demo_text": "Du möchtest unsere Chat-Anwendung in Aktion sehen? Mit unserer Live-Demo zeigen wir, wie Risikogeber und Risikonehmer nahtlos miteinander kommunizieren, Tarife vergleichen und Versicherungsabschlüsse einfach per Chat durchführen können. Unsere Experten führen dich durch die Funktionen und beantworten alle Fragen – unverbindlich und praxisnah. Vereinbare jetzt eine Demo und entdecke, wie unsere Lösung deinen Versicherungsprozess optimieren kann."
+    } 
+  },
+  "sign_in": {
+    "we_make_risks_tradeable": "Wir machen Risiken handelbar",
+    "signin_text": "Melde dich an!",
+    "use_email_and_password": "Nutze deine Email-Adresse und dein Passwort zur Anmeldung",
+    "SignIn": "Anmelden",
+    "or_login_with": "ODER LOGGE DICH EIN MIT",
+    "registration_text_1" : "Durch Registrierung, stimmst du automatisch unseren",
+    "conditions": "AGBs",
+    "and_our": "und unseren ",
+    "data_protection_guidelines": "Datenschutzrichtlinien",
+    "to": "zu"
   },
   "chat": {
-    "agreement": "Jetzt vereinbaren!"
+    "chat_header": {
+      "agreement": "Jetzt vereinbaren!",
+      "edit_proposal": "Vorschlag bearbeiten",
+      "check_proposal": "Vorschlag überprüfen",
+      "cancel_negotiation": "Verhandlung abbrechen",
+      "negotiaion_partner_signaled": "Verhandlungspartner hat eine Einigung signalisiert",
+      "take_a_look_at_the_edited_agreement": "Dein Verhandlungspartner hat schon einen Vorschlag zur Einigung unterbreitet, klicke auf den Button um dir diese anzusehen.",
+      "both_party_agreed": "Beide Teilnehmer haben der Einigung zugestimmt",
+      "both_party_agreed_tooltip": "Einigung erzielt beide Teilnehmer haben der Einigung zugestimmt"
+    },
+    "chat_messages": {
+      "choose_a_chat": "Wähle einen Chat!",
+      "ago": "her",
+      "you_before": "Du, vor "
+    },
+    "chat_sender": {
+      "placeholder": "Gebe eine Nachricht ein..."
+    },
+    "chat_sidebar": {
+      "search_chats": "Durchsuche Chats"
+    },
+    "chats_list": {
+      "last_chats": "Letzte Chats",
+      "new_chats": "Neueste Chats",
+      "oldest_chats": "Älteste Chats",
+      "no_chats_found": " Keine Chats gefunden!"
+    }
+  },
+  "risk_agreement": {
+    "could_not_refresh_risk_status": "Risikostatus nicht aktualisiert!",
+    "could_not_refresh_risk_status_inconsistency": "Risikostatus konnte nicht aktualisiert werden. RisikoId inkonsistent.",
+    "risk_agreement": "Risiko Vereinbarung",
+    "risk_agreement_definition": {
+      "mistake_data_extraction": "Fehler bei der Datenextraktion!",
+      "data_could_not_be_loaded": "Die Daten konnten nicht aus dem Chat extrahiert werden. Versuche es manuell.",
+      "risk_agreement_sent": "Risikovereinbarung versendet!",
+      "notification_sending_error": "Fehler beim Senden der Benachrichtigung!",
+      "notification_sending_error_continued": "Dein Vorschlag konnte nicht gesendet werden. Versuche es erneut.",
+      "dialog_context_1": "Haltet nochmal fest, was vereinbart wurde!",
+      "dialog_context_2": "Diese Informationen werden später Bestandteil des Vertrags.",
+      "dialog_context_3": "Nutze die KI, um das Formular basierend auf dem Chat automatisch",
+      "dialog_context_4": "auszufüllen, oder gib die Daten manuell ein.",
+      "dialog_action_button1": "Informationen Aus Chat übernehmen",
+      "dialog_action_button2": "Vereinbarung vorschlagen",
+      "dialog_action_button3": "Abbrechen"
+    },
+    "risk_agreement_discussion": {
+      "dialog_context_1": "Diese Informationen werden später Bestandteil des Vertrags.",
+      "dialog_context_2": "Du hast dein Angebot abgegeben.",
+      "dialog_context_3": "Warte auf die Zustimmung deines Verhandlungspartners.",
+      "dialog_context_4": "Die folgende Vereinbarung wurde vorgeschlagen.",
+      "dialog_context_5": "Stimme der aktuellen Risikovereinbarung zu oder passe die Punkte an,",
+      "dialog_context_6": "mit denen du nicht einverstanden bist.",
+      "box_chip_label1": "Dein Angebot wird geprüft",
+      "box_chip_label2": "Neues Angebot prüfen",
+      "dialog_action_button1": "Zustimmung zurückziehen",
+      "dialog_action_button2": "Vorschlag anpassen",
+      "dialog_action_button3": "Vereinbarung zustimmen",
+      "dialog_action_button4": "Schließen"
+    },
+    "risk_agreement_finalisation": {
+      "final_glance": "Hier kannst du nochmal einen Blick auf eure Vereinbarung werfen.",
+      "done": "Fertigstellen",
+      "close": "Schließen"
+    },
+    "risk_agreement_form": {
+      "timeframe": "Zeitspanne",
+      "evidence": "Beweismittel",
+      "costs": "Kosten",
+      "insuranceSum": "Absicherungssumme",
+      "details": "Sonstige Anmerkungen",
+      "evidence_tooltip": "Beweise für den Schadenfall",
+      "costs_tooltip": "Kosten des Risikogeber",
+      "insuranceSum_tooltip": "Maximal auszuzahlende Summe",
+      "details_tooltip": "Vertraglich relevante Informationen"
+    },
+    "risk_agreement_header": {
+      "Title" : "Titel",
+      "Type_of_risk": "Art des Risikos"
+    },
+    "expandable_textfield": {
+      "adornment_tooltip_title": "Schaue dir den vorher festgelegten Eintrag an",
+      "previous_entry": "Vorheriger Eintrag",
+      "no_prev_entry_message": "Kein vorheriger Eintrag verfügbar",
+      "set_prev_entry_again": "Setze den vorherigen Eintrag erneut"
+    }
+  },
+  "profile_information": {
+    "profile": "Profil",
+    "update_profile_text": "Passe deine Profilinformationen an, die du in der Risikobörse präsentierst",
+    "name_label": "Name",
+    "email_label": "Email",
+    "sex_label": "Geschlecht",
+    "introduction_label": "Vorstellung",
+    "birthdate_label": "Geburtsdatum",
+    "telephone_label": "Telefonnummer",
+    "adress": "Adresse",
+    "street_label": "Straße",
+    "house_number_label": "Hausnummer",
+    "city_label": "Stadt",
+    "zip_label": "Postleitzahl",
+    "cancel": "Abbrechen",
+    "save": "Speichern"
   }
 }

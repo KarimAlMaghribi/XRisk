@@ -11,6 +11,7 @@ import {AgreementTable} from "../my-risks/my-risk-row-details/agreement-details/
 import {RiskAgreement} from "../../models/RiskAgreement";
 import {useSelector} from "react-redux";
 import {selectRiskAgreements} from "../../store/slices/my-risk-agreements/selectors";
+import { Trans } from "react-i18next";
 
 export interface RiskDisplayDialogProps {
     open: boolean;
@@ -63,19 +64,19 @@ export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
                     <Grid container>
                         <Grid size={4}>
                             <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                Typ
+                                <Trans i18nKey={"terms.Type"}/>
                             </Typography>
                             <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                Absicherungssumme
+                                <Trans i18nKey={"terms.Insured_sum"}/>
                             </Typography>
                             <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                Fällig am
+                                <Trans i18nKey={"terms.Due_on"}/>
                             </Typography>
                             <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                Status
+                                <Trans i18nKey={"terms.Status"}/>
                             </Typography>
                             <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                Beschreibung
+                                <Trans i18nKey={"terms.Description"}/>
                             </Typography>
                         </Grid>
                         <Grid size={8}>
@@ -111,7 +112,7 @@ export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button autoFocus onClick={handleClose}>
-                    Schließen
+                    <Trans i18nKey={"terms.Close"}/>
                 </Button>
             </DialogActions>
         </Dialog>
