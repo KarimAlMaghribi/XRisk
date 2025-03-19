@@ -19,6 +19,7 @@ import { RiskAgreement } from "../../models/RiskAgreement";
 import { useSelector } from "react-redux";
 import { selectRiskAgreements } from "../../store/slices/my-risk-agreements/selectors";
 import { Trans } from "react-i18next";
+import { t } from "i18next";
 
 export interface RiskDisplayDialogProps {
   open: boolean;
@@ -137,7 +138,7 @@ export const RiskDisplayDialog = (props: RiskDisplayDialogProps) => {
                 variant="body2"
                 sx={{ marginBottom: `${elementBottomMargin}px` }}
               >
-                {mapStatus(props.risk?.status) || "-"}
+                {mapStatus(t, props.risk?.status) || "-"}
               </Typography>
               <Typography
                 variant="body2"
