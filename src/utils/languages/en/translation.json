@@ -65,7 +65,8 @@
     "register": "Registration",
     "sign_in": "Sign In",
     "sign_out": "Sign Out",
-    "profile": "Profile"
+    "profile": "Profile",
+    "credit_score": "Credit Check"
   },
   "homepage": {
     "figure_text": "Start trading risks now!",
@@ -394,5 +395,20 @@
     "zip_label": "Zip code",
     "cancel": "Cancel",
     "save": "Save"
+  },
+  "credit_score_information": {
+    "credit_score": "Credit Score",
+    "update_credit_score_text": "Update your credit score information",
+    "credit_score_explanation": "Credit Score Explanation",
+    "credit_score_explanation_text": "To take on risks on the platform, a credit check is conducted. Various financial factors are considered to calculate a <strong>personal assumption limit</strong>.",
+    "credit_score_notice": "Important Information",
+    "credit_score_notice_text": "<strong>Your information is private</strong> and not visible to other users. You can choose the response option <strong>\"No Information Provided\"</strong>. In this case, however, <strong>the most disadvantageous value</strong> will be used for the calculation.",
+    "liability_limit_text": "Your current liability limit is {{limit}} €.",
+    "liquidity_text": "What is your liquid wealth? (bank deposits, stocks, readily available assets)",
+    "net_income_text": "What is your annual net income?",
+    "existing_credits_text": "Do you currently have any ongoing loans? (e.g., mortgage, consumer loans, business loans)",
+    "monthly_fix_costs_text": "What are your monthly fixed costs? (rent, loans, alimony, etc.)",
+    "other_assets_text": "Do you own other assets? (real estate, company shares, collections of significant value)",
+    "not_provided": "Not Provided"
   }
 }
