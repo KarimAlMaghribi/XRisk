@@ -14,7 +14,7 @@ import {
     selectFilteredRisks,
     selectFilterTypes,
     selectFilterValue,
-    selectRemainingTerm,
+    selectRemainingTerm, selectShowTaken,
     selectStatus
 } from "../../store/slices/risks/selectors";
 import {subscribeToRisks} from "../../store/slices/risks/thunks";
@@ -28,6 +28,7 @@ export const RiskOverview = () => {
     const filterTypes: string[] = useSelector(selectFilterTypes);
     const filterValue: number | number[] = useSelector(selectFilterValue);
     const filterRemainingTerm: number | number[] = useSelector(selectRemainingTerm);
+    const showTaken: boolean = useSelector(selectShowTaken);
     const [openRiskCreationDialog, setOpenRiskCreationDialog] = React.useState(false);
 
     useEffect(() => {
@@ -73,6 +74,7 @@ export const RiskOverview = () => {
                         types={filterTypes}
                         value={filterValue}
                         remainingTerm={filterRemainingTerm}
+                        showTaken={showTaken}
                     />
                 </Grid>
                 <Grid size={{xs: 10}}>

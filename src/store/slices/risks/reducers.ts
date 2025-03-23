@@ -36,7 +36,8 @@ const initialState: RiskOverviewState = {
     filters: {
         types: [],
         value: [0, 200000],
-        remainingTerm: [0, 24] // months
+        remainingTerm: [0, 24], // months
+        showTaken: false
     },
     sorts: [
         {
@@ -167,6 +168,9 @@ export const riskOverviewSlice = createSlice({
             state.filteredRisks = defaultSortRisks(
                 applyAllFilters(action.payload, state.filters as RiskOverviewFilterType)
             );
+        },
+        setShowTaken: (state, action: PayloadAction<boolean>) => {
+            state.filters.showTaken = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -281,7 +285,8 @@ export const {
     changeFilterValue,
     changeRemainingTerm,
     clearFilters,
-    setRisks
+    setRisks,
+    setShowTaken
 } = riskOverviewSlice.actions;
 
 export default riskOverviewSlice.reducer;
