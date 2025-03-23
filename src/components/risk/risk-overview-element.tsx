@@ -26,6 +26,8 @@ import {PublisherProfile} from "./publisher-profile";
 import {updateRiskStatus} from "../../store/slices/risks/thunks";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {selectShowTaken} from "../../store/slices/risks/selectors";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {RiskDeletionDialog} from "./risk-deletion-dialog";
 
 export const elementBottomMargin: number = 20;
 
@@ -40,6 +42,8 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const navigate = useNavigate();
     const profileInfo: ProfileInformation = useSelector(selectProfileInformation);
     const showTaken: boolean = useSelector(selectShowTaken);
+    const [riskToDelete, setRiskToDelete] = React.useState<Risk | null>(null);
+    const [openRiskDeletionDialog, setOpenRiskDeletionDialog] = React.useState<boolean>(false);
     const [openPublisherProfileDialog, setOpenPublisherProfileDialog] = React.useState<boolean>(false);
     const [publisherProfile, setPublisherProfile] = React.useState<Publisher | null | undefined>(null);
     const [expandedPanels, setExpandedPanels] = React.useState<string[]>([]);
@@ -130,6 +134,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
         navigate(`/chat`);
     };
 
+    const handleRiskDeletionDialog = (risk: Risk) => {
+        console.log(risk);
+        setRiskToDelete(risk);
+        setOpenRiskDeletionDialog(true);
+    }
+
     const displayedRisks = !showTaken
         ? props.risks.filter(risk => risk.status !== RiskStatusEnum.AGREEMENT)
         : props.risks;
@@ -215,6 +225,17 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         style={{ maxHeight: "40px", height: "40px" }}>
                                         Kontakt aufnehmen
                                     </Button>
+                                    {
+                                        profileInfo.admin &&
+                                        <Button
+                                            color="error"
+                                            onClick={() => handleRiskDeletionDialog(risk)}
+                                            variant="contained"
+                                            endIcon={<DeleteIcon />}
+                                            style={{ maxHeight: "40px", height: "40px", marginLeft: "10px" }}>
+                                            Risiko löschen
+                                        </Button>
+                                    }
                                 </Grid>
                                 <Grid size={6}>
                                     <Typography variant="body1" sx={{marginBottom: `${elementBottomMargin}px`}}>
@@ -265,6 +286,10 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                 publisher={publisherProfile}
                 setPublisher={setPublisherProfile}
             />
+            <RiskDeletionDialog
+                open={openRiskDeletionDialog}
+                setOpen={setOpenRiskDeletionDialog}
+                risk={riskToDelete}/>
         </React.Fragment>
     );
 };

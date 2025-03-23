@@ -143,7 +143,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                         {/* Header */}
                         <MenuItem disabled sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}>
                             <Typography variant="subtitle1" sx={{ color: "black" }}>
-                                Notifications
+                                Benachrichtigungen
                             </Typography>
                         </MenuItem>
 
@@ -151,7 +151,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                         {notifications.length === 0 ? (
                             <MenuItem onClick={closeNotificationDialog} sx={{ textAlign: "center" }}>
                                 <Typography variant="body2" color="textSecondary">
-                                    No new notifications
+                                    Neue Benachrichtigungen
                                 </Typography>
                             </MenuItem>
                         ) : (
@@ -165,8 +165,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                                         handleSelectChat(notif.chatroomId);
                                     }}
                                     sx={{
-                                        backgroundColor:
-                                            notif.status === NotificationStatusEnum.UNREAD ? "#f9f9f9" : "white",
+                                        backgroundColor: notif.status === NotificationStatusEnum.UNREAD ? "#f9f9f9" : "white",
                                         borderBottom: "1px solid #ddd",
                                         display: "flex",
                                         flexDirection: "column",

@@ -10,6 +10,7 @@ export enum ActionTypes {
 }
 
 export interface ProfileInformation {
+    admin?: boolean;
     name: string;
     gender?: string;
     birthdate?: string;
