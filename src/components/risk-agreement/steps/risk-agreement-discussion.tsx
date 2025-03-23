@@ -16,6 +16,8 @@ import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
 import {EuroNumberFormat} from "../../my-risks/creation-dialog/my-risk-creation-dialog";
 import {ExpandableTextField} from "../expandable-textfield";
+import { Trans } from "react-i18next";
+import i18next from "i18next";
 
 export interface RiskAgreementDiscussionProps {
     hasApprovedExistingAgreement: boolean;
@@ -233,21 +235,21 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
     return (
         <>
             <DialogContentText>
-                Haltet nochmal fest, was vereinbart wurde! <br/>
-                Diese Informationen werden später Bestandteil des Vertrags.
+                <Trans i18nKey={"risk_agreement.risk_agreement_definition.dialog_context_1"}/> <br/>
+                <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_context_1"}/> <br/>
             </DialogContentText>
             <br/>
             {props.hasApprovedExistingAgreement && (
                 <DialogContentText>
-                    Du hast dein Angebot abgegeben. <br/>
-                    Warte auf die Zustimmung deines Verhandlungspartners.
+                    <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_context_2"}/> <br/>
+                    <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_context_3"}/>
                 </DialogContentText>
             )}
             {!props.hasApprovedExistingAgreement && (
                 <DialogContentText>
-                    Die folgende Vereinbarung wurde vorgeschlagen. <br/>
-                    Stimme der aktuellen Risikovereinbarung zu oder passe die Punkte an,
-                    mit denen du nicht einverstanden bist.
+                    <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_context_4"}/> <br/>
+                    <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_context_5"}/>
+                    <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_context_6"}/>
                 </DialogContentText>
             )}
 
@@ -266,8 +268,8 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
                     }
                     label={
                         props.hasApprovedExistingAgreement
-                            ? "Dein Angebot wird geprüft"
-                            : "Neues Angebot prüfen"
+                            ? i18next.t("risk_agreement.risk_agreement_discussion.box_chip_label1")
+                            : i18next.t("risk_agreement.risk_agreement_discussion.box_chip_label2")
                     }
                     color={!props.hasApprovedExistingAgreement ? "success" : "warning"}
                     sx={{position: "absolute", bottom: 0, right: 0}}
@@ -277,7 +279,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
             <ExpandableTextField
                 name="timeframe"
                 id="timeframe"
-                label="Zeitspanne"
+                label={i18next.t("risk_agreement.risk_agreement_form.timeframe")}
                 value={props.timeframe}
                 oldValue={props.prevTimeframe}
                 borderColor={props.timeframeColor}
@@ -286,7 +288,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
             <ExpandableTextField
                 name="evidence"
                 id="evidence"
-                label="Beweismittel"
+                label={i18next.t("risk_agreement.risk_agreement_form.evidence")}
                 value={props.evidence}
                 oldValue={props.prevEvidence}
                 borderColor={props.evidenceColor}
@@ -297,7 +299,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
             <ExpandableTextField
                 name="costs"
                 id="costs"
-                label="Kosten"
+                label={i18next.t("risk_agreement.risk_agreement_form.costs")}
                 value={props.costs}
                 oldValue={props.prevCosts}
                 borderColor={props.costsColor}
@@ -309,7 +311,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
             <ExpandableTextField
                 name="insuranceSum"
                 id="insuranceSum"
-                label="Absicherungssumme"
+                label={i18next.t("risk_agreement.risk_agreement_form.insuranceSum")}
                 value={props.insuranceSum}
                 oldValue={props.prevInsuranceSum}
                 borderColor={props.insuranceSumColor}
@@ -321,7 +323,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
             <ExpandableTextField
                 name="details"
                 id="details"
-                label="Sonstige Anmerkungen"
+                label={i18next.t("risk_agreement.risk_agreement_form.details")}
                 value={props.riskDetails}
                 oldValue={props.prevRiskDetails}
                 borderColor={props.riskDetailsColor}
@@ -331,7 +333,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
             <DialogActions>
                 {props.hasApprovedExistingAgreement && (
                     <Button onClick={handleWithdrawApprovals} variant="contained">
-                        Zustimmung zurückziehen
+                        <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_action_button1"}/>
                     </Button>
                 )}
 
@@ -341,7 +343,7 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
                     disabled={!riskAgreementChanged()}
                     color="primary"
                 >
-                    Vorschlag anpassen
+                    <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_action_button2"}/>
                 </Button>
 
                 {!props.hasApprovedExistingAgreement && (
@@ -350,11 +352,11 @@ export const RiskAgreementDiscussion = (props: RiskAgreementDiscussionProps) => 
                         variant="contained"
                         disabled={riskAgreementChanged()}
                         color="primary">
-                        Vereinbarung zustimmen
+                        <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_action_button3"}/>
                     </Button>
                 )}
                 <Button onClick={props.handleClose} variant="contained">
-                    Schließen
+                <Trans i18nKey={"risk_agreement.risk_agreement_discussion.dialog_action_button4"}/>
                 </Button>
             </DialogActions>
         </>

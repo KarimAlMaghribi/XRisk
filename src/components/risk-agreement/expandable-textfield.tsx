@@ -2,6 +2,8 @@ import {Accordion, Box, Collapse, IconButton, InputAdornment, TextField, Tooltip
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import RestoreSharpIcon from "@mui/icons-material/RestoreSharp";
 import React, {useEffect, useState} from "react";
+import i18next from "i18next";
+import { Trans } from "react-i18next";
 
 export const ExpandableTextField = ({
                                         label,
@@ -76,7 +78,7 @@ export const ExpandableTextField = ({
                         ...inputProps,
                         endAdornment: (
                             <InputAdornment position="end">
-                                <Tooltip title="Schaue dir den vorher festgelegten Eintrag an">
+                                <Tooltip title={i18next.t("risk_agreement.expandable_textfield.adornment_tooltip_title")}>
                                     <IconButton onClick={handleExpandClick} edge="end">
                                         <ExpandMoreIcon
                                             style={{
@@ -108,13 +110,13 @@ export const ExpandableTextField = ({
                         sx={{margin: "0 10px"}}>
                         <Box display="flex" alignItems="center" margin="0 10px">
                             <Typography variant="subtitle1" color="secondary">
-                                <i>Vorheriger Eintrag:</i>
+                                <i><Trans i18nKey={"risk_agreement.expandable_textfield.previous_entry"}/>:</i>
                             </Typography>
                             <Typography variant="subtitle1" fontWeight="bold" marginLeft="10px" marginRight="10px"
                                         color="secondary">
-                                {oldValue ? oldValue.toString() : "Kein vorheriger Eintrag verfügbar"}
+                                {oldValue ? oldValue.toString() : i18next.t("risk_agreement.expandable_textfield.no_prev_entry_message")}
                             </Typography>
-                            <Tooltip title="Setze den vorherigen Eintrag erneut">
+                            <Tooltip title={i18next.t("risk_agreement.expandable_textfield.set_prev_entry_again")}>
                                 <IconButton onClick={handleRestore}>
                                     <RestoreSharpIcon/>
                                 </IconButton>

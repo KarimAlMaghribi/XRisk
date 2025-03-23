@@ -26,6 +26,8 @@ import { UserProfile } from "../../store/slices/user-profile/types";
 import { Countries } from "./countries";
 import {updateProviderDetails} from "../../store/slices/risks/thunks";
 import {Publisher} from "../../models/Publisher";
+import { Trans } from "react-i18next";
+import i18next from "i18next";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -169,9 +171,9 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
             }}
         >
             <DialogTitle>
-                <Typography variant="h6">Profil</Typography>
+                <Typography variant="h6"><Trans i18nKey={"profile_information.profile"}/></Typography>
                 <Typography variant="subtitle1">
-                    Passe deine Profilinformationen an, die du in der Risikobörse präsentierst
+                    <Trans i18nKey={"profile_information.update_profile_text"}/>
                 </Typography>
             </DialogTitle>
 
@@ -191,7 +193,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Name"
+                            label={i18next.t("profile_information.name_label")}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
@@ -200,7 +202,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Email"
+                            label={i18next.t("profile_information.email_label")}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -216,7 +218,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             }}
                             options={["Männlich", "Weiblich", "Divers"]}
                             renderInput={(params) => (
-                                <TextField {...params} label="Geschlecht" variant="outlined" />
+                                <TextField {...params} label={i18next.t("profile_information.sex_label")} variant="outlined" />
                             )}
                         />
                     </Grid2>
@@ -227,7 +229,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             multiline
                             variant="outlined"
                             fullWidth
-                            label="Vorstellung"
+                            label={i18next.t("profile_information.introduction_label")}
                             value={aboutMe}
                             onChange={(e) => setAboutMe(e.target.value)}
                         />
@@ -236,7 +238,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Geburtsdatum"
+                            label={i18next.t("profile_information.birthdate_label")}
                             type="date"
                             value={birthdate}
                             error={birthdateError}
@@ -270,7 +272,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Telefonnummer"
+                            label={i18next.t("profile_information.telephone_label")}
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                         />
@@ -278,7 +280,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     <Grid2 size={{ md: 12, lg: 12 }}>
                         <Box mt={2}>
                             <Typography variant="subtitle1" fontWeight="bold">
-                                Adresse
+                                <Trans i18nKey={"profile_information.adress"}/>
                             </Typography>
                             <Divider sx={{ mb: 2 }} />
                         </Box>
@@ -287,7 +289,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Straße"
+                            label={i18next.t("profile_information.street_label")}
                             value={street}
                             onChange={(e) => setStreet(e.target.value)}
                         />
@@ -296,7 +298,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Hausnummer"
+                            label={i18next.t("profile_information.house_number_label")}
                             value={number}
                             onChange={(e) => setNumber(e.target.value)}
                         />
@@ -305,7 +307,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Stadt"
+                            label={i18next.t("profile_information.city_label")}
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         />
@@ -314,7 +316,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         <TextField
                             variant="outlined"
                             fullWidth
-                            label="Postleitzahl"
+                            label={i18next.t("profile_information.zip_label")}
                             value={zip}
                             onChange={(e) => setZip(e.target.value)}
                         />
@@ -323,10 +325,10 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCancel} variant="outlined">
-                    Abbrechen
+                    <Trans i18nKey={"profile_information.cancel"}/>
                 </Button>
                 <Button onClick={handleSave} variant="contained">
-                    Speichern
+                <Trans i18nKey={"profile_information.save"}/>
                 </Button>
             </DialogActions>
             <Snackbar

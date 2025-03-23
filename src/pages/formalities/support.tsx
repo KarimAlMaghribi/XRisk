@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { Trans } from "react-i18next";
 
 function FooterSupportDescriptions() {
   return (
@@ -10,7 +11,7 @@ function FooterSupportDescriptions() {
             color="black" 
             variant="h4"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Support
+            <Trans i18nKey={"footer.support"}></Trans>
         </Typography>
         </div>
         <br/>
@@ -20,14 +21,14 @@ function FooterSupportDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Developers
+            <Trans i18nKey={"footer.developers"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Unser Entwickler-Support stellt sicher, dass technische Teams die bestmögliche Unterstützung bei der Integration und Nutzung unserer Plattform erhalten. Ob es um APIs, Webhooks oder individuelle Anpassungen geht – Entwickler finden hier detaillierte Anleitungen, Codebeispiele und direkten Zugang zu unserem technischen Support. Unser Ziel ist es, eine nahtlose und effiziente Implementierung unserer Chat-Anwendung zu ermöglichen..
+          <Trans i18nKey={"footer.support_elements.developers_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -36,14 +37,14 @@ function FooterSupportDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Documentation
+            <Trans i18nKey={"footer.documentation"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Unsere umfassende Dokumentation bietet eine detaillierte Anleitung zur Nutzung und Integration unserer Plattform. Von ersten Einrichtungsschritten bis hin zu erweiterten Funktionen – hier finden Entwickler und Unternehmen alle relevanten Informationen. Klar strukturierte Inhalte, Beispiele und häufig gestellte Fragen helfen dabei, Herausforderungen schnell zu lösen und die Anwendung optimal zu nutzen.
+          <Trans i18nKey={"footer.support_elements.documentation_text"}></Trans>
         </Typography>
         <br/>
         <br/>
@@ -52,14 +53,14 @@ function FooterSupportDescriptions() {
             color="black" 
             variant="h6"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            Integrations
+            <Trans i18nKey={"footer.integrations"}></Trans>
         </Typography>
         </div>
         <Typography
             variant="body1"
             component="p"
             style={{ marginLeft: "10px", marginRight: "400px" }}>
-          Unsere Chat-Anwendung lässt sich nahtlos in bestehende Systeme und Tools integrieren. Ob CRM-Systeme, Zahlungsdienste oder Analyseplattformen – wir bieten flexible Schnittstellen, um den Versicherungsprozess effizient in bestehende Workflows einzubinden. Nutzer finden hier eine Übersicht über alle verfügbaren Integrationen sowie Anleitungen zur schnellen Implementierung, damit alles reibungslos funktioniert.
+          <Trans i18nKey={"footer.support_elements.integrations_text"}></Trans>
         </Typography>
         <br/>
         <br/>

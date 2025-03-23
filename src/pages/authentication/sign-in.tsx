@@ -15,6 +15,7 @@ import {useDispatch} from "react-redux";
 import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
 import {fetchRisks} from "../../store/slices/risks/thunks";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
+import { Trans } from "react-i18next";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -75,7 +76,7 @@ export const SignIn = () => {
                         <div style={{display: "flex", alignItems: "center", padding: "20px"}}>
                             <img src={Logo} alt="logo" style={{height: "30px", width: "39px", marginRight: "20px"}}/>
                             <Typography variant="body1" style={{color: "white"}}>
-                                Wir machen Risiken handelbar
+                                <Trans i18nKey={"sign_in.we_make_risks_tradeable"}/>
                             </Typography>
                         </div>
                     </Grid>
@@ -83,11 +84,11 @@ export const SignIn = () => {
                     <Grid size={6} style={{padding: "20px"}}>
                         <Grid container>
                             <Grid size={12} textAlign="center">
-                                <Typography variant="h6">Melde dich an</Typography>
+                                <Typography variant="h6"><Trans i18nKey={"sign_in.signin_text"}/></Typography>
                             </Grid>
 
                             <Grid size={12} textAlign="center">
-                                <Typography variant="caption">Nutze deine Email-Adresse und dein Passwort zur Anmeldung</Typography>
+                                <Typography variant="caption"><Trans i18nKey={"sign_in.use_email_and_password"}/></Typography>
                             </Grid>
 
                             <Container style={{maxWidth: "400px"}}>
@@ -131,13 +132,13 @@ export const SignIn = () => {
 
                                 <Grid size={12} textAlign="center">
                                     <Button variant="contained" style={{color: "white", marginTop: "10px"}} fullWidth onClick={signIn}>
-                                        Anmelden
+                                    <Trans i18nKey={"sign_in.SignIn"}/>
                                     </Button>
                                 </Grid>
 
                                 <Divider style={{marginTop: "10px", marginBottom: "10px"}}>
                                     <Typography variant="subtitle2" color="textSecondary">
-                                        ODER LOGGE DICH EIN MIT
+                                        <Trans i18nKey={"sign_in.or_login_with"}/>
                                     </Typography>
                                 </Divider>
 
@@ -150,9 +151,9 @@ export const SignIn = () => {
                                 </Button>
 
                                 <Typography variant="subtitle2" style={{textAlign: "center", marginTop: "10px"}}>
-                                    Durch Registrierung, stimmst du automatisch unseren <Link
-                                    to={`/${ROUTES.LEGAL}`}>AGBs</Link> und
-                                    unseren <Link to={`/${ROUTES.PRIVACY}`}>Datenschutzrichtlinien</Link> zu.
+                                    <Trans i18nKey={"sign_in.registration_text_1"}/> <Link
+                                    to={`/${ROUTES.TERMS}`}><Trans i18nKey={"sign_in.conditions"}/></Link> <Trans i18nKey={"sign_in.and_our"}/> 
+                                    <Link to={`/${ROUTES.PRIVACY}`}><Trans i18nKey={"sign_in.data_protection_guidelines"}/></Link> <Trans i18nKey={"sign_in.to"}/>.
                                 </Typography>
 
                             </Container>
