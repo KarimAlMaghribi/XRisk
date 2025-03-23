@@ -160,7 +160,11 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     <Typography variant="body1" sx={{ cursor: 'pointer', fontWeight: "bolder", color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
                                         {risk.name} {risk.status === RiskStatusEnum.AGREEMENT ?
                                         <Tooltip title={"Risiko wurde bereits übernommen"} followCursor>
-                                            <Chip label="Übernommen" color="error" variant="outlined" style={{marginLeft: "10px"}}/>
+                                            <Chip
+                                                label="Übernommen"
+                                                color="error"
+                                                variant="outlined"
+                                                style={{marginLeft: "10px", fontSize: "11px"}}/>
                                         </Tooltip> : ""}
                                     </Typography>
                                 </Grid>
