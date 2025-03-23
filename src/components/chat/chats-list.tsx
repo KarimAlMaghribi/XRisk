@@ -83,7 +83,12 @@ export const ChatsList = () => {
             </Box>
             <Scrollbar sx={{height: {lg: 'calc(100vh - 100px)', md: '100vh'}, maxHeight: '600px'}}>
                 {chats ? (
-                    chats.map((chat) => (
+                    chats
+                        .filter(chat =>
+                            (chat.riskProvider.uid === uid && chat.lastMessage) ||
+                            (chat.riskTaker.uid === uid)
+                        )
+                        .map((chat) => (
                         <ListItemButton
                             key={chat.id}
                             onClick={() => handleSelectChat(chat.id)}
