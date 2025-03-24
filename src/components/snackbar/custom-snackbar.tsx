@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Snackbar, Alert, AlertTitle, SnackbarOrigin } from "@mui/material";
+import {Snackbar, Alert, AlertTitle, SnackbarOrigin, duration} from "@mui/material";
 
 type SnackbarContextType = {
     showSnackbar: (
         title: string,
         message: string,
         anchorOrigin?: SnackbarOrigin,
-        severity?: "success" | "info" | "warning" | "error"
+        severity?: "success" | "info" | "warning" | "error",
+        duration?: number
     ) => void;
 };
 
@@ -27,16 +28,19 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
         horizontal: "center",
     });
     const [severity, setSeverity] = useState<"success" | "info" | "warning" | "error">("info");
+    const [duration, setDuration] = useState<number>(3000);
 
     const showSnackbar = (
         title: string,
         message: string,
         anchorOrigin?: SnackbarOrigin,
-        severity?: "success" | "info" | "warning" | "error"
+        severity?: "success" | "info" | "warning" | "error",
+        duration?: number
     ) => {
         setSnackbarTitle(title);
         setSnackbarMessage(message);
         setSeverity(severity || "info");
+        setDuration(duration || 3000);
 
         if (anchorOrigin) {
             setSnackbarOrigin(anchorOrigin);
@@ -57,7 +61,7 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
             <Snackbar
                 open={open}
                 onClose={handleClose}
-                autoHideDuration={3000}
+                autoHideDuration={duration}
                 anchorOrigin={snackbarOrigin}>
                 <Alert severity={severity} onClose={handleClose}>
                     <AlertTitle>{snackbarTitle}</AlertTitle>

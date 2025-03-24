@@ -25,6 +25,9 @@ import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import {PublisherProfile} from "./publisher-profile";
 import {updateRiskStatus} from "../../store/slices/risks/thunks";
 import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
+import {selectShowTaken} from "../../store/slices/risks/selectors";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {RiskDeletionDialog} from "./risk-deletion-dialog";
 
 export const elementBottomMargin: number = 20;
 
@@ -38,6 +41,9 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const profileInfo: ProfileInformation = useSelector(selectProfileInformation);
+    const showTaken: boolean = useSelector(selectShowTaken);
+    const [riskToDelete, setRiskToDelete] = React.useState<Risk | null>(null);
+    const [openRiskDeletionDialog, setOpenRiskDeletionDialog] = React.useState<boolean>(false);
     const [openPublisherProfileDialog, setOpenPublisherProfileDialog] = React.useState<boolean>(false);
     const [publisherProfile, setPublisherProfile] = React.useState<Publisher | null | undefined>(null);
     const [expandedPanels, setExpandedPanels] = React.useState<string[]>([]);
@@ -128,19 +134,25 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
         navigate(`/chat`);
     };
 
+    const handleRiskDeletionDialog = (risk: Risk) => {
+        console.log(risk);
+        setRiskToDelete(risk);
+        setOpenRiskDeletionDialog(true);
+    }
+
+    const displayedRisks = !showTaken
+        ? props.risks.filter(risk => risk.status !== RiskStatusEnum.AGREEMENT)
+        : props.risks;
+
     return (
         <React.Fragment>
             {
-                props.risks && props.risks.map((risk: Risk, index) => (
+                displayedRisks && displayedRisks.map((risk: Risk, index) => (
                     <Accordion
                         sx={{
                             margin: 0,
-                            '&.MuiAccordion-root': {
-                                margin: 0
-                            },
-                            '&.MuiAccordion-gutters': {
-                                margin: 0
-                            },
+                            '&.MuiAccordion-root': { margin: 0 },
+                            '&.MuiAccordion-gutters': { margin: 0 },
                         }}
                         elevation={0}
                         key={risk.id ? risk.id : index}
@@ -160,15 +172,18 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     <Typography variant="body1" sx={{ cursor: 'pointer', fontWeight: "bolder", color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
                                         {risk.name} {risk.status === RiskStatusEnum.AGREEMENT ?
                                         <Tooltip title={"Risiko wurde bereits übernommen"} followCursor>
-                                            <Chip label="Übernommen" color="error" variant="outlined" style={{marginLeft: "10px"}}/>
+                                            <Chip
+                                                label="Übernommen"
+                                                color="error"
+                                                variant="outlined"
+                                                style={{marginLeft: "10px", fontSize: "11px"}}/>
                                         </Tooltip> : ""}
                                     </Typography>
                                 </Grid>
-
                                 <Grid size={3}>
                                     <Typography variant="body1" sx={{ cursor: 'pointer' }}>
                                         {
-                                             risk.type.map((element, idx) => (
+                                            risk.type.map((element, idx) => (
                                                 <Chip key={idx} label={element} clickable={risk.status !== RiskStatusEnum.AGREEMENT} sx={{
                                                     backgroundColor: risk.status === RiskStatusEnum.AGREEMENT ? "white" :'#f3f3f3',
                                                     color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : '#343434',
@@ -210,6 +225,17 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         style={{ maxHeight: "40px", height: "40px" }}>
                                         Kontakt aufnehmen
                                     </Button>
+                                    {
+                                        profileInfo.admin &&
+                                        <Button
+                                            color="error"
+                                            onClick={() => handleRiskDeletionDialog(risk)}
+                                            variant="contained"
+                                            endIcon={<DeleteIcon />}
+                                            style={{ maxHeight: "40px", height: "40px", marginLeft: "10px" }}>
+                                            Risiko löschen
+                                        </Button>
+                                    }
                                 </Grid>
                                 <Grid size={6}>
                                     <Typography variant="body1" sx={{marginBottom: `${elementBottomMargin}px`}}>
@@ -249,10 +275,10 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                 ))
             }
             {
-                !props.risks || props.risks.length === 0 ?
-                    <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" }}>
-                        Keine Risiken gefunden.
-                    </Typography> : null
+                (!displayedRisks || displayedRisks.length === 0) &&
+                <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" }}>
+                    Keine Risiken gefunden.
+                </Typography>
             }
             <PublisherProfile
                 open={openPublisherProfileDialog}
@@ -260,7 +286,10 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                 publisher={publisherProfile}
                 setPublisher={setPublisherProfile}
             />
-
+            <RiskDeletionDialog
+                open={openRiskDeletionDialog}
+                setOpen={setOpenRiskDeletionDialog}
+                risk={riskToDelete}/>
         </React.Fragment>
     );
 };

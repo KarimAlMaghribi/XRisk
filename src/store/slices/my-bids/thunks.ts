@@ -42,6 +42,7 @@ export const subscribeToChats = createAsyncThunk<
     ActionTypes.SUBSCRIBE_TO_CHATS,
     async (_, { dispatch, rejectWithValue }) => {
         try {
+            // Falls bereits ein Abonnement existiert, wird es zuerst beendet.
             if (chatsUnsubscribe) {
                 chatsUnsubscribe();
                 chatsUnsubscribe = null;
@@ -54,6 +55,7 @@ export const subscribeToChats = createAsyncThunk<
 
             const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
             const q = query(chatsRef, orderBy("lastActivity", "desc"));
+
             chatsUnsubscribe = onSnapshot(q, (snapshot) => {
                 const chats = snapshot.docs
                     .map(doc => ({ id: doc.id, ...doc.data() } as Chat))
