@@ -1,4 +1,3 @@
-import {LiquidAssetsStatus, AnnualIncomeStatus, CurrentLoanStatus, MontlyFixedCosts, AdditionalAssetsStatus} from "../types/CreditAssesmentStatus";
 import { FieldValue, Timestamp } from "firebase/firestore";
 
 export interface CreditAssesment {
