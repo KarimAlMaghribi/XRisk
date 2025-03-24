@@ -292,6 +292,14 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                   <Trans i18nKey="header.profile"></Trans>
                 </Typography>
               </MenuItem>,
+              <MenuItem key="second-box" onClick={openCreditScoreDialog}>
+                <ListItemIcon>
+                  <AssuredWorkloadIcon />
+                </ListItemIcon>
+                <Typography sx={{ textAlign: "center" }}>
+                  <Trans i18nKey="header.credit_score"></Trans>
+                </Typography>
+              </MenuItem>,
             ]}
           </Menu>
           <Button
