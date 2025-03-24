@@ -36,7 +36,8 @@ const initialState: RiskOverviewState = {
     filters: {
         types: [],
         value: [0, 200000],
-        remainingTerm: [0, 24] // months
+        remainingTerm: [0, 24], // months
+        showTaken: false
     },
     sorts: [
         {
@@ -63,7 +64,7 @@ const initialState: RiskOverviewState = {
     status: FetchStatusEnum.IDLE
 };
 
-const applyAllFilters = (risks: any[], filters: RiskOverviewFilterType) => {
+const applyAllFilters = (risks: Risk[], filters: RiskOverviewFilterType): Risk[] => {
     const valueRange =
         Array.isArray(filters.value) && filters.value.length >= 2
             ? filters.value
@@ -73,7 +74,7 @@ const applyAllFilters = (risks: any[], filters: RiskOverviewFilterType) => {
             ? filters.remainingTerm
             : [0, 24];
 
-    return risks.filter((risk) => {
+    const filteredRisks = risks.filter((risk) => {
         const matchesType =
             filters.types.length === 0 ||
             filters.types.some((type) => risk.type.includes(type));
@@ -91,6 +92,15 @@ const applyAllFilters = (risks: any[], filters: RiskOverviewFilterType) => {
 
         return matchesType && matchesValue && matchesTerm;
     });
+
+    // Risiken mit Status AGREEMENT immer nach unten sortieren
+    return filteredRisks.sort((a, b) => {
+        const isAAgreement = a.status === RiskStatusEnum.AGREEMENT;
+        const isBAgreement = b.status === RiskStatusEnum.AGREEMENT;
+        if (isAAgreement && !isBAgreement) return 1;
+        if (!isAAgreement && isBAgreement) return -1;
+        return 0;
+    });
 };
 
 export const riskOverviewSlice = createSlice({
@@ -107,6 +117,13 @@ export const riskOverviewSlice = createSlice({
                     : SortDirectionEnum.ASC;
 
             state.filteredRisks.sort((a, b) => {
+                // Zuerst: Risiken mit AGREEMENT immer nach unten
+                const isAAgreement = a.status === RiskStatusEnum.AGREEMENT;
+                const isBAgreement = b.status === RiskStatusEnum.AGREEMENT;
+                if (isAAgreement && !isBAgreement) return 1;
+                if (!isAAgreement && isBAgreement) return -1;
+
+                // Danach reguläre Sortierung
                 if (sort.name === RiskOverviewHeaderEnum.PUBLISHER) {
                     if (!a.publisher || !b.publisher) return 0;
                     return sort.direction === SortDirectionEnum.ASC
@@ -151,6 +168,9 @@ export const riskOverviewSlice = createSlice({
             state.filteredRisks = defaultSortRisks(
                 applyAllFilters(action.payload, state.filters as RiskOverviewFilterType)
             );
+        },
+        setShowTaken: (state, action: PayloadAction<boolean>) => {
+            state.filters.showTaken = action.payload;
         }
     },
     extraReducers: (builder) => {
@@ -265,7 +285,8 @@ export const {
     changeFilterValue,
     changeRemainingTerm,
     clearFilters,
-    setRisks
+    setRisks,
+    setShowTaken
 } = riskOverviewSlice.actions;
 
 export default riskOverviewSlice.reducer;

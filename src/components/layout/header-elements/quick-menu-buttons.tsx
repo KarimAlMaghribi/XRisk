@@ -181,7 +181,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
               sx={{ backgroundColor: "#f5f5f5", fontWeight: "bold" }}
             >
               <Typography variant="subtitle1" sx={{ color: "black" }}>
-                Notifications
+                Benachrichtigungen
               </Typography>
             </MenuItem>
 
@@ -192,7 +192,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                 sx={{ textAlign: "center" }}
               >
                 <Typography variant="body2" color="textSecondary">
-                  No new notifications
+                  Neue Benachrichtigungen
                 </Typography>
               </MenuItem>
             ) : (
@@ -290,15 +290,6 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                 </ListItemIcon>
                 <Typography sx={{ textAlign: "center" }}>
                   <Trans i18nKey="header.profile"></Trans>
-                </Typography>
-              </MenuItem>,
-              <Divider key="divider" />,
-              <MenuItem key="second-box" onClick={openCreditScoreDialog}>
-                <ListItemIcon>
-                  <AssuredWorkloadIcon />
-                </ListItemIcon>
-                <Typography sx={{ textAlign: "center" }}>
-                  <Trans i18nKey="header.credit_score"></Trans>
                 </Typography>
               </MenuItem>,
             ]}

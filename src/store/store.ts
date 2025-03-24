@@ -1,4 +1,4 @@
-import { configureStore,  } from "@reduxjs/toolkit";
+import { configureStore  } from "@reduxjs/toolkit";
 import myRisksReducer from "./slices/my-risks/reducers";
 import myBidsReducer from "./slices/my-bids/reducers";
 import riskOverviewReducer from "./slices/risks/reducers";
@@ -17,7 +17,7 @@ export const store = configureStore({
         userProfile: userProfilesReducer,
         notifications: notificationReducer
     },
-    devTools: true
+    devTools: true,
 });
 
 export type AppDispatch = typeof store.dispatch;

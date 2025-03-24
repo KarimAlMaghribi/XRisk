@@ -7,6 +7,7 @@ export const selectSorts = (state: { risks: RiskOverviewState }) => state.risks.
 export const selectFilterTypes = (state: { risks: RiskOverviewState }) => state.risks.filters.types;
 export const selectFilterValue = (state: { risks: RiskOverviewState }) => state.risks.filters.value;
 export const selectRemainingTerm = (state: { risks: RiskOverviewState }) => state.risks.filters.remainingTerm;
+export const selectShowTaken = (state: { risks: RiskOverviewState }) => state.risks.filters.showTaken;
 export const selectTypes = (state: { risks: RiskOverviewState }) => state.risks.types;
 
 export const selectRiskById = (state: { risks: RiskOverviewState }, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id);

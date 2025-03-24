@@ -5,7 +5,7 @@ import {
     Paper,
     SelectChangeEvent,
     Typography,
-    TextField
+    TextField, Checkbox
 } from "@mui/material";
 import Slider from '@mui/material/Slider';
 import { RiskOverviewFilterType } from "../../models/RiskOverviewFilterType";
@@ -14,12 +14,12 @@ import {
     changeFilterValue,
     changeRemainingTerm,
     clearFilters,
-    setFilterType
+    setFilterType, setShowTaken
 } from "../../store/slices/risks/reducers";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import { RiskTypeSelector } from "../my-risks/risk-type-selector";
-import { selectFilterTypes } from "../../store/slices/risks/selectors";
+import {selectFilterTypes, selectShowTaken} from "../../store/slices/risks/selectors";
 import { formatDate } from "../../utils/dateFormatter";
 import { selectHighestRiskValue } from "../../store/slices/meta/selectors";
 import { formatEuro } from "../my-risks/my-risk-row-details/agreement-details/agreement-table";
@@ -217,6 +217,16 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                     onChange={handleTermUpperInputChange}
                     onBlur={commitTermInput}
                     sx={{ flex: 1 }}
+                />
+            </Box>
+
+            <Box display="flex" alignItems="center" marginTop="10px">
+                <Typography variant="body1">
+                    Übernommene Risiken anzeigen
+                </Typography>
+                <Checkbox
+                    checked={props.showTaken}
+                    onChange={() => dispatch(setShowTaken(!props.showTaken))}
                 />
             </Box>
 
