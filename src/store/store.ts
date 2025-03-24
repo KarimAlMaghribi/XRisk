@@ -6,6 +6,7 @@ import myRiskAgreementsReducer from "./slices/my-risk-agreements/reducers";
 import userProfilesReducer from "./slices/user-profile/reducers";
 import metaReducer from "./slices/meta/reducers";
 import notificationReducer from "./slices/my-notifications/reducers";
+import assesmentsReducer from "./slices/credit-assesment/reducers";
 
 export const store = configureStore({
     reducer: {
@@ -15,7 +16,8 @@ export const store = configureStore({
         myRiskAgreements: myRiskAgreementsReducer,
         risks: riskOverviewReducer,
         userProfile: userProfilesReducer,
-        notifications: notificationReducer
+        notifications: notificationReducer,
+        assesments: assesmentsReducer
     },
     devTools: true
 });

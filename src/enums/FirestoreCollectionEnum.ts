@@ -6,5 +6,6 @@ export enum FirestoreCollectionEnum {
     RISK_TYPES = "riskTypes",
     MESSAGES = "messages",
     MY_RISK_AGREEMENTS = "riskAgreement",
-    MY_NOTIFICATIONS = "notifications"
+    MY_NOTIFICATIONS = "notifications",
+    CREDIT_ASSESMENT = "creditAssesment"
 }
