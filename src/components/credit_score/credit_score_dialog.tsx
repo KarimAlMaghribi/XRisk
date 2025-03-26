@@ -16,8 +16,18 @@ import {
 } from "@mui/material";
 import { Trans } from "react-i18next";
 import { t } from "i18next";
-import React from "react";
+import React, { useEffect } from "react";
 import { NumericFormat } from "react-number-format";
+import { AppDispatch, RootState } from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addAssesments,
+  fetchAssesments,
+  updateAssesment,
+} from "../../store/slices/credit-assesment/thunks";
+import { CreditAssesment } from "../../models/CreditAssesment";
+import { auth } from "../../firebase_config";
+import { selectAssesmentById } from "../../store/slices/credit-assesment/selectors";
 
 export interface CreditScoreDialogProps {
   show: boolean;
@@ -131,6 +141,29 @@ export const computeLiabilityLimit = (
 };
 
 export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
+  const dispatch: AppDispatch = useDispatch();
+
+  const uid = auth.currentUser?.uid!;
+  //fetchAssesments(uid);
+
+  /*const getAssesments = async () => {
+    try {
+      const resultAction = await dispatch(fetchAssesments(uid!));
+      const assesments = resultAction.payload;
+
+      console.log("Assesments:", assesments);
+    } catch (err) {263
+      console.error("Failed to fetch assessments:", err);
+    }
+  };
+
+  const dispatch: AppDispatch = useDispatch();
+  var assesment = getAssesments();*/
+
+  const assesment: CreditAssesment | null = useSelector((state: RootState) =>
+    selectAssesmentById(state, uid)
+  );
+
   const [liquidity, setLiquidity] = React.useState<number | null>(null);
   const [netIncome, setNetIncome] = React.useState<number | null>(null);
   const [existingCredits, setExistingCredits] = React.useState<number | null>(
@@ -152,6 +185,17 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
 
   const [liabilityLimit, setLiabilityLimit] = React.useState(5000);
 
+  useEffect(() => {
+    if (assesment) {
+      setLiquidity(assesment?.liquidAssets);
+      setNetIncome(assesment?.monthlyIncome);
+      setExistingCredits(assesment?.currentLoan);
+      setMonthlyFixCosts(assesment?.monthlyFixedCosts);
+      setOtherAssets(assesment?.additionalAssets);
+      setLiabilityLimit(assesment?.acquisitionLimit);
+    }
+  }, [assesment]);
+
   const formattedLimit = new Intl.NumberFormat("de-DE", {
     style: "currency",
     currency: "EUR",
@@ -165,9 +209,8 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  //TODO handleSave implementieren
   const handleSave = () => {
-    //Werte im Firestore speichern
+    console.log(assesment);
 
     //Bonität berechnen und anzeigen (im Dialog und über die Snackbar)
     const liabilityLimit = computeLiabilityLimit(
@@ -177,6 +220,22 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
       monthlyFixCosts,
       otherAssets
     );
+
+    const newAssesment: CreditAssesment = {
+      id: "1",
+      liquidAssets: liquidity,
+      monthlyIncome: netIncome,
+      currentLoan: existingCredits,
+      monthlyFixedCosts: monthlyFixCosts,
+      additionalAssets: otherAssets,
+      acquisitionLimit: liabilityLimit,
+    };
+    if (assesment == null) {
+      dispatch(addAssesments({ uid: uid, newAssesment: newAssesment }));
+    } else {
+      dispatch(updateAssesment(newAssesment));
+    }
+
     setLiabilityLimit(liabilityLimit);
     setSnackbarMessage(
       t("credit_score_information.snackbar_updated_liability_limit", {
