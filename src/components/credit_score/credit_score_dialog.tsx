@@ -146,7 +146,7 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
   const uid = auth.currentUser?.uid!;
   //fetchAssesments(uid);
 
-  /*const getAssesments = async () => {
+  const getAssesments = async () => {
     try {
       const resultAction = await dispatch(fetchAssesments(uid!));
       const assesments = resultAction.payload;
@@ -156,9 +156,6 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
       console.error("Failed to fetch assessments:", err);
     }
   };
-
-  const dispatch: AppDispatch = useDispatch();
-  var assesment = getAssesments();*/
 
   const assesment: CreditAssesment | null = useSelector((state: RootState) =>
     selectAssesmentById(state, uid)
@@ -222,7 +219,7 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
     );
 
     const newAssesment: CreditAssesment = {
-      id: "1",
+      id: uid!,
       liquidAssets: liquidity,
       monthlyIncome: netIncome,
       currentLoan: existingCredits,

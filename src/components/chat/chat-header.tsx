@@ -150,7 +150,7 @@ export const ChatHeader = () => {
                                 <ListItemText
                                     primary={
                                         <Typography variant="body1" fontWeight={600}>
-                                            {activeChat?.riskProvider?.name}
+                                            {activeChat?.riskTaker?.uid === auth.currentUser?.uid ? activeChat?.riskProvider?.name : activeChat?.riskTaker?.name}
                                         </Typography>
                                     }
                                     secondary={
@@ -187,7 +187,7 @@ export const ChatHeader = () => {
                                                         variant="body2"
                                                         color="textSecondary"
                                                         sx={{ textAlign: "center", marginRight: "10px", fontWeight: "bold", cursor: "pointer" }}>
-                                                        <Trans i18nKey={"chat.chat_header.negotiation_partner_signaled"}></Trans>
+                                                        <Trans i18nKey={"chat.chat_header.negotiaion_partner_signaled"}></Trans>
                                                     </Typography>
                                                 </ToolTip>
                                             )

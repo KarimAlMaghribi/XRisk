@@ -33,7 +33,9 @@ export function Header() {
 
     const languages: Record<"en" | "de", { label: string; name: string; countryCode: string }> = {
         en: { label: "EN", name: "English", countryCode: "US" },
-        de: { label: "DE", name: "Deutsch", countryCode: "DE" }
+        de: { label: "DE", name: "Deutsch", countryCode: "DE" },
+        
+        
     };
 
     useEffect(() => {
@@ -75,7 +77,7 @@ export function Header() {
     };
 
     const changeLanguage = (lng: string) => {
-        setLanguage(lng as "en" | "de");
+        setLanguage(lng as "de" | "en");
         i18n.changeLanguage(lng);
     };
 
