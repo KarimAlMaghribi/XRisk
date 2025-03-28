@@ -331,8 +331,7 @@
       "notification_sending_error_continued": "Dein Vorschlag konnte nicht gesendet werden. Versuche es erneut.",
       "dialog_context_1": "Haltet nochmal fest, was vereinbart wurde!",
       "dialog_context_2": "Diese Informationen werden später Bestandteil des Vertrags.",
-      "dialog_context_3": "Nutze die KI, um das Formular basierend auf dem Chat automatisch",
-      "dialog_context_4": "auszufüllen, oder gib die Daten manuell ein.",
+      "dialog_context_3": "Die Felder dieses Formulars werden automatisch von einer KI ausgefüllt. Bitte überprüfe die Angaben sorgfältig und passe sie bei Bedarf an.",
       "dialog_action_button1": "Informationen Aus Chat übernehmen",
       "dialog_action_button2": "Vereinbarung vorschlagen",
       "dialog_action_button3": "Abbrechen"

@@ -332,8 +332,7 @@
       "notification_sending_error_continued": "Your suggestion could not be sent. Please try again.",
       "dialog_context_1": "Take a look on the agreement status!",
       "dialog_context_2": "This information will later become part of the contract.",
-      "dialog_context_3": "Use the AI to automatically create the form based on the chat",
-      "dialog_context_4": " or enter the data manually.",
+      "dialog_context_3": "The fields in this form are automatically filled in by AI. Please review the information carefully and make any necessary corrections.",
       "dialog_action_button1": "Transfer information from chat",
       "dialog_action_button2": "Propose agreement",
       "dialog_action_button3": "Cancel"
