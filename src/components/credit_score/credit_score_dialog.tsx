@@ -13,6 +13,7 @@ import {
   Switch,
   Alert,
   Snackbar,
+  IconButton,
 } from "@mui/material";
 import { Trans } from "react-i18next";
 import { t } from "i18next";
@@ -28,6 +29,8 @@ import {
 import { CreditAssesment } from "../../models/CreditAssesment";
 import { auth } from "../../firebase_config";
 import { selectAssesmentById } from "../../store/slices/credit-assesment/selectors";
+import CloseIcon from "@mui/icons-material/Close";
+import { theme } from "../../theme";
 
 export interface CreditScoreDialogProps {
   show: boolean;
@@ -152,7 +155,7 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
       const assesments = resultAction.payload;
 
       console.log("Assesments:", assesments);
-    } catch (err) {263
+    } catch (err) {
       console.error("Failed to fetch assessments:", err);
     }
   };
@@ -297,15 +300,26 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         },
       }}
     >
-      <DialogTitle>
-        <Typography variant="h6">
-          <Trans i18nKey={"credit_score_information.credit_score"} />
-        </Typography>
-        <Typography variant="subtitle1">
-          <Trans
-            i18nKey={"credit_score_information.update_credit_score_text"}
-          />
-        </Typography>
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Box>
+          <Typography variant="h6">
+            <Trans i18nKey={"credit_score_information.credit_score"} />
+          </Typography>
+          <Typography variant="subtitle1">
+            <Trans
+              i18nKey={"credit_score_information.update_credit_score_text"}
+            />
+          </Typography>
+        </Box>
+        <IconButton onClick={props.handleClose} sx={{ color: "grey.500" }}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <Divider />
       <DialogContent sx={{ marginTop: "20px" }}>
@@ -344,6 +358,16 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
           <Trans
             i18nKey="credit_score_information.liability_limit_text"
             values={{ limit: formattedLimit }}
+            components={{
+              span: (
+                <span
+                  style={{
+                    color: theme.palette.secondary.main,
+                    fontWeight: "bold",
+                  }}
+                />
+              ),
+            }}
           />
         </Typography>
         <Divider />
