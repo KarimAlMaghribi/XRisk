@@ -41,6 +41,7 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
     }
 
     return (
+        <>
         <Dialog
             open={props.open}
             onClose={handleClose}
@@ -115,10 +116,11 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                     Schließen
                 </Button>
             </DialogActions>
-            <UserDeletionDialog
-                open={openUserDeletionDialog}
-                setOpen={setOpenUserDeletionDialog}
-                publisher={props.publisher} />
         </Dialog>
+        <UserDeletionDialog
+            open={openUserDeletionDialog}
+            setOpen={setOpenUserDeletionDialog}
+            publisher={props.publisher} />
+        </>
     )
 }
