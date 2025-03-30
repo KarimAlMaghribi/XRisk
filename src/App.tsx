@@ -29,11 +29,13 @@ import FooterSupportDescriptions from './pages/formalities/support';
 import FooterCompanyDescriptions from './pages/formalities/company';
 import i18n from './utils/i18n';
 import { useState, useEffect } from 'react';
-
+import { useDispatch, UseDispatch } from 'react-redux';
 
 function App() {
 
-    const [userId, setUserId] = useState<string | null>(null);
+    
+
+    const dispatch = useDispatch();
 
     const [language, setLanguage] = useState(i18n.language);
 
@@ -41,7 +43,11 @@ function App() {
         i18n.on("languageChanged", (lng) => {
             setLanguage(lng); // This will force a re-render
         });
+
     }, [i18n.language]);
+
+
+    
 
     return (
         <Layout>

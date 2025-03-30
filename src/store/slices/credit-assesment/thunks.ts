@@ -9,10 +9,13 @@ import {setAssesments} from "./reducers";
 export const fetchAssesments = createAsyncThunk(
     "myAssesments/fetchAssesments",
     async (userId: string) => {
-        const userAssesmentsRef = collection(db, "creditAssesment", userId, "assesments");
-        const querySnapshot = await getDocs(userAssesmentsRef);
+        const docRef = doc(db, "creditAssesment", userId, "assesments", userId);
+        const docSnap = await getDoc(docRef);
 
-        return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        if (docSnap.exists()) {
+        return [{ id: docSnap.id, ...docSnap.data() }];
+        }
+        return [];
     }
 );
 
@@ -37,14 +40,14 @@ export const subscribeToAssesments = createAsyncThunk<
                 return rejectWithValue("User not authenticated");
             }
 
-            const assesmentsRef = collection(db, "creditAssesment", currentUserId, "assesments");
-            assesmentsUnsubscribe = onSnapshot(assesmentsRef, (snapshot) => {
-                const assesments = snapshot.docs
-                    .map(doc => ({id: doc.id, ...doc.data()} as CreditAssesment))
-                // .filter(notification =>
-                //     notification.id === currentUserId
-                // );
-                dispatch(setAssesments(assesments));
+            const assesmentDocRef = doc(db, "creditAssesment", currentUserId, "assesments", currentUserId);
+            assesmentsUnsubscribe = onSnapshot(assesmentDocRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const assesment = { id: docSnap.id, ...docSnap.data() } as CreditAssesment;
+                dispatch(setAssesments([assesment]));
+            } else {
+                dispatch(setAssesments([]));
+            }
             });
         } catch (error) {
             return rejectWithValue("Error subscribing to Creditassesments");
@@ -70,15 +73,16 @@ export const addAssesments = createAsyncThunk(
                 await setDoc(userDocRef, {});
             }
 
-            const userAssesmentsCollection = collection(db, `creditAssesment/${uid}/assesments`);
 
-            const assesmentsDocRef = await addDoc(userAssesmentsCollection, {
-                ...newAssesment,
-                uid: uid,
-                createdAt: new Date().toISOString(),
+            const assesmentDocRef = doc(db, `creditAssesment/${uid}/assesments/${uid}`);
+            await setDoc(assesmentDocRef, {
+            ...newAssesment,
+            uid: uid,
+            createdAt: new Date().toISOString(),
             });
 
-            return {id: assesmentsDocRef.id, ...newAssesment} as CreditAssesment;
+
+            return {id: assesmentDocRef.id, ...newAssesment} as CreditAssesment;
         } catch (error) {
             console.error("Error adding credit assesment: ", error);
             return rejectWithValue(error);

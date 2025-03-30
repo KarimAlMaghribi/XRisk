@@ -3,17 +3,20 @@ import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
 import { MyCreditAssesmentState } from "./types";
 import { fetchAssesments, addAssesments, updateAssesment } from "./thunks";
 import { CreditAssesment } from "../../../models/CreditAssesment";
+import { FirestoreCollectionEnum } from "../../../enums/FirestoreCollectionEnum";
 
 
 const initialState: MyCreditAssesmentState = {
     creditAssesments: [],
+    activeAssesments: null,
     error: undefined,
     status: FetchStatusEnum.IDLE
 };
 
 
+// Notification Slice
 const assesmentsSlice = createSlice({
-    name: "assesments",
+    name: FirestoreCollectionEnum.CREDIT_ASSESMENT,
     initialState: {
       list: [] as CreditAssesment[],
       loading: false,
@@ -35,20 +38,7 @@ const assesmentsSlice = createSlice({
         })
         .addCase(fetchAssesments.rejected, (state, action) => {
           state.loading = false;
-          state.error = action.error.message || "Error fetching credit assesments";
-        })
-        .addCase(addAssesments.fulfilled, (state, action) => {
-          state.list.push(action.payload);
-        })
-        .addCase(updateAssesment.pending, (state) => {
-          state.loading = true;
-        })
-        .addCase(updateAssesment.fulfilled, (state, action) => {
-          state.loading = false;
-        })
-        .addCase(updateAssesment.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.error.message || "Error updating credit assesments";
+          state.error = action.error.message || "Error fetching assesments";
         })
     },
   });
