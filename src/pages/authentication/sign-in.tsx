@@ -1,13 +1,6 @@
-import {
-  Button,
-  Card,
-  Container,
-  Divider,
-  TextField,
-  Typography,
-} from "@mui/material";
+import {Button, Card, Container, Divider, TextField, Typography,} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 // @ts-ignore
 import Logo from "../../assests/imgs/logo.png";
 import "./style.scss";
@@ -34,7 +27,7 @@ export const SignIn = () => {
     const navigate = useNavigate();
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
-    const { showSnackbar } = useSnackbarContext();
+    const {showSnackbar} = useSnackbarContext();
     const profile: ProfileInformation | null = useSelector(selectProfileInformation);
     const loading: FetchStatus | undefined = useSelector(selectLoadingStatus);
 
@@ -45,7 +38,7 @@ export const SignIn = () => {
             showSnackbar(
                 "Dein Account wurde gelöscht!",
                 "Dein Account wurde gelöscht. Bitte kontaktiere den Support, wenn du deinen Account wiederherstellen möchtest.",
-                { vertical: "top", horizontal: "center" },
+                {vertical: "top", horizontal: "center"},
                 "error"
             );
             signOutUser();
@@ -57,7 +50,7 @@ export const SignIn = () => {
             showSnackbar(
                 "Account nicht gefunden!",
                 "Es scheint Probleme bei der Identifizierung deines Accounts zu geben. Bitte wende dich an den Support.",
-                { vertical: "top", horizontal: "center" },
+                {vertical: "top", horizontal: "center"},
                 "warning"
             );
             signOutUser();
@@ -70,9 +63,9 @@ export const SignIn = () => {
         }
     }, [loading, auth.currentUser, profile, navigate, showSnackbar, dispatch]);
 
-  const signIn = async () => {
-    try {
-      const user = await signInWithEmail(email, password);
+    const signIn = async () => {
+        try {
+            const user = await signInWithEmail(email, password);
 
             if (user?.refreshToken) {
                 dispatch(fetchUserProfile());
@@ -85,7 +78,7 @@ export const SignIn = () => {
             showSnackbar(
                 "Login fehlgeschlagen!",
                 "Email oder Passwort sind falsch.",
-                { vertical: "top", horizontal: "center" },
+                {vertical: "top", horizontal: "center"},
                 "error"
             );
         }
@@ -103,129 +96,133 @@ export const SignIn = () => {
             }
         } catch (error) {
             console.error(error)
-            showSnackbar("Login fehlgeschlagen!", "Google konnte deine Anmeldedaten nicht verifizieren.", { vertical: "top", horizontal: "center" }, "error")
+            showSnackbar("Login fehlgeschlagen!", "Google konnte deine Anmeldedaten nicht verifizieren.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error")
         }
 
     }
-  };
 
-  return (
-    <div className="sign-in-card">
-      <Card>
-        <Grid container>
-          <Grid size={6} style={{ backgroundColor: "#1F271B" }}>
-            <div
-              style={{ display: "flex", alignItems: "center", padding: "20px" }}
-            >
-              <img
-                src={Logo}
-                alt="logo"
-                style={{ height: "30px", width: "39px", marginRight: "20px" }}
-              />
-              <Typography variant="body1" style={{ color: "white" }}>
-                <Trans i18nKey={"sign_in.we_make_risks_tradeable"} />
-              </Typography>
-            </div>
-          </Grid>
+    return (
+        <div className="sign-in-card">
+            <Card>
+                <Grid container>
+                    <Grid size={6} style={{backgroundColor: "#1F271B"}}>
+                        <div
+                            style={{display: "flex", alignItems: "center", padding: "20px"}}
+                        >
+                            <img
+                                src={Logo}
+                                alt="logo"
+                                style={{height: "30px", width: "39px", marginRight: "20px"}}
+                            />
+                            <Typography variant="body1" style={{color: "white"}}>
+                                <Trans i18nKey={"sign_in.we_make_risks_tradeable"}/>
+                            </Typography>
+                        </div>
+                    </Grid>
 
-          <Grid size={6} style={{ padding: "20px" }}>
-            <Grid container>
-              <Grid size={12} textAlign="center">
-                <Typography variant="h6">
-                  <Trans i18nKey={"sign_in.signin_text"} />
-                </Typography>
-              </Grid>
+                    <Grid size={6} style={{padding: "20px"}}>
+                        <Grid container>
+                            <Grid size={12} textAlign="center">
+                                <Typography variant="h6">
+                                    <Trans i18nKey={"sign_in.signin_text"}/>
+                                </Typography>
+                            </Grid>
 
-              <Grid size={12} textAlign="center">
-                <Typography variant="caption">
-                  <Trans i18nKey={"sign_in.use_email_and_password"} />
-                </Typography>
-              </Grid>
+                            <Grid size={12} textAlign="center">
+                                <Typography variant="caption">
+                                    <Trans i18nKey={"sign_in.use_email_and_password"}/>
+                                </Typography>
+                            </Grid>
 
-              <Container style={{ maxWidth: "400px" }}>
-                <Grid size={12} textAlign="center">
-                  <TextField
-                    InputProps={{
-                      style: {
-                        fontSize: "14px",
-                      },
-                    }}
-                    autoComplete="email"
-                    placeholder="max.mustermann@email.de"
-                    variant="outlined"
-                    name="Email"
-                    size="small"
-                    style={{ marginTop: "20px" }}
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    fullWidth
-                  />
+                            <Container style={{maxWidth: "400px"}}>
+                                <Grid size={12} textAlign="center">
+                                    <TextField
+                                        InputProps={{
+                                            style: {
+                                                fontSize: "14px",
+                                            },
+                                        }}
+                                        autoComplete="email"
+                                        placeholder="max.mustermann@email.de"
+                                        variant="outlined"
+                                        name="Email"
+                                        size="small"
+                                        style={{marginTop: "20px"}}
+                                        value={email}
+                                        onChange={(event) => setEmail(event.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+
+                                <Grid size={12} textAlign="center">
+                                    <TextField
+                                        InputProps={{
+                                            style: {
+                                                fontSize: "14px",
+                                            },
+                                        }}
+                                        autoComplete="current-password"
+                                        variant="outlined"
+                                        name="Passwort"
+                                        size="small"
+                                        type="password"
+                                        style={{marginTop: "20px"}}
+                                        value={password}
+                                        onChange={(event) => setPassword(event.target.value)}
+                                        fullWidth
+                                    />
+                                </Grid>
+
+                                <Grid size={12} textAlign="center">
+                                    <Button
+                                        variant="contained"
+                                        style={{color: "white", marginTop: "10px"}}
+                                        fullWidth
+                                        onClick={signIn}
+                                    >
+                                        <Trans i18nKey={"sign_in.SignIn"}/>
+                                    </Button>
+                                </Grid>
+
+                                <Divider style={{marginTop: "10px", marginBottom: "10px"}}>
+                                    <Typography variant="subtitle2" color="textSecondary">
+                                        <Trans i18nKey={"sign_in.or_login_with"}/>
+                                    </Typography>
+                                </Divider>
+
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<GoogleIcon/>}
+                                    fullWidth
+                                    onClick={signInGoogle}
+                                >
+                                    Google
+                                </Button>
+
+                                <Typography
+                                    variant="subtitle2"
+                                    style={{textAlign: "center", marginTop: "10px"}}
+                                >
+                                    <Trans i18nKey={"sign_in.registration_text_1"}/>{" "}
+                                    <Link to={`/${ROUTES.TERMS}`}>
+                                        <Trans i18nKey={"sign_in.conditions"}/>
+                                    </Link>{" "}
+                                    <Trans i18nKey={"sign_in.and_our"}/>
+                                    <Link to={`/${ROUTES.PRIVACY}`}>
+                                        <Trans i18nKey={"sign_in.data_protection_guidelines"}/>
+                                    </Link>{" "}
+                                    <Trans i18nKey={"sign_in.to"}/>.
+                                </Typography>
+                            </Container>
+                        </Grid>
+                    </Grid>
                 </Grid>
-
-                <Grid size={12} textAlign="center">
-                  <TextField
-                    InputProps={{
-                      style: {
-                        fontSize: "14px",
-                      },
-                    }}
-                    autoComplete="current-password"
-                    variant="outlined"
-                    name="Passwort"
-                    size="small"
-                    type="password"
-                    style={{ marginTop: "20px" }}
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    fullWidth
-                  />
-                </Grid>
-
-                <Grid size={12} textAlign="center">
-                  <Button
-                    variant="contained"
-                    style={{ color: "white", marginTop: "10px" }}
-                    fullWidth
-                    onClick={signIn}
-                  >
-                    <Trans i18nKey={"sign_in.SignIn"} />
-                  </Button>
-                </Grid>
-
-                <Divider style={{ marginTop: "10px", marginBottom: "10px" }}>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    <Trans i18nKey={"sign_in.or_login_with"} />
-                  </Typography>
-                </Divider>
-
-                <Button
-                  variant="outlined"
-                  startIcon={<GoogleIcon />}
-                  fullWidth
-                  onClick={signInGoogle}
-                >
-                  Google
-                </Button>
-
-                <Typography
-                  variant="subtitle2"
-                  style={{ textAlign: "center", marginTop: "10px" }}
-                >
-                  <Trans i18nKey={"sign_in.registration_text_1"} />{" "}
-                  <Link to={`/${ROUTES.TERMS}`}>
-                    <Trans i18nKey={"sign_in.conditions"} />
-                  </Link>{" "}
-                  <Trans i18nKey={"sign_in.and_our"} />
-                  <Link to={`/${ROUTES.PRIVACY}`}>
-                    <Trans i18nKey={"sign_in.data_protection_guidelines"} />
-                  </Link>{" "}
-                  <Trans i18nKey={"sign_in.to"} />.
-                </Typography>
-              </Container>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Card>
-    </div>
-  );
+            </Card>
+        </div>
+    );
 };
+
+
