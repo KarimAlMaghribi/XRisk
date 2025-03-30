@@ -7,6 +7,7 @@ export enum ActionTypes {
     CHECK_USER_PROFILE_WITH_GOOGLE = "userProfile/checkUserProfileWithGoogle",
     UPDATE_IMAGE_PATH = "userProfile/updateImagePath",
     FETCH_PROFILE_BY_ID = "userProfile/fetchProfileById",
+    SET_DELETE_FLAG = "userProfile/setDeleteFlag",
 }
 
 export interface ProfileInformation {
@@ -30,6 +31,8 @@ export interface ProfileInformation {
     city?: string;
     zip?: string;
     aboutMe?: string;
+    deleted?: boolean;
+    deletedAt?: string;
 }
 
 export interface UserProfile {

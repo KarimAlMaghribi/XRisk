@@ -7,7 +7,7 @@ import { RiskOverviewState } from "./types";
 import {
     addRisk,
     addRiskType,
-    deleteRisk,
+    deleteRisk, deleteRisksByUid,
     fetchRisks,
     fetchRiskTypes,
     updateProviderDetails,
@@ -272,6 +272,19 @@ export const riskOverviewSlice = createSlice({
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(updateRiskStatus.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            })
+            .addCase(deleteRisksByUid.pending, (state) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(deleteRisksByUid.fulfilled, (state, action) => {
+                state.risks = state.risks.filter((risk) => risk?.publisher?.uid !== action.payload);
+                state.filteredRisks = applyAllFilters(state.risks, state.filters);
+                state.status = FetchStatusEnum.SUCCEEDED;
+            })
+            .addCase(deleteRisksByUid.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             });

@@ -363,3 +363,33 @@ export const updateRiskStatus = createAsyncThunk(
         }
     }
 );
+
+export const deleteRisksByUid = createAsyncThunk(
+    ActionTypes.DELETE_RISKS_BY_UID,
+    async (uid: string, { rejectWithValue }) => {
+        try {
+            const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const riskQuery = query(risksCollection, where("uid", "==", uid));
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return rejectWithValue("No risks found");
+            }
+
+            const batch = writeBatch(db);
+
+            riskDocs.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+
+            await batch.commit();
+
+            console.log("Deleted risks by uid:", uid);
+            return uid;
+        } catch (error: any) {
+            console.error("Error deleting risks by uid:", error);
+            return rejectWithValue("Failed to delete risks by uid");
+        }
+    }
+);
+

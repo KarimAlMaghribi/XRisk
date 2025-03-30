@@ -5,7 +5,7 @@ import {
     addProfile,
     checkUserProfileWithGoogle,
     fetchUserProfile,
-    fetchUserProfileById,
+    fetchUserProfileById, setDeleteFlag,
     updateImagePath,
     updateProfile
 } from "./thunks";
@@ -115,6 +115,17 @@ export const userProfileSlice = createSlice({
                 })
                 .addCase(fetchUserProfileById.rejected, (state, action) => {
                     state.opposingProfile = undefined;
+                    state.error = action.payload as string;
+                    state.status = FetchStatusEnum.FAILED;
+                })
+                .addCase(setDeleteFlag.pending, (state) => {
+                    state.error = undefined;
+                    state.status = FetchStatusEnum.PENDING;
+                })
+                .addCase(setDeleteFlag.fulfilled, (state, action) => {
+                    state.status = FetchStatusEnum.SUCCEEDED;
+                })
+                .addCase(setDeleteFlag.rejected, (state, action) => {
                     state.error = action.payload as string;
                     state.status = FetchStatusEnum.FAILED;
                 });

@@ -6,6 +6,10 @@ import React, {useEffect} from "react";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import Grid from "@mui/material/Grid2";
 import Avatar from "@mui/material/Avatar";
+import {ProfileInformation} from "../../store/slices/user-profile/types";
+import {useSelector} from "react-redux";
+import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
+import {UserDeletionDialog} from "./user-deletion-dialog";
 
 export interface PublisherProfileProps {
     open: boolean;
@@ -17,6 +21,8 @@ export interface PublisherProfileProps {
 export const PublisherProfile = (props: PublisherProfileProps) => {
     const { showSnackbar } = useSnackbarContext();
     const elementBottomMargin: number = 20;
+    const profile: ProfileInformation | null = useSelector(selectProfileInformation);
+    const [openUserDeletionDialog, setOpenUserDeletionDialog] = React.useState<boolean>(false);
 
     useEffect(() => {
         if (props.open && !props.publisher) {
@@ -27,6 +33,11 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
 
     const handleClose = () => {
         props.setOpen(false);
+    }
+
+    const handleUserDeletion = () => {
+        props.setOpen(false);
+        setOpenUserDeletionDialog(true);
     }
 
     return (
@@ -68,6 +79,16 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
                                 Vorstellung
                             </Typography>
+                            {
+                                profile.admin && (
+                                    <Button
+                                        onClick={handleUserDeletion}
+                                        variant="contained"
+                                        color="error">
+                                        Löschen
+                                    </Button>
+                                )
+                            }
                         </Grid>
                         <Grid size={8}>
                             <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
@@ -94,6 +115,10 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                     Schließen
                 </Button>
             </DialogActions>
+            <UserDeletionDialog
+                open={openUserDeletionDialog}
+                setOpen={setOpenUserDeletionDialog}
+                publisher={props.publisher} />
         </Dialog>
     )
 }

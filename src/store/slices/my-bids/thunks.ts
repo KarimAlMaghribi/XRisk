@@ -227,6 +227,42 @@ export const deleteChatsByRiskId = createAsyncThunk<string, string, { rejectValu
     }
 );
 
+export const deleteChatsByUid = createAsyncThunk<string, string, { rejectValue: string; state: RootState }>(
+    ActionTypes.DELETE_CHATS_BY_UID,
+    async (uid, { rejectWithValue, getState }) => {
+        try {
+            if (!uid) throw new Error("User ID is required");
+            if (!auth.currentUser) throw new Error("User not authenticated");
+
+            const myChats: Chat[] = (getState() as RootState).myBids.chats;
+            const chatsToDelete = myChats.filter(
+                (chat) => chat.riskProvider?.uid === uid || chat.riskTaker?.uid === uid
+            );
+
+            if (chatsToDelete.length === 0) {
+                return uid;
+            }
+
+            await Promise.all(
+                chatsToDelete.map(async (chat) => {
+                    const chatDocRef = doc(db, FirestoreCollectionEnum.CHATS, chat.id);
+                    const messagesRef = collection(chatDocRef, FirestoreCollectionEnum.MESSAGES);
+                    const messagesSnapshot = await getDocs(messagesRef);
+                    await Promise.all(
+                        messagesSnapshot.docs.map((messageDoc) => deleteDoc(messageDoc.ref))
+                    );
+                    await deleteDoc(chatDocRef);
+                })
+            );
+
+            return uid;
+        } catch (error) {
+            console.error("Error deleting chats:", error);
+            return rejectWithValue("Error deleting chats");
+        }
+    }
+);
+
 export const deleteChatById = createAsyncThunk<string, string, { rejectValue: string }>(
     ActionTypes.DELETE_CHAT_BY_ID,
     async (chatId, { rejectWithValue }) => {

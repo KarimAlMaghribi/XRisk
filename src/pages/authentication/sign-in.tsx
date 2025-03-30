@@ -7,15 +7,19 @@ import "./style.scss";
 import GoogleIcon from '@mui/icons-material/Google';
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
-import {signInWithEmail, signInWithGoogle} from "../../firebase/firebase-service";
+import {signInWithEmail, signInWithGoogle, signOutUser} from "../../firebase/firebase-service";
 import {auth} from "../../firebase_config";
 import {checkUserProfileWithGoogle, fetchUserProfile} from "../../store/slices/user-profile/thunks";
-import {AppDispatch} from "../../store/store";
-import {useDispatch} from "react-redux";
+import {AppDispatch, resetStore} from "../../store/store";
+import {useDispatch, useSelector} from "react-redux";
 import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
 import {fetchRisks} from "../../store/slices/risks/thunks";
 import {fetchMyChats} from "../../store/slices/my-bids/thunks";
-import { Trans } from "react-i18next";
+import {Trans} from "react-i18next";
+import {ProfileInformation} from "../../store/slices/user-profile/types";
+import {selectLoadingStatus, selectProfileInformation} from "../../store/slices/user-profile/selectors";
+import {FetchStatus} from "../../types/FetchStatus";
+import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -23,12 +27,40 @@ export const SignIn = () => {
     const [email, setEmail] = React.useState<string>("");
     const [password, setPassword] = React.useState<string>("");
     const { showSnackbar } = useSnackbarContext();
+    const profile: ProfileInformation | null = useSelector(selectProfileInformation);
+    const loading: FetchStatus | undefined = useSelector(selectLoadingStatus);
 
     useEffect(() => {
-        if (auth.currentUser) {
-            navigate(`/${ROUTES.MY_RISKS}`)
+        if (loading !== FetchStatusEnum.SUCCEEDED) return;
+
+        if (profile && profile.deleted === true) {
+            showSnackbar(
+                "Dein Account wurde gelöscht!",
+                "Dein Account wurde gelöscht. Bitte kontaktiere den Support, wenn du deinen Account wiederherstellen möchtest.",
+                { vertical: "top", horizontal: "center" },
+                "error"
+            );
+            signOutUser();
+            dispatch(resetStore());
+            return;
         }
-    }, [])
+
+        if (!profile) {
+            showSnackbar(
+                "Account nicht gefunden!",
+                "Es scheint Probleme bei der Identifizierung deines Accounts zu geben. Bitte wende dich an den Support.",
+                { vertical: "top", horizontal: "center" },
+                "warning"
+            );
+            signOutUser();
+            dispatch(resetStore());
+            return;
+        }
+
+        if (auth.currentUser && profile && profile.deleted !== true) {
+            navigate(`/${ROUTES.MY_RISKS}`);
+        }
+    }, [loading, auth.currentUser, profile, navigate, showSnackbar, dispatch]);
 
     const signIn = async () => {
         try {
@@ -38,7 +70,6 @@ export const SignIn = () => {
                 dispatch(fetchUserProfile());
                 dispatch(fetchRisks());
                 dispatch(fetchMyChats());
-                navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
             console.error(error);
@@ -59,7 +90,6 @@ export const SignIn = () => {
             if (user?.refreshToken) {
                 dispatch(fetchRisks())
                 dispatch(fetchMyChats());
-                navigate(`/${ROUTES.MY_RISKS}`);
             }
         } catch (error) {
             console.error(error)
@@ -157,8 +187,6 @@ export const SignIn = () => {
                                 </Typography>
 
                             </Container>
-
-
                         </Grid>
                     </Grid>
                 </Grid>
