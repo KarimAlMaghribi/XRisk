@@ -224,7 +224,6 @@ export const updateRisk = createAsyncThunk(
             const risksCollection = collection(db, FirestoreCollectionEnum.RISKS);
             const riskQuery = query(
                 risksCollection,
-                where("uid", "==", user.uid),
                 where("id", "==", riskToUpdate.id)
             );
 

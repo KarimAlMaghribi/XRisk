@@ -10,6 +10,7 @@ import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {useSelector} from "react-redux";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {UserDeletionDialog} from "./user-deletion-dialog";
+import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
 
 export interface PublisherProfileProps {
     open: boolean;
@@ -61,7 +62,10 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
             <DialogContent>
                 <DialogContentText>
                     <Box marginBottom="20px">
-                        <Avatar sx={{width: 70, height: 70}} src={props.publisher?.imagePath} />
+                        <AvatarWithBadge
+                            image={props.publisher?.imagePath || ""}
+                            avatarSize={70}
+                            uid={props.publisher?.uid}/>
                     </Box>
                     <Grid container>
                         <Grid size={4}>
@@ -84,9 +88,9 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                                 profile.admin && (
                                     <Button
                                         onClick={handleUserDeletion}
-                                        variant="contained"
+                                        variant="outlined"
                                         color="error">
-                                        Löschen
+                                        Nutzer Löschen
                                     </Button>
                                 )
                             }

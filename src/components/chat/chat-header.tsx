@@ -46,6 +46,7 @@ import {
   updateRiskTakerAgreement,
 } from "../../store/slices/my-bids/thunks";
 import i18next from "i18next";
+import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
 
 export const ChatHeader = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -84,7 +85,7 @@ export const ChatHeader = () => {
       imagePath: opposingImagePath,
     };
     setOpposingPublisherProfile(mappedProfile);
-  }, [opposingProfile]);
+  }, [uid, opposingProfile, dispatch]);
 
   useEffect(() => {
     if (uid === activeChat?.riskProvider?.uid) {

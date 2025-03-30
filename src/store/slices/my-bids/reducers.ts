@@ -208,7 +208,7 @@ const myBidsSlice = createSlice({
             .addCase(updateRiskTakerAgreement.rejected, (state, action) => {
                 state.loading = FetchStatusEnum.FAILED;
                 state.error = action.payload as string;
-            });
+            })
         }
 
 });

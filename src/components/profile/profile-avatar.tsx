@@ -1,8 +1,9 @@
 // ProfileAvatar.tsx
-import React, { useRef } from "react";
-import Avatar from "@mui/material/Avatar";
+import React, {useRef} from "react";
 import Badge from "@mui/material/Badge";
 import EditIcon from "@mui/icons-material/Edit";
+import {AvatarWithBadge} from "./avatar-with-badge-count";
+import {auth} from "../../firebase_config";
 
 export interface ProfileAvatarProps {
     imagePath: string;
@@ -57,13 +58,13 @@ export const ProfileAvatar: React.FC<ProfileAvatarProps> = (props) => {
                     />
                 }
             >
-                <Avatar sx={{ width: 100, height: 100 }} src={props.imagePath} alt="User Avatar" />
+                <AvatarWithBadge image={props.imagePath} alt="User Avatar" uid={auth?.currentUser?.uid}/>
             </Badge>
             <input
                 type="file"
                 ref={fileInputRef}
                 accept="image/*"
-                style={{ display: "none" }}
+                style={{display: "none"}}
                 onChange={onFileChange}
             />
         </>
