@@ -43,9 +43,7 @@ export const ChatHeader = () => {
         selectOpposingImagePath({myBids: state.myBids}, auth.currentUser?.uid)
     );
     const [openRiskAgreementDialog, setOpenRiskAgreementDialog] = React.useState(false);
-    const risk: Risk | undefined = useSelector((state: RootState) =>
-        selectRiskById(state, activeChat?.riskId)
-    );
+    const risk: Risk | undefined = useSelector((state: RootState) => selectRiskById(state, activeChat?.riskId));
     const [openProfile, setOpenProfile] = React.useState(false);
     const [opposingPublisherProfile, setOpposingPublisherProfile] =
         React.useState<Publisher | null>(null);

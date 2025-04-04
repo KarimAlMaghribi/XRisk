@@ -152,7 +152,7 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
       const assesments = resultAction.payload;
 
       console.log("Assesments:", assesments);
-    } catch (err) {263
+    } catch (err) {
       console.error("Failed to fetch assessments:", err);
     }
   };

@@ -51,7 +51,7 @@
     "brief_description": "Brief description",
     "brief_description_description": "Please add a brief description of the risk",
     "brief_description_error": "Please add a longer description",
-    "insurance_sum_error1": "The amount must be less or equal than 999.999,00 €",
+    "insurance_sum_error1": "The amount must be less or equal than 500.000,00 €",
     "insurance_sum_error2": "Please enter a positive number",
     "type": "Type of Risk",
     "type_description": "Please choose at least one type for you risk",

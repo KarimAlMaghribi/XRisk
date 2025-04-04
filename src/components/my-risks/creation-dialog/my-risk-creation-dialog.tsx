@@ -65,7 +65,7 @@ export const MyRiskCreationDialog = (props: RiskCreationDialogProps) => {
     const [pushedCreateButton, setPushedCreateButton] = useState<boolean>(false);
 
     const descriptionLength: number = 5;
-    const maxValue: number = 100000000;
+    const maxValue: number = 500000;
 
     const [nameError, setNameError] = useState<boolean>(false);
     const [descriptionError, setDescriptionError] = useState<boolean>(false);

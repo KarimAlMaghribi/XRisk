@@ -8,7 +8,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import ModeIcon from '@mui/icons-material/Mode';
-import {AppDispatch} from "../../store/store";
+import {AppDispatch, RootState} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {createChat} from "../../store/slices/my-bids/thunks";
 import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
@@ -28,6 +28,12 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {selectShowTaken} from "../../store/slices/risks/selectors";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {RiskDeletionDialog} from "./risk-deletion-dialog";
+import { useEffect } from 'react';
+import { UserProfile } from '../../store/slices/user-profile/types';
+import { selectUserProfile } from '../../store/slices/user-profile/selectors';
+import { fetchAssesments } from '../../store/slices/credit-assesment/thunks';
+import { selectAssesmentById, selectAssesments} from '../../store/slices/credit-assesment/selectors';
+import { CreditAssesment } from '../../models/CreditAssesment';
 
 export const elementBottomMargin: number = 20;
 
@@ -47,9 +53,79 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const [openPublisherProfileDialog, setOpenPublisherProfileDialog] = React.useState<boolean>(false);
     const [publisherProfile, setPublisherProfile] = React.useState<Publisher | null | undefined>(null);
     const [expandedPanels, setExpandedPanels] = React.useState<string[]>([]);
+    const [noAddressError, setNoAddressError] = React.useState(false);
+    const [noPhoneError, setNoPhoneError] = React.useState(false);
+    const [noImageError, setNoImageError] = React.useState(false);
     const { showSnackbar } = useSnackbarContext();
+    const userProfile: UserProfile = useSelector(selectUserProfile);
+
+    
 
     const chats: Chat[] = useSelector(selectChats);
+    const uid = auth.currentUser?.uid!;
+    
+    
+    
+    var assesment: CreditAssesment | null = useSelector((state: RootState) =>
+        selectAssesmentById(state, uid)
+    );
+
+
+     useEffect(() => {
+        if (noAddressError) {
+          showSnackbar(
+            "Adresse fehlt!",
+            "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
+            {
+              vertical: "top",
+              horizontal: "center",
+            },
+            "warning"
+          );
+          setNoAddressError(false);
+          return;
+        }
+    
+        if (noPhoneError) {
+          showSnackbar(
+            "Telefonnummer fehlt!",
+            "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
+            {
+              vertical: "top",
+              horizontal: "center",
+            },
+            "warning"
+          );
+          setNoPhoneError(false);
+          return;
+        }
+    
+        if (noImageError) {
+          showSnackbar(
+            "Profilbild fehlt!",
+            "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
+            {
+              vertical: "top",
+              horizontal: "center",
+            },
+            "warning"
+          );
+          setNoImageError(false);
+          return;
+        }
+      }, [noAddressError, noPhoneError, noImageError]);
+
+      const getAssesments = async (uid: string) => {
+        try {
+            const resultAction = await dispatch(fetchAssesments(uid!));
+            const assesments = resultAction.payload;
+
+            console.log("Assesments:", assesments);
+            return assesments;
+        } catch (err) {
+            console.error("Failed to fetch assessments:", err);
+        }
+    };
 
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
         if (isExpanded) {
@@ -71,12 +147,38 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
         setOpenPublisherProfileDialog(true);
     }
 
+
+    
+    
+
     const openBid = (riskIndex: number) => {
+
+         
         if (!user || !user.uid) {
             console.error("User not authenticated or UID missing:", user);
             showSnackbar("Nutzer nicht authentifiziert!","Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.", { vertical: "top", horizontal: "center" }, "error");
             return;
         }
+
+        if (
+            !userProfile.profile.street ||
+            !userProfile.profile.number ||
+            !userProfile.profile.zip ||
+            !userProfile.profile.city
+          ) {
+            setNoAddressError(true);
+            return;
+          }
+      
+          if (!userProfile.profile.phone) {
+            setNoPhoneError(true);
+            return;
+          }
+      
+          if (!userProfile.profile.imagePath) {
+            setNoImageError(true);
+            return;
+          }
 
         const selectedRisk = props.risks[riskIndex];
 
@@ -85,6 +187,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             showSnackbar("Risiko nicht gefunden","Konnte Verhandlung nicht starten, das ausgewählte Risiko wurde nicht gefunden.", { vertical: "top", horizontal: "center" }, "error");
             return;
         }
+
+        // Check whether acquisition limit is valid or not
+         if (assesment?.acquisitionLimit! <= selectedRisk.value){
+             showSnackbar("Niedrige Übernahmelimit","Konnte Verhandlung nicht starten, da die Übernahmelimit kleiner ist als die Absicherungssumme.", { vertical: "top", horizontal: "center" }, "error");
+             return;
+         }
 
         if (selectedRisk.publisher?.uid === user.uid) {
             console.error("User tried to bid on his own risk:", selectedRisk, user);

@@ -42,7 +42,7 @@ const metaSlice = createSlice({
             .addCase(fetchHighestRiskValue.rejected, (state, action) => {
                 state.status = FetchStatusEnum.FAILED;
                 state.error = action.error.message;
-                state.highestRiskValue = 10000000
+                state.highestRiskValue = 500000
             });
     }
 });

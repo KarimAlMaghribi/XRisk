@@ -11,7 +11,7 @@ function FooterResourceDescriptions() {
             color="black" 
             variant="h4"
             style={{ marginLeft: "10px", marginRight: "10px" }}>
-            <Trans i18nKey={"footer.company"}></Trans>
+            <Trans i18nKey={"footer.resources"}></Trans>
         </Typography>
         </div>
         <br/>
