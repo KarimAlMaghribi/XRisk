@@ -16,4 +16,5 @@ export interface Risk {
     status?: RiskStatus;
     riskCategory?: string;
     riskProbability?: number;
+    occurred?: boolean;
 }

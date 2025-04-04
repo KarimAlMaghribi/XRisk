@@ -13,6 +13,7 @@ import {
   Switch,
   Alert,
   Snackbar,
+  IconButton,
 } from "@mui/material";
 import { Trans } from "react-i18next";
 import { t } from "i18next";
@@ -28,6 +29,8 @@ import {
 import { CreditAssesment } from "../../models/CreditAssesment";
 import { auth } from "../../firebase_config";
 import { selectAssesmentById } from "../../store/slices/credit-assesment/selectors";
+import CloseIcon from "@mui/icons-material/Close";
+import { theme } from "../../theme";
 
 export interface CreditScoreDialogProps {
   show: boolean;
@@ -190,6 +193,12 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
       setMonthlyFixCosts(assesment?.monthlyFixedCosts);
       setOtherAssets(assesment?.additionalAssets);
       setLiabilityLimit(assesment?.acquisitionLimit);
+
+      setLiquidityNoInput(liquidity == null);
+      setNetIncomeNoInput(netIncome == null);
+      setExistingCreditsNoInput(existingCredits == null);
+      setMonthlyFixCostsNoInput(monthlyFixCosts == null);
+      setOtherAssetsNoInput(otherAssets == null);
     }
   }, [assesment]);
 
@@ -241,12 +250,19 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
     );
     setSnackbarSeverity("success");
     setSnackbarOpen(true);
+
+    setLiquidityNoInput(liquidity == null);
+    setMonthlyFixCostsNoInput(monthlyFixCosts == null);
+    setNetIncomeNoInput(netIncome == null);
+    setExistingCreditsNoInput(existingCredits == null);
+    setOtherAssetsNoInput(otherAssets == null);
   };
 
   const handleSwitchLiquidity = (noInput: boolean) => {
     setLiquidityNoInput(noInput);
     if (noInput) {
       setLiquidity(null);
+      console.log("liquidity is now null");
     }
   };
 
@@ -297,15 +313,26 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         },
       }}
     >
-      <DialogTitle>
-        <Typography variant="h6">
-          <Trans i18nKey={"credit_score_information.credit_score"} />
-        </Typography>
-        <Typography variant="subtitle1">
-          <Trans
-            i18nKey={"credit_score_information.update_credit_score_text"}
-          />
-        </Typography>
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Box>
+          <Typography variant="h6">
+            <Trans i18nKey={"credit_score_information.credit_score"} />
+          </Typography>
+          <Typography variant="subtitle1">
+            <Trans
+              i18nKey={"credit_score_information.update_credit_score_text"}
+            />
+          </Typography>
+        </Box>
+        <IconButton onClick={props.handleClose} sx={{ color: "grey.500" }}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <Divider />
       <DialogContent sx={{ marginTop: "20px" }}>
@@ -344,6 +371,16 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
           <Trans
             i18nKey="credit_score_information.liability_limit_text"
             values={{ limit: formattedLimit }}
+            components={{
+              span: (
+                <span
+                  style={{
+                    color: theme.palette.secondary.main,
+                    fontWeight: "bold",
+                  }}
+                />
+              ),
+            }}
           />
         </Typography>
         <Divider />
@@ -364,13 +401,17 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         >
           <Grid2 size={{ md: 12, lg: 9 }}>
             <TextField
-              disabled={liquidityNoInput}
               variant="outlined"
               fullWidth
               value={liquidity ? liquidity : ""}
               onChange={(e) =>
                 setLiquidity(Number(e.target.value.replace(/€\s?|(,*)/g, "")))
               }
+              onClick={() => {
+                if (liquidityNoInput) {
+                  handleSwitchLiquidity(false);
+                }
+              }}
               InputProps={{
                 inputComponent: EuroNumberFormat,
               }}
@@ -408,13 +449,17 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         >
           <Grid2 size={{ md: 12, lg: 9 }}>
             <TextField
-              disabled={netIncomeNoInput}
               variant="outlined"
               fullWidth
               value={netIncome ? netIncome : ""}
               onChange={(e) =>
                 setNetIncome(Number(e.target.value.replace(/€\s?|(,*)/g, "")))
               }
+              onClick={() => {
+                if (netIncomeNoInput) {
+                  handleSwitchNetIncome(false);
+                }
+              }}
               InputProps={{
                 inputComponent: EuroNumberFormat,
               }}
@@ -426,6 +471,61 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                 <Switch
                   checked={netIncomeNoInput}
                   onChange={() => handleSwitchNetIncome(!netIncomeNoInput)}
+                  name="noInput"
+                  color="primary"
+                />
+              }
+              label={t("credit_score_information.not_provided")}
+              sx={{ display: "flex", justifyContent: "flex-end" }}
+            />
+          </Grid2>
+        </Grid2>
+
+        <Grid2 size={{ md: 12, lg: 12 }}>
+          <Box mt={2}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              <Trans
+                i18nKey={"credit_score_information.monthly_fix_costs_text"}
+              />
+            </Typography>
+          </Box>
+        </Grid2>
+
+        <Grid2
+          container
+          direction="row"
+          alignItems="center"
+          size={{ md: 12, lg: 6 }}
+          spacing={2}
+        >
+          <Grid2 size={{ md: 12, lg: 9 }}>
+            <TextField
+              variant="outlined"
+              fullWidth
+              value={monthlyFixCosts ? monthlyFixCosts : ""}
+              onChange={(e) =>
+                setMonthlyFixCosts(
+                  Number(e.target.value.replace(/€\s?|(,*)/g, ""))
+                )
+              }
+              onClick={() => {
+                if (monthlyFixCostsNoInput) {
+                  handleSwitchMonthlyFixCosts(false);
+                }
+              }}
+              InputProps={{
+                inputComponent: EuroNumberFormat,
+              }}
+            />
+          </Grid2>
+          <Grid2 size={{ md: 12, lg: 3 }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={monthlyFixCostsNoInput}
+                  onChange={() =>
+                    handleSwitchMonthlyFixCosts(!monthlyFixCostsNoInput)
+                  }
                   name="noInput"
                   color="primary"
                 />
@@ -454,7 +554,6 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         >
           <Grid2 size={{ md: 12, lg: 9 }}>
             <TextField
-              disabled={existingCreditsNoInput}
               variant="outlined"
               fullWidth
               value={existingCredits ? existingCredits : ""}
@@ -463,6 +562,11 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                   Number(e.target.value.replace(/€\s?|(,*)/g, ""))
                 )
               }
+              onClick={() => {
+                if (existingCreditsNoInput) {
+                  handleSwitchExistingCredits(false);
+                }
+              }}
               InputProps={{
                 inputComponent: EuroNumberFormat,
               }}
@@ -475,56 +579,6 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                   checked={existingCreditsNoInput}
                   onChange={() =>
                     handleSwitchExistingCredits(!existingCreditsNoInput)
-                  }
-                  name="noInput"
-                  color="primary"
-                />
-              }
-              label={t("credit_score_information.not_provided")}
-              sx={{ display: "flex", justifyContent: "flex-end" }}
-            />
-          </Grid2>
-        </Grid2>
-
-        <Grid2 size={{ md: 12, lg: 12 }}>
-          <Box mt={2}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              <Trans
-                i18nKey={"credit_score_information.monthly_fix_costs_text"}
-              />
-            </Typography>
-          </Box>
-        </Grid2>
-        <Grid2
-          container
-          direction="row"
-          alignItems="center"
-          size={{ md: 12, lg: 6 }}
-          spacing={2}
-        >
-          <Grid2 size={{ md: 12, lg: 9 }}>
-            <TextField
-              disabled={monthlyFixCostsNoInput}
-              variant="outlined"
-              fullWidth
-              value={monthlyFixCosts ? monthlyFixCosts : ""}
-              onChange={(e) =>
-                setMonthlyFixCosts(
-                  Number(e.target.value.replace(/€\s?|(,*)/g, ""))
-                )
-              }
-              InputProps={{
-                inputComponent: EuroNumberFormat,
-              }}
-            />
-          </Grid2>
-          <Grid2 size={{ md: 12, lg: 3 }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={monthlyFixCostsNoInput}
-                  onChange={() =>
-                    handleSwitchMonthlyFixCosts(!monthlyFixCostsNoInput)
                   }
                   name="noInput"
                   color="primary"
@@ -552,13 +606,17 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         >
           <Grid2 size={{ md: 12, lg: 9 }}>
             <TextField
-              disabled={otherAssetsNoInput}
               variant="outlined"
               fullWidth
               value={otherAssets ? otherAssets : ""}
               onChange={(e) =>
                 setOtherAssets(Number(e.target.value.replace(/€\s?|(,*)/g, "")))
               }
+              onClick={() => {
+                if (otherAssetsNoInput) {
+                  handleSwitchOtherAssets(false);
+                }
+              }}
               InputProps={{
                 inputComponent: EuroNumberFormat,
               }}

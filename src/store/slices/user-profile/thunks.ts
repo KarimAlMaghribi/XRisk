@@ -231,3 +231,50 @@ export const fetchUserProfileById = createAsyncThunk(
         }
     }
 );
+
+export const setDeleteFlag = createAsyncThunk(
+    ActionTypes.SET_DELETE_FLAG,
+    async (id: string, {rejectWithValue}) => {
+        try {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            const userProfilesCollection = collection(db, FirestoreCollectionEnum.USER_PROFILES);
+            const userProfileQuery = query(userProfilesCollection, where("id", "==", id));
+
+            const userProfileDocs = await getDocs(userProfileQuery);
+
+            if (userProfileDocs.empty) {
+                return rejectWithValue("Profile not found");
+            }
+
+            const userProfileDoc = userProfileDocs.docs[0];
+            const existingProfile = userProfileDoc.data()?.profile || {};
+
+            const updatedProfile = {
+                ...existingProfile,
+                deleted: true,
+                deletedAt: new Date().toISOString(),
+            };
+
+            const userProfileDocRef = userProfileDoc.ref;
+            await updateDoc(userProfileDocRef, {
+                profile: updatedProfile,
+                uid: id,
+                updatedAt: new Date().toISOString(),
+            });
+
+            return {
+                id: id,
+                profile: updatedProfile,
+                updatedAt: new Date().toISOString(),
+            };
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            return rejectWithValue(error);
+        }
+    }
+);
