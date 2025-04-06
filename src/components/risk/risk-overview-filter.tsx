@@ -31,6 +31,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     const [termValue, setTermValue] = useState<number[]>(props.remainingTerm);
     const highestRiskValue: number | null = useSelector(selectHighestRiskValue);
     const filterTypes: string[] = useSelector(selectFilterTypes);
+    const maxValue = 500000;
 
     const {t} = useTranslation();
 
@@ -70,7 +71,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
 
     const handleClearFilters = () => {
         dispatch(clearFilters());
-        setSliderValue([0, 200000]);
+        setSliderValue([0, maxValue]);
         setTermValue([0, 24]);
     };
 
@@ -83,7 +84,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
 
     const handleSliderUpperInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newUpper = Number(e.target.value);
-        if (highestRiskValue && newUpper > highestRiskValue || newUpper > 10000000) return;
+        if (highestRiskValue && (newUpper > highestRiskValue) || newUpper > maxValue) return;
         setSliderValue([sliderValue[0], newUpper]);
     };
 
@@ -126,15 +127,15 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                     onChange={handleValueChange}
                     onChangeCommitted={handleValueChangeCommitted}
                     min={0}
-                    max={highestRiskValue || 100000000}
+                    max={highestRiskValue || maxValue}
                     step={100}
                     marks={[
                         { value: 0, label: '0€' },
                         {
-                            value: (highestRiskValue && highestRiskValue / 2) || 50000000,
-                            label: formatEuro((highestRiskValue && highestRiskValue / 2) || 50000000)
+                            value: (highestRiskValue && highestRiskValue / 2) || maxValue/2,
+                            label: formatEuro((highestRiskValue && highestRiskValue / 2) || maxValue/2)
                         },
-                        { value: highestRiskValue || 100000000, label: formatEuro(highestRiskValue || 100000000) }
+                        { value: highestRiskValue || maxValue/2, label: formatEuro(highestRiskValue || maxValue) }
                     ]}
                     valueLabelDisplay="auto"
                     valueLabelFormat={(value) => `${value.toLocaleString("de-DE")}€`}
