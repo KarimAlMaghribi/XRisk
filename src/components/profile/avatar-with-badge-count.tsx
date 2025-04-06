@@ -70,7 +70,7 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
                             fontSize: "0.75rem",
                             lineHeight: 1,
                         }}>
-                        {!loading && !error ? calcSuccessfulTransfers() : " -- "}
+                        {!loading && !error ? calcSuccessfulTransfers() : "0"}
                     </Typography>
                 </Tooltip>
             }>

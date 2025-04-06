@@ -10,6 +10,7 @@ import {useSelector} from "react-redux";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {UserDeletionDialog} from "./user-deletion-dialog";
 import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
+import {RiskGiverHistory} from "../profile/riskGiverHistory";
 
 export interface PublisherProfileProps {
     open: boolean;
@@ -112,6 +113,9 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
                                     {props.publisher?.description || "-"}
                                 </Typography>
+                            </Grid>
+                            <Grid size={12}>
+                                <RiskGiverHistory uid={props.publisher?.uid} />
                             </Grid>
                         </Grid>
                     </DialogContentText>

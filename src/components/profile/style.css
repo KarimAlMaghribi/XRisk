@@ -1,0 +1,10 @@
+.riskGiverHistoryElement {
+    width: 100px;
+    height: 40px;
+    margin: 0 5px;
+    display: flex; /* notwendig für Flexbox */
+    justify-content: center; /* horizontal zentrieren */
+    align-items: center;     /* vertikal zentrieren */
+    border-radius: 4px;      /* optional: etwas runder */
+    cursor: pointer;          /* optional: Mauszeiger ändern */
+}
