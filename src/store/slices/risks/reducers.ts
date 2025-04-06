@@ -1,16 +1,19 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RiskOverviewHeaderEnum } from "../../../enums/RiskOverviewHeader.enum";
-import { SortDirectionEnum } from "../../../enums/SortDirection.enum";
-import { FetchStatusEnum } from "../../../enums/FetchStatus.enum";
-import { FirestoreCollectionEnum } from "../../../enums/FirestoreCollectionEnum";
-import { RiskOverviewState } from "./types";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {RiskOverviewHeaderEnum} from "../../../enums/RiskOverviewHeader.enum";
+import {SortDirectionEnum} from "../../../enums/SortDirection.enum";
+import {FetchStatusEnum} from "../../../enums/FetchStatus.enum";
+import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
+import {RiskOverviewState} from "./types";
 import {
     addRisk,
     addRiskType,
-    deleteRisk, deleteRisksByUid,
+    deleteRisk,
+    deleteRisksByUid,
+    fetchAgreedRisks,
     fetchRisks,
     fetchRiskTypes,
-    updateProviderDetails, updateRisk,
+    updateProviderDetails,
+    updateRisk,
     updateRiskStatus
 } from "./thunks";
 import {RiskOverviewFilterType} from "../../../models/RiskOverviewFilterType";
@@ -38,6 +41,10 @@ const initialState: RiskOverviewState = {
         value: [0, 200000],
         remainingTerm: [0, 24], // months
         showTaken: false
+    },
+    riskStats: {
+        amountCovered: 0,
+        successfulRiskTransfers: 0
     },
     sorts: [
         {
@@ -302,6 +309,23 @@ export const riskOverviewSlice = createSlice({
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(updateRisk.rejected, (state, action) => {
+                state.error = action.error.message;
+                state.status = FetchStatusEnum.FAILED;
+            })
+            .addCase(fetchAgreedRisks.pending, (state) => {
+                state.error = undefined;
+                state.status = FetchStatusEnum.PENDING;
+            })
+            .addCase(fetchAgreedRisks.fulfilled, (state, action) => {
+                state.riskStats.amountCovered = action.payload.reduce((acc, risk) => {
+                    if (risk.value) {
+                        return acc + risk.value;
+                    }
+                    return acc;
+                }, 0);
+                state.riskStats.successfulRiskTransfers = action.payload.length;
+            })
+            .addCase(fetchAgreedRisks.rejected, (state, action) => {
                 state.error = action.error.message;
                 state.status = FetchStatusEnum.FAILED;
             });

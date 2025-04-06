@@ -392,3 +392,28 @@ export const deleteRisksByUid = createAsyncThunk(
     }
 );
 
+export const fetchAgreedRisks = createAsyncThunk<Risk[], void, { rejectValue: string }>(
+    ActionTypes.FETCH_AGREED_RISKS,
+    async (_, thunkAPI) => {
+        try {
+            const agreedRisksCollection = collection(db, FirestoreCollectionEnum.RISKS);
+            const riskQuery = query(agreedRisksCollection, where("status", "==", RiskStatusEnum.AGREEMENT));
+            const riskDocs = await getDocs(riskQuery);
+
+            if (riskDocs.empty) {
+                return [];
+            }
+
+            const agreedRisks: Risk[] = riskDocs.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Risk[];
+
+            return agreedRisks;
+        } catch (error) {
+            console.error("Error fetching agreed risks:", error);
+            return thunkAPI.rejectWithValue("Failed to fetch agreed risks");
+        }
+    }
+);
+

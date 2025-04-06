@@ -9,6 +9,7 @@ export const selectFilterValue = (state: { risks: RiskOverviewState }) => state.
 export const selectRemainingTerm = (state: { risks: RiskOverviewState }) => state.risks.filters.remainingTerm;
 export const selectShowTaken = (state: { risks: RiskOverviewState }) => state.risks.filters.showTaken;
 export const selectTypes = (state: { risks: RiskOverviewState }) => state.risks.types;
+export const selectRiskStats = (state: { risks: RiskOverviewState }) => state.risks.riskStats;
 
 export const selectRiskById = (state: { risks: RiskOverviewState }, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id);
 export const selectStatusById = (state: { risks: RiskOverviewState }, id: string | undefined) => state.risks.risks.find((risk) => risk.id === id)?.status;

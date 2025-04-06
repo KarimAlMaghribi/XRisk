@@ -14,6 +14,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
 import {selectUserCount} from "../../store/slices/meta/selectors";
 import { Trans } from 'react-i18next';
+import {fetchAgreedRisks} from "../../store/slices/risks/thunks";
+import {selectRiskStats} from "../../store/slices/risks/selectors";
+import {RiskStats} from "../../store/slices/risks/types";
+import {formatEuro} from "../my-risks/my-risk-row-details/agreement-details/agreement-table";
 
 
 const item = {
@@ -26,9 +30,11 @@ const item = {
 function MarketingStats() {
     const dispatch: AppDispatch = useDispatch();
     const userCount: number | null = useSelector(selectUserCount);
+    const riskStats: RiskStats = useSelector(selectRiskStats);
 
     useEffect(() => {
-       dispatch(fetchUserCount())
+       dispatch(fetchUserCount());
+       dispatch(fetchAgreedRisks());
     }, []);
 
     const lightOrange = "#ffd7bb";
@@ -44,54 +50,48 @@ function MarketingStats() {
                     sx={{ pointerEvents: 'none', position: 'absolute', top: -180 }}
                 />
                 <Grid container spacing={7}>
-                    <Grid item xs={12} md={4}>
-                        <Box sx={item}>
-                            <Box
-                                component="img"
-                                src={happyUsers}
-                                alt="suitcase"
-                                sx={{ height: 150, borderRadius: "10px" }}
-                            />
-                            <Typography variant="h5" sx={{ my: 5 }}>
-                                <Trans i18nKey="homepage.user_figure_text"></Trans>
-                            </Typography>
-                            <Typography variant="h4">
-                                {userCount}
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Box sx={item}>
-                            <Box
-                                component="img"
-                                src={secured}
-                                alt="graph"
-                                sx={{ height: 150, borderRadius: "10px"  }}
-                            />
-                            <Typography variant="h5" sx={{ my: 5 }}>
-                                <Trans i18nKey="homepage.couple_figure_text"></Trans>
-                            </Typography>
-                            <Typography variant="h4">
-                                100€
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Box sx={item}>
-                            <Box
-                                component="img"
-                                src={contracts}
-                                alt="clock"
-                                sx={{ height: 150, borderRadius: "10px"  }}
-                            />
-                            <Typography variant="h5" sx={{ my: 5 }} textAlign="center">
-                            <Trans i18nKey="homepage.contract_figure_text"></Trans>
-                            </Typography>
-                            <Typography variant="h4">
-                                7
-                            </Typography>
-                        </Box>
-                    </Grid>
+                    {[{
+                        img: happyUsers,
+                        alt: "suitcase",
+                        labelKey: "homepage.user_figure_text",
+                        value: userCount
+                    }, {
+                        img: secured,
+                        alt: "graph",
+                        labelKey: "homepage.couple_figure_text",
+                        value: formatEuro(riskStats?.amountCovered)
+                    }, {
+                        img: contracts,
+                        alt: "clock",
+                        labelKey: "homepage.contract_figure_text",
+                        value: riskStats?.successfulRiskTransfers
+                    }].map((itemData, index) => (
+                        <Grid item xs={12} md={4} key={index}>
+                            <Box sx={item}>
+                                <Box
+                                    component="img"
+                                    src={itemData.img}
+                                    alt={itemData.alt}
+                                    sx={{ height: 150, borderRadius: "10px" }}
+                                />
+                                <Box sx={{
+                                    height: 60,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    textAlign: "center",
+                                    mt: 4
+                                }}>
+                                    <Typography variant="h5">
+                                        <Trans i18nKey={itemData.labelKey} />
+                                    </Typography>
+                                </Box>
+                                <Typography variant="h4" sx={{ mt: 2 }}>
+                                    {itemData.value}
+                                </Typography>
+                            </Box>
+                        </Grid>
+                    ))}
                 </Grid>
             </Container>
         </Box>

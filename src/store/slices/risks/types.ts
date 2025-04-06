@@ -14,6 +14,12 @@ export enum ActionTypes {
     UPDATE_PROVIDER_IMAGE_ON_ALL_MY_RISKS = "risks/updateProviderDetails",
     UPDATE_RISK_STATUS = "risks/updateRiskStatus",
     DELETE_RISKS_BY_UID = "risks/deleteRisksByUid",
+    FETCH_AGREED_RISKS = "risks/fetchAgreedRisks",
+}
+
+export interface RiskStats {
+    amountCovered: number;
+    successfulRiskTransfers: number;
 }
 
 export interface RiskOverviewState {
@@ -22,6 +28,7 @@ export interface RiskOverviewState {
     types: string[];
     filters: RiskOverviewFilterType;
     sorts: RiskOverviewSort[];
+    riskStats: RiskStats;
     status: FetchStatus;
     error?: string;
 }
