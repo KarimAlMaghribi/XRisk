@@ -100,26 +100,9 @@ export const ChatsList = () => {
                             }}
                             selected={activeChatId === chat.id}>
                             <ListItemAvatar>
-                                <Badge
-                                    color={
-                                        chat.status === ChatStatusEnum.ONLINE
-                                            ? 'success'
-                                            : chat.status === ChatStatusEnum.BUSY
-                                                ? 'error'
-                                                : chat.status === ChatStatusEnum.AWAY
-                                                    ? 'warning'
-                                                    : 'secondary'
-                                    }
-                                    variant="dot"
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'right',
-                                    }}
-                                    overlap="circular">
                                     <Avatar
                                         src={chat.riskTaker.uid === uid ? chat.riskProvider.imagePath : chat.riskTaker.imagePath}
                                         sx={{width: 42, height: 42}}/>
-                                </Badge>
                             </ListItemAvatar>
                             <ListItemText
                                 primary={

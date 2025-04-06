@@ -5,7 +5,6 @@ import { PaperComponent } from "../ui/draggable-dialog";
 import React, {useEffect} from "react";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import Grid from "@mui/material/Grid2";
-import Avatar from "@mui/material/Avatar";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {useSelector} from "react-redux";
 import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
@@ -43,88 +42,90 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
 
     return (
         <>
-        <Dialog
-            open={props.open}
-            onClose={handleClose}
-            PaperComponent={PaperComponent}
-            aria-labelledby="draggable-dialog-title"
-            PaperProps={{
-                sx: {
-                    minWidth: "500px",
-                    position: 'absolute',
-                    top: '10%',
-                    m: 0,
-                },
-            }}>
-            <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                {props.publisher?.name}
-            </DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    <Box marginBottom="20px">
-                        <AvatarWithBadge
-                            image={props.publisher?.imagePath || ""}
-                            avatarSize={70}
-                            uid={props.publisher?.uid}/>
-                    </Box>
-                    <Grid container>
-                        <Grid size={4}>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}} >
-                                Anbieter
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                Telefonnummer
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                E-Mail
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                Adresse
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                Vorstellung
-                            </Typography>
-                            {
-                                profile.admin && (
-                                    <Button
-                                        onClick={handleUserDeletion}
-                                        variant="outlined"
-                                        color="error">
-                                        Nutzer Löschen
-                                    </Button>
-                                )
-                            }
+            <Dialog
+                open={props.open}
+                onClose={handleClose}
+                PaperComponent={PaperComponent}
+                aria-labelledby="draggable-dialog-title"
+                PaperProps={{
+                    sx: {
+                        minWidth: "500px",
+                        position: 'absolute',
+                        top: '10%',
+                        m: 0,
+                    },
+                }}>
+                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                    {props.publisher?.name}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        <Box marginBottom="20px">
+                            <AvatarWithBadge
+                                name={props?.publisher?.name}
+                                image={props.publisher?.imagePath || ""}
+                                avatarSize={70}
+                                uid={props.publisher?.uid}
+                            />
+                        </Box>
+                        <Grid container>
+                            <Grid size={4}>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}} >
+                                    Anbieter
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                    Telefonnummer
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                    E-Mail
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                    Adresse
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                    Vorstellung
+                                </Typography>
+                                {
+                                    profile.admin && (
+                                        <Button
+                                            onClick={handleUserDeletion}
+                                            variant="outlined"
+                                            color="error">
+                                            Nutzer Löschen
+                                        </Button>
+                                    )
+                                }
+                            </Grid>
+                            <Grid size={8}>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                    {props.publisher?.name || "-"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                    {props.publisher?.phoneNumber || "-"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                    {props.publisher?.email || "-"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                    {props.publisher?.address || "-"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                    {props.publisher?.description || "-"}
+                                </Typography>
+                            </Grid>
                         </Grid>
-                        <Grid size={8}>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.name || "-"}
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.phoneNumber || "-"}
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.email || "-"}
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.address || "-"}
-                            </Typography>
-                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
-                                {props.publisher?.description || "-"}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <Button autoFocus onClick={handleClose}>
-                    Schließen
-                </Button>
-            </DialogActions>
-        </Dialog>
-        <UserDeletionDialog
-            open={openUserDeletionDialog}
-            setOpen={setOpenUserDeletionDialog}
-            publisher={props.publisher} />
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={handleClose}>
+                        Schließen
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <UserDeletionDialog
+                open={openUserDeletionDialog}
+                setOpen={setOpenUserDeletionDialog}
+                publisher={props.publisher} />
         </>
     )
 }

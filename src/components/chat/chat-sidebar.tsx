@@ -1,5 +1,5 @@
 import Typography from "@mui/material/Typography";
-import {Badge, Drawer, InputAdornment, TextField} from "@mui/material";
+import {Drawer, InputAdornment, TextField} from "@mui/material";
 import React from "react";
 import {ChatsList} from "./chats-list";
 import Box from "@mui/material/Box";
@@ -29,16 +29,7 @@ export const ChatSidebar = () => {
                 [`& .MuiDrawer-paper`]: {position: 'relative'},
             }}>
             <Box display={'flex'} alignItems="center" gap="10px" p={3}>
-                <Badge
-                    variant="dot"
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                    }}
-                    overlap="circular"
-                    color="success">
-                    <Avatar src={imagePath} sx={{width: 54, height: 54}}/>
-                </Badge>
+                <Avatar src={imagePath} sx={{width: 54, height: 54}}/>
                 <Box>
                     <Typography variant="body1" fontWeight={600}>
                         {username}

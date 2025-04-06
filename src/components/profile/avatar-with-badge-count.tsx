@@ -20,7 +20,7 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
     alt = "Avatar",
     avatarSize = 100,
     uid,
-    badgeSize = {x: 4, y: 6},
+    badgeSize = { x: 4, y: 6 },
     onClick,
     name
 }) => {
@@ -28,11 +28,26 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
 
     const calcSuccessfulTransfers = () => {
         return risks.length;
-    }
+    };
 
     const badgeHover: string = name
         ? `${name} hat ${calcSuccessfulTransfers()} erfolgreiche Risiko-Transfers abgeschlossen`
-        : "Anzahl abgeschlossener Risikotransfer";
+        : "Anzahl abgeschlossener Risikotransfers";
+
+    const avatar = (
+        <Tooltip title={name} followCursor placement="top">
+            <Avatar
+                sx={{ width: avatarSize, height: avatarSize, cursor: "pointer" }}
+                src={image}
+                alt={alt}
+                onClick={onClick}
+            />
+        </Tooltip>
+    );
+
+    if (!uid) {
+        return avatar;
+    }
 
     return (
         <Badge
@@ -43,7 +58,7 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
                     placement="top"
                     followCursor
                     title={badgeHover}
-                    sx={{pointer: "cursor"}}>
+                    sx={{ pointer: "cursor" }}>
                     <Typography
                         variant="caption"
                         sx={{
@@ -51,19 +66,16 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
                             backgroundColor: "primary.main",
                             color: "white",
                             borderRadius: "50%",
-                            padding: `${badgeSize.x}px ${badgeSize.y}px` ,
+                            padding: `${badgeSize.x}px ${badgeSize.y}px`,
                             fontSize: "0.75rem",
                             lineHeight: 1,
                         }}>
-                        {
-                            !loading && !error && uid ? calcSuccessfulTransfers() : " -- "
-                        }
+                        {!loading && !error ? calcSuccessfulTransfers() : " -- "}
                     </Typography>
                 </Tooltip>
             }>
-            <Tooltip title={name} followCursor placement="top">
-                <Avatar sx={{ width: avatarSize, height: avatarSize }} src={image} alt={alt} onClick={onClick}/>
-            </Tooltip>
+            {avatar}
         </Badge>
     );
 };
+
