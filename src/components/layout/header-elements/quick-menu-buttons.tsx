@@ -45,6 +45,7 @@ import { formatDistanceToNow } from "date-fns";
 import { selectActiveChatId } from "../../../store/slices/my-bids/selectors";
 import { setActiveChat } from "../../../store/slices/my-bids/reducers";
 import { CreditScoreDialog } from "../../credit_score/credit_score_dialog";
+import {AvatarWithBadge} from "../../profile/avatar-with-badge-count";
 
 export interface AuthenticationButtonsProps {
   isLoggedIn: boolean;
@@ -255,7 +256,8 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
             )}
           </Menu>
           <IconButton onClick={props.handleOpenUserMenu} sx={{ p: 0 }}>
-            <Avatar src={imagePath} sx={{ width: 42, height: 42 }} />
+            <AvatarWithBadge image={imagePath} uid={auth?.currentUser?.uid} badgeSize={{x: 4, y: 6}} name={userName} avatarSize={42}/>
+            {/*<Avatar src={imagePath} sx={{ width: 42, height: 42 }} />*/}
           </IconButton>
           <Menu
             sx={{ mt: "45px" }}

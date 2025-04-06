@@ -1,7 +1,7 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {Accordion, AccordionDetails, AccordionSummary, Chip, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import React from "react";
+import React, {useEffect} from "react";
 import {Risk} from "../../models/Risk";
 import {FetchStatus} from "../../types/FetchStatus";
 import Avatar from "@mui/material/Avatar";
@@ -17,8 +17,8 @@ import {useNavigate} from "react-router-dom";
 import {Chat} from "../../store/slices/my-bids/types";
 import {selectChats} from "../../store/slices/my-bids/selectors";
 import {setActiveChat} from "../../store/slices/my-bids/reducers";
-import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
-import {ProfileInformation} from "../../store/slices/user-profile/types";
+import {selectProfileInformation, selectUserProfile} from "../../store/slices/user-profile/selectors";
+import {ProfileInformation, UserProfile} from "../../store/slices/user-profile/types";
 import {formatDate} from '../../utils/dateFormatter';
 import {Publisher} from "../../models/Publisher";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
@@ -28,12 +28,10 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {selectShowTaken} from "../../store/slices/risks/selectors";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {RiskDeletionDialog} from "./risk-deletion-dialog";
-import { useEffect } from 'react';
-import { UserProfile } from '../../store/slices/user-profile/types';
-import { selectUserProfile } from '../../store/slices/user-profile/selectors';
-import { fetchAssesments } from '../../store/slices/credit-assesment/thunks';
-import { selectAssesmentById, selectAssesments} from '../../store/slices/credit-assesment/selectors';
-import { CreditAssesment } from '../../models/CreditAssesment';
+import {fetchAssesments} from '../../store/slices/credit-assesment/thunks';
+import {selectAssesmentById} from '../../store/slices/credit-assesment/selectors';
+import {CreditAssesment} from '../../models/CreditAssesment';
+import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
 
 export const elementBottomMargin: number = 20;
 
@@ -56,66 +54,61 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const [noAddressError, setNoAddressError] = React.useState(false);
     const [noPhoneError, setNoPhoneError] = React.useState(false);
     const [noImageError, setNoImageError] = React.useState(false);
-    const { showSnackbar } = useSnackbarContext();
+    const {showSnackbar} = useSnackbarContext();
     const userProfile: UserProfile = useSelector(selectUserProfile);
-
-    
 
     const chats: Chat[] = useSelector(selectChats);
     const uid = auth.currentUser?.uid!;
-    
-    
-    
+
     var assesment: CreditAssesment | null = useSelector((state: RootState) =>
         selectAssesmentById(state, uid)
     );
 
-
-     useEffect(() => {
+    useEffect(() => {
         if (noAddressError) {
-          showSnackbar(
-            "Adresse fehlt!",
-            "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
-            {
-              vertical: "top",
-              horizontal: "center",
-            },
-            "warning"
-          );
-          setNoAddressError(false);
-          return;
+            showSnackbar(
+                "Adresse fehlt!",
+                "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
+                {
+                    vertical: "top",
+                    horizontal: "center",
+                },
+                "warning"
+            );
+            setNoAddressError(false);
+            return;
         }
-    
-        if (noPhoneError) {
-          showSnackbar(
-            "Telefonnummer fehlt!",
-            "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
-            {
-              vertical: "top",
-              horizontal: "center",
-            },
-            "warning"
-          );
-          setNoPhoneError(false);
-          return;
-        }
-    
-        if (noImageError) {
-          showSnackbar(
-            "Profilbild fehlt!",
-            "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
-            {
-              vertical: "top",
-              horizontal: "center",
-            },
-            "warning"
-          );
-          setNoImageError(false);
-          return;
-        }
-      }, [noAddressError, noPhoneError, noImageError]);
 
-      const getAssesments = async (uid: string) => {
+        if (noPhoneError) {
+            showSnackbar(
+                "Telefonnummer fehlt!",
+                "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
+                {
+                    vertical: "top",
+                    horizontal: "center",
+                },
+                "warning"
+            );
+            setNoPhoneError(false);
+            return;
+        }
+
+        if (noImageError) {
+            showSnackbar(
+                "Profilbild fehlt!",
+                "Bitte vervollständige deine Adresse in deinem Profil, um Kontakt aufzunehmen.",
+                {
+                    vertical: "top",
+                    horizontal: "center",
+                },
+                "warning"
+            );
+            setNoImageError(false);
+            return;
+        }
+    }, [noAddressError, noPhoneError, noImageError]);
+
+    const getAssesments = async (uid: string) => {
         try {
             const resultAction = await dispatch(fetchAssesments(uid!));
             const assesments = resultAction.payload;
@@ -140,23 +133,23 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
 
         if (!publisher) {
             console.error("Error displaying publisher information. Publisher is undefined!", publisher);
-            showSnackbar("Probleme bei der Profilanzeige!", "Profil des Anbieters konnte nicht geladen werden. Lade die Seite erneut!", { vertical: "top", horizontal: "center" }, "error")
+            showSnackbar("Probleme bei der Profilanzeige!", "Profil des Anbieters konnte nicht geladen werden. Lade die Seite erneut!", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error")
         }
 
         setPublisherProfile(publisher);
         setOpenPublisherProfileDialog(true);
     }
 
-
-    
-    
-
     const openBid = (riskIndex: number) => {
-
-         
         if (!user || !user.uid) {
             console.error("User not authenticated or UID missing:", user);
-            showSnackbar("Nutzer nicht authentifiziert!","Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.", { vertical: "top", horizontal: "center" }, "error");
+            showSnackbar("Nutzer nicht authentifiziert!", "Konnte Verhandlung nicht starten, es gab Probleme mit der Authentifizierung.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error");
             return;
         }
 
@@ -165,38 +158,47 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             !userProfile.profile.number ||
             !userProfile.profile.zip ||
             !userProfile.profile.city
-          ) {
+        ) {
             setNoAddressError(true);
             return;
-          }
-      
-          if (!userProfile.profile.phone) {
+        }
+
+        if (!userProfile.profile.phone) {
             setNoPhoneError(true);
             return;
-          }
-      
-          if (!userProfile.profile.imagePath) {
+        }
+
+        if (!userProfile.profile.imagePath) {
             setNoImageError(true);
             return;
-          }
+        }
 
         const selectedRisk = props.risks[riskIndex];
 
         if (!selectedRisk) {
             console.error("Selected risk not found:", selectedRisk);
-            showSnackbar("Risiko nicht gefunden","Konnte Verhandlung nicht starten, das ausgewählte Risiko wurde nicht gefunden.", { vertical: "top", horizontal: "center" }, "error");
+            showSnackbar("Risiko nicht gefunden", "Konnte Verhandlung nicht starten, das ausgewählte Risiko wurde nicht gefunden.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error");
             return;
         }
 
         // Check whether acquisition limit is valid or not
-         if (assesment?.acquisitionLimit! <= selectedRisk.value){
-             showSnackbar("Niedrige Übernahmelimit","Konnte Verhandlung nicht starten, da die Übernahmelimit kleiner ist als die Absicherungssumme.", { vertical: "top", horizontal: "center" }, "error");
-             return;
-         }
+        if (assesment?.acquisitionLimit! <= selectedRisk.value) {
+            showSnackbar("Niedrige Übernahmelimit", "Konnte Verhandlung nicht starten, da die Übernahmelimit kleiner ist als die Absicherungssumme.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error");
+            return;
+        }
 
         if (selectedRisk.publisher?.uid === user.uid) {
             console.error("User tried to bid on his own risk:", selectedRisk, user);
-            showSnackbar("Falsches Risiko", "Konnte Verhandlung nicht starten, du kannst nicht auf dein eigenes Risiko bieten.", { vertical: "top", horizontal: "center" }, "error");
+            showSnackbar("Falsches Risiko", "Konnte Verhandlung nicht starten, du kannst nicht auf dein eigenes Risiko bieten.", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error");
             return;
         }
 
@@ -259,15 +261,15 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                     <Accordion
                         sx={{
                             margin: 0,
-                            '&.MuiAccordion-root': { margin: 0 },
-                            '&.MuiAccordion-gutters': { margin: 0 },
+                            '&.MuiAccordion-root': {margin: 0},
+                            '&.MuiAccordion-gutters': {margin: 0},
                         }}
                         elevation={0}
                         key={risk.id ? risk.id : index}
                         expanded={expandedPanels.includes(risk.id!)}
                         onChange={handleChange(risk.id!)}>
                         <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
+                            expandIcon={<ExpandMoreIcon/>}
                             sx={{
                                 borderTop: '1px solid #f3f3f3',
                                 borderBottom: '1px solid #f3f3f3',
@@ -277,7 +279,11 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                             id={`panel-header-${risk.id}`}>
                             <Grid container size={12} spacing={2} alignItems="center">
                                 <Grid size={3}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer', fontWeight: "bolder", color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
+                                    <Typography variant="body1" sx={{
+                                        cursor: 'pointer',
+                                        fontWeight: "bolder",
+                                        color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"
+                                    }}>
                                         {risk.name} {risk.status === RiskStatusEnum.AGREEMENT ?
                                         <Tooltip title={"Risiko wurde bereits übernommen"} followCursor>
                                             <Chip
@@ -289,11 +295,12 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     </Typography>
                                 </Grid>
                                 <Grid size={3}>
-                                    <Typography variant="body1" sx={{ cursor: 'pointer' }}>
+                                    <Typography variant="body1" sx={{cursor: 'pointer'}}>
                                         {
                                             risk.type.map((element, idx) => (
-                                                <Chip key={idx} label={element} clickable={risk.status !== RiskStatusEnum.AGREEMENT} sx={{
-                                                    backgroundColor: risk.status === RiskStatusEnum.AGREEMENT ? "white" :'#f3f3f3',
+                                                <Chip key={idx} label={element}
+                                                      clickable={risk.status !== RiskStatusEnum.AGREEMENT} sx={{
+                                                    backgroundColor: risk.status === RiskStatusEnum.AGREEMENT ? "white" : '#f3f3f3',
                                                     color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : '#343434',
                                                     marginRight: '4px',
                                                     border: '1px solid',
@@ -303,20 +310,26 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                         }
                                     </Typography>
                                 </Grid>
-                                <Grid size={2} sx={{ marginLeft: "20px" }}>
-                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer'}} style={{color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
+                                <Grid size={2} sx={{marginLeft: "20px"}}>
+                                    <Typography variant="subtitle1" sx={{cursor: 'pointer'}}
+                                                style={{color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
                                         {`${risk.value.toLocaleString()},00 €`}
                                     </Typography>
                                 </Grid>
                                 <Grid size={2}>
-                                    <Typography variant="subtitle1" sx={{ cursor: 'pointer' }} style={{color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
+                                    <Typography variant="subtitle1" sx={{cursor: 'pointer'}}
+                                                style={{color: risk.status === RiskStatusEnum.AGREEMENT ? "grey" : "black"}}>
                                         {formatDate(new Date(risk.declinationDate))}
                                     </Typography>
                                 </Grid>
                                 <Grid size={1} display="flex" justifyContent="center" alignItems="center">
-                                    <Tooltip title={risk.publisher && risk.publisher.name}>
-                                        <Avatar src={risk.publisher?.imagePath} onClick={(event) => displayPublisherProfile(event, risk.publisher)}/>
-                                    </Tooltip>
+                                    <AvatarWithBadge
+                                        name={risk.publisher?.name}
+                                        uid={risk.publisher?.uid}
+                                        avatarSize={40}
+                                        image={risk.publisher?.imagePath}
+                                        onClick={(event: any) => displayPublisherProfile(event, risk.publisher)} />
+
                                 </Grid>
                             </Grid>
                         </AccordionSummary>
@@ -324,13 +337,13 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                             <Grid container>
                                 <Grid
                                     size={12}
-                                    style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: "20px" }}>
+                                    style={{display: 'flex', justifyContent: 'flex-end', paddingRight: "20px"}}>
                                     <Button
                                         disabled={risk.publisher?.uid === user?.uid || risk.status === RiskStatusEnum.AGREEMENT}
                                         onClick={() => openBid(index)}
                                         variant="contained"
-                                        endIcon={<ModeIcon />}
-                                        style={{ maxHeight: "40px", height: "40px" }}>
+                                        endIcon={<ModeIcon/>}
+                                        style={{maxHeight: "40px", height: "40px"}}>
                                         Kontakt aufnehmen
                                     </Button>
                                     {
@@ -339,8 +352,8 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                             color="error"
                                             onClick={() => handleRiskDeletionDialog(risk)}
                                             variant="contained"
-                                            endIcon={<DeleteIcon />}
-                                            style={{ maxHeight: "40px", height: "40px", marginLeft: "10px" }}>
+                                            endIcon={<DeleteIcon/>}
+                                            style={{maxHeight: "40px", height: "40px", marginLeft: "10px"}}>
                                             Risiko löschen
                                         </Button>
                                     }
@@ -357,21 +370,23 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
                                     <Typography variant="body1">
                                         Details
                                     </Typography>
-                                    <br />
+                                    <br/>
                                     <Grid container>
                                         <Grid size={4}>
-                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}} >
+                                            <Typography variant="body2"
+                                                        sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 Anbieter
                                             </Typography>
-                                            <Typography variant="body2" sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
+                                            <Typography variant="body2"
+                                                        sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                                                 E-Mail
                                             </Typography>
                                         </Grid>
                                         <Grid size={8}>
-                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                            <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                                 {risk.publisher?.name || "-"}
                                             </Typography>
-                                            <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                            <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                                 {risk.publisher?.email || "-"}
                                             </Typography>
                                         </Grid>
@@ -384,7 +399,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             }
             {
                 (!displayedRisks || displayedRisks.length === 0) &&
-                <Typography variant="h5" sx={{ marginTop: "20px", textAlign: "center" }}>
+                <Typography variant="h5" sx={{marginTop: "20px", textAlign: "center"}}>
                     Keine Risiken gefunden.
                 </Typography>
             }
