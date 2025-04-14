@@ -128,6 +128,11 @@ export function Header() {
                                         <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
                                     </MenuItem>
                             ))}
+                            <Typography>
+                                {<Trans i18nKey={"homepage.rubber_stamp"}>
+
+                                </Trans>}
+                            </Typography>
                         </Menu>
                     </Box>
                     <Typography
@@ -201,6 +206,7 @@ export function Header() {
                     />
                 </Toolbar>
             </Container>
+            <Typography color="orange" align='center'><Trans i18nKey={"homepage.rubber_stamp"}/></Typography>
         </AppBar>
     );
 }
