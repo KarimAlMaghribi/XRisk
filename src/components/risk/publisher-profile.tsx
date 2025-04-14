@@ -11,6 +11,7 @@ import {selectProfileInformation} from "../../store/slices/user-profile/selector
 import {UserDeletionDialog} from "./user-deletion-dialog";
 import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
 import {RiskGiverHistory} from "../profile/riskGiverHistory";
+import {LossRatio} from "./loss-ratio";
 
 export interface PublisherProfileProps {
     open: boolean;
@@ -116,6 +117,9 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                             </Grid>
                             <Grid size={12}>
                                 <RiskGiverHistory uid={props.publisher?.uid} />
+                            </Grid>
+                            <Grid size={12}>
+                                <LossRatio />
                             </Grid>
                         </Grid>
                     </DialogContentText>
