@@ -143,11 +143,6 @@ export const ChatHeader = () => {
                                                 : activeChat?.riskTaker?.name}
                                         </Typography>
                                     }
-                                    secondary={
-                                        <Typography variant="body2">
-                                            {activeChat?.status}
-                                        </Typography>
-                                    }
                                 />
                             </ListItem>
                         </Box>

@@ -119,7 +119,7 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                                 <RiskGiverHistory uid={props.publisher?.uid} />
                             </Grid>
                             <Grid size={12}>
-                                <LossRatio />
+                                <LossRatio uid={props.publisher?.uid}/>
                             </Grid>
                         </Grid>
                     </DialogContentText>
