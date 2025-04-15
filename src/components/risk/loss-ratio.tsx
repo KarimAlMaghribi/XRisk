@@ -1,13 +1,14 @@
-import { Divider, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectRisks } from "../../store/slices/risks/selectors";
-import { selectMyTakenRisks } from "../../store/slices/my-risks/selectors";
-import { fetchMyTakenRisks } from "../../store/slices/risks/thunks";
-import { AppDispatch } from "../../store/store";
-import { Risk } from "../../models/Risk";
-import { auth } from "../../firebase_config";
+import {Divider, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {selectRisks} from "../../store/slices/risks/selectors";
+import {selectMyTakenRisks} from "../../store/slices/my-risks/selectors";
+import {fetchMyTakenRisks} from "../../store/slices/risks/thunks";
+import {AppDispatch} from "../../store/store";
+import {Risk} from "../../models/Risk";
+import {auth} from "../../firebase_config";
 import Tooltip from "@mui/material/Tooltip";
+import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 
 export const LossRatio = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -28,7 +29,7 @@ export const LossRatio = () => {
 
         const receivedPayouts: number = risks
             .filter(risk =>
-                risk.status === "agreement" &&
+                risk.status === RiskStatusEnum.AGREEMENT &&
                 risk.occurred === true &&
                 risk.publisher?.uid === uid
             )

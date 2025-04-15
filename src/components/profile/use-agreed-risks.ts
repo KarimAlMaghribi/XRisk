@@ -50,13 +50,13 @@ export const useAgreedRisks = (uid: string | null | undefined) => {
                     fetchedRisks.push(...data);
                 }
 
-                const expired = fetchedRisks.filter(
-                    (risk) =>
-                        risk.declinationDate &&
-                        new Date(risk.declinationDate) < new Date()
-                );
+                // const expired: Risk[] = fetchedRisks.filter(
+                //     (risk) =>
+                //         risk.declinationDate &&
+                //         new Date(risk.declinationDate) < new Date()
+                // );
 
-                setRisks(expired);
+                setRisks(fetchedRisks);
             } catch (err) {
                 console.error("Fehler beim Laden der agreed risks:", err);
                 setError("Daten konnten nicht geladen werden.");
