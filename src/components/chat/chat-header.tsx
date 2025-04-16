@@ -37,20 +37,12 @@ export const ChatHeader = () => {
     const uid: string = auth.currentUser?.uid || "";
     const activeChatId: string | null = useSelector(selectActiveChatId);
     const activeChat: Chat | undefined = useSelector(selectActiveChat);
-    const opposingProfile: ProfileInformation | undefined = useSelector(
-        selectOpposingProfile
-    );
-    const opposingImagePath: string = useSelector((state: RootState) =>
-        selectOpposingImagePath({myBids: state.myBids}, auth.currentUser?.uid)
-    );
-    const [openRiskAgreementDialog, setOpenRiskAgreementDialog] =
-        React.useState(false);
-    const risk: Risk | undefined = useSelector((state: RootState) =>
-        selectRiskById(state, activeChat?.riskId)
-    );
+    const opposingProfile: ProfileInformation | undefined = useSelector(selectOpposingProfile);
+    const opposingImagePath: string = useSelector((state: RootState) => selectOpposingImagePath({myBids: state.myBids}, auth.currentUser?.uid));
+    const [openRiskAgreementDialog, setOpenRiskAgreementDialog] = React.useState(false);
+    const risk: Risk | undefined = useSelector((state: RootState) => selectRiskById(state, activeChat?.riskId));
     const [openProfile, setOpenProfile] = React.useState(false);
-    const [opposingPublisherProfile, setOpposingPublisherProfile] =
-        React.useState<Publisher | null>(null);
+    const [opposingPublisherProfile, setOpposingPublisherProfile] = React.useState<Publisher | null>(null);
     const [openRiskDetails, setOpenRiskDetails] = React.useState(false);
     const [openCancelDealDialog, setOpenCancelDealDialog] = React.useState(false);
 
@@ -58,7 +50,7 @@ export const ChatHeader = () => {
 
     useEffect(() => {
         const mappedProfile: Publisher = {
-            uid: "",
+            uid: activeChat?.riskProvider?.uid === uid ? activeChat?.riskTaker?.uid || "" : activeChat?.riskProvider?.uid || "",
             name: opposingProfile?.name || "",
             address: `${opposingProfile?.street || ""} ${
                 opposingProfile?.number || ""

@@ -73,7 +73,7 @@ export const LossRatio = (props: LossRatioProps) => {
             <Tooltip followCursor
                      title={"Diese Quote gibt an, in welchem Verhältnis die erhaltenen Auszahlungen aus eingetretenen Schäden zu den gezahlten Gebühren für Risikoübernahmen stehen. Ein hoher Wert kann darauf hinweisen, dass der Nutzer häufig Schäden meldet, während ein niedriger Wert für eine verantwortungsbewusste Übernahme von Risiken spricht."}
                      placement="top">
-                <Typography marginLeft="10px" fontWeight="bold" style={{cursor: "pointer"}}>
+                <Typography marginLeft="10px" style={{cursor: "pointer"}}>
                     {lossRatio !== null
                         ? `${(lossRatio * 100).toFixed(2)} %`
                         : "Keine Daten vorhanden"}
