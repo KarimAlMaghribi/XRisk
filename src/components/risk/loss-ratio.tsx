@@ -11,7 +11,7 @@ import {Chat} from "../../store/slices/my-bids/types";
 import {collection, getDocs} from "firebase/firestore";
 
 export interface LossRatioProps {
-    uid: string | undefined;
+    uid: string | undefined | null;
 }
 
 export const LossRatio = (props: LossRatioProps) => {
