@@ -25,7 +25,8 @@ export const AgreementDetails = (props: AgreementDetailsProps) => {
           </Typography>
         </Grid>
 
-        {props.chats.map((chat: Chat, index: number) => {
+        {
+          props.chats.map((chat: Chat, index: number) => {
           return (
             <Grid size={12} marginBottom="20px">
               <AgreementElement risk={props.risk} chat={chat} key={index} />

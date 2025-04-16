@@ -29,6 +29,7 @@ import {Publisher} from "../../models/Publisher";
 import {Trans} from "react-i18next";
 import i18next from "i18next";
 import {RiskGiverHistory} from "./riskGiverHistory";
+import {LossRatio} from "../risk/loss-ratio";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -352,6 +353,9 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                     </Grid2>
                     <Grid2 size={12}>
                         <RiskGiverHistory uid={userProfile.id}/>
+                    </Grid2>
+                    <Grid2 size={12}>
+                        <LossRatio uid={userProfile.id}/>
                     </Grid2>
                 </Grid2>
             </DialogContent>

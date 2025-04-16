@@ -88,16 +88,6 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
                                     <Trans i18nKey={"risk.publisher_profile.introduction"}></Trans>
                                 </Typography>
-                                {
-                                    profile.admin && (
-                                        <Button
-                                            onClick={handleUserDeletion}
-                                            variant="outlined"
-                                            color="error">
-                                            Nutzer Löschen
-                                        </Button>
-                                    )
-                                }
                             </Grid>
                             <Grid size={8}>
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
@@ -120,7 +110,12 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                                 <RiskGiverHistory uid={props.publisher?.uid} />
                             </Grid>
                             <Grid size={12}>
-                                <LossRatio />
+                                <LossRatio uid={props.publisher?.uid}/>
+                            </Grid>
+                            <Grid size={12} marginTop="20px">
+                                <Button variant="outlined" color="error" onClick={handleUserDeletion}>
+                                    Nutzer löschen
+                                </Button>
                             </Grid>
                         </Grid>
                     </DialogContentText>

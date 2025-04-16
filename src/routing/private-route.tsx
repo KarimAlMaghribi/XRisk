@@ -9,7 +9,7 @@ export const PrivateRoute = ({ children }: { children: JSX.Element }) => {
     const [user, loading] = useAuthState(auth);
 
     if (loading) {
-        <CircularProgress />
+        return <CircularProgress />
     }
 
     return user ? children : <Navigate to={`/${ROUTES.SIGN_IN}`} />;
