@@ -12,6 +12,7 @@ import {UserDeletionDialog} from "./user-deletion-dialog";
 import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
 import {RiskGiverHistory} from "../profile/riskGiverHistory";
 import {LossRatio} from "./loss-ratio";
+import { Trans } from "react-i18next";
 
 export interface PublisherProfileProps {
     open: boolean;
@@ -73,19 +74,19 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                         <Grid container>
                             <Grid size={4}>
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}} >
-                                    Anbieter
+                                    <Trans i18nKey={"risk.publisher_profile.provider"}></Trans>
                                 </Typography>
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                    Telefonnummer
+                                    <Trans i18nKey={"risk.publisher_profile.telephone"}></Trans>
                                 </Typography>
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                    E-Mail
+                                    <Trans i18nKey={"risk.publisher_profile.email"}></Trans>
                                 </Typography>
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                    Adresse
+                                    <Trans i18nKey={"risk.publisher_profile.adress"}></Trans>
                                 </Typography>
                                 <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
-                                    Vorstellung
+                                    <Trans i18nKey={"risk.publisher_profile.introduction"}></Trans>
                                 </Typography>
                                 {
                                     profile.admin && (

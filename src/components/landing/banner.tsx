@@ -31,13 +31,14 @@ export const Banner = () => {
                     variant="h2"
                     className="rubber"
                     color="white"
+                    fontSize={"40px"}
                     sx={{
                         position: "absolute",
-                        bottom: 550,
+                        bottom: 380,
                         right: 20,
                         m: 2,
                       }}
-                    style={{width: "40%", paddingTop: "20", paddingLeft: "20px"}}>
+                    style={{height: "15%", width: "40%", paddingTop: "20px", paddingLeft: "20px"}}>
                     <b><Trans i18nKey="homepage.rubber_stamp" /></b>
                 </Typography>
             </Box>

@@ -82,6 +82,15 @@
     "couple_figure_text": "Betrag in Absicherung",
     "contract_figure_text": "Geschlossene Risikotransfers"
   },
+  "risk": {
+    "publisher_profile": {
+      "provider": "Anbieter",
+      "telephone": "Telefonnummer",
+      "email": "Email",
+      "adress": "Adresse",
+      "introduction": "Vorstellung"
+    }
+  },
   "risk_exchange": {
     "define_risk": "RISIKO DEFINIEREN!",
     "filter_message": "Filter die Risiken nach deinen Wünschen und Interessen",
