@@ -319,7 +319,8 @@
       "you_before": "You, before "
     },
     "chat_sender": {
-      "placeholder": "Type a message..."
+      "placeholder": "Type a message...",
+      "popper_text": "Write a message as usual and click here to send it to the xRisk chatbot"
     },
     "chat_sidebar": {
       "search_chats": "Search Chats"

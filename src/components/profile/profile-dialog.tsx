@@ -13,6 +13,7 @@ import {
     Grid2,
     Snackbar,
     TextField,
+    Tooltip,
     Typography,
 } from "@mui/material";
 import {ProfileAvatar} from "./profile-avatar";
@@ -30,6 +31,7 @@ import {Trans} from "react-i18next";
 import i18next from "i18next";
 import {RiskGiverHistory} from "./riskGiverHistory";
 import {LossRatio} from "../risk/loss-ratio";
+import { useAgreedRisks } from "./use-agreed-risks";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -60,6 +62,12 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
         "error" | "success"
     >("error");
     const [birthdateError, setBirthdateError] = React.useState<boolean>(false);
+
+    const { risks, loading, error } = useAgreedRisks(auth.currentUser?.uid);
+    
+    const calcSuccessfulTransfers = () => {
+        return risks.length;
+    };
 
     const handleSnackbarClose = () => setSnackbarOpen(false);
 
@@ -188,8 +196,8 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
             <Divider/>
 
             <DialogContent sx={{marginTop: "20px"}}>
-                <Grid2 container spacing={2}>
-                    <Grid2 size={{md: 12, lg: 12}}>
+            <Grid2 container spacing={2} alignItems="flex-start">
+                    <Grid2 size={{xs: 12, md:4}}>
                         <ProfileAvatar
                             imagePath={imagePath || userProfile.profile.imagePath || ""}
                             setImagePath={setImagePath}
@@ -197,6 +205,42 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             setFile={setImageFile}
                         />
                     </Grid2>
+
+                    <Grid2 size={{xs: 12, md:4}} >
+                        <LossRatio uid={userProfile.id} />
+                    </Grid2>
+
+                    <Grid2 size={{xs: 12, md:4}} display="safe" justifyContent={"flex-end"}>
+                        <Typography variant="subtitle1" gutterBottom fontWeight="bold" marginTop="10px">
+                            Risiko-Transfer
+                        </Typography>
+                        <Divider/>
+                        <br/>
+                        <Tooltip followCursor
+                                    title={"Diese Quote gibt die Anzahl der abgeschlossenen Risko-Transfers des Nutzers an."}
+                                    placement="top">
+                            <Typography marginLeft="10px" style={{cursor: "pointer"}}>
+                                {calcSuccessfulTransfers() !== null
+                                    ? calcSuccessfulTransfers()
+                                    : "Keine Daten vorhanden"}
+                            </Typography>
+                        </Tooltip>
+                    </Grid2>
+
+                    <Grid2 size={{xs:12, md:12, lg:12}}>
+                        <Box
+                            display="flex"
+                            justifyContent="flex-end"
+                            sx={{ width: "100%" }}
+                        >
+                            <Box sx={{ maxWidth: "600px", width: "100%" }}>
+                                <RiskGiverHistory uid={userProfile.id} />
+                            </Box>
+                        </Box>
+                    </Grid2>
+                </Grid2>
+                <Grid2 container spacing={2}>
+                    
                     <Grid2 size={{md: 12, lg: 12}}>
                         <Box mt={2}>
                             <Typography variant="subtitle1" fontWeight="bold">
@@ -350,12 +394,6 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={zip}
                             onChange={(e) => setZip(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={12}>
-                        <RiskGiverHistory uid={userProfile.id}/>
-                    </Grid2>
-                    <Grid2 size={12}>
-                        <LossRatio uid={userProfile.id}/>
                     </Grid2>
                 </Grid2>
             </DialogContent>

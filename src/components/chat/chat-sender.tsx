@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import { CircularProgress, InputBase, Popover } from "@mui/material";
+import { Button, Popper, Paper, CircularProgress, InputBase, Popover, Typography} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from "@mui/icons-material/Send";
 import Picker from "emoji-picker-react";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
@@ -29,6 +30,7 @@ import { ProfileInformation } from "../../store/slices/user-profile/types";
 import { selectProfileInformation } from "../../store/slices/user-profile/selectors";
 import { v4 as uuid } from "uuid";
 import i18next from "i18next";
+import { Trans } from "react-i18next";
 
 export const ChatSender = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -52,6 +54,11 @@ export const ChatSender = () => {
     apiKey: process.env.REACT_APP_OPENAI_API_KEY,
     dangerouslyAllowBrowser: true,
   });
+
+  const [open, setOpen] = useState(true); // Bubble visible by default
+  const buttonRef = useRef(null);
+
+  const handleClosePopper = () => setOpen(false);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -103,6 +110,7 @@ export const ChatSender = () => {
   const onAIChatMsgSubmit = async (e: any) => {
     onChatMsgSubmit(e);
     setAILoading(true);
+    setOpen(true)
 
     const risk: Risk | undefined = risks.find((risk) => risk.id === riskId);
     const lastMessage: ChatMessage = {
@@ -204,7 +212,8 @@ export const ChatSender = () => {
         <IconButton onClick={onChatMsgSubmit} disabled={!msg} color="primary">
           <SendIcon />
         </IconButton>
-        <IconButton
+      <IconButton
+          ref={buttonRef}
           color="secondary"
           onClick={onAIChatMsgSubmit}
           disabled={!msg || aiLoading}
@@ -215,6 +224,49 @@ export const ChatSender = () => {
             <AssistantIcon />
           )}
         </IconButton>
+      {open && buttonRef.current && (
+      <Popper
+        open={open}
+        anchorEl={buttonRef.current}
+        placement="top"
+        style={{ zIndex: 1200 }}
+      >
+      
+        <Paper
+          elevation={3}
+          sx={{
+            p: 2,
+            pt: 4,
+            bgcolor: 'background.paper',
+            position: 'relative',
+            maxWidth: 250,
+            borderRadius: 2,
+            mt: 1,
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -5,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              borderWidth: '10px 10px 0 10px',
+              borderStyle: 'solid',
+              borderColor: (theme) => `${theme.palette.background.paper} transparent transparent transparent`,
+            },
+          }}
+        >
+          <IconButton
+            size="small"
+            onClick={handleClosePopper}
+            sx={{ position: 'absolute', top: 6, right: 6 }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+          <Typography variant="body2">
+          <Trans i18nKey={"chat.chat_sender.popper_text"}></Trans>
+          </Typography>
+        </Paper>
+      </Popper>
+      )}
       </form>
     </Box>
   );

@@ -318,7 +318,8 @@
       "you_before": "Du, vor "
     },
     "chat_sender": {
-      "placeholder": "Gebe eine Nachricht ein..."
+      "placeholder": "Gebe eine Nachricht ein...",
+      "popper_text": "Schreibe wie gewohnt eine Nachricht und klicke hier, um sie an den xRisk-Chatbot zu senden"
     },
     "chat_sidebar": {
       "search_chats": "Durchsuche Chats"

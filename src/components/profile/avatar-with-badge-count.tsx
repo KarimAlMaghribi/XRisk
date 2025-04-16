@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Badge from "@mui/material/Badge";
 import { Typography } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import {useAgreedRisks} from "./use-agreed-risks";
+import { auth } from "../../firebase_config";
 
 export interface AvatarWithBadgeProps {
     image: string | undefined;
@@ -25,6 +26,8 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
     name
 }) => {
     const { risks, loading, error } = useAgreedRisks(uid);
+
+    let checkUser = uid === auth.currentUser?.uid;
 
     const calcSuccessfulTransfers = () => {
         return risks.length;
@@ -48,6 +51,14 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
     if (!uid) {
         return avatar;
     }
+
+    if (checkUser)
+        return(
+            <>
+                {avatar}
+            </>
+      
+    );
 
     return (
         <Badge
