@@ -15,7 +15,6 @@ export interface LossRatioProps {
 }
 
 export const LossRatio = (props: LossRatioProps) => {
-    const dispatch: AppDispatch = useDispatch();
     const risks: Risk[] = useSelector(selectRisks);
     const [lossRatio, setLossRatio] = useState<number | null>(null);
     const [chats, setChats] = useState<Chat[]>([]);
@@ -52,26 +51,17 @@ export const LossRatio = (props: LossRatioProps) => {
             )
             .reduce((sum, risk) => sum + risk.value, 0);
 
-        const takenRisks = risks.filter((risk) => {
+        const totalFees = risks.filter((risk) => {
             const chat = chats.find(
-                (chat) => chat.riskId === risk.id && chat.riskTaker?.uid === props.uid
+                (chat) => chat.riskId === risk.id && chat.riskProvider?.uid === props.uid
             );
             return !!chat;
-        });
-
-
-        const totalFees: number = risks.filter((risk) => {
-            const chat = chats.find((chat) => chat.riskId === risk.id);
-            return (
-                risk.status === RiskStatusEnum.AGREEMENT &&
-                risk.occurred === false &&
-                risk.publisher?.uid === props.uid
-            );
         }).reduce((sum, risk) => sum + risk.value, 0);
 
         const calculatedLossRatio: number | null = totalFees > 0 ? receivedPayouts / totalFees : null;
+
         setLossRatio(calculatedLossRatio);
-    }, [risks]);
+    }, [risks, chats, props.uid]);
 
     return (
         <>
