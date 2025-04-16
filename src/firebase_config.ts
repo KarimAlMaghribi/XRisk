@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, setPersistence, inMemoryPersistence  } from "firebase/auth";
+import { getAuth, setPersistence, inMemoryPersistence, browserSessionPersistence  } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 import { GoogleAuthProvider } from "firebase/auth";
@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
-setPersistence(auth, inMemoryPersistence)
+setPersistence(auth, browserSessionPersistence)
     .then(() => {
         console.log("Persistence auf inMemoryPersistence gesetzt. Sobald der Nutzer den Browser oder das Tab schließt schließt, wird er abgemeldet.");
     })
