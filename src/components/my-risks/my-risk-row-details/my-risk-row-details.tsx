@@ -12,6 +12,7 @@ import {AgreementDetails} from "./agreement-details/agreement-details";
 
 export interface MyRiskRowDetailsProps {
     risk: Risk;
+    taken?: boolean;
 }
 
 
@@ -27,7 +28,7 @@ export const MyRiskRowDetails = (props: MyRiskRowDetailsProps) => {
             case RiskStatusEnum.DEAL:
                 return <DealDetails risk={props.risk} chats={riskRelatedChats}/>;
             case RiskStatusEnum.AGREEMENT:
-                return <AgreementDetails risk={props.risk} chats={riskRelatedChats}/>;
+                return <AgreementDetails risk={props.risk} chats={riskRelatedChats} taken={props.taken}/>;
             default:
                 return <></>;
         }

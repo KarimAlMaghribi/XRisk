@@ -235,12 +235,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             </Grid>
                             <Grid size={{ xs: 0, lg: 4, xl: 3 }} textAlign="center" sx={STYLES.GRID_CHIP_SX}>
                                 {props.risk.type.map((element, idx) => (
-                                    <Chip
-                                        key={idx}
-                                        label={element}
-                                        clickable
-                                        sx={STYLES.TYPE_CHIP_SX}
-                                    />
+                                    <Chip key={idx} label={element} clickable sx={STYLES.TYPE_CHIP_SX}/>
                                 ))}
                             </Grid>
                             <Grid size={{ xs: 0, lg: 0, xl: 1 }} textAlign="left" sx={STYLES.GRID_SIZE_VALUE_SX}>
@@ -291,28 +286,31 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                                             </Button>
                                         )}
 
-                                        {props.risk.status !== RiskStatusEnum.AGREEMENT ? (
-                                            <Button
-                                                variant="outlined"
-                                                disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
-                                                onClick={() => setOpenRiskEditDialog(true)}
-                                                size="small"
-                                                startIcon={<EditIcon />}
-                                                sx={STYLES.EDIT_BUTTON_SX}>
-                                                <Trans i18nKey="my_risks.edit" />
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                disabled={props.risk.occurred}
-                                                variant="outlined"
-                                                onClick={(e) => handleReportDamage(e, props.risk)}
-                                                startIcon={<FeedbackIcon />}
-                                                color="error"
-                                                sx={STYLES.CANCEL_REPORT_BUTTON_SX}>
-                                                <Trans i18nKey={props.risk.occurred ? "my_risks.claim_reported" : "my_risks.claim_report"}/>
-                                            </Button>
-                                        )}
-
+                                        {
+                                            props.risk.status !== RiskStatusEnum.AGREEMENT
+                                                ?   (
+                                                        <Button
+                                                            variant="outlined"
+                                                            disabled={props.risk.status !== RiskStatusEnum.DRAFT && props.risk.status !== RiskStatusEnum.WITHDRAWN}
+                                                            onClick={() => setOpenRiskEditDialog(true)}
+                                                            size="small"
+                                                            startIcon={<EditIcon />}
+                                                            sx={STYLES.EDIT_BUTTON_SX}>
+                                                            <Trans i18nKey="my_risks.edit" />
+                                                        </Button>
+                                                    )
+                                                :   (
+                                                        <Button
+                                                            disabled={props.risk.occurred}
+                                                            variant="outlined"
+                                                            onClick={(e) => handleReportDamage(e, props.risk)}
+                                                            startIcon={<FeedbackIcon />}
+                                                            color="error"
+                                                            sx={STYLES.CANCEL_REPORT_BUTTON_SX}>
+                                                            <Trans i18nKey={props.risk.occurred ? "my_risks.claim_reported" : "my_risks.claim_report"}/>
+                                                        </Button>
+                                                    )
+                                        }
                                         <IconButton
                                             size="small"
                                             disabled={deletionIsDisabled}
@@ -327,7 +325,7 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                     </Card>
                 </AccordionSummary>
                 <AccordionDetails sx={{ padding: 0, borderTop: "none" }}>
-                    <MyRiskRowDetails risk={props.risk} />
+                    <MyRiskRowDetails risk={props.risk} taken={props.taken} />
                 </AccordionDetails>
                 <MyRiskEditDialog
                     open={openRiskEditDialog}

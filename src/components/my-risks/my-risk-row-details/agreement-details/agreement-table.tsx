@@ -19,7 +19,6 @@ export const formatEuro = (value?: number) => {
 
 export interface AgreementTableProps {
     riskAgreement: RiskAgreement | null;
-
 }
 
 export const AgreementTable = (props: AgreementTableProps) => {

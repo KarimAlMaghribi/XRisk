@@ -18,7 +18,7 @@ export const selectRiskAgreementsByRiskId = (state: RootState, riskId: string) =
 
 
 
-export const selectRiskAgreementByChatId = (chatId: string) => (state: RootState) =>
+export const selectRiskAgreementByChatId = (chatId: string) => (state: RootState) => 
     state.myRiskAgreements.riskAgreements.filter(
         riskAgreement => riskAgreement.chatId === chatId
     )[0];
