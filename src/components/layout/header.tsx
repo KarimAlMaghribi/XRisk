@@ -18,6 +18,7 @@ import { theme } from "../../theme";
 import { QuickMenuButtons } from "./header-elements/quick-menu-buttons";
 import { useTranslation, Trans } from "react-i18next";
 import i18n from '../../utils/i18n';
+import { keyframes } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
 
 export function Header() {
@@ -37,6 +38,16 @@ export function Header() {
         
         
     };
+
+    // Define animation
+    const scrollRight = keyframes`
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+        `;
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -128,11 +139,6 @@ export function Header() {
                                         <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
                                     </MenuItem>
                             ))}
-                            <Typography>
-                                {<Trans i18nKey={"homepage.rubber_stamp"}>
-
-                                </Trans>}
-                            </Typography>
                         </Menu>
                     </Box>
                     <Typography
@@ -206,7 +212,16 @@ export function Header() {
                     />
                 </Toolbar>
             </Container>
-            <Typography color="orange" align='center'><Trans i18nKey={"homepage.rubber_stamp"}/></Typography>
+            <Typography
+                variant="h6"
+                sx={{
+                    color: 'orange',
+                    fontWeight: 'bold',
+                    animation: `${scrollRight} 20s linear infinite`,
+                }}
+                >
+            <Trans i18nKey="homepage.rubber_stamp" />
+            </Typography>
         </AppBar>
     );
 }

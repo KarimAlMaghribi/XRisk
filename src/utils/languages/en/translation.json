@@ -82,6 +82,15 @@
     "couple_figure_text": "Amount in security",
     "contract_figure_text": "Closed contracts/risk transfers"
   },
+  "risk": {
+    "publisher_profile": {
+      "provider": "Provider",
+      "telephone": "Telephone",
+      "email": "Email",
+      "adress": "Adress",
+      "introduction": "Introduction"
+    }
+  },
   "risk_exchange": {
     "define_risk": "DEFINE RISK!",
     "filter_message": "Filter the preferred risk",
@@ -310,7 +319,8 @@
       "you_before": "You, before "
     },
     "chat_sender": {
-      "placeholder": "Type a message..."
+      "placeholder": "Type a message...",
+      "popper_text": "Write a message as usual and click here to send it to the xRisk chatbot"
     },
     "chat_sidebar": {
       "search_chats": "Search Chats"

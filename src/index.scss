@@ -2,20 +2,3 @@ body {
   margin: 0;
   padding: 0;
 }
-
-.rubber {
-  box-shadow: 0 0 0 3px rgb(0, 17, 255), 0 0 0 2px rgb(17, 0, 255) inset;  
-  border: 2px solid transparent;
-  border-radius: 4px;
-  display: inline-block;
-  padding: 5px 2px;
-  line-height: 22px;
-  color: rgb(255, 0, 0);
-  font-size: 24px;
-  font-family: 'Black Ops One', cursive;
-  text-transform: uppercase;
-  text-align: center;
-  opacity: 1;
-  width: 155px;
-  transform: rotate(-10deg);
-}

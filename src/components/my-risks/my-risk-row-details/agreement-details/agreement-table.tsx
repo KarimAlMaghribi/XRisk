@@ -58,34 +58,33 @@ export const AgreementTable = (props: AgreementTableProps) => {
                     <TableRow sx={{ backgroundColor: "#f0f0f0" }}>
                         <TableCell></TableCell>
                         <TableCell sx={{ fontWeight: "bold" }}>Wert</TableCell>
-                        <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+                        
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     <TableRow hover>
                         <TableCell sx={{ fontWeight: "bold" }}>Versicherungssumme</TableCell>
                         <TableCell>{formatEuro(props.riskAgreement?.insuranceSum)}</TableCell>
-                        <TableCell>{getStatus("insuranceSum", props.riskAgreement).text}</TableCell>
+                        
                     </TableRow>
                     <TableRow hover>
                         <TableCell sx={{ fontWeight: "bold" }}>Kosten</TableCell>
                         <TableCell>{formatEuro(props.riskAgreement?.costs)}</TableCell>
-                        <TableCell>{getStatus("costs", props.riskAgreement).text}</TableCell>
+                        
                     </TableRow>
                     <TableRow hover>
                         <TableCell sx={{ fontWeight: "bold" }}>Zeitspanne</TableCell>
                         <TableCell>{props.riskAgreement?.timeframe}</TableCell>
-                        <TableCell>{getStatus("timeframe", props.riskAgreement).text}</TableCell>
+                        
                     </TableRow>
                     <TableRow hover>
                         <TableCell sx={{ fontWeight: "bold" }}>Beweismittel</TableCell>
                         <TableCell>{props.riskAgreement?.evidence}</TableCell>
-                        <TableCell>{getStatus("evidence", props.riskAgreement).text}</TableCell>
+                        
                     </TableRow>
                     <TableRow hover>
                         <TableCell sx={{ fontWeight: "bold" }}>Weitere Details</TableCell>
                         <TableCell>{props.riskAgreement?.details}</TableCell>
-                        <TableCell>{getStatus("details", props.riskAgreement).text}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

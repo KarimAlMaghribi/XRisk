@@ -82,6 +82,15 @@
     "couple_figure_text": "Betrag in Absicherung",
     "contract_figure_text": "Geschlossene Risikotransfers"
   },
+  "risk": {
+    "publisher_profile": {
+      "provider": "Anbieter",
+      "telephone": "Telefonnummer",
+      "email": "Email",
+      "adress": "Adresse",
+      "introduction": "Vorstellung"
+    }
+  },
   "risk_exchange": {
     "define_risk": "RISIKO DEFINIEREN!",
     "filter_message": "Filter die Risiken nach deinen Wünschen und Interessen",
@@ -309,7 +318,8 @@
       "you_before": "Du, vor "
     },
     "chat_sender": {
-      "placeholder": "Gebe eine Nachricht ein..."
+      "placeholder": "Gebe eine Nachricht ein...",
+      "popper_text": "Schreibe wie gewohnt eine Nachricht und klicke hier, um sie an den xRisk-Chatbot zu senden"
     },
     "chat_sidebar": {
       "search_chats": "Durchsuche Chats"

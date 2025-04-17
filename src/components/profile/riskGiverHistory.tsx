@@ -18,6 +18,9 @@ export const RiskGiverHistory = (props: HistoryProps) => {
             <Typography variant="subtitle1" gutterBottom fontWeight="bold">
                 Risikoabgabe-Historie
             </Typography>
+            <Typography variant="subtitle1" gutterBottom>
+            Zeigt den Ausgang der letzten 5 abgegebenen Risiken des Nutzers.
+            </Typography>
             <Divider />
             <br />
             {
