@@ -227,17 +227,12 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         </Tooltip>
                     </Grid2>
 
-                    <Grid2 size={{xs:12, md:12, lg:12}}>
-                        <Box
-                            display="flex"
-                            justifyContent="flex-end"
-                            sx={{ width: "100%" }}
-                        >
-                            <Box sx={{ maxWidth: "600px", width: "100%" }}>
-                                <RiskGiverHistory uid={userProfile.id} />
-                            </Box>
+                    <Grid2  sx={{xs:12, md:8, ml: { md: 'auto' } }}>
+                        <Box sx={{ width: "100%" }}>
+                            <RiskGiverHistory uid={userProfile.id} />
                         </Box>
                     </Grid2>
+
                 </Grid2>
                 <Grid2 container spacing={2}>
                     

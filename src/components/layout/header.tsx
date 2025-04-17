@@ -212,16 +212,20 @@ export function Header() {
                     />
                 </Toolbar>
             </Container>
-            <Typography
-                variant="h6"
-                sx={{
-                    color: 'orange',
-                    fontWeight: 'bold',
-                    animation: `${scrollRight} 20s linear infinite`,
-                }}
+            <Box sx={{ overflow: 'hidden', width: '100%' }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        color: 'orange',
+                        fontWeight: 'bold',
+                        animation: `${scrollRight} 20s linear infinite`,
+                        whiteSpace: 'nowrap',
+                        display: 'inline-block',
+                    }}
                 >
-            <Trans i18nKey="homepage.rubber_stamp" />
-            </Typography>
+                    <Trans i18nKey="homepage.rubber_stamp" />
+                </Typography>
+            </Box>
         </AppBar>
     );
 }
