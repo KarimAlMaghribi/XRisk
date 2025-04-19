@@ -14,8 +14,6 @@ export interface AgreementDetailsProps {
 }
 
 export const AgreementDetails = (props: AgreementDetailsProps) => {
-
-
     return (
         <>
             <Grid container>

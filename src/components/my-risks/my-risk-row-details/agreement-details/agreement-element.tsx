@@ -29,19 +29,30 @@ export const AgreementElement = (props: AgreementElementProps) => {
         };
     }, [dispatch]);
 
-    const riskAgreement: RiskAgreement | undefined = useSelector(selectRiskAgreementByChatId(props.chat.id));
+    const riskAgreements = useSelector(
+        selectRiskAgreementByChatId(props.chat.id)
+    );
 
-    const agreed = riskAgreement &&
-        Object.values(riskAgreement.riskGiverApprovals).every((v) => v) &&
-        Object.values(riskAgreement.riskTakerApprovals).every((v) => v);
+    const displayAgreements: RiskAgreement[] =
+        riskAgreements?.length === 1
+            ? riskAgreements
+            : riskAgreements?.filter(
+            (agreement) =>
+                Object.values(agreement.riskGiverApprovals).every((v) => v) &&
+                Object.values(agreement.riskTakerApprovals).every((v) => v)
+        ) || [];
+
+    if (displayAgreements.length === 0) {
+        return null;
+    }
+
 
     return (
         <>
-            {
-                agreed &&
-                <Grid container>
+            {displayAgreements.map((agreement) => (
+                <Grid container spacing={2} key={agreement.id}>
                     <Grid size={4}>
-                        <Grid container>
+                        <Grid container spacing={1}>
                             <Grid size={4}>
                                 <Typography variant="subtitle1" fontWeight="bold">
                                     {t("terms.riskgiver")}
@@ -52,19 +63,19 @@ export const AgreementElement = (props: AgreementElementProps) => {
                             </Grid>
                             <Grid size={8}>
                                 <Typography variant="subtitle1">
-                                    {props.chat?.riskProvider?.name}
+                                    {props.chat.riskProvider?.name}
                                 </Typography>
                                 <Typography variant="subtitle1">
-                                    {new Date(props.chat?.lastActivity || "").toLocaleString()}
+                                    {new Date(props.chat.lastActivity || "").toLocaleString()}
                                 </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid size={8}>
-                        <AgreementTable riskAgreement={riskAgreement}/>
+                        <AgreementTable riskAgreement={agreement} />
                     </Grid>
                 </Grid>
-            }
+            ))}
         </>
     );
 };
