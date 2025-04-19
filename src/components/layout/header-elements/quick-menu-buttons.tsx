@@ -84,16 +84,13 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
   useEffect(() => {
     if (!userId) return;
 
-    // Reference to the notifications subcollection
     const notificationsRef = collection(
       db,
       `notifications/${userId}/notifications`
     );
 
-    // Create a query to order by time (assuming 'timestamp' field exists)
     const orderedQuery = query(notificationsRef, orderBy("createdAt", "desc")); // "desc" for newest first
 
-    // Real-time listener with ordering
     const unsubscribe = onSnapshot(orderedQuery, (snapshot) => {
       const newNotifications = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -103,7 +100,6 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
       setNotifications(newNotifications);
     });
 
-    // Cleanup the listener when the component unmounts
     return () => unsubscribe();
   }, [userId]);
 

@@ -1,6 +1,10 @@
-// In App.tsx anpassen:
+// src/App.tsx
 import React, { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
+import { theme } from "./theme";
+import { MobileWorkInProgress } from "./mobile-work-inprogress";
+
 import { Landing } from "./pages/landing/landing";
 import { SignIn } from "./pages/authentication/sign-in";
 import { SignUp } from "./pages/authentication/sign-up";
@@ -27,6 +31,7 @@ import FooterSolutionDescriptions from "./pages/formalities/solutions";
 import FooterResourceDescriptions from "./pages/formalities/resources";
 import FooterSupportDescriptions from "./pages/formalities/support";
 import FooterCompanyDescriptions from "./pages/formalities/company";
+
 import i18n from "./utils/i18n";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "./store/store";
@@ -35,8 +40,9 @@ import { fetchUserProfile } from "./store/slices/user-profile/thunks";
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
-
     const [language, setLanguage] = useState(i18n.language);
+
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -44,15 +50,18 @@ function App() {
                 dispatch(fetchUserProfile());
             }
         });
-
         return () => unsubscribe();
     }, [dispatch]);
 
     useEffect(() => {
         i18n.on("languageChanged", (lng) => {
-            setLanguage(lng); // Forciert einen Re-Render
+            setLanguage(lng);
         });
     }, [i18n.language]);
+
+    if (isMobile) {
+        return <MobileWorkInProgress />;
+    }
 
     return (
         <Layout>

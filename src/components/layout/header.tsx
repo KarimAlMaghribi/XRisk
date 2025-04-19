@@ -35,8 +35,6 @@ export function Header() {
     const languages: Record<"en" | "de", { label: string; name: string; countryCode: string }> = {
         en: { label: "EN", name: "English", countryCode: "US" },
         de: { label: "DE", name: "Deutsch", countryCode: "DE" },
-        
-        
     };
 
     // Define animation

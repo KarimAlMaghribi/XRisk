@@ -13,7 +13,6 @@ export const Banner = () => {
                 backgroundSize: "cover",
                 height: "70vh",
                 position: "relative", // Enable absolute positioning inside
-                //padding: "5% 5%",
             }}
         >
             <Typography
