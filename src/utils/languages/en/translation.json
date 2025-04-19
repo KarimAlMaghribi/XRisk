@@ -159,17 +159,15 @@
     "question3": "How can I get help?",
     "question4": "How can I report an error?",
     "question5": "What types of risks can I manage on this platform?",
-    "question6": "Is there a mobile app for this platform?",
-    "question7": "How is my data protected on this platform?",
-    "question8": "Can I test the platform before registering?",
+    "question6": "How is my data protected on this platform?",
+    "question7": "Can I test the platform before registering?",
     "answer1": "This platform is designed to help you efficiently manage your personal risks. It provides tools and resources to assist you in assessing, monitoring, and minimizing risks.",
     "answer2": "To use this platform, you must first register and log in. After registration, you can create your risk profile and use the various risk management features.",
     "answer3": "You can get help by contacting our support team via the contact form provided on our website. Our team is available to answer all your questions and assist you.",
     "answer4": "If you discover a technical error on the platform, you can report it to our support team. Please use the special error reporting form on our website so that we can fix the issue as quickly as possible.",
     "answer5": "The platform supports the management of a variety of personal risks, including financial, legal, and personal security risks. You can create and manage specific risk scenarios tailored to your individual needs.",
-    "answer6": "Yes, we offer a mobile application that you can download to your smartphone. This app allows you to manage your risks on the go and receive real-time risk updates.",
-    "answer7": "Your data is protected with the latest security technologies. We use SSL encryption for all data transmissions and store your data on secure servers. Data protection and security are our top priorities.",
-    "answer8": "Yes, we offer a demo version of the platform that you can use to familiarize yourself with the features and interface before registering. Visit our website to access the demo."
+    "answer6": "Your data is protected with the latest security technologies. We use SSL encryption for all data transmissions and store your data on secure servers. Data protection and security are our top priorities.",
+    "answer7": "Yes, we offer a demo version of the platform that you can use to familiarize yourself with the features and interface before registering. Visit our website to access the demo."
   },
   "footer": {
     "product": "Product",

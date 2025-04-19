@@ -26,10 +26,6 @@ export const FAQs = () => {
             answer: "Die Plattform unterstützt das Management einer Vielzahl von privaten Risiken, einschließlich finanzieller, rechtlicher und persönlicher Sicherheitsrisiken. Sie können spezifische Risikoszenarien erstellen und verwalten, die auf Ihre individuellen Bedürfnisse zugeschnitten sind."
         },
         {
-            question: "Gibt es eine mobile App für diese Plattform?",
-            answer: "Ja, wir bieten eine mobile Anwendung an, die Sie auf Ihr Smartphone herunterladen können. Diese App bietet Ihnen die Möglichkeit, Ihre Risiken auch unterwegs zu managen und sich über Risikoaktualisierungen in Echtzeit informieren zu lassen."
-        },
-        {
             question: "Wie werden meine Daten auf dieser Plattform geschützt?",
             answer: "Ihre Daten werden mit modernsten Sicherheitstechnologien geschützt. Wir verwenden SSL-Verschlüsselung für alle Datenübertragungen und speichern Ihre Daten auf sicheren Servern. Datenschutz und -sicherheit sind für uns von höchster Priorität."
         },
