@@ -42,7 +42,7 @@ export const ChatHeader = () => {
     const [openRiskAgreementDialog, setOpenRiskAgreementDialog] = React.useState(false);
     const risk: Risk | undefined = useSelector((state: RootState) => selectRiskById(state, activeChat?.riskId));
     const [openProfile, setOpenProfile] = React.useState(false);
-    const [opposingPublisherProfile, setOpposingPublisherProfile] = React.useState<Publisher | null>(null);
+    const [opposingPublisherProfile, setOpposingPublisherProfile] = React.useState<Publisher | null | undefined>(null);
     const [openRiskDetails, setOpenRiskDetails] = React.useState(false);
     const [openCancelDealDialog, setOpenCancelDealDialog] = React.useState(false);
 
@@ -170,8 +170,7 @@ export const ChatHeader = () => {
                                                 title={`${t(
                                                     "chat.chat_header.take_a_look_at_the_edited_agreement"
                                                 )}`}
-                                                followCursor
-                                            >
+                                                followCursor>
                                                 <Typography
                                                     variant="body2"
                                                     color="textSecondary"
@@ -180,8 +179,7 @@ export const ChatHeader = () => {
                                                         marginRight: "10px",
                                                         fontWeight: "bold",
                                                         cursor: "pointer",
-                                                    }}
-                                                >
+                                                    }}>
                                                     <Trans
                                                         i18nKey={
                                                             "chat.chat_header.negotiaion_partner_signaled"
@@ -269,6 +267,7 @@ export const ChatHeader = () => {
                 open={openProfile}
                 setOpen={setOpenProfile}
                 publisher={opposingPublisherProfile}
+                setPublisher={setOpposingPublisherProfile}
             />
             <RiskStepperDialog
                 open={openRiskAgreementDialog}

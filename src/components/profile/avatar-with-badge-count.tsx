@@ -27,14 +27,8 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
 }) => {
     const { risks, loading, error } = useAgreedRisks(uid);
 
-    let checkUser = uid === auth.currentUser?.uid;
-
-    const calcSuccessfulTransfers = () => {
-        return risks.length;
-    };
-
     const badgeHover: string = name
-        ? `${name} hat ${calcSuccessfulTransfers()} erfolgreiche Risiko-Transfers abgeschlossen`
+        ? `${name} hat ${risks.length} erfolgreiche Risiko-Transfers abgeschlossen`
         : "Anzahl abgeschlossener Risikotransfers";
 
     const avatar = (
@@ -48,17 +42,9 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
         </Tooltip>
     );
 
-    if (!uid) {
+    if (!uid || uid === auth.currentUser?.uid) {
         return avatar;
     }
-
-    if (checkUser)
-        return(
-            <>
-                {avatar}
-            </>
-      
-    );
 
     return (
         <Badge
@@ -81,7 +67,7 @@ export const AvatarWithBadge: React.FC<AvatarWithBadgeProps> = ({
                             fontSize: "0.75rem",
                             lineHeight: 1,
                         }}>
-                        {!loading && !error ? calcSuccessfulTransfers() : "0"}
+                        {!loading && !error ? risks.length : "0"}
                     </Typography>
                 </Tooltip>
             }>

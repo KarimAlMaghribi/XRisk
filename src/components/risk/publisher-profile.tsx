@@ -1,18 +1,15 @@
 import {Box, Button, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import {Publisher} from "../../models/Publisher";
-import { PaperComponent } from "../ui/draggable-dialog";
+import {PaperComponent} from "../ui/draggable-dialog";
 import React, {useEffect} from "react";
 import {useSnackbarContext} from "../snackbar/custom-snackbar";
 import Grid from "@mui/material/Grid2";
-import {ProfileInformation} from "../../store/slices/user-profile/types";
-import {useSelector} from "react-redux";
-import {selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {UserDeletionDialog} from "./user-deletion-dialog";
 import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
 import {RiskGiverHistory} from "../profile/riskGiverHistory";
 import {LossRatio} from "./loss-ratio";
-import { Trans } from "react-i18next";
+import {Trans} from "react-i18next";
 
 export interface PublisherProfileProps {
     open: boolean;
@@ -22,15 +19,17 @@ export interface PublisherProfileProps {
 }
 
 export const PublisherProfile = (props: PublisherProfileProps) => {
-    const { showSnackbar } = useSnackbarContext();
+    const {showSnackbar} = useSnackbarContext();
     const elementBottomMargin: number = 20;
-    const profile: ProfileInformation | null = useSelector(selectProfileInformation);
     const [openUserDeletionDialog, setOpenUserDeletionDialog] = React.useState<boolean>(false);
 
     useEffect(() => {
         if (props.open && !props.publisher) {
             console.error("Publisher not found!");
-            showSnackbar("Darstellung fehlerhaft!", "Anbieterdaten konnten nicht dargestellt werden", {vertical: "top", horizontal: "center"},"error");
+            showSnackbar("Darstellung fehlerhaft!", "Anbieterdaten konnten nicht dargestellt werden", {
+                vertical: "top",
+                horizontal: "center"
+            }, "error");
         }
     }, [props.publisher]);
 
@@ -58,7 +57,7 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                         m: 0,
                     },
                 }}>
-                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                <DialogTitle style={{cursor: 'move'}} id="draggable-dialog-title">
                     {props.publisher?.name}
                 </DialogTitle>
                 <DialogContent>
@@ -73,41 +72,41 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
                         </Box>
                         <Grid container>
                             <Grid size={4}>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}} >
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     <Trans i18nKey={"risk.publisher_profile.provider"}></Trans>
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     <Trans i18nKey={"risk.publisher_profile.telephone"}></Trans>
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     <Trans i18nKey={"risk.publisher_profile.email"}></Trans>
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     <Trans i18nKey={"risk.publisher_profile.adress"}></Trans>
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px`}}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     <Trans i18nKey={"risk.publisher_profile.introduction"}></Trans>
                                 </Typography>
                             </Grid>
                             <Grid size={8}>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     {props.publisher?.name || "-"}
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     {props.publisher?.phoneNumber || "-"}
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     {props.publisher?.email || "-"}
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     {props.publisher?.address || "-"}
                                 </Typography>
-                                <Typography variant="body2" sx={{ marginBottom: `${elementBottomMargin}px` }}>
+                                <Typography variant="body2" sx={{marginBottom: `${elementBottomMargin}px`}}>
                                     {props.publisher?.description || "-"}
                                 </Typography>
                             </Grid>
                             <Grid size={12}>
-                                <RiskGiverHistory uid={props.publisher?.uid} />
+                                <RiskGiverHistory uid={props.publisher?.uid}/>
                             </Grid>
                             <Grid size={12}>
                                 <LossRatio uid={props.publisher?.uid}/>
@@ -129,7 +128,7 @@ export const PublisherProfile = (props: PublisherProfileProps) => {
             <UserDeletionDialog
                 open={openUserDeletionDialog}
                 setOpen={setOpenUserDeletionDialog}
-                publisher={props.publisher} />
+                publisher={props.publisher}/>
         </>
     )
 }
