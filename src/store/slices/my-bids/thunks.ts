@@ -1,5 +1,16 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, setDoc, where} from "firebase/firestore";
+import {
+    collection,
+    deleteDoc,
+    doc,
+    getDocs,
+    limit,
+    onSnapshot,
+    orderBy,
+    query,
+    setDoc,
+    where
+} from "firebase/firestore";
 import {auth, db} from "../../../firebase_config";
 import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {ActionTypes, Chat, ChatMessage} from "./types";
@@ -149,6 +160,59 @@ export const fetchMyChats = createAsyncThunk<Chat[], void, { rejectValue: string
         }
     }
 );
+
+export const fetchMyChatsWithDeletion = createAsyncThunk<Chat[], void, { rejectValue: string }>(
+    ActionTypes.FETCH_MY_CHATS,
+    async (_, { rejectWithValue }) => {
+        try {
+            const userUid = auth.currentUser?.uid;
+            if (!userUid) throw new Error("User not authenticated");
+
+            const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
+
+            // 1. alle Chats holen, bei denen ich Provider oder Taker bin
+            const providerQuery = query(chatsRef, where("riskProvider.uid", "==", userUid));
+            const takerQuery    = query(chatsRef, where("riskTaker.uid",    "==", userUid));
+
+            const [providerSnap, takerSnap] = await Promise.all([
+                getDocs(providerQuery),
+                getDocs(takerQuery),
+            ]);
+
+            const allChatDocs = [...providerSnap.docs, ...takerSnap.docs];
+
+            const validChats: Chat[] = [];
+
+            // 2. bei jedem Chat prüfen, ob es mindestens eine Message gibt
+            for (const chatDoc of allChatDocs) {
+                const chatId = chatDoc.id;
+                const messagesRef = collection(
+                    db,
+                    FirestoreCollectionEnum.CHATS,
+                    chatId,
+                    FirestoreCollectionEnum.MESSAGES
+                );
+                // Nur 1 Dokument abfragen – genügt zur Leere‑Prüfung
+                const msgSnap = await getDocs(query(messagesRef, limit(1)));
+
+                if (msgSnap.empty) {
+                    // 3. wenn leer, Chat komplett löschen
+                    await deleteDoc(doc(db, FirestoreCollectionEnum.CHATS, chatId));
+                } else {
+                    // 4. sonst in die Ergebnisliste aufnehmen
+                    const chatData = chatDoc.data() as Omit<Chat, "id">;
+                    validChats.push({ id: chatId, ...chatData });
+                }
+            }
+
+            return validChats;
+        } catch (error) {
+            console.error("Error fetching chats:", error);
+            return rejectWithValue("Error fetching chats");
+        }
+    }
+);
+
 
 export const sendMessage = createAsyncThunk<
     void,

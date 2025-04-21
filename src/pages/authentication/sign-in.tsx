@@ -14,7 +14,7 @@ import {AppDispatch, resetStore} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {useSnackbarContext} from "../../components/snackbar/custom-snackbar";
 import {fetchRisks} from "../../store/slices/risks/thunks";
-import {fetchMyChats} from "../../store/slices/my-bids/thunks";
+import {fetchMyChats, fetchMyChatsWithDeletion} from "../../store/slices/my-bids/thunks";
 import {Trans} from "react-i18next";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectLoadingStatus, selectProfileInformation} from "../../store/slices/user-profile/selectors";
@@ -71,10 +71,9 @@ export const SignIn = () => {
                 dispatch(fetchUserProfile());
                 dispatch(fetchAssesments(auth.currentUser?.uid!));
                 dispatch(fetchRisks());
-                dispatch(fetchMyChats());
+                dispatch(fetchMyChatsWithDeletion());
             }
         } catch (error) {
-            console.error(error);
             showSnackbar(
                 "Login fehlgeschlagen!",
                 "Email oder Passwort sind falsch.",
@@ -92,7 +91,7 @@ export const SignIn = () => {
             if (user?.refreshToken) {
                 dispatch(fetchAssesments(auth.currentUser?.uid!));
                 dispatch(fetchRisks())
-                dispatch(fetchMyChats());
+                dispatch(fetchMyChatsWithDeletion());
             }
         } catch (error) {
             console.error(error)
