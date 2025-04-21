@@ -29,7 +29,6 @@ export const useAgreedRisks = (uid?: string | null) => {
                     getDocs(query(raRef, where("riskTakerId", "==", uid))),
                 ]);
 
-                // Agreements deduplizieren und id korrekt zuweisen
                 const agreements: RiskAgreement[] = [...giverSnap.docs, ...takerSnap.docs]
                     .map(doc => {
                         const data = doc.data() as Omit<RiskAgreement, "id">;
@@ -39,7 +38,6 @@ export const useAgreedRisks = (uid?: string | null) => {
                             acc.some(a => a.riskId === ra.riskId) ? acc : [...acc, ra],
                         []);
 
-                // Nur vollständig bestätigte Agreements
                 const successfulIds = agreements
                     .filter(ra =>
                         Object.values(ra.riskGiverApprovals).every(v => v) &&

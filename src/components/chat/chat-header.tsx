@@ -1,12 +1,10 @@
-import {Badge, Box, Button, Divider, ListItem, ListItemAvatar, ListItemText, Stack,} from "@mui/material";
+import {Box, Button, Divider, ListItem, ListItemAvatar, ListItemText, Stack,} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import React, {useEffect} from "react";
-import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import HandshakeIcon from "@mui/icons-material/Handshake";
 import {useDispatch, useSelector} from "react-redux";
 import {selectActiveChat, selectActiveChatId, selectOpposingImagePath,} from "../../store/slices/my-bids/selectors";
-import {ChatStatusEnum} from "../../enums/ChatStatus.enum";
 import {Chat} from "../../store/slices/my-bids/types";
 import {AppDispatch, RootState} from "../../store/store";
 import {auth} from "../../firebase_config";
@@ -45,6 +43,14 @@ export const ChatHeader = () => {
     const [opposingPublisherProfile, setOpposingPublisherProfile] = React.useState<Publisher | null | undefined>(null);
     const [openRiskDetails, setOpenRiskDetails] = React.useState(false);
     const [openCancelDealDialog, setOpenCancelDealDialog] = React.useState(false);
+
+    const isRiskProvider = activeChat?.riskProvider?.uid === uid;
+    const opposingUid = isRiskProvider
+        ? activeChat?.riskTaker?.uid
+        : activeChat?.riskProvider?.uid;
+    const opposingName = isRiskProvider
+        ? activeChat?.riskTaker?.name
+        : activeChat?.riskProvider?.name;
 
     const t = i18next.t;
 
@@ -120,12 +126,14 @@ export const ChatHeader = () => {
                         <Box sx={{display: "flex", alignItems: "center"}}>
                             <ListItem key={activeChatId} dense disableGutters>
                                 <ListItemAvatar>
-                                  <AvatarWithBadge
-                                      avatarSize={52}
-                                      onClick={() => setOpenProfile(true)}
-                                      image={opposingImagePath}
-                                      alt={activeChat?.riskProvider?.name}
-                                      uid={activeChat?.riskProvider?.uid}/>
+                                    <AvatarWithBadge
+                                        avatarSize={52}
+                                        onClick={() => setOpenProfile(true)}
+                                        image={opposingImagePath}
+                                        alt={opposingName}
+                                        uid={opposingUid}
+                                        name={opposingName}
+                                    />
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={
@@ -140,14 +148,12 @@ export const ChatHeader = () => {
                         </Box>
                         <Box
                             sx={{flexGrow: 1, textAlign: "center"}}
-                            onClick={() => setOpenRiskDetails(true)}
-                        >
+                            onClick={() => setOpenRiskDetails(true)}>
                             <Typography
                                 variant="h5"
                                 fontWeight={600}
                                 ml={2}
-                                style={{cursor: "pointer"}}
-                            >
+                                style={{cursor: "pointer"}}>
                                 {activeChat?.topic}
                             </Typography>
                         </Box>
@@ -196,8 +202,7 @@ export const ChatHeader = () => {
                                                 title={`${t(
                                                     "chat.chat_header.both_party_agreed_tooltip"
                                                 )}`}
-                                                followCursor
-                                            >
+                                                followCursor>
                                                 <Typography
                                                     onClick={() => setOpenRiskDetails(true)}
                                                     variant="body2"
@@ -207,8 +212,7 @@ export const ChatHeader = () => {
                                                         marginRight: "10px",
                                                         fontWeight: "bold",
                                                         cursor: "pointer",
-                                                    }}
-                                                >
+                                                    }}>
                                                     <Trans
                                                         i18nKey={"chat.chat_header.both_party_agreed"}
                                                     ></Trans>
@@ -243,12 +247,10 @@ export const ChatHeader = () => {
                                 </Button>
                                 <ToolTip
                                     title={`${t("chat.chat_header.cancel_negotiation")}`}
-                                    followCursor
-                                >
+                                    followCursor>
                                     <IconButton
                                         onClick={deleteChat}
-                                        disabled={risk?.status === RiskStatusEnum.AGREEMENT}
-                                    >
+                                        disabled={risk?.status === RiskStatusEnum.AGREEMENT}>
                                         <NotInterestedIcon/>
                                     </IconButton>
                                 </ToolTip>
