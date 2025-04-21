@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid2";
 import React, {useEffect} from "react";
 // @ts-ignore
 import Logo from "../../assests/imgs/logo.png";
+import Background from "../../assests/imgs/login.jpg";
 import "./style.scss";
 import GoogleIcon from '@mui/icons-material/Google';
 import {Link, useNavigate} from "react-router-dom";
@@ -107,16 +108,16 @@ export const SignIn = () => {
         <div className="sign-in-card">
             <Card>
                 <Grid container>
-                    <Grid size={6} style={{backgroundColor: "#1F271B"}}>
-                        <div
-                            style={{display: "flex", alignItems: "center", padding: "20px"}}
-                        >
+                    {/*<Grid size={6} style={{backgroundColor: "#1F271B"}}>*/}
+                    <Grid size={6} style={{ backgroundImage: `url(${Background})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+                    <div
+                            style={{display: "flex", alignItems: "center", padding: "20px"}}>
                             <img
                                 src={Logo}
                                 alt="logo"
                                 style={{height: "30px", width: "39px", marginRight: "20px"}}
                             />
-                            <Typography variant="body1" style={{color: "white"}}>
+                            <Typography variant="body1" style={{color: "black"}}>
                                 <Trans i18nKey={"sign_in.we_make_risks_tradeable"}/>
                             </Typography>
                         </div>

@@ -7,7 +7,7 @@ export const FAQs = () => {
     const faqs: { question: string, answer: string }[] = [
         {
             question: "Was ist der Zweck dieser Plattform?",
-            answer: "Diese Plattform ist darauf ausgelegt, Ihnen ein effizientes Management Ihrer privaten Risiken zu ermöglichen. Sie bietet Werkzeuge und Ressourcen, die Sie bei der Bewertung, Überwachung und Minimierung von Risiken unterstützen."
+            answer: "xRisk ist ein Demonstrationsprojekt, das die Idee eines digitalen Marktplatzes für die Verteilung und Übernahme von Risiken erfahrbar machen soll. Nutzer können hier in einer simulierten Umgebung Risikoangebote einstellen, übernehmen oder gemeinsam verhandeln – ohne rechtliche oder finanzielle Bindung. Die Plattform dient ausschließlich zu Test- und Präsentationszwecken."
         },
         {
             question: "Wie kann ich diese Plattform nutzen?",
@@ -15,23 +15,15 @@ export const FAQs = () => {
         },
         {
             question: "Wie kann ich Hilfe erhalten?",
-            answer: "Sie können Hilfe erhalten, indem Sie unser Support-Team über das bereitgestellte Kontaktformular auf unserer Webseite kontaktieren. Unser Team steht Ihnen für alle Fragen zur Verfügung und hilft Ihnen gerne weiter."
+            answer: "Bei Fragen oder Problemen rund um die Plattform stehen wir dir gerne zur Verfügung. Schick uns einfach eine E-Mail an office@xrisk.info – wir melden uns so schnell wie möglich zurück."
         },
         {
             question: "Wie kann ich einen Fehler melden?",
-            answer: "Wenn Sie einen technischen Fehler auf der Plattform entdecken, können Sie diesen unserem Support-Team melden. Nutzen Sie dafür bitte das spezielle Formular für Fehlermeldungen auf unserer Webseite, damit wir den Fehler schnellstmöglich beheben können."
+            answer: "Fehler gefunden? Super! Wir freuen uns über jeden Hinweis, der hilft, die Plattform besser zu machen. Bitte sende eine kurze Beschreibung des Fehlers an office@xrisk.info – idealerweise mit Screenshot und Angabe, wo der Fehler aufgetreten ist."
         },
         {
             question: "Welche Arten von Risiken kann ich auf dieser Plattform managen?",
-            answer: "Die Plattform unterstützt das Management einer Vielzahl von privaten Risiken, einschließlich finanzieller, rechtlicher und persönlicher Sicherheitsrisiken. Sie können spezifische Risikoszenarien erstellen und verwalten, die auf Ihre individuellen Bedürfnisse zugeschnitten sind."
-        },
-        {
-            question: "Wie werden meine Daten auf dieser Plattform geschützt?",
-            answer: "Ihre Daten werden mit modernsten Sicherheitstechnologien geschützt. Wir verwenden SSL-Verschlüsselung für alle Datenübertragungen und speichern Ihre Daten auf sicheren Servern. Datenschutz und -sicherheit sind für uns von höchster Priorität."
-        },
-        {
-            question: "Kann ich die Plattform vor der Registrierung testen?",
-            answer: "Ja, wir bieten eine Demo-Version der Plattform an, die Sie nutzen können, um sich mit den Funktionen und dem Interface vertraut zu machen, bevor Sie sich registrieren. Besuchen Sie unsere Webseite, um Zugang zur Demo zu erhalten."
+            answer: "Grundsätzlich können alle legalen und simulierten Risiken auf der Plattform dargestellt werden – von kleineren Alltagsrisiken bis zu komplexeren Szenarien. Bitte beachte: Die Plattform ist ein Prototyp und dient ausschließlich der Veranschaulichung. Illegale, anstößige oder gefährliche Inhalte werden nicht toleriert."
         }
     ]
 
