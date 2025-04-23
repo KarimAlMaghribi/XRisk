@@ -87,14 +87,12 @@ export const DealDetails = ({risk, chats}: { risk: Risk; chats: Chat[] }) => {
                 <Grid size={4}>
                     <Typography
                         variant="body1"
-                        sx={{marginBottom: `${elementBottomMargin}px`}}
-                    >
+                        sx={{marginBottom: `${elementBottomMargin}px`}}>
                         <Trans i18nKey="my_risks.description"/>
                     </Typography>
                     <Typography
                         variant="body2"
-                        sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}
-                    >
+                        sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
                         {risk.description}
                     </Typography>
                 </Grid>
@@ -103,8 +101,7 @@ export const DealDetails = ({risk, chats}: { risk: Risk; chats: Chat[] }) => {
                         <>
                             <Typography
                                 variant="body1"
-                                sx={{marginBottom: `${elementBottomMargin}px`}}
-                            >
+                                sx={{marginBottom: `${elementBottomMargin}px`}}>
                                 <Trans i18nKey="my_risks.negotiation_partner"/>
                             </Typography>
                             <Box display="flex" alignItems="center">
@@ -113,8 +110,7 @@ export const DealDetails = ({risk, chats}: { risk: Risk; chats: Chat[] }) => {
                                         displayPublisherProfile(event, risk.publisher)
                                     }
                                     src={risk.publisher?.imagePath}
-                                    sx={{cursor: "pointer"}}
-                                />
+                                    sx={{cursor: "pointer"}}/>
                                 <Typography
                                     variant="body2"
                                     sx={{
@@ -122,8 +118,7 @@ export const DealDetails = ({risk, chats}: { risk: Risk; chats: Chat[] }) => {
                                         marginBottom: `${elementBottomMargin}px`,
                                         paddingTop: "20px",
                                         marginLeft: "10px",
-                                    }}
-                                >
+                                    }}>
                                     {risk.publisher?.name}
                                 </Typography>
                             </Box>
@@ -134,8 +129,7 @@ export const DealDetails = ({risk, chats}: { risk: Risk; chats: Chat[] }) => {
                         <>
                             <Typography
                                 variant="body1"
-                                sx={{marginBottom: `${elementBottomMargin}px`}}
-                            >
+                                sx={{marginBottom: `${elementBottomMargin}px`}}>
                                 <Trans i18nKey="my_risks.negotiations"/>
                             </Typography>
                             <DealsTableHeader/>

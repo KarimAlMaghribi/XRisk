@@ -202,6 +202,11 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
         props.risk.status === RiskStatusEnum.AGREEMENT ||
         props.risk.status === RiskStatusEnum.DEAL;
 
+    const truncateText = (text: string) => {
+        const maxLength = text.length < 36 ? text.length - 4 : 35;
+        return text.length <= maxLength ? text : text.substring(0, maxLength) + '...';
+    };
+
     return (
         <>
             <Accordion
@@ -230,8 +235,9 @@ export const MyRiskRow = (props: MyRiskRowProps) => {
                             </Grid>
                             <Grid size={{ xs: 0, lg: 0, xl: 2 }}>
                                 <Typography variant="body1" sx={STYLES.RISK_DESCRIPTION_TYPOGRAPHY_SX}>
-                                    {props.risk.description}
+                                    {truncateText(props.risk.description)} {/* Maximale Länge von 50 Zeichen */}
                                 </Typography>
+
                             </Grid>
                             <Grid size={{ xs: 0, lg: 4, xl: 3 }} textAlign="center" sx={STYLES.GRID_CHIP_SX}>
                                 {props.risk.type.map((element, idx) => (

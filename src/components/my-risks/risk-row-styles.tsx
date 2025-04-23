@@ -47,10 +47,18 @@ export const STYLES: {
     },
     RISK_DESCRIPTION_TYPOGRAPHY_SX: {
         marginRight: "5px",
-        whiteSpace: "nowrap",
-        overflow: "hidden",
+        maxHeight: "23px",  // Höhe auf 3 Zeilen begrenzen
+        overflowY: "hidden",  // Bei Bedarf scrollen
         textOverflow: "ellipsis",
     },
+    // RISK_DESCRIPTION_TYPOGRAPHY_SX: {
+    //     marginRight: "5px",
+    //     wordWrap: "break-word",
+    //     // whiteSpace: "nowrap",
+    //     overflow: "hidden",
+    //     textOverflow: "ellipsis",
+    //     maxWidth: "100%",
+    // },
     EDIT_BUTTON_SX: { marginLeft: "10px" },
     CONTACT_BUTTON_SX: { marginLeft: "10px" },
     CANCEL_REPORT_BUTTON_SX: { marginLeft: "5px" },
