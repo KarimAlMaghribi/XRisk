@@ -16,14 +16,6 @@ export const fetchNotifications = createAsyncThunk(
     }
 );
 
-// export const addNotification = createAsyncThunk(
-//   "notifications/add",
-//   async (notification: Omit<Notification, "id">) => {
-//     const docRef = await addDoc(collection(db, "notifications"), notification);
-//     return { id: docRef.id, ...notification };
-//   }
-// );
-
 export let notificationsUnsubscribe: (() => void) | null = null;
 
 export const subscribeToNotifications = createAsyncThunk<
@@ -48,9 +40,6 @@ export const subscribeToNotifications = createAsyncThunk<
             notificationsUnsubscribe = onSnapshot(notificatinsRef, (snapshot) => {
                 const notifications = snapshot.docs
                     .map(doc => ({id: doc.id, ...doc.data()} as Notification))
-                // .filter(notification =>
-                //     notification.id === currentUserId
-                // );
                 dispatch(setNotifications(notifications));
             });
         } catch (error) {

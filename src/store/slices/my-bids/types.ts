@@ -16,6 +16,7 @@ export enum ActionTypes {
     DELETE_UNAGREED_CHATS = "myBids/deleteUnagreedChats",
     DELETE_CHATS_BY_UID = "myBids/deleteChatsByUid",
     FETCH_ALL_CHATS = "myBids/fetchAllChats",
+    CLEAN_OUTDATED_DEALS = "myBids/cleanOutdatedDeals",
 }
 
 export interface ChatMessage {

@@ -7,7 +7,7 @@ import {
     limit,
     onSnapshot,
     orderBy,
-    query,
+    query, serverTimestamp,
     setDoc,
     where
 } from "firebase/firestore";
@@ -16,6 +16,10 @@ import {FirestoreCollectionEnum} from "../../../enums/FirestoreCollectionEnum";
 import {ActionTypes, Chat, ChatMessage} from "./types";
 import {setChats, setMessages} from "./reducers";
 import {RootState} from "../../store";
+import {RiskAgreement} from "../../../models/RiskAgreement";
+import {addNotification} from "../my-notifications/thunks";
+import {Notification} from "../../../models/Notification";
+import {NotificationStatusEnum} from "../../../enums/Notifications.enum";
 
 export let messagesUnsubscribe: (() => void) | null = null;
 
@@ -410,6 +414,61 @@ export const updateRiskTakerAgreement = createAsyncThunk<
         } catch (error) {
             console.error("Error updating risk taker agreement:", error);
             return rejectWithValue("Error updating risk taker agreement");
+        }
+    }
+);
+
+export const cleanOutdatedDeals = createAsyncThunk<
+    void,
+    { riskAgreement: RiskAgreement },
+    { rejectValue: string }
+>(
+    ActionTypes.CLEAN_OUTDATED_DEALS,
+    async ({ riskAgreement }, { rejectWithValue, dispatch }) => {
+        try {
+            const chatsRef = collection(db, FirestoreCollectionEnum.CHATS);
+            const q = query(chatsRef, where("riskId", "==", riskAgreement.riskId));
+            const snapshot = await getDocs(q);
+
+            await Promise.all(
+                snapshot.docs.map(async docSnap => {
+                    const chatId = docSnap.id;
+                    if (chatId === riskAgreement.chatId) return;  // gültigen Chat überspringen
+
+                    const chatData = docSnap.data() as Chat;
+                    const uids = [
+                        chatData.riskProvider?.uid,
+                        chatData.riskTaker?.uid
+                    ].filter((u): u is string => !!u);
+
+                    const notificationPayload: Omit<Notification, "id"> = {
+                        message: `Das Risiko ${riskAgreement.title} wurde inzwischen von einem anderen Nutzer übernommen. Deine Verhandlung wurde daher automatisch beendet und der Chat gelöscht.`,
+                        chatroomId: chatId,
+                        createdAt: serverTimestamp(),
+                        status: NotificationStatusEnum.UNREAD,
+                    };
+
+                    uids.forEach(uid =>
+                        dispatch(addNotification({ uid, newNotification: notificationPayload }))
+                    );
+
+                    // 1) Alle Messages löschen
+                    const messagesRef = collection(
+                        db,
+                        FirestoreCollectionEnum.CHATS,
+                        chatId,
+                        FirestoreCollectionEnum.MESSAGES
+                    );
+                    const msgsSnap = await getDocs(messagesRef);
+                    await Promise.all(msgsSnap.docs.map(msgDoc => deleteDoc(msgDoc.ref)));
+
+                    // 2) Chat-Dokument löschen
+                    await deleteDoc(doc(db, FirestoreCollectionEnum.CHATS, chatId));
+                })
+            );
+        } catch (error) {
+            console.error("Error in cleanOutdatedDeals:", error);
+            return rejectWithValue("Fehler beim Bereinigen veralteter Deals");
         }
     }
 );

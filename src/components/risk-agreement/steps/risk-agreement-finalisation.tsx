@@ -3,18 +3,18 @@ import {Button, DialogActions, Typography} from "@mui/material";
 import {AgreementTable} from "../../my-risks/my-risk-row-details/agreement-details/agreement-table";
 import {RiskAgreement} from "../../../models/RiskAgreement";
 import confetti from "canvas-confetti";
-import {useNavigate} from "react-router-dom";
-import {auth} from "../../../firebase_config";
 import {Trans} from "react-i18next";
+import {AppDispatch} from "../../../store/store";
+import {useDispatch} from "react-redux";
+import {cleanOutdatedDeals} from "../../../store/slices/my-bids/thunks";
 
 export interface RiskAgreementFinalisationProps {
     handleClose: () => void;
     riskAgreement: RiskAgreement | null;
 }
 
-export const RiskAgreementFinalisation = (
-    props: RiskAgreementFinalisationProps
-) => {
+export const RiskAgreementFinalisation = (props: RiskAgreementFinalisationProps) => {
+    const dispatch: AppDispatch = useDispatch();
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
@@ -29,19 +29,12 @@ export const RiskAgreementFinalisation = (
                 origin: {y: 0.6},
             });
         }
-    }, []);
 
-    const navigate = useNavigate();
-
-    const handleToRiskOverview = () => {
-        const currentUserId = auth.currentUser?.uid;
-
-        if (currentUserId == props.riskAgreement?.riskGiverId) {
-            navigate("/my-risks");
-        } else {
-            navigate("/my-risks");
+        if (props.riskAgreement !== null) {
+            dispatch(cleanOutdatedDeals({riskAgreement: props.riskAgreement}));
         }
-    };
+
+    }, []);
 
     return (
         <>
