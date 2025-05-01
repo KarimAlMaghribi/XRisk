@@ -12,7 +12,6 @@ import {
     controllPrompt, 
     miscPrompt 
 } from "../../constants/prompts";
-import { toHaveFormValues } from "@testing-library/jest-dom/matchers";
 
 export class Chatbot {
     public chosenPrompt: string = "";
@@ -153,5 +152,4 @@ export class Chatbot {
     }
  
 }
- 
  

@@ -219,8 +219,7 @@ export function Header() {
                         animation: `${scrollRight} 20s linear infinite`,
                         whiteSpace: 'nowrap',
                         display: 'inline-block',
-                    }}
-                >
+                    }}>
                     <Trans i18nKey="homepage.rubber_stamp" />
                 </Typography>
             </Box>

@@ -31,6 +31,7 @@ import { selectProfileInformation } from "../../store/slices/user-profile/select
 import { v4 as uuid } from "uuid";
 import i18next from "i18next";
 import { Trans } from "react-i18next";
+import {useSnackbarContext} from "../snackbar/custom-snackbar";
 
 export const ChatSender = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -44,6 +45,7 @@ export const ChatSender = () => {
   const [chosenEmoji, setChosenEmoji] = React.useState<any>();
   const [msg, setMsg] = React.useState<any>("");
   const [aiLoading, setAILoading] = React.useState<boolean>(false);
+  const {showSnackbar} = useSnackbarContext();
   const [msgType, setMsgType] = React.useState<MessageTypeEnum>(
     MessageTypeEnum.TEXT
   );
@@ -129,17 +131,34 @@ export const ChatSender = () => {
     // Wait for classification to complete
     setTimeout(async () => {
       const promptMessages = chatbot.getMessages();
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: promptMessages,
-        temperature: 0.5,
-        top_p: 0.4,
-        presence_penalty: 0.4,
-        frequency_penalty: 0.0,
-      });
+      let response: any;
 
-      const xRiskChatbotResponse: string =
-        response.choices[0]?.message?.content || "";
+      try {
+        response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: promptMessages,
+          temperature: 0.5,
+          top_p: 0.4,
+          presence_penalty: 0.4,
+          frequency_penalty: 0.0,
+        });
+      } catch (e: any) {
+        showSnackbar(
+            "Fehler im Chatbot!",
+            "Es liegt eine Störung des LLM-Anbieters vor. Versuchen Sie es später erneut.",
+            {vertical: "top", horizontal: "center"},
+            "error"
+        );
+        if (e.status === 429) {
+             console.error("OpenAI-Fehler 429: Quota überschritten", e);
+         } else {
+            console.error("OpenAI-Fehler:", e);
+          }
+        setAILoading(false);
+        return;
+       }
+
+      const xRiskChatbotResponse: string = (response.choices[0]?.message?.content) || "";
 
       if (!xRiskChatbotResponse) {
         console.error("No response from OpenAI:", response);

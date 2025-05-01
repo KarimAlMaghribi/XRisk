@@ -20,7 +20,7 @@ import {
 import {messagesUnsubscribe, subscribeToMessages} from "../../store/slices/my-bids/thunks";
 import {selectImagePath} from "../../store/slices/user-profile/selectors";
 import ReactMarkdown from "react-markdown";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 
 export const ChatMessages = () => {
     const dispatch: AppDispatch = useDispatch();
