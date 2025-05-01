@@ -31,7 +31,7 @@ export const useRiskHistory = (uid: string | null | undefined) => {
                     const dateA = a.publishedAt ? new Date(a.publishedAt) : new Date(0);
                     const dateB = b.publishedAt ? new Date(b.publishedAt) : new Date(0);
                     return dateB.getTime() - dateA.getTime();
-                })
+                }).reverse();
 
                 const recentRisks: Risk[] = allRisks.slice(0, 5);
 
