@@ -21,7 +21,7 @@ import {ProfileInformation} from "../../store/slices/user-profile/types";
 import {selectLoadingStatus, selectProfileInformation} from "../../store/slices/user-profile/selectors";
 import {FetchStatus} from "../../types/FetchStatus";
 import {FetchStatusEnum} from "../../enums/FetchStatus.enum";
-import {fetchAssesments} from "../../store/slices/credit-assesment/thunks";
+import {fetchAssessments} from "../../store/slices/credit-assesment/thunks";
 
 export const SignIn = () => {
     const dispatch: AppDispatch = useDispatch();
@@ -74,7 +74,7 @@ export const SignIn = () => {
 
             if (user?.refreshToken) {
                 dispatch(fetchUserProfile());
-                dispatch(fetchAssesments(auth.currentUser?.uid!));
+                dispatch(fetchAssessments(auth.currentUser?.uid!));
                 dispatch(fetchRisks());
                 dispatch(fetchMyChatsWithDeletion());
             }
@@ -94,7 +94,7 @@ export const SignIn = () => {
             dispatch(checkUserProfileWithGoogle(user))
 
             if (user?.refreshToken) {
-                dispatch(fetchAssesments(auth.currentUser?.uid!));
+                dispatch(fetchAssessments(auth.currentUser?.uid!));
                 dispatch(fetchRisks())
                 dispatch(fetchMyChatsWithDeletion());
             }

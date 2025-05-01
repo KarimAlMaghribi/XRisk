@@ -71,7 +71,7 @@ export const LossRatio = (props: LossRatioProps) => {
             <Divider/>
             <br/>
             <Tooltip followCursor
-                     title={"Diese Quote gibt an, in welchem Verhältnis die erhaltenen Auszahlungen aus eingetretenen Schäden zu den gezahlten Gebühren für Risikoübernahmen stehen. Ein hoher Wert kann darauf hinweisen, dass der Nutzer häufig Schäden meldet, während ein niedriger Wert für eine verantwortungsbewusste Übernahme von Risiken spricht."}
+                     title={"Diese Quote gibt an, in welchem Verhältnis die erhaltenen Auszahlungen aus eingetretenen Schäden zu den gezahlten Gebühren für Risikoübernahmen stehen. Ein hoher Wert kann darauf hinweisen, dass der Nutzer häufig Schäden meldet, während ein niedriger Wert für eine verantwortungsbewusste Abgabe von Risiken spricht."}
                      placement="top">
                 <Typography marginLeft="10px" style={{cursor: "pointer"}}>
                     {lossRatio !== null

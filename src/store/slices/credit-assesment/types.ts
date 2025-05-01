@@ -9,8 +9,7 @@ export enum ActionTypes {
 }
 
 export interface MyCreditAssesmentState {
-    creditAssesments: CreditAssesment[];
-    activeAssesments: CreditAssesment | null;
-    error?: string;
+    list: CreditAssesment[];
+    error?: string | null;
     status: FetchStatus;
 }

@@ -1,19 +1,19 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {ActionTypes} from "./types";
 import {auth, db} from "../../../firebase_config";
-import {addDoc, collection, doc, getDoc, getDocs, onSnapshot, setDoc, updateDoc} from "firebase/firestore";
-import { CreditAssesment } from "../../../models/CreditAssesment";
+import {doc, getDoc, onSnapshot, setDoc, updateDoc} from "firebase/firestore";
+import {CreditAssesment} from "../../../models/CreditAssesment";
 import {setAssesments} from "./reducers";
 
 
-export const fetchAssesments = createAsyncThunk(
+export const fetchAssessments = createAsyncThunk(
     "myAssesments/fetchAssesments",
     async (userId: string) => {
         const docRef = doc(db, "creditAssesment", userId, "assesments", userId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-        return [{ id: docSnap.id, ...docSnap.data() }];
+            return [{id: docSnap.id, ...docSnap.data()}];
         }
         return [];
     }
@@ -42,12 +42,12 @@ export const subscribeToAssesments = createAsyncThunk<
 
             const assesmentDocRef = doc(db, "creditAssesment", currentUserId, "assesments", currentUserId);
             assesmentsUnsubscribe = onSnapshot(assesmentDocRef, (docSnap) => {
-            if (docSnap.exists()) {
-                const assesment = { id: docSnap.id, ...docSnap.data() } as CreditAssesment;
-                dispatch(setAssesments([assesment]));
-            } else {
-                dispatch(setAssesments([]));
-            }
+                if (docSnap.exists()) {
+                    const assesment = {id: docSnap.id, ...docSnap.data()} as CreditAssesment;
+                    dispatch(setAssesments([assesment]));
+                } else {
+                    dispatch(setAssesments([]));
+                }
             });
         } catch (error) {
             return rejectWithValue("Error subscribing to Creditassesments");
@@ -76,9 +76,9 @@ export const addAssesments = createAsyncThunk(
 
             const assesmentDocRef = doc(db, `creditAssesment/${uid}/assesments/${uid}`);
             await setDoc(assesmentDocRef, {
-            ...newAssesment,
-            uid: uid,
-            createdAt: new Date().toISOString(),
+                ...newAssesment,
+                uid: uid,
+                createdAt: new Date().toISOString(),
             });
 
 
@@ -92,36 +92,36 @@ export const addAssesments = createAsyncThunk(
 
 export const updateAssesment = createAsyncThunk(
     ActionTypes.UPDATE_MY_ASSESMENTS,
-    async (assesment: CreditAssesment, { rejectWithValue }) => {
-      try {
-        const user = auth.currentUser;
-  
-        if (!user) {
-          return rejectWithValue("User not authenticated");
+    async (assesment: CreditAssesment, {rejectWithValue}) => {
+        try {
+            const user = auth.currentUser;
+
+            if (!user) {
+                return rejectWithValue("User not authenticated");
+            }
+
+            if (!assesment.id) {
+                return rejectWithValue("Assessment ID is required");
+            }
+
+            // Step 1: Reference the specific document
+            const assesmentDocRef = doc(db, `creditAssesment/${user.uid}/assesments/${assesment.id}`);
+
+            // Step 2: Check if it exists
+            const docSnap = await getDoc(assesmentDocRef);
+            if (!docSnap.exists()) {
+                return rejectWithValue("Assessment not found");
+            }
+
+            // Step 3: Update it
+            const updatedData = {...assesment, updatedAt: new Date().toISOString()};
+            await updateDoc(assesmentDocRef, updatedData);
+
+            console.log("Assessment updated:", assesment.id);
+            return {...updatedData};
+        } catch (error) {
+            console.error("Error updating assessment:", error);
+            return rejectWithValue("Failed to update assessment");
         }
-  
-        if (!assesment.id) {
-          return rejectWithValue("Assessment ID is required");
-        }
-  
-        // Step 1: Reference the specific document
-        const assesmentDocRef = doc(db, `creditAssesment/${user.uid}/assesments/${assesment.id}`);
-  
-        // Step 2: Check if it exists
-        const docSnap = await getDoc(assesmentDocRef);
-        if (!docSnap.exists()) {
-          return rejectWithValue("Assessment not found");
-        }
-  
-        // Step 3: Update it
-        const updatedData = { ...assesment, updatedAt: new Date().toISOString() };
-        await updateDoc(assesmentDocRef, updatedData);
-  
-        console.log("Assessment updated:", assesment.id);
-        return { ...updatedData };
-      } catch (error) {
-        console.error("Error updating assessment:", error);
-        return rejectWithValue("Failed to update assessment");
-      }
     }
-  );
+);

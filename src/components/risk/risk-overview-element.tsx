@@ -28,10 +28,11 @@ import {RiskStatusEnum} from "../../enums/RiskStatus.enum";
 import {selectShowTaken} from "../../store/slices/risks/selectors";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {RiskDeletionDialog} from "./risk-deletion-dialog";
-import {fetchAssesments} from '../../store/slices/credit-assesment/thunks';
-import {selectAssesmentById} from '../../store/slices/credit-assesment/selectors';
+import {fetchAssessments} from '../../store/slices/credit-assesment/thunks';
+import {selectAssessmentById, selectLatestAcquisitionLimit} from '../../store/slices/credit-assesment/selectors';
 import {CreditAssesment} from '../../models/CreditAssesment';
 import {AvatarWithBadge} from "../profile/avatar-with-badge-count";
+import {EuroNumberFormat} from "../my-risks/creation-dialog/my-risk-creation-dialog";
 
 export const elementBottomMargin: number = 20;
 
@@ -42,6 +43,7 @@ export interface RiskOverviewElementProps {
 
 export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const user = auth.currentUser;
+    const acquisitionLimit: number = useSelector(selectLatestAcquisitionLimit);
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const profileInfo: ProfileInformation = useSelector(selectProfileInformation);
@@ -54,15 +56,25 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const [noAddressError, setNoAddressError] = React.useState(false);
     const [noPhoneError, setNoPhoneError] = React.useState(false);
     const [noImageError, setNoImageError] = React.useState(false);
+    const [creditAssessmentError, setCreditAssessmentError] = React.useState(false);
     const {showSnackbar} = useSnackbarContext();
     const userProfile: UserProfile = useSelector(selectUserProfile);
 
     const chats: Chat[] = useSelector(selectChats);
-    const uid = auth.currentUser?.uid!;
 
-    var assesment: CreditAssesment | null = useSelector((state: RootState) =>
-        selectAssesmentById(state, uid)
-    );
+    useEffect(() => {
+        const uid: string | undefined = auth.currentUser?.uid;
+
+        if (!uid) {
+            console.warn("User not authenticated or UID missing. Cannot guarantee creditAssessment Validation!", user);
+            setCreditAssessmentError(true);
+            return;
+        }
+
+        if (acquisitionLimit === 0) {
+            dispatch(fetchAssessments(uid));
+        }
+    }, []);
 
     useEffect(() => {
         if (noAddressError) {
@@ -107,18 +119,6 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             return;
         }
     }, [noAddressError, noPhoneError, noImageError]);
-
-    const getAssesments = async (uid: string) => {
-        try {
-            const resultAction = await dispatch(fetchAssesments(uid!));
-            const assesments = resultAction.payload;
-
-            console.log("Assesments:", assesments);
-            return assesments;
-        } catch (err) {
-            console.error("Failed to fetch assessments:", err);
-        }
-    };
 
     const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
         if (isExpanded) {
@@ -184,9 +184,8 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             return;
         }
 
-        // Check whether acquisition limit is valid or not
-        if (assesment?.acquisitionLimit! <= selectedRisk.value) {
-            showSnackbar("Niedrige Übernahmelimit", "Konnte Verhandlung nicht starten, da die Übernahmelimit kleiner ist als die Absicherungssumme.", {
+        if (!creditAssessmentError && acquisitionLimit <= selectedRisk.value) {
+            showSnackbar("Niedrige Bonität", `Konnte Verhandlung nicht starten, da das Übernahmelimit (${acquisitionLimit.toFixed(2)}€) kleiner als die Absicherungssumme (${selectedRisk.value.toFixed(2)}€) ist.`, {
                 vertical: "top",
                 horizontal: "center"
             }, "error");
