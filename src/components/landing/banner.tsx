@@ -1,10 +1,26 @@
 import cover from "../../assests/imgs/desert_1-min.png";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
+import {Link, Typography} from "@mui/material";
 import { Trans } from "react-i18next";
+import {getDownloadURL, getStorage, ref} from "firebase/storage";
 
 export const Banner = () => {
+    const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const storage = getStorage();
+        const pdfRef = ref(
+            storage,
+            "slides/Präsentation Seniorenkolleg Uni Leipzig 24.04.25.pdf"
+        );
+        getDownloadURL(pdfRef)
+            .then((url) => setPdfUrl(url))
+            .catch((error) =>
+                console.error("Fehler beim Laden der PDF-URL:", error)
+            );
+    }, []);
+
     return (
         <Box
             sx={{
@@ -38,6 +54,26 @@ export const Banner = () => {
                 }}
             >
                 <Trans i18nKey="homepage.figure_text2" />
+            </Typography>
+            <Typography
+                variant="body1"
+                color="black"
+                sx={{ pl: { xs: 2, md: 10 }}}
+            >
+                Foliensatz{" "}
+                {pdfUrl ? (
+                    <Link
+                        href={pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="hover"
+                        sx={{ fontWeight: "bold" }}>
+                        hier
+                    </Link>
+                ) : (
+                    "lädt..."
+                )}{" "}
+                herunterladen
             </Typography>
         </Box>
     );
