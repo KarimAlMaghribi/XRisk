@@ -63,9 +63,6 @@ export const computeLiabilityLimit = (
         }
     }
 
-
-    console.log(ranking);
-
     if (ranking <= 5) {
         return 5000;
     } else if (ranking <= 10) {

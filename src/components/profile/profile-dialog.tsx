@@ -1,4 +1,3 @@
-// ProfileDialog.tsx
 import Dialog from "@mui/material/Dialog";
 import React, {useEffect} from "react";
 import {
@@ -71,7 +70,6 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
     const handleSnackbarClose = () => setSnackbarOpen(false);
 
-    // Populate state from the user profile
     useEffect(() => {
         setName(userProfile.profile.name);
         setEmail(userProfile.profile.email);
@@ -87,7 +85,6 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
         setAboutMe(userProfile.profile.aboutMe || "");
     }, [userProfile]);
 
-    // Immediately upload the file when imageFile changes
     useEffect(() => {
         if (imageFile) {
             (async () => {
@@ -197,41 +194,42 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
             <DialogContent sx={{marginTop: "20px"}}>
             <Grid2 container spacing={2} alignItems="flex-start">
-                    <Grid2 size={{xs: 12, md:4}}>
-                        <ProfileAvatar
-                            imagePath={imagePath || userProfile.profile.imagePath || ""}
-                            setImagePath={setImagePath}
-                            file={imageFile}
-                            setFile={setImageFile}
-                        />
-                    </Grid2>
+                <Grid2 size={{xs: 12, md:4}}>
+                    <ProfileAvatar
+                        imagePath={imagePath || userProfile.profile.imagePath || ""}
+                        setImagePath={setImagePath}
+                        file={imageFile}
+                        setFile={setImageFile}
+                    />
+                </Grid2>
 
-                    <Grid2 size={{xs: 12, md:4}} >
-                        <LossRatio uid={userProfile.id} />
-                    </Grid2>
+                <Grid2 size={{xs: 12, md:4}} >
+                    <LossRatio uid={userProfile.id} />
+                </Grid2>
 
-                    <Grid2 size={{xs: 12, md:4}} display="safe" justifyContent={"flex-end"}>
-                        <Typography variant="subtitle1" gutterBottom fontWeight="bold" marginTop="10px">
-                            Risiko-Transfer
+                <Grid2 size={{xs: 12, md:4}} display="safe" justifyContent={"flex-end"}>
+                    <Typography variant="subtitle1" gutterBottom fontWeight="bold" marginTop="10px">
+                        Risiko-Transfer
+                    </Typography>
+                    <Divider/>
+                    <br/>
+                    <Tooltip followCursor
+                                title={"Diese Quote gibt die Anzahl der abgeschlossenen Risko-Transfers des Nutzers an."}
+                                placement="top">
+                        <Typography marginLeft="10px" style={{cursor: "pointer"}}>
+                            {calcSuccessfulTransfers() !== null ? calcSuccessfulTransfers() : "Keine Daten vorhanden"}
                         </Typography>
-                        <Divider/>
-                        <br/>
-                        <Tooltip followCursor
-                                    title={"Diese Quote gibt die Anzahl der abgeschlossenen Risko-Transfers des Nutzers an."}
-                                    placement="top">
-                            <Typography marginLeft="10px" style={{cursor: "pointer"}}>
-                                {calcSuccessfulTransfers() !== null
-                                    ? calcSuccessfulTransfers()
-                                    : "Keine Daten vorhanden"}
-                            </Typography>
-                        </Tooltip>
-                    </Grid2>
+                    </Tooltip>
+                </Grid2>
 
-                    <Grid2  sx={{xs:12, md:8, ml: { md: 'auto' } }}>
-                        <Box sx={{ width: "100%" }}>
-                            <RiskGiverHistory uid={userProfile.id} />
-                        </Box>
-                    </Grid2>
+                <Grid2 size={{xs: 12, md: 4}} display="safe" justifyContent={"flex-end"}>
+                </Grid2>
+
+                <Grid2  sx={{xs:12, md: 8 }}>
+                    <Box sx={{ width: "100%" }}>
+                        <RiskGiverHistory uid={userProfile.id} />
+                    </Box>
+                </Grid2>
 
                 </Grid2>
                 <Grid2 container spacing={2}>
@@ -309,8 +307,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             onChange={(e) => {
                                 const selectedDate = new Date(e.target.value);
                                 const currentDate = new Date();
-                                const age =
-                                    currentDate.getFullYear() - selectedDate.getFullYear();
+                                const age = currentDate.getFullYear() - selectedDate.getFullYear();
 
                                 if (
                                     age < 18 ||
@@ -328,7 +325,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                                     );
                                     setSnackbarSeverity("error");
                                     setSnackbarOpen(true);
-                                    setBirthdate(""); // Reset bei ungültigem Alter
+                                    setBirthdate("");
                                 } else {
                                     setBirthdateError(false);
                                     setBirthdate(e.target.value);
@@ -404,13 +401,11 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                 open={snackbarOpen}
                 autoHideDuration={4000}
                 onClose={handleSnackbarClose}
-                anchorOrigin={{vertical: "top", horizontal: "center"}}
-            >
+                anchorOrigin={{vertical: "top", horizontal: "center"}}>
                 <Alert
                     onClose={handleSnackbarClose}
                     severity={snackbarSeverity}
-                    sx={{width: "100%"}}
-                >
+                    sx={{width: "100%"}}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
