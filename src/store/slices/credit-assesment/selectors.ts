@@ -4,15 +4,11 @@ export const selectAssessmentById = (state: RootState, uid: string) => {
     return state.assesments.list.find(assesment => assesment.id === uid) || null;
 };
 
-export const selectAssesments = (uid: string | undefined) => (state: RootState) => {
-    return state.assesments.list.filter(notification =>
-        notification.id === uid
-    );
-};
-
 export const selectLatestAcquisitionLimit = (state: RootState): number => {
     const list = state.assesments.list;
     if (!list || list.length === 0) return 0;
+
+    console.log(list);
 
     const latest = list.reduce((prev, curr) => {
         const prevTime = (() => {
@@ -29,8 +25,6 @@ export const selectLatestAcquisitionLimit = (state: RootState): number => {
         return currTime > prevTime ? curr : prev;
     });
 
-    // Wenn das gefundene Element gar keine Datumsfelder hat,
-    // gib den niedrigsten acquisitionLimit aller Einträge zurück.
     if (!latest.updatedAt && !latest.createdAt) {
         return Math.min(...list.map(a => a.acquisitionLimit));
     }

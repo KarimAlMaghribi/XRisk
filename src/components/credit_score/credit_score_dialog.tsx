@@ -1,6 +1,5 @@
 import Dialog from "@mui/material/Dialog";
 import {
-    Alert,
     Box,
     Button,
     DialogActions,
@@ -10,15 +9,13 @@ import {
     FormControlLabel,
     Grid2,
     IconButton,
-    Snackbar,
     Switch,
     TextField,
     Typography,
 } from "@mui/material";
 import {Trans} from "react-i18next";
 import {t} from "i18next";
-import React, {useEffect} from "react";
-import {NumericFormat} from "react-number-format";
+import React, {useEffect, useState} from "react";
 import {AppDispatch, RootState} from "../../store/store";
 import {useDispatch, useSelector} from "react-redux";
 import {addAssesments, fetchAssessments, updateAssesment,} from "../../store/slices/credit-assesment/thunks";
@@ -27,326 +24,138 @@ import {auth} from "../../firebase_config";
 import {selectAssessmentById} from "../../store/slices/credit-assesment/selectors";
 import CloseIcon from "@mui/icons-material/Close";
 import {theme} from "../../theme";
+import {computeLiabilityLimit} from "./liability-calculation";
+import {EuroNumberFormat} from "./utils";
+import {useSnackbarContext} from "../snackbar/custom-snackbar";
+
+function useNullableNumberField(initial: number | null = null) {
+    const [value, setValue] = useState<number | null>(initial);
+    const [noInput, setNoInput] = useState<boolean>(initial == null);
+
+    const handleChange = (raw: string) => {
+        const cleaned = raw.replace(/€\s?|\.|,/g, "");
+        if (cleaned === "") {
+            setValue(null);
+            setNoInput(true);
+        } else {
+            const num = Math.max(0, Number(cleaned));
+            setValue(num);
+            setNoInput(false);
+        }
+    };
+
+    const toggleNoInput = () => {
+        setNoInput((prev) => {
+            const next = !prev;
+            setValue(next ? null : value);
+            return next;
+        });
+    };
+
+    const setFromAssessment = (v: number | null) => {
+        setValue(v);
+        setNoInput(v == null);
+    };
+
+    return { value, noInput, handleChange, toggleNoInput, setFromAssessment };
+}
 
 export interface CreditScoreDialogProps {
     show: boolean;
     handleClose: () => void;
 }
 
-export const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(
-    props: any,
-    ref
-) {
-    const {onChange, ...other} = props;
-
-    return (
-        <NumericFormat
-            {...other}
-            getInputRef={ref}
-            decimalScale={2}
-            fixedDecimalScale={false}
-            onValueChange={(values: any) => {
-                onChange({
-                    target: {
-                        value: values.value,
-                        name: props.name,
-                    },
-                });
-            }}
-            thousandSeparator="."
-            decimalSeparator=","
-            prefix="€ "
-        />
-    );
-});
-
-export const computeLiabilityLimit = (
-    liquidity: number | null,
-    netIncome: number | null,
-    existingCredits: number | null,
-    monthlyFixCosts: number | null,
-    otherAssets: number | null
-) => {
-    var ranking = 0;
-
-    if (liquidity != null) {
-        if (liquidity >= 5000 && liquidity < 25000) {
-            ranking += 2;
-        } else if (liquidity >= 25000 && liquidity < 100000) {
-            ranking += 4;
-        } else if (liquidity >= 100000 && liquidity < 500000) {
-            ranking += 6;
-        } else if (liquidity >= 500000) {
-            ranking += 8;
-        }
-    }
-
-    if (existingCredits != null) {
-        if (existingCredits === 0) {
-            ranking += 5;
-        } else if (existingCredits < 50000) {
-            ranking += 2;
-        } else if (existingCredits < 200000) {
-            ranking += 0;
-        } else if (existingCredits >= 200000) {
-            ranking += -3;
-        }
-    } else {
-        ranking += -3;
-    }
-
-    if (otherAssets != null) {
-        if (otherAssets > 0 && otherAssets < 100000) {
-            ranking += 2;
-        } else if (otherAssets >= 100000 && otherAssets < 500000) {
-            ranking += 4;
-        } else if (otherAssets >= 500000) {
-            ranking += 6;
-        }
-    }
-
-    if (netIncome != null && monthlyFixCosts != null) {
-        if (monthlyFixCosts === 0) {
-            ranking += 10;
-        } else {
-            const incomeFixcostsQuota = netIncome / monthlyFixCosts;
-
-            if (incomeFixcostsQuota >= 1 && incomeFixcostsQuota < 1.5) {
-                ranking += 2;
-            } else if (incomeFixcostsQuota >= 1.5 && incomeFixcostsQuota < 2) {
-                ranking += 4;
-            } else if (incomeFixcostsQuota >= 2 && incomeFixcostsQuota < 3) {
-                ranking += 6;
-            } else if (incomeFixcostsQuota >= 3 && incomeFixcostsQuota < 5) {
-                ranking += 8;
-            } else if (incomeFixcostsQuota >= 5) {
-                ranking += 10;
-            }
-        }
-    }
-
-
-    console.log(ranking);
-
-    if (ranking <= 5) {
-        return 5000;
-    } else if (ranking <= 10) {
-        return 10000;
-    } else if (ranking <= 15) {
-        return 25000;
-    } else if (ranking <= 20) {
-        return 50000;
-    } else if (ranking <= 25) {
-        return 100000;
-    } else {
-        return 500000;
-    }
-};
-
 export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
     const dispatch: AppDispatch = useDispatch();
     const uid = auth.currentUser?.uid!;
-
-    const [liquidity, setLiquidity] = React.useState<number | null>(null);
-    const [netIncome, setNetIncome] = React.useState<number | null>(null);
-    const [existingCredits, setExistingCredits] = React.useState<number | null>(null);
-    const [monthlyFixCosts, setMonthlyFixCosts] = React.useState<number | null>(null);
-    const [otherAssets, setOtherAssets] = React.useState<number | null>(null);
-
-    const [liquidityNoInput, setLiquidityNoInput] = React.useState<boolean>(true);
-    const [netIncomeNoInput, setNetIncomeNoInput] = React.useState<boolean>(true);
-    const [existingCreditsNoInput, setExistingCreditsNoInput] = React.useState<boolean>(true);
-    const [monthlyFixCostsNoInput, setMonthlyFixCostsNoInput] = React.useState<boolean>(true);
-    const [otherAssetsNoInput, setOtherAssetsNoInput] = React.useState<boolean>(true);
-
-    const [liabilityLimit, setLiabilityLimit] = React.useState(5000);
-
-    const assesment: CreditAssesment | null = useSelector((state: RootState) =>
-        selectAssessmentById(state, uid)
-    );
+    const {showSnackbar} = useSnackbarContext();
+    const liquidityField = useNullableNumberField();
+    const netIncomeField = useNullableNumberField();
+    const existingCreditsField = useNullableNumberField();
+    const monthlyFixCostsField = useNullableNumberField();
+    const otherAssetsField = useNullableNumberField();
+    const [liabilityLimit, setLiabilityLimit] = useState<number>(5000);
+    const assessment: CreditAssesment | null = useSelector((state: RootState) => selectAssessmentById(state, uid));
 
     useEffect(() => {
-        if (!assesment) {
-            dispatch(fetchAssessments(uid));
-        }
+        dispatch(fetchAssessments(uid));
     }, [])
 
     useEffect(() => {
-        if (assesment) {
-            setLiquidity(assesment?.liquidAssets);
-            setNetIncome(assesment?.monthlyIncome);
-            setExistingCredits(assesment?.currentLoan);
-            setMonthlyFixCosts(assesment?.monthlyFixedCosts);
-            setOtherAssets(assesment?.additionalAssets);
-            setLiabilityLimit(assesment?.acquisitionLimit);
-
-            setLiquidityNoInput(liquidity === null);
-            setNetIncomeNoInput(netIncome === null);
-            setExistingCreditsNoInput(existingCredits === null);
-            setMonthlyFixCostsNoInput(monthlyFixCosts === null);
-            setOtherAssetsNoInput(otherAssets === null);
+        if (assessment) {
+            liquidityField.setFromAssessment(assessment.liquidAssets);
+            netIncomeField.setFromAssessment(assessment.monthlyIncome);
+            existingCreditsField.setFromAssessment(assessment.currentLoan);
+            monthlyFixCostsField.setFromAssessment(assessment.monthlyFixedCosts);
+            otherAssetsField.setFromAssessment(assessment.additionalAssets);
+            setLiabilityLimit(assessment.acquisitionLimit);
         }
-    }, [assesment]);
+    }, [assessment]);
 
-    const formatLimit = (limit: number) => {
-        return new Intl.NumberFormat("de-DE", {
-            style: "currency",
-            currency: "EUR",
-        }).format(limit);
-    }
-
-    const formattedLimit = new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "EUR",
-    }).format(liabilityLimit);
-
-    const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
-    const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
-    const [snackbarSeverity, setSnackbarSeverity] = React.useState<"error" | "success">("error");
-
-    const handleSnackbarClose = () => setSnackbarOpen(false);
+    const formatLimit = (limit: number) =>
+        new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(limit);
 
     const handleSave = () => {
-        const liabilityLimit = computeLiabilityLimit(
-            liquidity,
-            netIncome,
-            existingCredits,
-            monthlyFixCosts,
-            otherAssets
+        const limit = computeLiabilityLimit(
+            liquidityField.value,
+            netIncomeField.value,
+            existingCreditsField.value,
+            monthlyFixCostsField.value,
+            otherAssetsField.value
         );
-
-        const newAssesment: CreditAssesment = {
-            id: uid!,
-            liquidAssets: liquidity,
-            monthlyIncome: netIncome,
-            currentLoan: existingCredits,
-            monthlyFixedCosts: monthlyFixCosts,
-            additionalAssets: otherAssets,
-            acquisitionLimit: liabilityLimit,
+        const newA: CreditAssesment = {
+            id: uid,
+            liquidAssets: liquidityField.value,
+            monthlyIncome: netIncomeField.value,
+            currentLoan: existingCreditsField.value,
+            monthlyFixedCosts: monthlyFixCostsField.value,
+            additionalAssets: otherAssetsField.value,
+            acquisitionLimit: limit,
         };
-        if (assesment == null) {
-            dispatch(addAssesments({uid: uid, newAssesment: newAssesment}));
-        } else {
-            dispatch(updateAssesment(newAssesment));
-        }
+        if (!assessment) dispatch(addAssesments({ uid, newAssesment: newA }));
+        else dispatch(updateAssesment(newA));
 
-        setLiabilityLimit(liabilityLimit);
-        setSnackbarMessage(
-            t("credit_score_information.snackbar_updated_liability_limit", {
-                limit: formatLimit(liabilityLimit),
-            })
+        setLiabilityLimit(limit);
+        showSnackbar(
+            "Bonität angepasst!",
+            t("credit_score_information.snackbar_updated_liability_limit", { limit: formatLimit(limit) }),
+            { vertical: "top", horizontal: "center" },
+            "success"
         );
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
-
-        setLiquidityNoInput(liquidity == null);
-        setMonthlyFixCostsNoInput(monthlyFixCosts == null);
-        setNetIncomeNoInput(netIncome == null);
-        setExistingCreditsNoInput(existingCredits == null);
-        setOtherAssetsNoInput(otherAssets == null);
-    };
-
-    const handleSwitchLiquidity = (noInput: boolean) => {
-        setLiquidityNoInput(noInput);
-        if (noInput) {
-            setLiquidity(null);
-        }
-    };
-
-    const handleSwitchNetIncome = (noInput: boolean) => {
-        setNetIncomeNoInput(noInput);
-        if (noInput) {
-            setNetIncome(null);
-        }
-    };
-
-    const handleSwitchExistingCredits = (noInput: boolean) => {
-        setExistingCreditsNoInput(noInput);
-        if (noInput) {
-            setExistingCredits(null);
-        }
-    };
-
-    const handleSwitchMonthlyFixCosts = (noInput: boolean) => {
-        setMonthlyFixCostsNoInput(noInput);
-        if (noInput) {
-            setMonthlyFixCosts(null);
-        }
-    };
-
-    const handleSwitchOtherAssets = (noInput: boolean) => {
-        setOtherAssetsNoInput(noInput);
-        if (noInput) {
-            setOtherAssets(null);
-        }
-    };
-
-    const handleCancel = () => {
-        props.handleClose();
     };
 
     return (
         <Dialog
             onClose={props.handleClose}
             open={props.show}
+            maxWidth={false}
             PaperProps={{
                 sx: {
-                    maxHeight: "80%",
-                    position: "absolute",
-                    top: "10%",
-                    margin: 0,
-                    width: "50%",
-                    maxWidth: "none",
-                },
+                    width: '50vw',
+                    maxHeight: '80%',
+                    top: '10%'
+                }
             }}>
-            <DialogTitle
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                }}>
-                <Box>
-                    <Typography variant="h6">
-                        <Trans i18nKey={"credit_score_information.credit_score"}/>
-                    </Typography>
-                    <Typography variant="subtitle1">
-                        <Trans
-                            i18nKey={"credit_score_information.update_credit_score_text"}
-                        />
-                    </Typography>
-                </Box>
-                <IconButton onClick={props.handleClose} sx={{color: "grey.500"}}>
-                    <CloseIcon/>
-                </IconButton>
+            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography variant="h6"><Trans i18nKey="credit_score_information.credit_score" /></Typography>
+                <IconButton onClick={props.handleClose} sx={{ color: "grey.500" }}><CloseIcon /></IconButton>
             </DialogTitle>
-            <Divider/>
-            <DialogContent sx={{marginTop: "20px"}}>
+            <Divider />
+            <DialogContent sx={{ mt: 2 }}>
                 <Grid2 size={{md: 12, lg: 12}}>
                     <Box mr={3}>
                         {" "}
                         <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                            <Trans
-                                i18nKey={"credit_score_information.credit_score_explanation"}
-                            />
+                            <Trans i18nKey={"credit_score_information.credit_score_explanation"}/>
                         </Typography>
                         <Typography variant="body2" gutterBottom>
-                            <Trans
-                                i18nKey={
-                                    "credit_score_information.credit_score_explanation_text"
-                                }
-                            />
+                            <Trans i18nKey={"credit_score_information.credit_score_explanation_text"}/>
                         </Typography>
-                        <Typography
-                            variant="subtitle1"
-                            fontWeight="bold"
-                            gutterBottom
-                            mt={2}>
+                        <Typography variant="subtitle1" fontWeight="bold" gutterBottom mt={2}>
                             <Trans i18nKey={"credit_score_information.credit_score_notice"}/>
                         </Typography>
                         <Typography variant="body2" sx={{mb: 3}}>
-                            <Trans
-                                i18nKey={"credit_score_information.credit_score_notice_text"}
-                            />
+                            <Trans i18nKey={"credit_score_information.credit_score_notice_text"}/>
                         </Typography>
                     </Box>
                 </Grid2>
@@ -354,284 +163,45 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                 <Typography variant="h5" fontWeight="bold">
                     <Trans
                         i18nKey="credit_score_information.liability_limit_text"
-                        values={{limit: formattedLimit}}
-                        components={{
-                            span: (
-                                <span
-                                    style={{
-                                        color: theme.palette.secondary.main,
-                                        fontWeight: "bold",
-                                    }}
-                                />
-                            ),
-                        }}
-                    />
+                        values={{limit: liabilityLimit ? formatLimit(liabilityLimit) : "---"}}
+                        components={{span: (<span style={{color: theme.palette.secondary.main, fontWeight: "bold",}}/>),}}/>
                 </Typography>
                 <Divider/>
 
-                <Grid2 size={{md: 12, lg: 12}}>
-                    <Box mt={2}>
+                {[
+                    { field: liquidityField, labelKey: "liquidity_text" },
+                    { field: netIncomeField, labelKey: "net_income_text" },
+                    { field: monthlyFixCostsField, labelKey: "monthly_fix_costs_text" },
+                    { field: existingCreditsField, labelKey: "existing_credits_text" },
+                    { field: otherAssetsField, labelKey: "other_assets_text" },
+                ].map(({ field, labelKey }) => (
+                    <Box key={labelKey} mb={2}>
                         <Typography variant="subtitle1" fontWeight="bold">
-                            <Trans i18nKey={"credit_score_information.liquidity_text"}/>
+                            <Trans i18nKey={`credit_score_information.${labelKey}`} />
                         </Typography>
-                    </Box>
-                </Grid2>
-                <Grid2
-                    container
-                    direction="row"
-                    alignItems="center"
-                    size={{md: 12, lg: 6}}
-                    spacing={2}
-                >
-                    <Grid2 size={{md: 12, lg: 9}}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            value={liquidity ? liquidity : ""}
-                            onChange={(e) =>
-                                setLiquidity(Number(e.target.value.replace(/€\s?|(,*)/g, "")))
-                            }
-                            onClick={() => {
-                                if (liquidityNoInput) {
-                                    handleSwitchLiquidity(false);
-                                }
-                            }}
-                            InputProps={{
-                                inputComponent: EuroNumberFormat,
-                            }}
-                        />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 3}}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={liquidityNoInput}
-                                    onChange={() => handleSwitchLiquidity(!liquidityNoInput)}
-                                    name="noInput"
-                                    color="primary"
+                        <Grid2 container alignItems="center" spacing={2}>
+                            <Grid2 size={{xs: 9}}>
+                                <TextField
+                                    fullWidth
+                                    value={field.noInput ? "" : field.value ?? ""}
+                                    onChange={(e) => field.handleChange(e.target.value)}
+                                    InputProps={{ inputComponent: EuroNumberFormat }}
                                 />
-                            }
-                            label={t("credit_score_information.not_provided")}
-                            sx={{display: "flex", justifyContent: "flex-end"}}
-                        />
-                    </Grid2>
-                </Grid2>
-
-                <Grid2 size={{md: 12, lg: 12}}>
-                    <Box mt={2}>
-                        <Typography variant="subtitle1" fontWeight="bold">
-                            <Trans i18nKey={"credit_score_information.net_income_text"}/>
-                        </Typography>
-                    </Box>
-                </Grid2>
-                <Grid2
-                    container
-                    direction="row"
-                    alignItems="center"
-                    size={{md: 12, lg: 6}}
-                    spacing={2}>
-                    <Grid2 size={{md: 12, lg: 9}}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            value={netIncome ? netIncome : ""}
-                            onChange={(e) => setNetIncome(Number(e.target.value.replace(/€\s?|(,*)/g, "")))}
-                            onClick={() => {if (netIncomeNoInput) {handleSwitchNetIncome(false);}}}
-                            InputProps={{inputComponent: EuroNumberFormat,}}
-                        />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 3}}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={netIncomeNoInput}
-                                    onChange={() => handleSwitchNetIncome(!netIncomeNoInput)}
-                                    name="noInput"
-                                    color="primary"
+                            </Grid2>
+                            <Grid2 size={{xs: 3}}>
+                                <FormControlLabel
+                                    control={<Switch checked={field.noInput} onChange={field.toggleNoInput} />}
+                                    label={t(`credit_score_information.not_provided`)}
                                 />
-                            }
-                            label={t("credit_score_information.not_provided")}
-                            sx={{display: "flex", justifyContent: "flex-end"}}
-                        />
-                    </Grid2>
-                </Grid2>
-
-                <Grid2 size={{md: 12, lg: 12}}>
-                    <Box mt={2}>
-                        <Typography variant="subtitle1" fontWeight="bold">
-                            <Trans
-                                i18nKey={"credit_score_information.monthly_fix_costs_text"}
-                            />
-                        </Typography>
+                            </Grid2>
+                        </Grid2>
                     </Box>
-                </Grid2>
-
-                <Grid2
-                    container
-                    direction="row"
-                    alignItems="center"
-                    size={{md: 12, lg: 6}}
-                    spacing={2}
-                >
-                    <Grid2 size={{md: 12, lg: 9}}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            value={monthlyFixCosts ? monthlyFixCosts : ""}
-                            onChange={(e) =>
-                                setMonthlyFixCosts(
-                                    Number(e.target.value.replace(/€\s?|(,*)/g, ""))
-                                )
-                            }
-                            onClick={() => {
-                                if (monthlyFixCostsNoInput) {
-                                    handleSwitchMonthlyFixCosts(false);
-                                }
-                            }}
-                            InputProps={{
-                                inputComponent: EuroNumberFormat,
-                            }}
-                        />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 3}}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={monthlyFixCostsNoInput}
-                                    onChange={() =>
-                                        handleSwitchMonthlyFixCosts(!monthlyFixCostsNoInput)
-                                    }
-                                    name="noInput"
-                                    color="primary"
-                                />
-                            }
-                            label={t("credit_score_information.not_provided")}
-                            sx={{display: "flex", justifyContent: "flex-end"}}
-                        />
-                    </Grid2>
-                </Grid2>
-
-                <Grid2 size={{md: 12, lg: 12}}>
-                    <Box mt={2}>
-                        <Typography variant="subtitle1" fontWeight="bold">
-                            <Trans
-                                i18nKey={"credit_score_information.existing_credits_text"}
-                            />
-                        </Typography>
-                    </Box>
-                </Grid2>
-                <Grid2
-                    container
-                    direction="row"
-                    alignItems="center"
-                    size={{md: 12, lg: 6}}
-                    spacing={2}
-                >
-                    <Grid2 size={{md: 12, lg: 9}}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            value={existingCredits ? existingCredits : ""}
-                            onChange={(e) =>
-                                setExistingCredits(
-                                    Number(e.target.value.replace(/€\s?|(,*)/g, ""))
-                                )
-                            }
-                            onClick={() => {
-                                if (existingCreditsNoInput) {
-                                    handleSwitchExistingCredits(false);
-                                }
-                            }}
-                            InputProps={{
-                                inputComponent: EuroNumberFormat,
-                            }}
-                        />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 3}}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={existingCreditsNoInput}
-                                    onChange={() =>
-                                        handleSwitchExistingCredits(!existingCreditsNoInput)
-                                    }
-                                    name="noInput"
-                                    color="primary"
-                                />
-                            }
-                            label={t("credit_score_information.not_provided")}
-                            sx={{display: "flex", justifyContent: "flex-end"}}
-                        />
-                    </Grid2>
-                </Grid2>
-
-                <Grid2 size={{md: 12, lg: 12}}>
-                    <Box mt={2}>
-                        <Typography variant="subtitle1" fontWeight="bold">
-                            <Trans i18nKey={"credit_score_information.other_assets_text"}/>
-                        </Typography>
-                    </Box>
-                </Grid2>
-                <Grid2
-                    container
-                    direction="row"
-                    alignItems="center"
-                    size={{md: 12, lg: 6}}
-                    spacing={2}>
-                    <Grid2 size={{md: 12, lg: 9}}>
-                        <TextField
-                            variant="outlined"
-                            fullWidth
-                            value={otherAssets ? otherAssets : ""}
-                            onChange={(e) =>
-                                setOtherAssets(Number(e.target.value.replace(/€\s?|(,*)/g, "")))
-                            }
-                            onClick={() => {
-                                if (otherAssetsNoInput) {
-                                    handleSwitchOtherAssets(false);
-                                }
-                            }}
-                            InputProps={{
-                                inputComponent: EuroNumberFormat,
-                            }}
-                        />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 3}}>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={otherAssetsNoInput}
-                                    onChange={() => handleSwitchOtherAssets(!otherAssetsNoInput)}
-                                    name="noInput"
-                                    color="primary"
-                                />
-                            }
-                            label={t("credit_score_information.not_provided")}
-                            sx={{display: "flex", justifyContent: "flex-end"}}
-                        />
-                    </Grid2>
-                </Grid2>
+                ))}
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleCancel} variant="outlined">
-                    <Trans i18nKey={"profile_information.cancel"}/>
-                </Button>
-                <Button onClick={handleSave} variant="contained">
-                    <Trans i18nKey={"profile_information.save"}/>
-                </Button>
+                <Button onClick={props.handleClose} variant="outlined"><Trans i18nKey="profile_information.cancel" /></Button>
+                <Button onClick={handleSave} variant="contained"><Trans i18nKey="profile_information.save" /></Button>
             </DialogActions>
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={4000}
-                onClose={handleSnackbarClose}
-                anchorOrigin={{vertical: "top", horizontal: "center"}}>
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity={snackbarSeverity}
-                    sx={{width: "100%"}}>
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
         </Dialog>
     );
 };

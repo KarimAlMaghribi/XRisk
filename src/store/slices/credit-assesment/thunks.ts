@@ -118,7 +118,7 @@ export const updateAssesment = createAsyncThunk(
             await updateDoc(assesmentDocRef, updatedData);
 
             console.log("Assessment updated:", assesment.id);
-            return {...updatedData};
+            return updatedData as CreditAssesment;
         } catch (error) {
             console.error("Error updating assessment:", error);
             return rejectWithValue("Failed to update assessment");

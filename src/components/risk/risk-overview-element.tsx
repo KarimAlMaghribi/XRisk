@@ -43,7 +43,7 @@ export interface RiskOverviewElementProps {
 
 export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
     const user = auth.currentUser;
-    const acquisitionLimit: number = useSelector(selectLatestAcquisitionLimit);
+    const assessment: CreditAssesment | null = useSelector((state: RootState) => selectAssessmentById(state, user?.uid!));
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const profileInfo: ProfileInformation = useSelector(selectProfileInformation);
@@ -71,7 +71,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             return;
         }
 
-        if (acquisitionLimit === 0) {
+        if (!assessment) {
             dispatch(fetchAssessments(uid));
         }
     }, []);
@@ -184,6 +184,7 @@ export const RiskOverviewElement = (props: RiskOverviewElementProps) => {
             return;
         }
 
+        const acquisitionLimit = assessment?.acquisitionLimit || 0;
         if (!creditAssessmentError && acquisitionLimit <= selectedRisk.value) {
             showSnackbar("Niedrige Bonität", `Konnte Verhandlung nicht starten, da das Übernahmelimit (${acquisitionLimit.toFixed(2)}€) kleiner als die Absicherungssumme (${selectedRisk.value.toFixed(2)}€) ist.`, {
                 vertical: "top",

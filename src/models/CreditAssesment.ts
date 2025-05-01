@@ -8,6 +8,6 @@ export interface CreditAssesment {
     monthlyFixedCosts: number | null;
     additionalAssets: number | null;
     acquisitionLimit: number;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
 };
