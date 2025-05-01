@@ -40,12 +40,11 @@ export function Header() {
     // Define animation
     const scrollRight = keyframes`
         0% {
-            transform: translateX(-100%);
+            transform: translateX(-100vw);
         }
         100% {
-            transform: translateX(100%);
-        }
-        `;
+            transform: translateX(100vw);
+        }`;
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -119,15 +118,9 @@ export function Header() {
                         <Menu
                             id="menu-appbar"
                             anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
+                            anchorOrigin={{vertical: 'bottom', horizontal: 'left',}}
                             keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'left',
-                            }}
+                            transformOrigin={{vertical: 'top', horizontal: 'left',}}
                             open={Boolean(anchorElNav)}
                             onClose={() => setAnchorElNav(null)}
                             sx={{ display: { xs: 'block', md: 'none' } }}>
