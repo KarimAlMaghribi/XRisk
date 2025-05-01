@@ -64,11 +64,7 @@ export const useAgreedRisks = (uid?: string | null) => {
                 );
 
                 if (!cancelled) {
-                    const expiredRisks: Risk[] = fetchedRisks.filter((risk) =>
-                        new Date(risk.declinationDate) <= new Date()
-                    )
-
-                    setRisks(expiredRisks);
+                    setRisks(fetchedRisks);
                 }
             } catch (e) {
                 console.error("Fehler beim Laden der agreed risks:", e);
