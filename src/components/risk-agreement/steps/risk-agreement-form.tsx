@@ -56,6 +56,10 @@ export const RiskAgreementForm: React.FC<RiskAgreementFormProps> = ({
                 InputProps={{
                     endAdornment: <InfoTooltip title={i18next.t("risk_agreement.risk_agreement_form.costs_tooltip")} />,
                     inputComponent: EuroNumberFormat,
+                    inputProps: {
+                        decimalScale: 2,
+                        fixedDecimalScale: false,
+                    },
                 }}
             />
             <TextField
@@ -67,6 +71,10 @@ export const RiskAgreementForm: React.FC<RiskAgreementFormProps> = ({
                 InputProps={{
                     endAdornment: <InfoTooltip title={i18next.t("risk_agreement.risk_agreement_form.insuranceSum_tooltip")} />,
                     inputComponent: EuroNumberFormat,
+                    inputProps: {
+                        decimalScale: 2,
+                        fixedDecimalScale: false,
+                    },
                 }}
             />
             <TextField

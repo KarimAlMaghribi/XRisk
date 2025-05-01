@@ -35,6 +35,8 @@ export const EuroNumberFormat = React.forwardRef(function EuroNumberFormat(props
     return (
         <NumericFormat
             {...other}
+            decimalScale={2}
+            fixedDecimalScale={false}
             getInputRef={ref}
             onValueChange={(values: any) => {
                 onChange({
