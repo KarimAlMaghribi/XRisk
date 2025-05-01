@@ -44,6 +44,8 @@ export const SignIn = () => {
             );
             signOutUser();
             dispatch(resetStore());
+            localStorage.clear();
+            sessionStorage.clear();
             return;
         }
 
@@ -56,6 +58,8 @@ export const SignIn = () => {
             );
             signOutUser();
             dispatch(resetStore());
+            localStorage.clear();
+            sessionStorage.clear();
             return;
         }
 

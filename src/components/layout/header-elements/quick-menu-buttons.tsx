@@ -39,7 +39,7 @@ import { db } from "../../../firebase_config";
 import { NotificationStatusEnum } from "../../../enums/Notifications.enum";
 import { useState } from "react";
 import { Notification } from "../../../models/Notification";
-import { AppDispatch } from "../../../store/store";
+import {AppDispatch, resetStore} from "../../../store/store";
 import { useDispatch } from "react-redux";
 import { formatDistanceToNow } from "date-fns";
 import { selectActiveChatId } from "../../../store/slices/my-bids/selectors";
@@ -137,6 +137,13 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
     );
   };
 
+  const handleLogout = () => {
+    signOutUser()
+    dispatch(resetStore());
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
   return (
     <>
       {props.isLoggedIn ? (
@@ -157,8 +164,6 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          {/* Notification Menu */}
-          {/* Notification Menu */}
           <Menu
             anchorEl={anchorEl}
             open={openNotification}
@@ -301,7 +306,7 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
             ]}
           </Menu>
           <Button
-            onClick={() => signOutUser()}
+            onClick={handleLogout}
             variant="outlined"
             style={{ color: "white", borderColor: "white", marginLeft: "20px" }}
             startIcon={<West />}
