@@ -76,6 +76,7 @@ export const myRisksSlice = createSlice({
             })
             .addCase(fetchMyOfferedRisks.fulfilled, (state, action) => {
                 state.offeredRisks = action.payload;
+                state.filteredOfferedRisks = action.payload;
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
             .addCase(fetchMyOfferedRisks.rejected, (state, action) => {
@@ -93,7 +94,9 @@ export const myRisksSlice = createSlice({
                 }
 
                 state.offeredRisks.push(action.payload);
-                state.filteredOfferedRisks.push(action.payload);
+                if (state.filteredOfferedRisks.length === state.offeredRisks.length - 1) {
+                    state.filteredOfferedRisks = [...state.offeredRisks];
+                }
 
                 state.status = FetchStatusEnum.SUCCEEDED;
             })
