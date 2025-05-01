@@ -125,7 +125,9 @@ export const computeLiabilityLimit = (
         }
     }
 
-    //Bestimmung des Übernahmelimits anhand der vergebenen Punkte
+
+    console.log(ranking);
+
     if (ranking <= 5) {
         return 5000;
     } else if (ranking <= 10) {
@@ -145,6 +147,20 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
     const dispatch: AppDispatch = useDispatch();
     const uid = auth.currentUser?.uid!;
 
+    const [liquidity, setLiquidity] = React.useState<number | null>(null);
+    const [netIncome, setNetIncome] = React.useState<number | null>(null);
+    const [existingCredits, setExistingCredits] = React.useState<number | null>(null);
+    const [monthlyFixCosts, setMonthlyFixCosts] = React.useState<number | null>(null);
+    const [otherAssets, setOtherAssets] = React.useState<number | null>(null);
+
+    const [liquidityNoInput, setLiquidityNoInput] = React.useState<boolean>(true);
+    const [netIncomeNoInput, setNetIncomeNoInput] = React.useState<boolean>(true);
+    const [existingCreditsNoInput, setExistingCreditsNoInput] = React.useState<boolean>(true);
+    const [monthlyFixCostsNoInput, setMonthlyFixCostsNoInput] = React.useState<boolean>(true);
+    const [otherAssetsNoInput, setOtherAssetsNoInput] = React.useState<boolean>(true);
+
+    const [liabilityLimit, setLiabilityLimit] = React.useState(5000);
+
     const assesment: CreditAssesment | null = useSelector((state: RootState) =>
         selectAssessmentById(state, uid)
     );
@@ -155,27 +171,6 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         }
     }, [])
 
-    const [liquidity, setLiquidity] = React.useState<number | null>(null);
-    const [netIncome, setNetIncome] = React.useState<number | null>(null);
-    const [existingCredits, setExistingCredits] = React.useState<number | null>(
-        null
-    );
-    const [monthlyFixCosts, setMonthlyFixCosts] = React.useState<number | null>(
-        null
-    );
-    const [otherAssets, setOtherAssets] = React.useState<number | null>(null);
-
-    const [liquidityNoInput, setLiquidityNoInput] = React.useState<boolean>(true);
-    const [netIncomeNoInput, setNetIncomeNoInput] = React.useState<boolean>(true);
-    const [existingCreditsNoInput, setExistingCreditsNoInput] =
-        React.useState<boolean>(true);
-    const [monthlyFixCostsNoInput, setMonthlyFixCostsNoInput] =
-        React.useState<boolean>(true);
-    const [otherAssetsNoInput, setOtherAssetsNoInput] =
-        React.useState<boolean>(true);
-
-    const [liabilityLimit, setLiabilityLimit] = React.useState(5000);
-
     useEffect(() => {
         if (assesment) {
             setLiquidity(assesment?.liquidAssets);
@@ -185,11 +180,11 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
             setOtherAssets(assesment?.additionalAssets);
             setLiabilityLimit(assesment?.acquisitionLimit);
 
-            setLiquidityNoInput(liquidity == null);
-            setNetIncomeNoInput(netIncome == null);
-            setExistingCreditsNoInput(existingCredits == null);
-            setMonthlyFixCostsNoInput(monthlyFixCosts == null);
-            setOtherAssetsNoInput(otherAssets == null);
+            setLiquidityNoInput(liquidity === null);
+            setNetIncomeNoInput(netIncome === null);
+            setExistingCreditsNoInput(existingCredits === null);
+            setMonthlyFixCostsNoInput(monthlyFixCosts === null);
+            setOtherAssetsNoInput(otherAssets === null);
         }
     }, [assesment]);
 
@@ -207,16 +202,11 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
 
     const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
-    const [snackbarSeverity, setSnackbarSeverity] = React.useState<
-        "error" | "success"
-    >("error");
+    const [snackbarSeverity, setSnackbarSeverity] = React.useState<"error" | "success">("error");
 
     const handleSnackbarClose = () => setSnackbarOpen(false);
 
     const handleSave = () => {
-        console.log(assesment);
-
-        //Bonität berechnen und anzeigen (im Dialog und über die Snackbar)
         const liabilityLimit = computeLiabilityLimit(
             liquidity,
             netIncome,
@@ -260,7 +250,6 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
         setLiquidityNoInput(noInput);
         if (noInput) {
             setLiquidity(null);
-            console.log("liquidity is now null");
         }
     };
 
@@ -309,15 +298,13 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                     width: "50%",
                     maxWidth: "none",
                 },
-            }}
-        >
+            }}>
             <DialogTitle
                 sx={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                }}
-            >
+                }}>
                 <Box>
                     <Typography variant="h6">
                         <Trans i18nKey={"credit_score_information.credit_score"}/>
@@ -353,8 +340,7 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                             variant="subtitle1"
                             fontWeight="bold"
                             gutterBottom
-                            mt={2}
-                        >
+                            mt={2}>
                             <Trans i18nKey={"credit_score_information.credit_score_notice"}/>
                         </Typography>
                         <Typography variant="body2" sx={{mb: 3}}>
@@ -443,24 +429,15 @@ export const CreditScoreDialog = (props: CreditScoreDialogProps) => {
                     direction="row"
                     alignItems="center"
                     size={{md: 12, lg: 6}}
-                    spacing={2}
-                >
+                    spacing={2}>
                     <Grid2 size={{md: 12, lg: 9}}>
                         <TextField
                             variant="outlined"
                             fullWidth
                             value={netIncome ? netIncome : ""}
-                            onChange={(e) =>
-                                setNetIncome(Number(e.target.value.replace(/€\s?|(,*)/g, "")))
-                            }
-                            onClick={() => {
-                                if (netIncomeNoInput) {
-                                    handleSwitchNetIncome(false);
-                                }
-                            }}
-                            InputProps={{
-                                inputComponent: EuroNumberFormat,
-                            }}
+                            onChange={(e) => setNetIncome(Number(e.target.value.replace(/€\s?|(,*)/g, "")))}
+                            onClick={() => {if (netIncomeNoInput) {handleSwitchNetIncome(false);}}}
+                            InputProps={{inputComponent: EuroNumberFormat,}}
                         />
                     </Grid2>
                     <Grid2 size={{md: 12, lg: 3}}>
