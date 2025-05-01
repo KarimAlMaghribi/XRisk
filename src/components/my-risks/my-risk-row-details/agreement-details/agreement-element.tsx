@@ -10,6 +10,7 @@ import Grid from "@mui/material/Grid2";
 import {t} from "i18next";
 import {riskAgreementsUnsubscribe, subscribeToRiskAgreements} from "../../../../store/slices/my-risk-agreements/thunks";
 import {AppDispatch} from "../../../../store/store";
+import {auth} from "../../../../firebase_config";
 
 export interface AgreementElementProps {
     risk: Risk;
@@ -18,6 +19,7 @@ export interface AgreementElementProps {
 
 export const AgreementElement = (props: AgreementElementProps) => {
     const dispatch: AppDispatch = useDispatch();
+    const uid: string = auth.currentUser?.uid || "";
 
     useEffect(() => {
         dispatch(subscribeToRiskAgreements());
@@ -55,7 +57,7 @@ export const AgreementElement = (props: AgreementElementProps) => {
                         <Grid container spacing={1}>
                             <Grid size={4}>
                                 <Typography variant="subtitle1" fontWeight="bold">
-                                    {t("terms.riskgiver")}
+                                    {uid === props.chat.riskProvider.uid ? "Risikonehmer" : t("terms.riskgiver")}
                                 </Typography>
                                 <Typography variant="subtitle1" fontWeight="bold">
                                     {t("my_risks.last_activity")}
@@ -63,7 +65,7 @@ export const AgreementElement = (props: AgreementElementProps) => {
                             </Grid>
                             <Grid size={8}>
                                 <Typography variant="subtitle1">
-                                    {props.chat.riskProvider?.name}
+                                    {uid === props.chat.riskProvider.uid ? props.chat.riskTaker?.name : props.chat.riskProvider?.name}
                                 </Typography>
                                 <Typography variant="subtitle1">
                                     {new Date(props.chat.lastActivity || "").toLocaleString()}
