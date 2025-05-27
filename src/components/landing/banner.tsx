@@ -55,26 +55,26 @@ export const Banner = () => {
             >
                 <Trans i18nKey="homepage.figure_text2" />
             </Typography>
-            <Typography
-                variant="body1"
-                color="black"
-                sx={{ pl: { xs: 2, md: 10 }}}
-            >
-                Foliensatz{" "}
-                {pdfUrl ? (
-                    <Link
-                        href={pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        underline="hover"
-                        sx={{ fontWeight: "bold" }}>
-                        hier
-                    </Link>
-                ) : (
-                    "lädt..."
-                )}{" "}
-                herunterladen
-            </Typography>
+            {/*<Typography*/}
+            {/*    variant="body1"*/}
+            {/*    color="black"*/}
+            {/*    sx={{ pl: { xs: 2, md: 10 }}}*/}
+            {/*>*/}
+            {/*    Foliensatz{" "}*/}
+            {/*    {pdfUrl ? (*/}
+            {/*        <Link*/}
+            {/*            href={pdfUrl}*/}
+            {/*            target="_blank"*/}
+            {/*            rel="noopener noreferrer"*/}
+            {/*            underline="hover"*/}
+            {/*            sx={{ fontWeight: "bold" }}>*/}
+            {/*            hier*/}
+            {/*        </Link>*/}
+            {/*    ) : (*/}
+            {/*        "lädt..."*/}
+            {/*    )}{" "}*/}
+            {/*    herunterladen*/}
+            {/*</Typography>*/}
         </Box>
     );
 };

@@ -46,6 +46,14 @@ export function Header() {
             transform: translateX(100vw);
         }`;
 
+    const scrollLeft = keyframes`
+        0% {
+            transform: translateX(100vw);
+        }
+        100% {
+            transform: translateX(-100vw);
+        }`;
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             setIsLoggedIn(!!user);
@@ -209,7 +217,7 @@ export function Header() {
                     sx={{
                         color: 'orange',
                         fontWeight: 'bold',
-                        animation: `${scrollRight} 20s linear infinite`,
+                        animation: `${scrollLeft} 20s linear infinite`,
                         whiteSpace: 'nowrap',
                         display: 'inline-block',
                     }}>
