@@ -48,7 +48,7 @@
     "title": "Risiko definieren",
     "title_text": "Definiere dein eignes Risiko, dass du später veröffentlichen kannst!",
     "name_description": "Bitte gib einen Namen ein",
-    "brief_description": "Kurzbeschreibung",
+    "brief_description": "Beschreibe dein Risiko so präzise wie möglich",
     "brief_description_description": "Bitte füge eine Beschreibung hinzu",
     "brief_description_error": "Bitte füge eine längere Beschreibung hinzu",
     "insurance_sum_error1": "Maximal 500.000,00 € möglich",
