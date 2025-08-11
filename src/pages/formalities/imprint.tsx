@@ -2,6 +2,8 @@ import {Card, CardContent, CardHeader, Typography} from "@mui/material";
 import { Label, Title } from "@mui/icons-material";
 import { Trans } from "react-i18next";
 export const Imprint = () => {
+    const email: string =  "koch@informatik.uni-leipzig.de";
+
     return (<div id="imprint">
         <br/>
         <br/>
@@ -29,15 +31,15 @@ export const Imprint = () => {
                 <Typography variant="body1"> CH 9050 Bühler</Typography>
                 <Typography variant="body1"> <Trans i18nKey={"footer.contact_elements.telephone"}/>: +41 78 79 99 968</Typography>
                 <Typography variant="body1">
-                <Trans i18nKey={"footer.contact_elements.email"}/>:
-                <a href="mailto:office@xrisk.info" className="text-blue-500 hover:underline">
-                    office@xrisk.info
+                <Trans i18nKey={"footer.contact_elements.email"}/>{": "}
+                <a href={`mailto:${email}`} className="hover:underline">
+                    {email}
                 </a>
                 </Typography>
                 <Typography variant="body1">
-                <Trans i18nKey={"footer.contact_elements.website"}/>: 
+                <Trans i18nKey={"footer.contact_elements.website"}/>{": "}
                 <a href="https://xrisk.info" className="text-blue-500 hover:underline">
-                www.xrisk.info
+                    www.xrisk.info
                 </a>
                 </Typography>
             </Typography>

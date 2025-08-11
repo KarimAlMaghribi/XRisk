@@ -15,7 +15,7 @@ export const FAQs = () => {
         },
         {
             question: "Wie kann ich Hilfe erhalten?",
-            answer: "Bei Fragen oder Problemen rund um die Plattform stehen wir dir gerne zur Verfügung. Schick uns einfach eine E-Mail an office@xrisk.info – wir melden uns so schnell wie möglich zurück."
+            answer: "Sie können Hilfe erhalten, indem Sie unser Support-Team unter koch@informatik.uni-leipzig.de kontaktieren. Unser Team steht Ihnen für alle Fragen zur Verfügung und hilft Ihnen gerne weiter."
         },
         {
             question: "Wie kann ich einen Fehler melden?",
