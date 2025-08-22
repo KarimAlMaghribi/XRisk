@@ -1,7 +1,7 @@
 export const Account = () => {
     return (
         <div>
-            Account
+            Your Account
         </div>
     )
 }
