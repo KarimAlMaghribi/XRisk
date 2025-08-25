@@ -5,10 +5,15 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,7 +31,7 @@ export function Header() {
     const navigate = useNavigate();
 
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+    const [mobileOpen, setMobileOpen] = useState(false);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const [anchorElLanguage, setAnchorElLanguage] = useState<null | HTMLElement>(null);
     const [activePage, setActivePage] = useState<string | null>(pages[0].name);
@@ -38,14 +43,6 @@ export function Header() {
     };
 
     // Define animation
-    const scrollRight = keyframes`
-        0% {
-            transform: translateX(-100vw);
-        }
-        100% {
-            transform: translateX(100vw);
-        }`;
-
     const scrollLeft = keyframes`
         0% {
             transform: translateX(100vw);
@@ -70,17 +67,17 @@ export function Header() {
         }
     }, [location]);
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNav(event.currentTarget);
-    };
-
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
     };
 
+    const handleOpenNavMenu = () => {
+        setMobileOpen(true);
+    };
+
     const handleCloseNavMenu = (page: Page) => {
         setActivePage(page.name);
-        setAnchorElNav(null);
+        setMobileOpen(false);
         navigate(page.route);
     };
 
@@ -98,48 +95,57 @@ export function Header() {
     };
 
     const countryFlagStyle = {
-        borderRadius: '5px',
-        width: '30px',
-        height: '20px',
-        marginRight: '8px',
-    }
+        borderRadius: '0.3125rem',
+        width: '1.875rem',
+        height: '1.25rem',
+        marginRight: '0.5rem',
+    } as const;
 
     return (
-        <AppBar position="static" elevation={0} sx={{ backgroundColor: "#1F271B" }}>
+        <AppBar
+            position="sticky"
+            elevation={0}
+            sx={{
+                backgroundColor: "#1F271B",
+                top: 0,
+                pt: "env(safe-area-inset-top)",
+            }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box
                         onClick={() => navigate('/')}
                         component="img"
-                        sx={{ maxWidth: '50px', display: { xs: 'none', md: 'flex' }, mr: 6, cursor: 'pointer' }}
+                        sx={{ maxWidth: '3.125rem', display: { xs: 'none', md: 'flex' }, mr: 6, cursor: 'pointer' }}
                         src={Logo} />
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
+                            aria-label="navigation menu"
                             onClick={handleOpenNavMenu}
                             color="inherit">
                             <MenuIcon />
                         </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{vertical: 'bottom', horizontal: 'left',}}
-                            keepMounted
-                            transformOrigin={{vertical: 'top', horizontal: 'left',}}
-                            open={Boolean(anchorElNav)}
-                            onClose={() => setAnchorElNav(null)}
-                            sx={{ display: { xs: 'block', md: 'none' } }}>
-                            {pages.map((page, index) => (
-                                page.authenticated && !isLoggedIn ? null :
-                                    <MenuItem key={index + "_" + page.name} onClick={() => handleCloseNavMenu(page)}>
-                                        <Typography sx={{ textAlign: 'center' }}>{page.name}</Typography>
-                                    </MenuItem>
-                            ))}
-                        </Menu>
                     </Box>
+                    <Drawer
+                        anchor="left"
+                        open={mobileOpen}
+                        onClose={() => setMobileOpen(false)}
+                        ModalProps={{ keepMounted: true }}
+                        sx={{ display: { xs: 'block', md: 'none' } }}>
+                        <Box sx={{ width: '15rem' }} role="presentation">
+                            <List>
+                                {pages.map((page, index) => (
+                                    page.authenticated && !isLoggedIn ? null : (
+                                        <ListItem key={index + '_' + page.name} disablePadding>
+                                            <ListItemButton onClick={() => handleCloseNavMenu(page)}>
+                                                <ListItemText primary={<Trans i18nKey={`header.${page.name}`} />} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    )
+                                ))}
+                            </List>
+                        </Box>
+                    </Drawer>
                     <Typography
                         variant="h5"
                         noWrap
@@ -179,9 +185,9 @@ export function Header() {
                             countryCode={languages[language].countryCode}
                             svg
                             style={{
-                                borderRadius: '5px',
-                                width: '1.0em',
-                                height: '1.0em',
+                                borderRadius: '0.3125rem',
+                                width: '1rem',
+                                height: '1rem',
                             }}
                             title={languages[language].label}
                         />
@@ -218,6 +224,9 @@ export function Header() {
                         color: 'orange',
                         fontWeight: 'bold',
                         animation: `${scrollLeft} 20s linear infinite`,
+                        '@media (prefers-reduced-motion: reduce)': {
+                            animation: 'none',
+                        },
                         whiteSpace: 'nowrap',
                         display: 'inline-block',
                     }}>

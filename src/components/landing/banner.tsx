@@ -25,10 +25,11 @@ export const Banner = () => {
         <Box
             sx={{
                 backgroundImage: `url(${cover})`,
-                backgroundRepeat: "no-repeat",
-                backgroundSize: "cover",
-                height: "70vh",
-                position: "relative", // Enable absolute positioning inside
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                minHeight: { xs: '60vh', md: '70vh' },
+                position: 'relative',
             }}
         >
             <Typography

@@ -83,7 +83,7 @@ export const Panel = (props: PanelProps) => {
             variant="button"
             component="div"
             fontWeight="bolder"
-            marginTop="20px"
+            sx={{ mt: 3 }}
           >
             {getHeaders(section)}
           </Typography>

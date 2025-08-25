@@ -56,16 +56,21 @@ export const RiskOverview = () => {
     return (
         <React.Fragment>
             <Grid container>
-                <Grid size={{xs: 12, md: 2}}>
-                    <Grid style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: "63px",
-                        margin: '0 30px 0 30px'
-                    }}>
-                        <Button variant="contained" onClick={() => setOpenRiskCreationDialog(true)} fullWidth
-                                style={{borderRadius: "5px"}}>
+                <Grid size={{ xs: 12, md: 2 }}>
+                    <Grid
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            p: { xs: 2, md: 4 }
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            onClick={() => setOpenRiskCreationDialog(true)}
+                            fullWidth
+                            sx={{ borderRadius: 1 }}
+                        >
                             <Trans i18nKey="risk_exchange.define_risk"></Trans>
                         </Button>
                     </Grid>
@@ -77,16 +82,18 @@ export const RiskOverview = () => {
                         showTaken={showTaken}
                     />
                 </Grid>
-                <Grid size={{xs: 10}}>
-                    <RiskOverviewHeader/>
+                <Grid size={{ xs: 12, md: 10 }}>
+                    <RiskOverviewHeader />
                     <RiskOverviewElement
                         risks={filteredRisks}
-                        status={status}/>
+                        status={status}
+                    />
                 </Grid>
             </Grid>
             <MyRiskCreationDialog
                 open={openRiskCreationDialog}
-                handleClose={handleClose}/>
+                handleClose={handleClose}
+            />
         </React.Fragment>
     )
 }
