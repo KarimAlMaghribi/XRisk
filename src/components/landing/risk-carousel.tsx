@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid2";
 import RouteIcon from "@mui/icons-material/Route";
 import GavelIcon from "@mui/icons-material/Gavel";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import { Card, CardMedia, Typography } from "@mui/material";
+import { Box, Card, CardMedia, Typography } from "@mui/material";
 import route from "../../assests/imgs/risk-examples/wings.jpg";
 import process from "../../assests/imgs/risk-examples/process.jpg";
 import event from "../../assests/imgs/risk-examples/event.jpg";
@@ -19,31 +19,35 @@ interface RiskExample {
   icon: any;
 }
 
-const iconSize = 50;
+const iconSx = { fontSize: { xs: 32, md: 50 } };
 const riskExamples: RiskExample[] = [
   {
     title: "way",
     img: route,
-    icon: <RouteIcon sx={{ fontSize: iconSize }} />,
+    icon: <RouteIcon sx={iconSx} />,
   },
   {
     title: "process",
     img: process,
-    icon: <GavelIcon sx={{ fontSize: iconSize }} />,
+    icon: <GavelIcon sx={iconSx} />,
   },
   {
     title: "event",
     img: event,
-    icon: <CalendarMonthIcon sx={{ fontSize: iconSize }} />,
+    icon: <CalendarMonthIcon sx={iconSx} />,
   },
 ];
 
 export const RiskElement = (props: RiskExample) => {
   return (
     <Card sx={{ textAlign: "center", cursor: "pointer" }} elevation={2}>
-      <CardMedia sx={{ height: 270 }} title={props.title} image={props.img} />
+      <CardMedia
+        sx={{ aspectRatio: '4/3', width: '100%' }}
+        title={props.title}
+        image={props.img}
+      />
 
-      <div style={{ margin: "60px" }}>{props.icon}</div>
+      <Box sx={{ my: { xs: 4, md: 7 } }}>{props.icon}</Box>
 
       <Typography gutterBottom variant="h5" component="div">
         {props.title}
@@ -61,51 +65,54 @@ export const RiskCarousel = () => {
       <Typography
         variant="h5"
         color="grey"
-        style={{ textAlign: "center", marginTop: "50px" }}
+        sx={{ textAlign: 'center', mt: { xs: 6, md: 8 } }}
       >
-        <Trans i18nKey="homepage.middle_page_text"></Trans>{" "}
-        <span style={{ color: orange }}>X</span>RISK
+        <Trans i18nKey="homepage.middle_page_text" />{" "}
+        <Box component="span" sx={{ color: orange }}>X</Box>RISK
       </Typography>
       <Typography
         variant="h3"
-        style={{ textAlign: "center", marginBottom: "50px" }}
+        sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}
       >
         {i18n.language === "en" && (
           <b>
-            <span style={{ color: orange }}>Offer your Risks</span> now.
+            <Box component="span" sx={{ color: orange }}>Offer your Risks</Box> now.
           </b>
         )}
         {i18n.language === "de" && (
           <b>
-            Jetzt <span style={{ color: orange }}>mit Risiken handeln!</span>
+            Jetzt <Box component="span" sx={{ color: orange }}>mit Risiken handeln!</Box>
           </b>
         )}
       </Typography>
       <Typography
         variant="h5"
         color="black"
-        style={{ textAlign: "center", marginBottom: "50px" }}
+        sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}
       >
         <Trans i18nKey="homepage.middle_page_text3"></Trans>
       </Typography>
 
       <Grid
         container
-        style={{ margin: "0 40px 100px 40px" }}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+        sx={{
+          my: { xs: 5, md: 12 },
+          px: { xs: 2, md: 5 },
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
       >
-        <Grid size={1} style={{ textAlign: "right" }}>
-          <IconButton>
-            <KeyboardArrowLeftIcon sx={{ fontSize: 40 }} />
+        <Grid size={1} sx={{ textAlign: 'right' }}>
+          <IconButton aria-label="previous">
+            <KeyboardArrowLeftIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
           </IconButton>
         </Grid>
         {riskExamples.map((riskExample: RiskExample) => (
           <Grid
             size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}
             key={riskExample.title}
-            style={{ margin: "40px" }}
+            sx={{ m: { xs: 2, md: 5 } }}
           >
             <RiskElement
               img={riskExample.img}
@@ -115,8 +122,8 @@ export const RiskCarousel = () => {
           </Grid>
         ))}
         <Grid size={1}>
-          <IconButton>
-            <KeyboardArrowRightIcon sx={{ fontSize: 40 }} />
+          <IconButton aria-label="next">
+            <KeyboardArrowRightIcon sx={{ fontSize: { xs: 32, md: 40 } }} />
           </IconButton>
         </Grid>
       </Grid>

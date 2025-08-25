@@ -108,7 +108,11 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
     };
 
     return (
-        <Paper square={false} style={{ margin: "5px", padding: "30px", marginTop: "10px" }} elevation={0}>
+        <Paper
+            square={false}
+            elevation={0}
+            sx={{ m: 1, mt: 2, p: { xs: 2, md: 3 } }}
+        >
             <Typography variant="h6"><b>Filter</b></Typography>
             <Typography variant="caption"><Trans i18nKey="risk_exchange.filter_message"></Trans></Typography>
 
@@ -121,7 +125,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
             <Typography variant="body1"><Trans i18nKey="risk_exchange.nominal_value"></Trans></Typography>
             <Typography variant="caption"><Trans i18nKey="risk_exchange.insured_sum_risk"></Trans></Typography>
 
-            <Box margin="15px">
+              <Box sx={{ m: 2 }}>
                 <Slider
                     value={sliderValue}
                     onChange={handleValueChange}
@@ -172,7 +176,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
             <Typography variant="body1"><Trans i18nKey="risk_exchange.remaining_term"></Trans></Typography>
             <Typography variant="caption"><Trans i18nKey="risk_exchange.risk_expire_time"></Trans></Typography>
 
-            <Box margin="15px">
+              <Box sx={{ m: 2 }}>
                 <Slider
                     value={termValue}
                     onChange={handleTermChange}
@@ -221,7 +225,7 @@ export const RiskOverviewFilter = (props: RiskOverviewFilterType) => {
                 />
             </Box>
 
-            <Box display="flex" alignItems="center" marginTop="10px">
+              <Box display="flex" alignItems="center" sx={{ mt: 2 }}>
                 <Typography variant="body1">
                     Übernommene Risiken anzeigen
                 </Typography>

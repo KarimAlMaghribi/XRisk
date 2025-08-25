@@ -24,8 +24,8 @@ const item = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    px: 5,
-};
+    px: { xs: 2, md: 5 },
+} as const;
 
 function MarketingStats() {
     const dispatch: AppDispatch = useDispatch();
@@ -43,13 +43,13 @@ function MarketingStats() {
         <Box
             component="section"
             sx={{ display: 'flex', overflow: 'hidden', bgcolor: lightOrange }}>
-            <Container sx={{ mt: 15, mb: 30, display: 'flex', position: 'relative' }}>
+            <Container sx={{ mt: { xs: 8, md: 15 }, mb: { xs: 10, md: 30 }, display: 'flex', position: 'relative' }}>
                 <Box
                     component="img"
                     src={CurvyLines}
                     sx={{ pointerEvents: 'none', position: 'absolute', top: -180 }}
                 />
-                <Grid container spacing={7}>
+                <Grid container spacing={{ xs: 4, md: 7 }}>
                     {[{
                         img: happyUsers,
                         alt: "suitcase",
@@ -72,14 +72,14 @@ function MarketingStats() {
                                     component="img"
                                     src={itemData.img}
                                     alt={itemData.alt}
-                                    sx={{ height: 150, borderRadius: "10px" }}
+                                    sx={{ width: '100%', height: 'auto', maxHeight: { xs: 120, md: 150 }, borderRadius: 2 }}
                                 />
                                 <Box sx={{
-                                    height: 60,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    textAlign: "center",
+                                    minHeight: { xs: 'auto', md: 60 },
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    textAlign: 'center',
                                     mt: 4
                                 }}>
                                     <Typography variant="h5">

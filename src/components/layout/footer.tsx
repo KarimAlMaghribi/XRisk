@@ -215,7 +215,16 @@ export const Footer = () => {
 
     return (
         <React.Fragment>
-            <Grid container style={{backgroundColor: "#1F271B", padding: "60px 80px 100px 80px"}}>
+            <Grid
+                container
+                sx={{
+                    backgroundColor: "#1F271B",
+                    p: { xs: "2.5rem 1rem", sm: "3.75rem 5rem 6.25rem" },
+                    pb: {
+                        xs: "calc(2.5rem + env(safe-area-inset-bottom))",
+                        sm: "calc(6.25rem + env(safe-area-inset-bottom))",
+                    },
+                }}>
                 <Grid size={2}>
                     <img src={Logo} style={{width: "60px", height: "50px"}} alt="logo"/>
                 </Grid>

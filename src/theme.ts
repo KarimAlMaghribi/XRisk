@@ -14,6 +14,17 @@ export const theme = createTheme({
     },
     typography: {
         fontFamily: fontFamily,
+        h1: {
+            fontSize: 'clamp(2rem, 5vw + 1rem, 3rem)',
+            lineHeight: 1.2,
+        },
+        h2: {
+            fontSize: 'clamp(1.5rem, 4vw + 0.5rem, 2.25rem)',
+            lineHeight: 1.3,
+        },
+        body1: {
+            fontSize: 'clamp(1rem, 2vw + 0.5rem, 1.125rem)',
+        },
     },
     components: {
         MuiButton: {
@@ -39,7 +50,7 @@ export const theme = createTheme({
         MuiSlider: {
             styleOverrides: {
                 markLabel: {
-                    fontSize: "10px",
+                    fontSize: '0.625rem',
                 },
             },
         },

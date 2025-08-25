@@ -6,7 +6,6 @@ import Button from "@mui/material/Button";
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
 import {signUpWithEmail} from "../../firebase/firebase-service";
-import "./style.scss";
 import {AppDispatch} from "../../store/store";
 import {useDispatch} from "react-redux";
 import {ProfileInformation} from "../../store/slices/user-profile/types";
@@ -58,11 +57,20 @@ export const SignUp = () => {
     }
 
     return (
-        <div className="sign-up-card">
+        <Box
+            component="section"
+            sx={{
+                pt: {xs: 'calc(env(safe-area-inset-top) + 2rem)', md: 'calc(env(safe-area-inset-top) + 4rem)'},
+                pb: {xs: 'calc(env(safe-area-inset-bottom) + 2rem)', md: 'calc(env(safe-area-inset-bottom) + 4rem)'},
+                px: 2,
+                display: 'flex',
+                justifyContent: 'center'
+            }}
+        >
             <Box sx={{
-                maxWidth: 400,
-                mx: 'auto',
-                p: 3,
+                width: '100%',
+                maxWidth: '25rem',
+                p: {xs: 3, md: 4},
                 boxShadow: 3,
                 borderRadius: 2,
             }}>
@@ -74,6 +82,7 @@ export const SignUp = () => {
                         fullWidth
                         label="Vorname"
                         name="name"
+                        autoComplete="given-name"
                         value={formData.name}
                         onChange={handleChange}
                         margin="normal"
@@ -84,6 +93,7 @@ export const SignUp = () => {
                         fullWidth
                         label="Nachname"
                         name="familyName"
+                        autoComplete="family-name"
                         value={formData.familyName}
                         onChange={handleChange}
                         margin="normal"
@@ -94,6 +104,8 @@ export const SignUp = () => {
                         label="Email"
                         name="email"
                         type="email"
+                        autoComplete="email"
+                        inputProps={{ inputMode: 'email' }}
                         value={formData.email}
                         onChange={handleChange}
                         margin="normal"
@@ -104,6 +116,7 @@ export const SignUp = () => {
                         label="Passwort"
                         name="password"
                         type="password"
+                        autoComplete="new-password"
                         value={formData.password}
                         onChange={handleChange}
                         margin="normal"
@@ -126,7 +139,7 @@ export const SignUp = () => {
                     </Typography>
                 </form>
             </Box>
-        </div>
+        </Box>
 
     );
 }

@@ -1,5 +1,11 @@
 import React from "react";
-import {Accordion, AccordionDetails, AccordionSummary, Typography} from "@mui/material";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Container,
+    Typography
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Trans } from "react-i18next";
 
@@ -35,35 +41,37 @@ export const FAQs = () => {
         };
 
     return (
-        <div style={{margin: "50px"}}>
-            <Typography variant="h3" style={{textAlign: "center", marginBottom: "50px"}}>
-                <Trans i18nKey="faq.title"></Trans>
+        <Container sx={{ py: { xs: 4, md: 10 } }}>
+            <Typography
+                variant="h3"
+                sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+                <Trans i18nKey="faq.title" />
             </Typography>
 
-            {
-                faqs.map((faq, index) => (
-                    <Accordion
-                        key={index}
-                        style={{marginTop: "20px"}}
-                        expanded={expanded === `panel${index}`}
-                        onChange={handleChange(`panel${index}`)}
-                        elevation={0}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon/>}
-                            aria-controls="panel1bh-content"
-                            id="panel1bh-header">
-                            <Typography variant="h6" sx={{width: '33%', flexShrink: 0, color: 'text.secondary'}}>
-                                <Trans  i18nKey={`faq.question${index+1}`}></Trans>
-                            </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                <Trans  i18nKey={`faq.answer${index+1}`}></Trans>
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                ))
-            }
-        </div>
+            {faqs.map((faq, index) => (
+                <Accordion
+                    key={index}
+                    sx={{ mt: 2 }}
+                    expanded={expanded === `panel${index}`}
+                    onChange={handleChange(`panel${index}`)}
+                    elevation={0}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls={`panel${index}bh-content`}
+                        id={`panel${index}bh-header`}>
+                        <Typography
+                            variant="h6"
+                            sx={{ width: { xs: '100%', md: '33%' }, flexShrink: 0, color: 'text.secondary' }}>
+                            <Trans i18nKey={`faq.question${index + 1}`} />
+                        </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Typography>
+                            <Trans i18nKey={`faq.answer${index + 1}`} />
+                        </Typography>
+                    </AccordionDetails>
+                </Accordion>
+            ))}
+        </Container>
     );
 }

@@ -1,10 +1,9 @@
-import {Button, Card, Container, Divider, TextField, Typography,} from "@mui/material";
+import {Button, Card, Container, Divider, TextField, Typography, Box} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import React, {useEffect} from "react";
 // @ts-ignore
 import Logo from "../../assests/imgs/logo.png";
 import Background from "../../assests/imgs/login.jpg";
-import "./style.scss";
 import GoogleIcon from '@mui/icons-material/Google';
 import {Link, useNavigate} from "react-router-dom";
 import {ROUTES} from "../../routing/routes";
@@ -109,44 +108,43 @@ export const SignIn = () => {
     }
 
     return (
-        <div className="sign-in-card">
-            <Card>
+        <Box component="section" sx={{
+            pt: 'calc(env(safe-area-inset-top) + 2rem)',
+            pb: 'calc(env(safe-area-inset-bottom) + 2rem)',
+            px: 2,
+        }}>
+            <Card sx={{maxWidth: '56.25rem', mx: 'auto'}}>
                 <Grid container>
                     {/*<Grid size={6} style={{backgroundColor: "#1F271B"}}>*/}
-                    <Grid size={6} style={{ backgroundImage: `url(${Background})`, backgroundSize: "cover", backgroundPosition: "center" }}>
-                    <div
-                            style={{display: "flex", alignItems: "center", padding: "20px"}}>
-                            <img
-                                src={Logo}
-                                alt="logo"
-                                style={{height: "30px", width: "39px", marginRight: "20px"}}
-                            />
-                            <Typography variant="body1" style={{color: "black"}}>
+                    <Grid xs={12} md={6} sx={{ backgroundImage: `url(${Background})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    <Box sx={{display: 'flex', alignItems: 'center', p: 2.5}}>
+                            <Box component="img" src={Logo} alt="logo" sx={{height: '2rem', width: '2.5rem', mr: 2.5}}/>
+                            <Typography variant="body1" color="text.primary">
                                 <Trans i18nKey={"sign_in.we_make_risks_tradeable"}/>
                             </Typography>
-                        </div>
+                        </Box>
                     </Grid>
 
-                    <Grid size={6} style={{padding: "20px"}}>
-                        <Grid container>
-                            <Grid size={12} textAlign="center">
+                    <Grid xs={12} md={6} sx={{p: 2.5}}>
+                        <Grid container spacing={2}>
+                            <Grid xs={12} textAlign="center">
                                 <Typography variant="h6">
                                     <Trans i18nKey={"sign_in.signin_text"}/>
                                 </Typography>
                             </Grid>
 
-                            <Grid size={12} textAlign="center">
+                            <Grid xs={12} textAlign="center">
                                 <Typography variant="caption">
                                     <Trans i18nKey={"sign_in.use_email_and_password"}/>
                                 </Typography>
                             </Grid>
 
-                            <Container style={{maxWidth: "400px"}}>
-                                <Grid size={12} textAlign="center">
+                            <Container sx={{maxWidth: '25rem', mx: 'auto'}}>
+                                <Grid xs={12} textAlign="center">
                                     <TextField
                                         InputProps={{
-                                            style: {
-                                                fontSize: "14px",
+                                            sx: {
+                                                fontSize: '0.875rem',
                                             },
                                         }}
                                         autoComplete="email"
@@ -154,18 +152,18 @@ export const SignIn = () => {
                                         variant="outlined"
                                         name="Email"
                                         size="small"
-                                        style={{marginTop: "20px"}}
+                    sx={{mt: 2.5}}
                                         value={email}
                                         onChange={(event) => setEmail(event.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
 
-                                <Grid size={12} textAlign="center">
+                                <Grid xs={12} textAlign="center">
                                     <TextField
                                         InputProps={{
-                                            style: {
-                                                fontSize: "14px",
+                                            sx: {
+                                                fontSize: '0.875rem',
                                             },
                                         }}
                                         autoComplete="current-password"
@@ -173,17 +171,17 @@ export const SignIn = () => {
                                         name="Passwort"
                                         size="small"
                                         type="password"
-                                        style={{marginTop: "20px"}}
+                    sx={{mt: 2.5}}
                                         value={password}
                                         onChange={(event) => setPassword(event.target.value)}
                                         fullWidth
                                     />
                                 </Grid>
 
-                                <Grid size={12} textAlign="center">
+                                <Grid xs={12} textAlign="center">
                                     <Button
                                         variant="contained"
-                                        style={{color: "white", marginTop: "10px"}}
+                                        sx={{color: 'white', mt: 1.25}}
                                         fullWidth
                                         onClick={signIn}
                                     >
@@ -191,7 +189,7 @@ export const SignIn = () => {
                                     </Button>
                                 </Grid>
 
-                                <Divider style={{marginTop: "10px", marginBottom: "10px"}}>
+                                <Divider sx={{my: 1.25}}>
                                     <Typography variant="subtitle2" color="textSecondary">
                                         <Trans i18nKey={"sign_in.or_login_with"}/>
                                     </Typography>
@@ -208,7 +206,7 @@ export const SignIn = () => {
 
                                 <Typography
                                     variant="subtitle2"
-                                    style={{textAlign: "center", marginTop: "10px"}}
+                                    sx={{textAlign: 'center', mt: 1.25}}
                                 >
                                     <Trans i18nKey={"sign_in.registration_text_1"}/>{" "}
                                     <Link to={`/${ROUTES.TERMS}`}>
@@ -225,7 +223,7 @@ export const SignIn = () => {
                     </Grid>
                 </Grid>
             </Card>
-        </div>
+        </Box>
     );
 };
 

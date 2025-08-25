@@ -58,50 +58,51 @@ export const MyRisks = () => {
 
     return (
         <React.Fragment>
-            <Grid container style={{padding: "10px 0 10px 0"}}>
-                <Grid size={2}
-                      style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: "0 30px 0 30px"
-                      }}>
+            <Grid container spacing={2} sx={{ px: { xs: 2, md: 4 }, py: 2 }}>
+                <Grid size={{ xs: 12, md: 2 }} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Button
                         onClick={() => setOpenRiskCreationDialog(true)}
                         fullWidth
                         variant="outlined"
-                        style={{borderRadius: "5px"}}>
+                        sx={{ borderRadius: 1 }}>
                         <Trans i18nKey="risk_exchange.define_risk"></Trans>
                     </Button>
                 </Grid>
-                <Grid size={10} style={{padding: "0 30px 0 30px"}}>
+                <Grid size={{ xs: 12, md: 10 }} sx={{ mt: { xs: 1, md: 0 } }}>
                     <FilterBar
                         key={tab}
                         searchInput={searchInput}
                         setSearchInput={setSearchInput}
                         myRisks={tab === RiskTypeEnum.OFFERED ? myOfferedRisks : myTakenRisks}
-                        type={tab}/>
+                        type={tab}
+                    />
                 </Grid>
                 <Grid size={12}>
-                    <Box sx={{width: '100%', typography: 'body1'}} marginLeft="30px" marginRight="30px"
-                         marginTop="10px">
+                    <Box sx={{ width: '100%', typography: 'body1', mt: 2, mx: { xs: 0, md: 4 } }}>
                         <TabContext value={tab}>
-                            <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                                <TabList onChange={handleTabChange}>
-                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.OFFERED_RISKS")}`}
-                                         value={RiskTypeEnum.OFFERED}/>
-                                    <Tab sx={{fontWeight: "bold"}} label={`${t("my_risks.TAKEN_RISKS")}`}
-                                         value={RiskTypeEnum.TAKEN}/>
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                <TabList
+                                    onChange={handleTabChange}
+                                    variant="scrollable"
+                                    allowScrollButtonsMobile
+                                >
+                                    <Tab sx={{ fontWeight: 'bold' }} label={`${t("my_risks.OFFERED_RISKS")}`}
+                                         value={RiskTypeEnum.OFFERED} />
+                                    <Tab sx={{ fontWeight: 'bold' }} label={`${t("my_risks.TAKEN_RISKS")}`}
+                                         value={RiskTypeEnum.TAKEN} />
                                 </TabList>
                             </Box>
                             <TabPanel value={RiskTypeEnum.OFFERED}>
                                 <Panel
                                     risks={myFilteredOfferedRisks.length > 0 ? myFilteredOfferedRisks : myOfferedRisks}
-                                    type={RiskTypeEnum.OFFERED}/>
+                                    type={RiskTypeEnum.OFFERED}
+                                />
                             </TabPanel>
                             <TabPanel value={RiskTypeEnum.TAKEN}>
-                                <Panel risks={myFilteredTakenRisks.length > 0 ? myFilteredTakenRisks : myTakenRisks}
-                                       type={RiskTypeEnum.TAKEN}/>
+                                <Panel
+                                    risks={myFilteredTakenRisks.length > 0 ? myFilteredTakenRisks : myTakenRisks}
+                                    type={RiskTypeEnum.TAKEN}
+                                />
                             </TabPanel>
                         </TabContext>
                     </Box>
@@ -110,7 +111,8 @@ export const MyRisks = () => {
 
             <MyRiskCreationDialog
                 open={openRiskCreationDialog}
-                handleClose={handleCloseDialog}/>
+                handleClose={handleCloseDialog}
+            />
         </React.Fragment>
     );
 }
