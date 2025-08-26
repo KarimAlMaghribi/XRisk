@@ -116,7 +116,7 @@ export const SignIn = () => {
             <Card sx={{maxWidth: '56.25rem', mx: 'auto'}}>
                 <Grid container>
                     {/*<Grid size={6} style={{backgroundColor: "#1F271B"}}>*/}
-                    <Grid xs={12} md={6} sx={{ backgroundImage: `url(${Background})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    <Grid size={{ xs: 12, md: 6 }} sx={{ backgroundImage: `url(${Background})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <Box sx={{display: 'flex', alignItems: 'center', p: 2.5}}>
                             <Box component="img" src={Logo} alt="logo" sx={{height: '2rem', width: '2.5rem', mr: 2.5}}/>
                             <Typography variant="body1" color="text.primary">
@@ -125,22 +125,22 @@ export const SignIn = () => {
                         </Box>
                     </Grid>
 
-                    <Grid xs={12} md={6} sx={{p: 2.5}}>
+                    <Grid size={{ xs: 12, md: 6 }} sx={{p: 2.5}}>
                         <Grid container spacing={2}>
-                            <Grid xs={12} textAlign="center">
+                            <Grid size={12} textAlign="center">
                                 <Typography variant="h6">
                                     <Trans i18nKey={"sign_in.signin_text"}/>
                                 </Typography>
                             </Grid>
 
-                            <Grid xs={12} textAlign="center">
+                            <Grid size={12} textAlign="center">
                                 <Typography variant="caption">
                                     <Trans i18nKey={"sign_in.use_email_and_password"}/>
                                 </Typography>
                             </Grid>
 
                             <Container sx={{maxWidth: '25rem', mx: 'auto'}}>
-                                <Grid xs={12} textAlign="center">
+                                <Grid size={12} textAlign="center">
                                     <TextField
                                         InputProps={{
                                             sx: {
@@ -159,7 +159,7 @@ export const SignIn = () => {
                                     />
                                 </Grid>
 
-                                <Grid xs={12} textAlign="center">
+                                <Grid size={12} textAlign="center">
                                     <TextField
                                         InputProps={{
                                             sx: {
@@ -178,7 +178,7 @@ export const SignIn = () => {
                                     />
                                 </Grid>
 
-                                <Grid xs={12} textAlign="center">
+                                <Grid size={12} textAlign="center">
                                     <Button
                                         variant="contained"
                                         sx={{color: 'white', mt: 1.25}}
