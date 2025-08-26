@@ -1,9 +1,6 @@
 // src/App.tsx
 import React, { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
-import { theme } from "./theme";
-import { MobileWorkInProgress } from "./mobile-work-inprogress";
 
 import { Landing } from "./pages/landing/landing";
 import { SignIn } from "./pages/authentication/sign-in";
@@ -42,8 +39,6 @@ function App() {
     const dispatch = useDispatch<AppDispatch>();
     const [language, setLanguage] = useState(i18n.language);
 
-    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
@@ -58,10 +53,6 @@ function App() {
             setLanguage(lng);
         });
     }, [i18n.language]);
-
-    if (isMobile) {
-        return <MobileWorkInProgress />;
-    }
 
     return (
         <Layout>
