@@ -1,5 +1,5 @@
 import { Autocomplete, Box, InputAdornment, TextField } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useDeferredValue, useEffect, useMemo } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import { Risk } from "../../models/Risk";
 import { mapStatus } from "./utils";
@@ -21,23 +21,27 @@ export const FilterBar = (props: FilterbarProps) => {
 
   const { t } = useTranslation();
 
-  const searchParams: string[] = props.myRisks.reduce((acc: string[], risk) => {
-    if (risk.name) acc.push(risk.name);
-    if (risk.publisher?.name) acc.push(risk.publisher?.name);
-    if (risk.type) acc.push(risk.type.map((type) => type).join(", "));
-    if (risk.description) acc.push(risk.description);
-    if (risk.value) acc.push(risk.value.toString());
-    if (risk.status) acc.push(mapStatus(t, risk.status));
-    if (risk.declinationDate)
-      acc.push(new Date(risk.declinationDate).toLocaleDateString());
-    return acc;
-  }, []);
+  const uniqueSearchParams = useMemo(() => {
+    const params: string[] = props.myRisks.reduce((acc: string[], risk) => {
+      if (risk.name) acc.push(risk.name);
+      if (risk.publisher?.name) acc.push(risk.publisher?.name);
+      if (risk.type) acc.push(risk.type.join(", "));
+      if (risk.description) acc.push(risk.description);
+      if (risk.value != null) acc.push(risk.value.toString());
+      if (risk.status != null) acc.push(mapStatus(t, risk.status));
+      if (risk.declinationDate)
+        acc.push(new Date(risk.declinationDate).toLocaleDateString());
+      return acc;
+    }, []);
 
-  const uniqueSearchParams = Array.from(new Set(searchParams));
+    return Array.from(new Set(params));
+  }, [props.myRisks, t]);
+
+  const deferredSearch = useDeferredValue(props.searchInput);
 
   useEffect(() => {
-    dispatch(setFilter(props.searchInput));
-  }, [props.searchInput, dispatch]);
+    dispatch(setFilter(deferredSearch));
+  }, [deferredSearch, dispatch]);
 
   return (
     <Box
@@ -47,6 +51,10 @@ export const FilterBar = (props: FilterbarProps) => {
       sx={{
         borderLeft: { md: "1px solid lightgrey" },
         pl: { md: 2 },
+        position: { xs: "sticky", md: "static" },
+        top: { xs: 0 },
+        zIndex: { xs: 1 },
+        bgcolor: { xs: "background.paper", md: "transparent" },
       }}
     >
       <Autocomplete
@@ -55,9 +63,10 @@ export const FilterBar = (props: FilterbarProps) => {
           props.setSearchInput(newInputValue);
         }}
         size="small"
-        disablePortal
+        freeSolo
         options={uniqueSearchParams}
         sx={{ width: { xs: "100%", md: "35%" } }}
+        ListboxProps={{ style: { maxHeight: 200, overflow: "auto" } }}
         renderInput={(params) => (
           <TextField
             {...params}
