@@ -1,9 +1,9 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useMemo } from "react";
+import Grid from "@mui/material/Grid2";
+import { Paper, Typography } from "@mui/material";
 import { Risk } from "../../models/Risk";
 import { RiskStatusEnum } from "../../enums/RiskStatus.enum";
 import { MyRiskRow } from "./my-risk-row";
-import { RiskPanelArea } from "../../enums/RiskPanelArea.enum";
 import { RiskTypeEnum } from "../../enums/RiskType.enum";
 import { useTranslation } from "react-i18next";
 import { mapStatus } from "./utils";
@@ -13,83 +13,108 @@ export interface PanelProps {
   type: RiskTypeEnum;
 }
 
-export const Panel = (props: PanelProps) => {
+export const Panel = ({ risks, type }: PanelProps) => {
   const { t } = useTranslation();
-  const getHeaders = (column: number) => {
-    if (props.type === RiskTypeEnum.OFFERED) {
-      switch (column) {
-        case 1:
-          return mapStatus(t, RiskStatusEnum.DRAFT);
-        case 2:
-          return mapStatus(t, RiskStatusEnum.PUBLISHED);
-        case 3:
-          return mapStatus(t, RiskStatusEnum.WITHDRAWN);
-        case 4:
-          return mapStatus(t, RiskStatusEnum.DEAL);
-        case 5:
-          return mapStatus(t, RiskStatusEnum.AGREEMENT);
-        default:
-          return null;
-      }
-    }
-    if (props.type === RiskTypeEnum.TAKEN) {
-      switch (column) {
-        case 1:
-          return mapStatus(t, RiskStatusEnum.DEAL);
-        case 2:
-          return mapStatus(t, RiskStatusEnum.AGREEMENT);
-        default:
-          return null;
-      }
-    }
-  };
 
-  const getRiskRow = (column: number, risk: Risk) => {
-    if (props.type === RiskTypeEnum.OFFERED) {
-      if (risk.status === RiskStatusEnum.DRAFT && column === 1) {
-        return <MyRiskRow risk={risk} />;
-      }
-      if (risk.status === RiskStatusEnum.PUBLISHED && column === 2) {
-        return <MyRiskRow risk={risk} />;
-      }
-      if (risk.status === RiskStatusEnum.WITHDRAWN && column === 3) {
-        return <MyRiskRow risk={risk} />;
-      }
-      if (risk.status === RiskStatusEnum.DEAL && column === 4) {
-        return <MyRiskRow risk={risk} />;
-      }
-      if (risk.status === RiskStatusEnum.AGREEMENT && column === 5) {
-        return <MyRiskRow risk={risk} />;
-      }
-    } else if (props.type === RiskTypeEnum.TAKEN) {
-      if (risk.status !== RiskStatusEnum.AGREEMENT && column === 1) {
-        return <MyRiskRow risk={risk} taken={true} />;
-      }
-      if (risk.status === RiskStatusEnum.AGREEMENT && column === 2) {
-        return <MyRiskRow risk={risk} taken={true} />;
-      }
-    }
-    return null;
-  };
+  const groupedRisks = useMemo(() => {
+    const groups: Record<RiskStatusEnum, Risk[]> = {
+      [RiskStatusEnum.DRAFT]: [],
+      [RiskStatusEnum.PUBLISHED]: [],
+      [RiskStatusEnum.WITHDRAWN]: [],
+      [RiskStatusEnum.DEAL]: [],
+      [RiskStatusEnum.AGREEMENT]: [],
+    };
 
-  const columns =
-    props.type === RiskTypeEnum.OFFERED ? [1, 2, 3, 4, 5] : [1, 2];
+    risks.forEach((risk) => {
+      if (risk.status != null) {
+        groups[risk.status as RiskStatusEnum].push(risk);
+      }
+    });
+
+    return groups;
+  }, [risks]);
+
+  const activeRisks = useMemo(
+    () => [
+      ...groupedRisks[RiskStatusEnum.DRAFT],
+      ...groupedRisks[RiskStatusEnum.PUBLISHED],
+      ...groupedRisks[RiskStatusEnum.WITHDRAWN],
+      ...groupedRisks[RiskStatusEnum.DEAL],
+    ],
+    [groupedRisks]
+  );
+
+  const mdColumns = type === RiskTypeEnum.OFFERED ? 5 : 2;
+
+  const sections =
+    type === RiskTypeEnum.OFFERED
+      ? [
+          {
+            key: RiskStatusEnum.DRAFT,
+            label: mapStatus(t, RiskStatusEnum.DRAFT),
+            risks: groupedRisks[RiskStatusEnum.DRAFT],
+          },
+          {
+            key: RiskStatusEnum.PUBLISHED,
+            label: mapStatus(t, RiskStatusEnum.PUBLISHED),
+            risks: groupedRisks[RiskStatusEnum.PUBLISHED],
+          },
+          {
+            key: RiskStatusEnum.WITHDRAWN,
+            label: mapStatus(t, RiskStatusEnum.WITHDRAWN),
+            risks: groupedRisks[RiskStatusEnum.WITHDRAWN],
+          },
+          {
+            key: RiskStatusEnum.DEAL,
+            label: mapStatus(t, RiskStatusEnum.DEAL),
+            risks: groupedRisks[RiskStatusEnum.DEAL],
+          },
+          {
+            key: RiskStatusEnum.AGREEMENT,
+            label: mapStatus(t, RiskStatusEnum.AGREEMENT),
+            risks: groupedRisks[RiskStatusEnum.AGREEMENT],
+          },
+        ]
+      : [
+          {
+            key: "active",
+            label: mapStatus(t, RiskStatusEnum.DEAL),
+            risks: activeRisks,
+          },
+          {
+            key: RiskStatusEnum.AGREEMENT,
+            label: mapStatus(t, RiskStatusEnum.AGREEMENT),
+            risks: groupedRisks[RiskStatusEnum.AGREEMENT],
+          },
+        ];
 
   return (
-    <Box>
-      {columns.map((section) => (
-        <React.Fragment key={section}>
-          <Typography
-            variant="button"
-            component="div"
-            fontWeight="bolder"
-            sx={{ mt: 3 }}
+    <Grid container columns={{ xs: 12, md: mdColumns }} spacing={2}>
+      {sections.map((section) => (
+        <Grid key={String(section.key)} size={{ xs: 12, md: 1 }} sx={{ display: "flex" }}>
+          <Paper
+            variant="outlined"
+            sx={{ p: 2, flexGrow: 1, display: "flex", flexDirection: "column" }}
           >
-            {getHeaders(section)}
-          </Typography>
-          {props.risks.map((risk) => getRiskRow(section, risk))}
-        </React.Fragment>
+            <Typography
+              variant="overline"
+              component="div"
+              fontWeight="bolder"
+              sx={{ mb: 1 }}
+            >
+              {section.label}
+            </Typography>
+            {section.risks.map((risk, index) => (
+              <MyRiskRow
+                key={risk.id ?? `${section.key}-${index}`}
+                risk={risk}
+                taken={type === RiskTypeEnum.TAKEN}
+              />
+            ))}
+          </Paper>
+        </Grid>
       ))}
-    </Box>
+    </Grid>
   );
 };
+

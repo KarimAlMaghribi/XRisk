@@ -42,7 +42,7 @@ export const MyRisks = () => {
         dispatch(fetchMyChats());
         dispatch(fetchMyOfferedRisks());
         dispatch(fetchMyTakenRisks());
-    }, [dispatch, tab]);
+    }, [dispatch]);
 
 
     const handleCloseDialog = () => {
@@ -85,6 +85,7 @@ export const MyRisks = () => {
                                     onChange={handleTabChange}
                                     variant="scrollable"
                                     allowScrollButtonsMobile
+                                    aria-label={t("my_risks.tabs_aria_label", "my risks tabs")}
                                 >
                                     <Tab sx={{ fontWeight: 'bold' }} label={`${t("my_risks.OFFERED_RISKS")}`}
                                          value={RiskTypeEnum.OFFERED} />
@@ -92,18 +93,22 @@ export const MyRisks = () => {
                                          value={RiskTypeEnum.TAKEN} />
                                 </TabList>
                             </Box>
-                            <TabPanel value={RiskTypeEnum.OFFERED}>
-                                <Panel
-                                    risks={myFilteredOfferedRisks.length > 0 ? myFilteredOfferedRisks : myOfferedRisks}
-                                    type={RiskTypeEnum.OFFERED}
-                                />
-                            </TabPanel>
-                            <TabPanel value={RiskTypeEnum.TAKEN}>
-                                <Panel
-                                    risks={myFilteredTakenRisks.length > 0 ? myFilteredTakenRisks : myTakenRisks}
-                                    type={RiskTypeEnum.TAKEN}
-                                />
-                            </TabPanel>
+                            {tab === RiskTypeEnum.OFFERED && (
+                                <TabPanel value={RiskTypeEnum.OFFERED} sx={{ px: 0 }}>
+                                    <Panel
+                                        risks={myFilteredOfferedRisks.length > 0 ? myFilteredOfferedRisks : myOfferedRisks}
+                                        type={RiskTypeEnum.OFFERED}
+                                    />
+                                </TabPanel>
+                            )}
+                            {tab === RiskTypeEnum.TAKEN && (
+                                <TabPanel value={RiskTypeEnum.TAKEN} sx={{ px: 0 }}>
+                                    <Panel
+                                        risks={myFilteredTakenRisks.length > 0 ? myFilteredTakenRisks : myTakenRisks}
+                                        type={RiskTypeEnum.TAKEN}
+                                    />
+                                </TabPanel>
+                            )}
                         </TabContext>
                     </Box>
                 </Grid>
