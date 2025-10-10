@@ -21,8 +21,8 @@ export const Contact = () => {
                 <Typography variant="body1"> <Trans i18nKey={"footer.contact_elements.telephone"}/>: +41 78 79 99 968</Typography>
                 <Typography variant="body1">
                 <Trans i18nKey={"footer.contact_elements.email"}/>:
-                <a href="mailto:office@xrisk.info" className="text-blue-500 hover:underline">
-                    office@xrisk.info
+                <a href="mailto:koch@informatik.uni-leipzig.de" className="text-blue-500 hover:underline">
+                    koch@informatik.uni-leipzig.de
                 </a>
                 </Typography>
                 <Typography variant="body1">

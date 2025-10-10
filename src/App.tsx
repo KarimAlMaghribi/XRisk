@@ -15,7 +15,8 @@ import { About } from "./pages/about/about";
 import { Catalog } from "./pages/catalog/catalog";
 import { Account } from "./pages/account/account";
 import { Investors } from "./pages/investors/investors";
-import { Chat } from "./pages/chat/chat";
+// ❌ Entfernt: altes Chat-Page-Objekt
+// import { Chat } from "./pages/chat/chat";
 import { Settings } from "@mui/icons-material";
 import { ROUTES } from "./routing/routes";
 import { PrivateRoute } from "./routing/private-route";
@@ -34,6 +35,8 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "./store/store";
 import { auth } from "./firebase_config";
 import { fetchUserProfile } from "./store/slices/user-profile/thunks";
+import ChatPage from "./components/chat/chat-page";
+
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
@@ -41,17 +44,13 @@ function App() {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
-            if (user) {
-                dispatch(fetchUserProfile());
-            }
+            if (user) dispatch(fetchUserProfile());
         });
         return () => unsubscribe();
     }, [dispatch]);
 
     useEffect(() => {
-        i18n.on("languageChanged", (lng) => {
-            setLanguage(lng);
-        });
+        i18n.on("languageChanged", (lng) => setLanguage(lng));
     }, [i18n.language]);
 
     return (
@@ -62,7 +61,17 @@ function App() {
                 <Route path={`/${ROUTES.SIGN_UP}`} element={<SignUp />} />
                 <Route path={`/${ROUTES.FORGOT_PASSWORD}`} element={<ForgotPassword />} />
                 <Route path={`/${ROUTES.ABOUT}`} element={<About />} />
-                <Route path={`/${ROUTES.CHAT}`} element={<PrivateRoute><Chat /></PrivateRoute>} />
+
+                <Route
+                    path={`/${ROUTES.CHAT}`}
+                    element={<PrivateRoute><ChatPage /></PrivateRoute>}
+                />
+                <Route
+                    path={`/${ROUTES.CHAT}/:id`}
+                    element={<PrivateRoute><ChatPage /></PrivateRoute>}
+                />
+
+                {/* Rest unverändert */}
                 <Route path={`/${ROUTES.CATALOG}`} element={<Catalog />} />
                 <Route path={`/${ROUTES.ACCOUNT}`} element={<PrivateRoute><Account /></PrivateRoute>} />
                 <Route path={`/${ROUTES.SETTINGS}`} element={<PrivateRoute><Settings /></PrivateRoute>} />

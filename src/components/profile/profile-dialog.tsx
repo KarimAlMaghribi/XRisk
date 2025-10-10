@@ -9,18 +9,18 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
-    Grid2,
     Snackbar,
     TextField,
     Tooltip,
     Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import {ProfileAvatar} from "./profile-avatar";
 import {saveInStorage} from "../../firebase/firebase-service";
 import {auth} from "../../firebase_config";
 import {useDispatch, useSelector} from "react-redux";
 import {AppDispatch} from "../../store/store";
-import {updateImagePath, updateProfile,} from "../../store/slices/user-profile/thunks";
+import {updateImagePath, updateProfile} from "../../store/slices/user-profile/thunks";
 import {selectUserProfile} from "../../store/slices/user-profile/selectors";
 import {UserProfile} from "../../store/slices/user-profile/types";
 import {Countries} from "./countries";
@@ -30,7 +30,9 @@ import {Trans} from "react-i18next";
 import i18next from "i18next";
 import {RiskGiverHistory} from "./riskGiverHistory";
 import {LossRatio} from "../risk/loss-ratio";
-import { useAgreedRisks } from "./use-agreed-risks";
+import {useAgreedRisks} from "./use-agreed-risks";
+import {useTheme} from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 export interface ProfileDialogProps {
     show: boolean;
@@ -57,17 +59,11 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
     const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
-    const [snackbarSeverity, setSnackbarSeverity] = React.useState<
-        "error" | "success"
-    >("error");
+    const [snackbarSeverity, setSnackbarSeverity] = React.useState<"error" | "success">("error");
     const [birthdateError, setBirthdateError] = React.useState<boolean>(false);
 
-    const { risks, loading, error } = useAgreedRisks(auth.currentUser?.uid);
-    
-    const calcSuccessfulTransfers = () => {
-        return risks.length;
-    };
-
+    const {risks} = useAgreedRisks(auth.currentUser?.uid);
+    const calcSuccessfulTransfers = () => risks.length;
     const handleSnackbarClose = () => setSnackbarOpen(false);
 
     useEffect(() => {
@@ -89,11 +85,7 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
         if (imageFile) {
             (async () => {
                 try {
-                    const downloadUrl = await saveInStorage(
-                        `imgs/profile/${auth.currentUser?.uid}`,
-                        imageFile
-                    );
-
+                    const downloadUrl = await saveInStorage(`imgs/profile/${auth.currentUser?.uid}`, imageFile);
                     if (!downloadUrl) {
                         console.error("Error uploading file! Could not get download URL!");
                         setSnackbarMessage("Fehler beim Hochladen des Bildes!");
@@ -101,18 +93,15 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                         setSnackbarOpen(true);
                         return;
                     }
-
                     dispatch(updateImagePath(downloadUrl));
                     setImagePath(downloadUrl);
                 } catch (error) {
                     console.error("File upload failed:", error);
-                    const errorMsg =
-                        error instanceof Error ? error.message : "Unbekannter Fehler";
+                    const errorMsg = error instanceof Error ? error.message : "Unbekannter Fehler";
                     setSnackbarMessage("Fehler beim Hochladen: " + errorMsg);
                     setSnackbarSeverity("error");
                     setSnackbarOpen(true);
                 } finally {
-                    // Clear the file state after upload
                     setImageFile(null);
                 }
             })();
@@ -121,128 +110,120 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
 
     const handleSave = async () => {
         try {
-            dispatch(
-                updateProfile({
-                    imagePath: imagePath || userProfile.profile.imagePath || "",
-                    email,
-                    name,
-                    gender,
-                    birthdate,
-                    birthplace,
-                    phone,
-                    country,
-                    street,
-                    number,
-                    city,
-                    zip,
-                    aboutMe,
-                })
-            );
+            dispatch(updateProfile({
+                imagePath: imagePath || userProfile.profile.imagePath || "",
+                email, name, gender, birthdate, birthplace, phone, country, street, number, city, zip, aboutMe,
+            }));
 
             const publisherInfos: Publisher = {
                 uid: auth.currentUser?.uid || userProfile.id || "",
-                name: name,
-                email: email,
-                phoneNumber: phone,
+                name, email, phoneNumber: phone,
                 imagePath: imagePath || userProfile.profile.imagePath || "",
                 address: `${street} ${number}, ${zip} ${city}, ${country}`,
                 description: aboutMe,
             };
-
             dispatch(updateProviderDetails(publisherInfos));
-
             props.handleClose();
         } catch (error) {
             console.error("Error saving profile:", error);
-            const errorMsg =
-                error instanceof Error ? error.message : "Unbekannter Fehler";
+            const errorMsg = error instanceof Error ? error.message : "Unbekannter Fehler";
             setSnackbarMessage("Fehler beim Speichern: " + errorMsg);
             setSnackbarSeverity("error");
             setSnackbarOpen(true);
         }
     };
 
-    const handleCancel = () => {
-        props.handleClose();
-    };
+    const handleCancel = () => props.handleClose();
+
+    // ---- Mobile Fullscreen & Sticky Header/Actions ----
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Dialog
             onClose={props.handleClose}
             open={props.show}
+            fullScreen={fullScreen}
+            fullWidth
+            maxWidth="md"
+            scroll="paper"
             PaperProps={{
-                sx: {
-                    maxHeight: "80%",
-                    position: "absolute",
-                    top: "10%",
-                    margin: 0,
-                    width: "50%",
-                    maxWidth: "none",
-                },
+                sx: fullScreen
+                    ? { width: "100%", height: "100%", m: 0, borderRadius: 0 }
+                    : { width: "min(720px, 90vw)", maxHeight: "90vh", m: "auto" },
             }}
         >
-            <DialogTitle>
+            <DialogTitle
+                sx={{
+                    position: fullScreen ? "sticky" : "static",
+                    top: 0,
+                    zIndex: 1,
+                    bgcolor: "background.paper",
+                    borderBottom: (t) => `1px solid ${t.palette.divider}`,
+                    py: { xs: 1, sm: 1.5 },
+                }}
+            >
                 <Typography variant="h6">
-                    <Trans i18nKey={"profile_information.profile"}/>
+                    <Trans i18nKey={"profile_information.profile"} />
                 </Typography>
                 <Typography variant="subtitle1">
-                    <Trans i18nKey={"profile_information.update_profile_text"}/>
+                    <Trans i18nKey={"profile_information.update_profile_text"} />
                 </Typography>
             </DialogTitle>
 
-            <Divider/>
+            <DialogContent sx={{ mt: 2, px: { xs: 2, sm: 3 } }}>
+                {/* Kopfbereich: Avatar / LossRatio / Transfer-Stat */}
+                <Grid container spacing={2} alignItems="flex-start">
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <ProfileAvatar
+                            imagePath={imagePath || userProfile.profile.imagePath || ""}
+                            setImagePath={setImagePath}
+                            file={imageFile}
+                            setFile={setImageFile}
+                        />
+                    </Grid>
 
-            <DialogContent sx={{marginTop: "20px"}}>
-            <Grid2 container spacing={2} alignItems="flex-start">
-                <Grid2 size={{xs: 12, md:4}}>
-                    <ProfileAvatar
-                        imagePath={imagePath || userProfile.profile.imagePath || ""}
-                        setImagePath={setImagePath}
-                        file={imageFile}
-                        setFile={setImageFile}
-                    />
-                </Grid2>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <LossRatio uid={userProfile.id} />
+                    </Grid>
 
-                <Grid2 size={{xs: 12, md:4}} >
-                    <LossRatio uid={userProfile.id} />
-                </Grid2>
-
-                <Grid2 size={{xs: 12, md:4}} display="safe" justifyContent={"flex-end"}>
-                    <Typography variant="subtitle1" gutterBottom fontWeight="bold" marginTop="10px">
-                        Risiko-Transfer
-                    </Typography>
-                    <Divider/>
-                    <br/>
-                    <Tooltip followCursor
-                                title={"Diese Quote gibt die Anzahl der abgeschlossenen Risko-Transfers des Nutzers an."}
-                                placement="top">
-                        <Typography marginLeft="10px" style={{cursor: "pointer"}}>
-                            {calcSuccessfulTransfers() !== null ? calcSuccessfulTransfers() : "Keine Daten vorhanden"}
-                        </Typography>
-                    </Tooltip>
-                </Grid2>
-
-                <Grid2 size={{xs: 12, md: 4}} display="safe" justifyContent={"flex-end"}>
-                </Grid2>
-
-                <Grid2  sx={{xs:12, md: 8 }}>
-                    <Box sx={{ width: "100%" }}>
-                        <RiskGiverHistory uid={userProfile.id} />
-                    </Box>
-                </Grid2>
-
-                </Grid2>
-                <Grid2 container spacing={2}>
-                    
-                    <Grid2 size={{md: 12, lg: 12}}>
-                        <Box mt={2}>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                                Basisdaten
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Box sx={{ width: "100%" }}>
+                            <Typography variant="subtitle1" gutterBottom fontWeight="bold" mt={1}>
+                                Risiko-Transfer
                             </Typography>
-                            <Divider sx={{mb: 2}}/>
+                            <Divider />
+                            <Box mt={1}>
+                                <Tooltip
+                                    followCursor
+                                    title={"Diese Quote gibt die Anzahl der abgeschlossenen Risko-Transfers des Nutzers an."}
+                                    placement="top"
+                                >
+                                    <Typography sx={{ cursor: "pointer", ml: 1 }}>
+                                        {calcSuccessfulTransfers() !== null ? calcSuccessfulTransfers() : "Keine Daten vorhanden"}
+                                    </Typography>
+                                </Tooltip>
+                            </Box>
                         </Box>
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 8 }}>
+                        <Box sx={{ width: "100%" }}>
+                            <RiskGiverHistory uid={userProfile.id} />
+                        </Box>
+                    </Grid>
+                </Grid>
+
+                {/* Basisdaten */}
+                <Box mt={3}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        Basisdaten
+                    </Typography>
+                    <Divider sx={{ mb: 2 }} />
+                </Box>
+
+                <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -250,8 +231,8 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -259,29 +240,24 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
-                        <Countries value={country} setValue={setCountry}/>
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
+                        <Countries value={country} setValue={setCountry} />
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <Autocomplete
                             value={gender}
-                            onChange={(event, newValue) => {
-                                newValue && setGender(newValue);
-                            }}
+                            onChange={(_, newValue) => { newValue && setGender(newValue); }}
                             options={["Männlich", "Weiblich", "Divers"]}
                             renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label={i18next.t("profile_information.sex_label")}
-                                    variant="outlined"
-                                />
+                                <TextField {...params} label={i18next.t("profile_information.sex_label")} variant="outlined" />
                             )}
                         />
-                    </Grid2>
-                    <Grid2 size={{xs: 12}}>
+                    </Grid>
+
+                    <Grid size={{ xs: 12 }}>
                         <TextField
-                            sx={{marginTop: "10px"}}
+                            sx={{ mt: 1 }}
                             rows={4}
                             multiline
                             variant="outlined"
@@ -290,8 +266,9 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={aboutMe}
                             onChange={(e) => setAboutMe(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -299,30 +276,17 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             type="date"
                             value={birthdate}
                             error={birthdateError}
-                            helperText={
-                                birthdateError
-                                    ? "Das Alter darf nicht unter 18 Jahren liegen!"
-                                    : ""
-                            }
+                            helperText={birthdateError ? "Das Alter darf nicht unter 18 Jahren liegen!" : ""}
                             onChange={(e) => {
                                 const selectedDate = new Date(e.target.value);
                                 const currentDate = new Date();
                                 const age = currentDate.getFullYear() - selectedDate.getFullYear();
+                                const turned18 = new Date(selectedDate);
+                                turned18.setFullYear(selectedDate.getFullYear() + 18);
 
-                                if (
-                                    age < 18 ||
-                                    (age === 18 &&
-                                        currentDate <
-                                        new Date(
-                                            selectedDate.setFullYear(
-                                                selectedDate.getFullYear() + 18
-                                            )
-                                        ))
-                                ) {
+                                if (age < 18 || (age === 18 && currentDate < turned18)) {
                                     setBirthdateError(true);
-                                    setSnackbarMessage(
-                                        "Das Alter darf nicht unter 18 Jahren liegen!"
-                                    );
+                                    setSnackbarMessage("Das Alter darf nicht unter 18 Jahren liegen!");
                                     setSnackbarSeverity("error");
                                     setSnackbarOpen(true);
                                     setBirthdate("");
@@ -331,10 +295,11 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                                     setBirthdate(e.target.value);
                                 }
                             }}
-                            InputLabelProps={{shrink: true}}
+                            InputLabelProps={{ shrink: true }}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -342,16 +307,19 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 12}}>
+                    </Grid>
+
+                    {/* Adresse */}
+                    <Grid size={{ xs: 12 }}>
                         <Box mt={2}>
                             <Typography variant="subtitle1" fontWeight="bold">
-                                <Trans i18nKey={"profile_information.adress"}/>
+                                <Trans i18nKey={"profile_information.adress"} />
                             </Typography>
-                            <Divider sx={{mb: 2}}/>
+                            <Divider sx={{ mb: 2 }} />
                         </Box>
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -359,8 +327,8 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={street}
                             onChange={(e) => setStreet(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -368,8 +336,8 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={number}
                             onChange={(e) => setNumber(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -377,8 +345,8 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                         />
-                    </Grid2>
-                    <Grid2 size={{md: 12, lg: 6}}>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 12, lg: 6 }}>
                         <TextField
                             variant="outlined"
                             fullWidth
@@ -386,26 +354,35 @@ export const ProfileDialog = (props: ProfileDialogProps) => {
                             value={zip}
                             onChange={(e) => setZip(e.target.value)}
                         />
-                    </Grid2>
-                </Grid2>
+                    </Grid>
+                </Grid>
             </DialogContent>
-            <DialogActions>
+
+            <DialogActions
+                sx={{
+                    position: fullScreen ? "sticky" : "static",
+                    bottom: 0,
+                    bgcolor: "background.paper",
+                    borderTop: (t) => `1px solid ${t.palette.divider}`,
+                    px: { xs: 2, sm: 3 },
+                    py: { xs: 1.25, sm: 1.5 },
+                }}
+            >
                 <Button onClick={handleCancel} variant="outlined">
-                    <Trans i18nKey={"profile_information.cancel"}/>
+                    <Trans i18nKey={"profile_information.cancel"} />
                 </Button>
                 <Button onClick={handleSave} variant="contained">
-                    <Trans i18nKey={"profile_information.save"}/>
+                    <Trans i18nKey={"profile_information.save"} />
                 </Button>
             </DialogActions>
+
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={4000}
                 onClose={handleSnackbarClose}
-                anchorOrigin={{vertical: "top", horizontal: "center"}}>
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity={snackbarSeverity}
-                    sx={{width: "100%"}}>
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
                     {snackbarMessage}
                 </Alert>
             </Snackbar>

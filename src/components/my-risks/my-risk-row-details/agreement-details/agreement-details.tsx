@@ -16,21 +16,18 @@ export interface AgreementDetailsProps {
 export const AgreementDetails = (props: AgreementDetailsProps) => {
     return (
         <>
-            <Grid container>
-                <Grid size={12}>
-                    <Typography variant="body1" sx={{marginBottom: `${elementBottomMargin}px`}}>
-                        <Trans i18nKey="my_risks.agreements"/>
+            <Grid container spacing={{ xs: 1, md: 2 }}>
+                <Grid size={{ xs: 12 }}>
+                    <Typography variant="body1" sx={{ mb: `${elementBottomMargin}px` }}>
+                        <Trans i18nKey="my_risks.agreements" />
                     </Typography>
                 </Grid>
 
-                {
-                    props.chats.map((chat: Chat, index: number) => {
-                        return (
-                            <Grid size={12} marginBottom="20px">
-                                <AgreementElement risk={props.risk} chat={chat} key={index}/>
-                            </Grid>
-                        );
-                    })}
+                {props.chats.map((chat) => (
+                    <Grid key={chat.id} size={{ xs: 12 }} sx={{ mb: { xs: 1, md: 2 } }}>
+                        <AgreementElement risk={props.risk} chat={chat} />
+                    </Grid>
+                ))}
             </Grid>
         </>
     );

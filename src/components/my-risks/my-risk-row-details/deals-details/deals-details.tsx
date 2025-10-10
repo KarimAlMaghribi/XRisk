@@ -12,8 +12,8 @@ import {PublisherProfile} from "../../../risk/publisher-profile";
 import {DealsTableHeader} from "./deals-table-header";
 import {DealsTableBodyElement} from "./deals-table-body-element";
 import {
-    riskAgreementsUnsubscribe,
-    subscribeToRiskAgreements,
+  riskAgreementsUnsubscribe,
+  subscribeToRiskAgreements,
 } from "../../../../store/slices/my-risk-agreements/thunks";
 import {AppDispatch} from "../../../../store/store";
 import {useDispatch, useSelector} from "react-redux";
@@ -22,139 +22,115 @@ import {RiskAgreement} from "../../../../models/RiskAgreement";
 import {Trans} from "react-i18next";
 
 export const DealDetails = ({risk, chats}: { risk: Risk; chats: Chat[] }) => {
-    const dispatch: AppDispatch = useDispatch();
-    const riskTaker: boolean = risk.publisher?.uid !== auth.currentUser?.uid;
-    const [openPublisherProfileDialog, setOpenPublisherProfileDialog] =
-        React.useState<boolean>(false);
-    const [publisherProfile, setPublisherProfile] = React.useState<
-        Publisher | null | undefined
-    >(null);
+  const dispatch: AppDispatch = useDispatch();
+  const riskTaker: boolean = risk.publisher?.uid !== auth.currentUser?.uid;
+  const [openPublisherProfileDialog, setOpenPublisherProfileDialog] = React.useState<boolean>(false);
+  const [publisherProfile, setPublisherProfile] = React.useState<Publisher | null | undefined>(null);
 
-    useEffect(() => {
-        dispatch(subscribeToRiskAgreements());
-
-        return () => {
-            if (riskAgreementsUnsubscribe) {
-                riskAgreementsUnsubscribe();
-            }
-        };
-    }, [dispatch]);
-
-    const riskAgreements: RiskAgreement[] = useSelector(selectRiskAgreements);
-
-    const {showSnackbar} = useSnackbarContext();
-    const uid: string | undefined = auth.currentUser?.uid;
-
-    if (!uid) {
-        console.error("Could not get user id in deals-details component");
-        showSnackbar(
-            "Authentifizierung fehlgeschlagen!",
-            "Uid konnte nicht gefunden werden. Melde dich erneut an.",
-            {vertical: "top", horizontal: "center"},
-            "error"
-        );
-    }
-
-    const displayPublisherProfile = (
-        event: any,
-        publisher: Publisher | undefined
-    ) => {
-        event.stopPropagation();
-
-        if (!publisher) {
-            console.error(
-                "Error displaying publisher information. Publisher is undefined!",
-                publisher
-            );
-            showSnackbar(
-                "Probleme bei der Profilanzeige!",
-                "Profil des Anbieters konnte nicht geladen werden. Lade die Seite erneut!",
-                {
-                    vertical: "top",
-                    horizontal: "center",
-                },
-                "error"
-            );
-        }
-
-        setPublisherProfile(publisher);
-        setOpenPublisherProfileDialog(true);
+  useEffect(() => {
+    dispatch(subscribeToRiskAgreements());
+    return () => {
+      if (riskAgreementsUnsubscribe) {
+        riskAgreementsUnsubscribe();
+      }
     };
+  }, [dispatch]);
 
-    return (
-        <>
-            <Grid container>
-                <Grid size={4}>
-                    <Typography
-                        variant="body1"
-                        sx={{marginBottom: `${elementBottomMargin}px`}}>
-                        <Trans i18nKey="my_risks.description"/>
-                    </Typography>
-                    <Typography
-                        variant="body2"
-                        sx={{color: "grey", marginBottom: `${elementBottomMargin}px`}}>
-                        {risk.description}
-                    </Typography>
-                </Grid>
-                <Grid size={8}>
-                    {riskTaker && (
-                        <>
-                            <Typography
-                                variant="body1"
-                                sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                <Trans i18nKey="my_risks.negotiation_partner"/>
-                            </Typography>
-                            <Box display="flex" alignItems="center">
-                                <Avatar
-                                    onClick={(event) =>
-                                        displayPublisherProfile(event, risk.publisher)
-                                    }
-                                    src={risk.publisher?.imagePath}
-                                    sx={{cursor: "pointer"}}/>
-                                <Typography
-                                    variant="body2"
-                                    sx={{
-                                        color: "grey",
-                                        marginBottom: `${elementBottomMargin}px`,
-                                        paddingTop: "20px",
-                                        marginLeft: "10px",
-                                    }}>
-                                    {risk.publisher?.name}
-                                </Typography>
-                            </Box>
-                        </>
-                    )}
+  const riskAgreements: RiskAgreement[] = useSelector(selectRiskAgreements);
+  const {showSnackbar} = useSnackbarContext();
+  const uid: string | undefined = auth.currentUser?.uid;
 
-                    {!riskTaker && (
-                        <>
-                            <Typography
-                                variant="body1"
-                                sx={{marginBottom: `${elementBottomMargin}px`}}>
-                                <Trans i18nKey="my_risks.negotiations"/>
-                            </Typography>
-                            <DealsTableHeader/>
-                            {chats.map((chat, index) => {
-                                const riskAgreement =
-                                    riskAgreements.find((ra) => ra.chatId === chat.id) || null;
-                                return (
-                                    <DealsTableBodyElement
-                                        key={chat.id}
-                                        chat={chat}
-                                        riskAgreement={riskAgreement}
-                                        index={index}
-                                    />
-                                );
-                            })}
-                        </>
-                    )}
-                </Grid>
-            </Grid>
-            <PublisherProfile
-                open={openPublisherProfileDialog}
-                setOpen={setOpenPublisherProfileDialog}
-                publisher={publisherProfile}
-                setPublisher={setPublisherProfile}
-            />
-        </>
+  if (!uid) {
+    console.error("Could not get user id in deals-details component");
+    showSnackbar(
+        "Authentifizierung fehlgeschlagen!",
+        "Uid konnte nicht gefunden werden. Melde dich erneut an.",
+        {vertical: "top", horizontal: "center"},
+        "error"
     );
+  }
+
+  const displayPublisherProfile = (event: any, publisher: Publisher | undefined) => {
+    event.stopPropagation();
+    if (!publisher) {
+      console.error("Error displaying publisher information. Publisher is undefined!", publisher);
+      showSnackbar(
+          "Probleme bei der Profilanzeige!",
+          "Profil des Anbieters konnte nicht geladen werden. Lade die Seite erneut!",
+          {vertical: "top", horizontal: "center"},
+          "error"
+      );
+    }
+    setPublisherProfile(publisher);
+    setOpenPublisherProfileDialog(true);
+  };
+
+  return (
+      <>
+        <Grid container spacing={{xs: 1, md: 2}}>
+          <Grid size={{xs: 12, md: 4}} sx={{minWidth: 0}}>
+            <Typography variant="body1" sx={{mb: `${elementBottomMargin}px`}}>
+              <Trans i18nKey="my_risks.description"/>
+            </Typography>
+            <Typography variant="body2" color="text.secondary"
+                        sx={{wordBreak: "break-word", mb: `${elementBottomMargin}px`}}>
+              {risk.description}
+            </Typography>
+          </Grid>
+
+          <Grid size={{xs: 12, md: 8}} sx={{minWidth: 0}}>
+            {riskTaker && (
+                <>
+                  <Typography variant="body1" sx={{mb: `${elementBottomMargin}px`}}>
+                    <Trans i18nKey="my_risks.negotiation_partner"/>
+                  </Typography>
+                  <Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
+                    <Avatar
+                        onClick={(event) => displayPublisherProfile(event, risk.publisher)}
+                        src={risk.publisher?.imagePath}
+                        sx={{cursor: "pointer"}}
+                    />
+                    <Typography variant="body2" color="text.secondary"
+                                sx={{pt: "4px", wordBreak: "break-word"}}>
+                      {risk.publisher?.name}
+                    </Typography>
+                  </Box>
+                </>
+            )}
+
+            {!riskTaker && (
+                <>
+                  <Typography variant="body1" sx={{mb: `${elementBottomMargin}px`}}>
+                    <Trans i18nKey="my_risks.negotiations"/>
+                  </Typography>
+
+                  {/* Tabelle im mobilen Kontext scrollbar machen */}
+                  <Box sx={{overflowX: "auto"}}>
+                    <DealsTableHeader/>
+                    {chats.map((chat, index) => {
+                      const riskAgreement =
+                          riskAgreements.find((ra) => ra.chatId === chat.id) || null;
+                      return (
+                          <DealsTableBodyElement
+                              key={chat.id ?? index}
+                              chat={chat}
+                              riskAgreement={riskAgreement}
+                              index={index}
+                          />
+                      );
+                    })}
+                  </Box>
+                </>
+            )}
+          </Grid>
+        </Grid>
+
+        <PublisherProfile
+            open={openPublisherProfileDialog}
+            setOpen={setOpenPublisherProfileDialog}
+            publisher={publisherProfile}
+            setPublisher={setPublisherProfile}
+        />
+      </>
+  );
 };

@@ -1,11 +1,14 @@
+// src/components/my-risks/panel.tsx
 import React, { useMemo } from "react";
-import Grid from "@mui/material/Grid2";
-import { Paper, Typography } from "@mui/material";
+import { Box, Paper, Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTranslation } from "react-i18next";
+
 import { Risk } from "../../models/Risk";
 import { RiskStatusEnum } from "../../enums/RiskStatus.enum";
-import { MyRiskRow } from "./my-risk-row";
 import { RiskTypeEnum } from "../../enums/RiskType.enum";
-import { useTranslation } from "react-i18next";
+import MyRiskRow from "./my-risk-row";
 import { mapStatus } from "./utils";
 
 export interface PanelProps {
@@ -13,108 +16,115 @@ export interface PanelProps {
   type: RiskTypeEnum;
 }
 
-export const Panel = ({ risks, type }: PanelProps) => {
+export const Panel: React.FC<PanelProps> = ({ risks, type }) => {
+  const theme = useTheme();
+  const mdUp = useMediaQuery(theme.breakpoints.up("md"));
   const { t } = useTranslation();
 
-  const groupedRisks = useMemo(() => {
-    const groups: Record<RiskStatusEnum, Risk[]> = {
+  // Risiken nach Status gruppieren
+  const grouped = useMemo(() => {
+    const g: Record<RiskStatusEnum, Risk[]> = {
       [RiskStatusEnum.DRAFT]: [],
       [RiskStatusEnum.PUBLISHED]: [],
       [RiskStatusEnum.WITHDRAWN]: [],
       [RiskStatusEnum.DEAL]: [],
       [RiskStatusEnum.AGREEMENT]: [],
     };
-
-    risks.forEach((risk) => {
-      if (risk.status != null) {
-        groups[risk.status as RiskStatusEnum].push(risk);
-      }
-    });
-
-    return groups;
+    for (const r of risks) {
+      if (r.status != null) g[r.status as RiskStatusEnum].push(r);
+    }
+    return g;
   }, [risks]);
 
-  const activeRisks = useMemo(
-    () => [
-      ...groupedRisks[RiskStatusEnum.DRAFT],
-      ...groupedRisks[RiskStatusEnum.PUBLISHED],
-      ...groupedRisks[RiskStatusEnum.WITHDRAWN],
-      ...groupedRisks[RiskStatusEnum.DEAL],
-    ],
-    [groupedRisks]
+  // Für "Übernommene Risiken": aktive = alles außer AGREEMENT
+  const activeTaken = useMemo(
+      () => [
+        ...grouped[RiskStatusEnum.DRAFT],
+        ...grouped[RiskStatusEnum.PUBLISHED],
+        ...grouped[RiskStatusEnum.WITHDRAWN],
+        ...grouped[RiskStatusEnum.DEAL],
+      ],
+      [grouped]
   );
 
-  const mdColumns = type === RiskTypeEnum.OFFERED ? 5 : 2;
+  const isOffered = type === RiskTypeEnum.OFFERED;
 
+  // Sektionen definieren (Reihenfolge)
   const sections =
-    type === RiskTypeEnum.OFFERED
-      ? [
-          {
-            key: RiskStatusEnum.DRAFT,
-            label: mapStatus(t, RiskStatusEnum.DRAFT),
-            risks: groupedRisks[RiskStatusEnum.DRAFT],
-          },
-          {
-            key: RiskStatusEnum.PUBLISHED,
-            label: mapStatus(t, RiskStatusEnum.PUBLISHED),
-            risks: groupedRisks[RiskStatusEnum.PUBLISHED],
-          },
-          {
-            key: RiskStatusEnum.WITHDRAWN,
-            label: mapStatus(t, RiskStatusEnum.WITHDRAWN),
-            risks: groupedRisks[RiskStatusEnum.WITHDRAWN],
-          },
-          {
-            key: RiskStatusEnum.DEAL,
-            label: mapStatus(t, RiskStatusEnum.DEAL),
-            risks: groupedRisks[RiskStatusEnum.DEAL],
-          },
-          {
-            key: RiskStatusEnum.AGREEMENT,
-            label: mapStatus(t, RiskStatusEnum.AGREEMENT),
-            risks: groupedRisks[RiskStatusEnum.AGREEMENT],
-          },
-        ]
-      : [
-          {
-            key: "active",
-            label: mapStatus(t, RiskStatusEnum.DEAL),
-            risks: activeRisks,
-          },
-          {
-            key: RiskStatusEnum.AGREEMENT,
-            label: mapStatus(t, RiskStatusEnum.AGREEMENT),
-            risks: groupedRisks[RiskStatusEnum.AGREEMENT],
-          },
-        ];
+      isOffered
+          ? [
+            { key: RiskStatusEnum.DRAFT, label: mapStatus(t, RiskStatusEnum.DRAFT), risks: grouped[RiskStatusEnum.DRAFT] },
+            { key: RiskStatusEnum.PUBLISHED, label: mapStatus(t, RiskStatusEnum.PUBLISHED), risks: grouped[RiskStatusEnum.PUBLISHED] },
+            { key: RiskStatusEnum.WITHDRAWN, label: mapStatus(t, RiskStatusEnum.WITHDRAWN), risks: grouped[RiskStatusEnum.WITHDRAWN] },
+            { key: RiskStatusEnum.DEAL, label: mapStatus(t, RiskStatusEnum.DEAL), risks: grouped[RiskStatusEnum.DEAL] },
+            { key: RiskStatusEnum.AGREEMENT, label: mapStatus(t, RiskStatusEnum.AGREEMENT), risks: grouped[RiskStatusEnum.AGREEMENT] },
+          ]
+          : [
+            { key: "active", label: mapStatus(t, RiskStatusEnum.DEAL), risks: activeTaken },
+            { key: RiskStatusEnum.AGREEMENT, label: mapStatus(t, RiskStatusEnum.AGREEMENT), risks: grouped[RiskStatusEnum.AGREEMENT] },
+          ];
 
   return (
-    <Grid container columns={{ xs: 12, md: mdColumns }} spacing={2}>
-      {sections.map((section) => (
-        <Grid key={String(section.key)} size={{ xs: 12, md: 1 }} sx={{ display: "flex" }}>
-          <Paper
-            variant="outlined"
-            sx={{ p: 2, flexGrow: 1, display: "flex", flexDirection: "column" }}
-          >
-            <Typography
-              variant="overline"
-              component="div"
-              fontWeight="bolder"
-              sx={{ mb: 1 }}
+      <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr",             // ALLES untereinander – eine Spalte für alle Breakpoints
+            rowGap: { xs: 2, md: 3 },               // großzügiger vertikaler Abstand zwischen Sektionen
+          }}
+      >
+        {sections.map((section) => (
+            <Box
+                key={String(section.key)}
+                sx={{
+                  display: "grid",
+                  gridTemplateRows: "auto 1fr",
+                  rowGap: { xs: 1, md: 1.5 },
+                  minWidth: 0,
+                }}
             >
-              {section.label}
-            </Typography>
-            {section.risks.map((risk, index) => (
-              <MyRiskRow
-                key={risk.id ?? `${section.key}-${index}`}
-                risk={risk}
-                taken={type === RiskTypeEnum.TAKEN}
-              />
-            ))}
-          </Paper>
-        </Grid>
-      ))}
-    </Grid>
+              {/* Abschnitt-Label */}
+              <Typography
+                  variant="overline"
+                  component="div"
+                  fontWeight="bolder"
+                  sx={{ px: { xs: 0.5, md: 0 }, letterSpacing: 0.5 }}
+              >
+                {section.label}
+              </Typography>
+
+              {/* Karten-Container */}
+              <Paper
+                  variant={mdUp ? "outlined" : "elevation"}
+                  elevation={mdUp ? 0 : 1}
+                  sx={{
+                    p: { xs: 2, md: 3 },               // mehr Innenabstand
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: { xs: 1.25, md: 1.5 },        // Abstand zwischen Reihen (MyRiskRow)
+                    borderRadius: 2,
+                    bgcolor: "background.paper",
+                    borderColor: "divider",
+                  }}
+              >
+                {section.risks.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary">
+                      Keine Einträge
+                    </Typography>
+                ) : (
+                    <Stack spacing={{ xs: 1.25, md: 1.5 }}>
+                      {section.risks.map((risk, i) => (
+                          <MyRiskRow
+                              key={risk.id ?? `${section.key}-${i}`}
+                              risk={risk}
+                              taken={!isOffered}
+                              density={isOffered ? "dense" : "roomy"}
+                          />
+                      ))}
+                    </Stack>
+                )}
+              </Paper>
+            </Box>
+        ))}
+      </Box>
   );
 };
-

@@ -23,7 +23,6 @@ export const AgreementElement = (props: AgreementElementProps) => {
 
     useEffect(() => {
         dispatch(subscribeToRiskAgreements());
-
         return () => {
             if (riskAgreementsUnsubscribe) {
                 riskAgreementsUnsubscribe();
@@ -31,9 +30,7 @@ export const AgreementElement = (props: AgreementElementProps) => {
         };
     }, [dispatch]);
 
-    const riskAgreements = useSelector(
-        selectRiskAgreementByChatId(props.chat.id)
-    );
+    const riskAgreements = useSelector(selectRiskAgreementByChatId(props.chat.id));
 
     const displayAgreements: RiskAgreement[] =
         riskAgreements?.length === 1
@@ -48,14 +45,13 @@ export const AgreementElement = (props: AgreementElementProps) => {
         return null;
     }
 
-
     return (
         <>
             {displayAgreements.map((agreement) => (
-                <Grid container spacing={2} key={agreement.id}>
-                    <Grid size={4}>
-                        <Grid container spacing={1}>
-                            <Grid size={4}>
+                <Grid container spacing={{ xs: 1, md: 2 }} key={agreement.id}>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ minWidth: 0 }}>
+                        <Grid container spacing={{ xs: 0.5, md: 1 }}>
+                            <Grid size={{ xs: 5, md: 4 }}>
                                 <Typography variant="subtitle1" fontWeight="bold">
                                     {uid === props.chat.riskProvider.uid ? "Risikonehmer" : t("terms.riskgiver")}
                                 </Typography>
@@ -63,17 +59,20 @@ export const AgreementElement = (props: AgreementElementProps) => {
                                     {t("my_risks.last_activity")}
                                 </Typography>
                             </Grid>
-                            <Grid size={8}>
-                                <Typography variant="subtitle1">
-                                    {uid === props.chat.riskProvider.uid ? props.chat.riskTaker?.name : props.chat.riskProvider?.name}
+                            <Grid size={{ xs: 7, md: 8 }}>
+                                <Typography variant="subtitle1" sx={{ wordBreak: "break-word" }}>
+                                    {uid === props.chat.riskProvider.uid
+                                        ? props.chat.riskTaker?.name
+                                        : props.chat.riskProvider?.name}
                                 </Typography>
-                                <Typography variant="subtitle1">
+                                <Typography variant="subtitle1" color="text.secondary">
                                     {new Date(props.chat.lastActivity || "").toLocaleString()}
                                 </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid size={8}>
+
+                    <Grid size={{ xs: 12, md: 8 }} sx={{ minWidth: 0 }}>
                         <AgreementTable riskAgreement={agreement} />
                     </Grid>
                 </Grid>

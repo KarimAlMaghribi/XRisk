@@ -104,7 +104,10 @@
     "reset": "Zurücksetzen"
   },
   
-  "my_risks":{
+  "my_risks": {
+    "details": "Details",
+    "search_placeholder_my_offered": "Suche",
+    "search_placeholder_my_taken": "Suche",
     "search_label": "Suche",
     "OFFERED_RISKS": "ANGEBOTENE RISIKEN",
     "TAKEN_RISKS": "ÜBERNOMMENE RISIKEN",

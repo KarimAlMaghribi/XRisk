@@ -106,6 +106,9 @@
     "risktaker": "Risktaker"
   },
   "my_risks":{
+    "details": "Details",
+    "search_placeholder_my_offered": "Search",
+    "search_placeholder_my_taken": "Search",
     "search_label": "Search",
     "OFFERED_RISKS": "OFFERED RISKS",
     "TAKEN_RISKS": "TAKEN RISKS",
