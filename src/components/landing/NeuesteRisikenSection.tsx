@@ -1,5 +1,5 @@
 import { RiskCard } from "../RiskCard";
-import { getAllRisks } from "../../lib/database";
+import { getAllRisks } from "../lib/database";
 
 interface NeuesteRisikenSectionProps {
   variant: "market" | "bus";
