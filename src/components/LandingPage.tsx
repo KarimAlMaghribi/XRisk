@@ -19,6 +19,8 @@ interface LandingPageProps {
   onNavigate?: (page: string) => void;
 }
 
+type VariantType = 'market' | 'bus';
+
 const imgHeroMarketDesktop = placeholderImage;
 const imgHeroMarketMobile = placeholderImage;
 const imgHeroBusDesktop = placeholderImage;

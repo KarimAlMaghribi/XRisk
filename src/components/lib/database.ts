@@ -6,7 +6,7 @@
  */
 
 import { User } from '../types/user';
-import { Risk } from '../types/risk';
+import { Risk, RiskLevel } from '../types/risk';
 import { Offer } from '../types/offer';
 
 // ============================================================================
@@ -321,7 +321,7 @@ export const userDatabase: Record<string, User> = {
 // ============================================================================
 
 // Basis-Risiken ohne berechnete Werte
-const baseRisks: Risk[] = [
+const baseRisks: Omit<Risk, 'createdBy'>[] = [
   {
     id: 'R-100001',
     title: 'Espressomaschine Leihgabe an Freund - DeLonghi Kaffeevollautomat für 2 Wochen',
@@ -511,7 +511,10 @@ const baseRisks: Risk[] = [
 // ANGEBOTS DATENBANK
 // ============================================================================
 
-const offerDatabase: Offer[] = [
+const offerDatabase: Omit<
+  Offer,
+  'riskTitle' | 'riskCategory' | 'riskLevel' | 'coverageAmount' | 'offeredBy'
+>[] = [
   // Offers for 'R-100002' - Wohnungsabsicherung für Geburtstagsparty (45-65€)
   {
     id: 'o1',
@@ -811,9 +814,19 @@ export const riskDatabase: Risk[] = baseRisks.map(risk => {
  */
 export const offers: Offer[] = offerDatabase.map(offer => {
   const offerer = userDatabase[offer.offeredByUserId];
+  const risk = riskDatabase.find(r => r.id === offer.riskId);
+
+  const calculatedRiskLevel = risk?.riskScore
+    ? Math.min(5, Math.max(1, Math.round(risk.riskScore / 20)))
+    : 3;
+
   return {
     ...offer,
     offeredBy: offerer?.displayName || 'Unbekannt',
+    riskTitle: risk?.title || 'Unbekanntes Risiko',
+    riskCategory: risk?.category || 'other',
+    riskLevel: calculatedRiskLevel as RiskLevel,
+    coverageAmount: risk?.coverageAmount ?? 0,
   };
 });
 

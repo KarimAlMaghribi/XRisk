@@ -15,7 +15,7 @@ export const mockConversations: Conversation[] = [
     lastMessage: "Das Angebot deckt alle Schäden, Ersatz und Verlust/Diebstahl ab. Lass mich wissen, ob das für dich passt!",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 10), // 10 min ago
     unreadCount: 2,
-    riskCategory: "Immobilien",
+    riskCategory: "Sachrisiko",
     riskLevel: 3,
     riskStatus: "in-negotiation",
     currentOffer: {
@@ -41,7 +41,7 @@ export const mockConversations: Conversation[] = [
     lastMessage: "Perfekt! Ich hole die Ausrüstung am Freitag um 18 Uhr ab.",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
     unreadCount: 0,
-    riskCategory: "Elektronik",
+    riskCategory: "Sachrisiko",
     riskLevel: 4,
     riskStatus: "active",
     currentOffer: {
@@ -67,7 +67,7 @@ export const mockConversations: Conversation[] = [
     lastMessage: "Das Canyon E-Bike ist top gepflegt. Viel Spaß im Allgäu!",
     lastMessageTime: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
     unreadCount: 1,
-    riskCategory: "Fahrzeuge",
+    riskCategory: "Sachrisiko",
     riskLevel: 2,
     riskStatus: "in-negotiation",
     currentOffer: {
@@ -98,7 +98,7 @@ export const mockMessages: { [conversationId: string]: Message[] } = {
         offerId: "offer-1",
         riskId: "R-100002",
         riskTitle: "Wohnungsabsicherung für Geburtstagsparty - 40. Geburtstag mit 25-30 Gästen in Altbauwohnung",
-        riskCategory: "Immobilien",
+        riskCategory: "Sachrisiko",
         riskLevel: 3,
         coverageAmount: 5000,
         offeredPremium: 50,
@@ -174,7 +174,7 @@ export const mockMessages: { [conversationId: string]: Message[] } = {
         offerId: "offer-2",
         riskId: "R-100009",
         riskTitle: "Kameraausrüstung für Hochzeitsfotografie - Canon EOS R5 mit Profi-Objektiven und Zubehör",
-        riskCategory: "Elektronik",
+        riskCategory: "Sachrisiko",
         riskLevel: 4,
         coverageAmount: 9500,
         offeredPremium: 110,
@@ -250,7 +250,7 @@ export const mockMessages: { [conversationId: string]: Message[] } = {
         offerId: "offer-3",
         riskId: "R-100003",
         riskTitle: "E-Bike Verleih für Wochenendtour - Canyon Pathlite:ON 7 E-Bike im Allgäu",
-        riskCategory: "Fahrzeuge",
+        riskCategory: "Sachrisiko",
         riskLevel: 2,
         coverageAmount: 2800,
         offeredPremium: 38,
@@ -295,7 +295,7 @@ export const mockRiskDetails: { [riskId: string]: RiskDetails } = {
   "R-100002": {
     id: "R-100002",
     title: "Wohnungsabsicherung für Geburtstagsparty - 40. Geburtstag mit 25-30 Gästen in Altbauwohnung",
-    category: "Immobilien",
+    category: "Sachrisiko",
     status: "in-negotiation",
     riskLevel: 3,
     volume: 5000,
@@ -369,7 +369,7 @@ export const mockRiskDetails: { [riskId: string]: RiskDetails } = {
   "R-100009": {
     id: "R-100009",
     title: "Kameraausrüstung für Hochzeitsfotografie - Canon EOS R5 mit Profi-Objektiven und Zubehör",
-    category: "Elektronik",
+    category: "Sachrisiko",
     status: "active",
     riskLevel: 4,
     volume: 9500,
@@ -430,7 +430,7 @@ export const mockRiskDetails: { [riskId: string]: RiskDetails } = {
   "R-100003": {
     id: "R-100003",
     title: "E-Bike Verleih für Wochenendtour - Canyon Pathlite:ON 7 E-Bike im Allgäu",
-    category: "Fahrzeuge",
+    category: "Sachrisiko",
     status: "in-negotiation",
     riskLevel: 2,
     volume: 2800,

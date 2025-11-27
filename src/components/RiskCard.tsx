@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Risk, calculateRiskScore } from "./types/risk";
 import svgPaths from "../imports/svg-uh0650197e";
 import { getOffersByRisk, getUserById } from "./lib/database";
@@ -9,10 +10,22 @@ interface RiskCardProps {
   onTakeRisk?: (risk: Risk) => void;
   onDetailsClick?: (risk: Risk) => void;
   onDelete?: (risk: Risk) => void;
+  onPublish?: (risk: Risk) => void;
   onFavoriteToggle?: (risk: Risk) => void;
   isFavorite?: boolean;
   variant?: 'marketplace' | 'dashboard';
   hideActions?: boolean; // Versteckt Favorite-Button und Aktions-Buttons
+  customBadges?: ReactNode;
+  hideUser?: boolean;
+  showDelete?: boolean;
+  showDescription?: boolean;
+  hidePrimaryAction?: boolean;
+  customActionLabel?: string;
+  customActionDisabled?: boolean;
+  hideAction?: boolean;
+  showStatusBadge?: boolean;
+  showOffersBadge?: boolean;
+  isOwnRisk?: boolean;
 }
 
 /**

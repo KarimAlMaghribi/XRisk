@@ -17,6 +17,7 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import DescriptionIcon from "@mui/icons-material/Description";
 import { VerifiedBadge } from "./VerifiedBadge";
 import {
   Search as SearchIcon,
@@ -264,10 +265,10 @@ export function Messages() {
                       >
                         {conversation.partnerName}
                       </Typography>
-                      {users[conversation.partnerId]?.verification.hasVerifiedEmail && 
-                       users[conversation.partnerId]?.verification.hasVerifiedPhone && (
-                        <VerifiedBadge size="small" />
-                      )}
+                        {users[conversation.partnerId]?.verification.hasVerifiedEmail &&
+                         users[conversation.partnerId]?.verification.hasVerifiedPhone && (
+                          <VerifiedBadge size={16} />
+                        )}
                       <Chip
                         label={conversation.myRole}
                         size="small"
@@ -573,7 +574,7 @@ export function Messages() {
                         {message.senderName}
                       </Typography>
                       {message.senderVerified && !message.isSystemMessage && (
-                        <VerifiedBadge size="small" />
+                        <VerifiedBadge size={16} />
                       )}
                       <Typography sx={{ fontSize: "11px", color: "#9e9e9e" }}>
                         {formatDate(message.timestamp)}

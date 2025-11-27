@@ -18,7 +18,7 @@ import {
   ExpandLess as ExpandLessIcon,
   Dashboard as DashboardIcon,
 } from "@mui/icons-material";
-import { currentUser } from "../lib/current-user";
+import { currentUser } from "./lib/current-user";
 
 interface UserMenuProps {
   onLogout: () => void;

@@ -4,7 +4,7 @@ import { Offer } from "./types/offer";
 import { getUserById } from "./lib/database";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { Check, X, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 interface OfferManagementCardProps {
   offer: Offer;

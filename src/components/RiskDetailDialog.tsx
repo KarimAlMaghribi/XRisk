@@ -466,19 +466,7 @@ export function RiskDetailDialog({
                 {riskOffers.map((offer) => (
                   <OfferDetailsCard
                     key={offer.id}
-                    offer={{
-                      riskTitle: risk.title,
-                      riskCategory: categoryLabels[risk.category],
-                      riskLevel: getRiskLevel(calculateRiskScore(risk)),
-                      coverageAmount: risk.coverageAmount,
-                      offeredPremium: offer.premium,
-                      recommendedPriceRange: {
-                        min: recommendedMin,
-                        max: recommendedMax,
-                      },
-                      coverageTypes: offer.coverageTypes,
-                      status: offer.status,
-                    }}
+                    offer={offer}
                     showActions={false}
                   />
                 ))}
