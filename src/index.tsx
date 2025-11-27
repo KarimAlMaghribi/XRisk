@@ -10,7 +10,7 @@ import {store} from "./store/store";
 import {Provider} from "react-redux";
 import {theme} from "./theme";
 import {ThemeProvider} from "@mui/material";
-import "./index.scss";
+import "./index.css";
 import {BrowserRouter} from "react-router-dom";
 import {SnackbarProvider} from "./components/snackbar/custom-snackbar";
 
