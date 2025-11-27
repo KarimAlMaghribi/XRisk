@@ -1,12 +1,12 @@
 import { Box, Container, Button, Chip, Avatar, IconButton, Divider } from "@mui/material";
 import { ArrowLeft, Calendar } from "lucide-react";
-import { Risk, calculateRiskScore, getRiskLevel, categoryLabels } from "../types/risk";
-import { users } from "../lib/user-mock-data";
+import { Risk, calculateRiskScore, getRiskLevel, categoryLabels } from "./types/risk";
+import { users } from "./lib/user-mock-data";
 import { VerifiedBadge } from "./VerifiedBadge";
-import { getOffersByRisk } from "../lib/database";
+import { getOffersByRisk } from "./lib/database";
 import { OfferDetailsCard } from "./OfferDetailsCard";
 import { OfferManagementCard } from "./OfferManagementCard";
-import { CURRENT_USER_ID } from "../lib/current-user";
+import { CURRENT_USER_ID } from "./lib/current-user";
 
 interface RiskDetailPageProps {
   risk: Risk;

@@ -10,7 +10,7 @@ import {
   Grow,
 } from "@mui/material";
 import { Wand2, Sparkles, FileText, CheckCircle2, Search, BarChart3, TrendingUp, Zap } from "lucide-react";
-import { Risk } from "../types/risk";
+import { Risk } from "./types/risk";
 import { BaseModal } from "./BaseModal";
 import { AuthModal } from "./AuthModal";
 

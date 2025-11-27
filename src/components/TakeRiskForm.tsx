@@ -12,7 +12,7 @@ import {
   TrendingUp,
   Info as InfoIcon,
 } from "@mui/icons-material";
-import { Risk } from "../types/risk";
+import { Risk } from "./types/risk";
 
 interface TakeRiskFormProps {
   risk: Risk;

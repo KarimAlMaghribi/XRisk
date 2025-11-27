@@ -1,6 +1,6 @@
 import { Box, Avatar, Chip } from "@mui/material";
-import { Offer } from "../types/offer";
-import { getUserById } from "../lib/database";
+import { Offer } from "./types/offer";
+import { getUserById } from "./lib/database";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { Check, X } from "lucide-react";
 

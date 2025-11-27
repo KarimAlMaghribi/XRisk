@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { OfferMessageData } from "../types/message";
+import { OfferMessageData } from "./types/message";
 import { OfferDetailsCard } from "./OfferDetailsCard";
 
 interface OfferMessageCardProps {

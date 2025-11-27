@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Avatar, Chip, Button, TextField, Collapse, IconButton } from "@mui/material";
-import { Offer } from "../types/offer";
-import { getUserById } from "../lib/database";
+import { Offer } from "./types/offer";
+import { getUserById } from "./lib/database";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { Check, X, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner@2.0.3";

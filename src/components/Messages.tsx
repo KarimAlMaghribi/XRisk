@@ -26,11 +26,11 @@ import {
   Info as InfoIcon,
   AccountCircle as AccountCircleIcon,
 } from "@mui/icons-material";
-import { mockConversations, mockMessages } from "../lib/messages-mock-data";
-import { Conversation, Message } from "../types/message";
-import { currentUser } from "../lib/current-user";
+import { mockConversations, mockMessages } from "./lib/messages-mock-data";
+import { Conversation, Message } from "./types/message";
+import { currentUser } from "./lib/current-user";
 import { OfferMessageCard } from "./OfferMessageCard";
-import { users } from "../lib/user-mock-data";
+import { users } from "./lib/user-mock-data";
 
 export function Messages() {
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(

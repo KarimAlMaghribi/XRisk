@@ -14,9 +14,9 @@ import {
   Schedule as ScheduleIcon,
   Info as InfoIcon,
 } from "@mui/icons-material";
-import { Risk, calculateRiskScore, getRiskLevel, categoryLabels } from "../types/risk";
-import { users } from "../lib/user-mock-data";
-import { offers as allOffers } from "../lib/offers-mock-data";
+import { Risk, calculateRiskScore, getRiskLevel, categoryLabels } from "./types/risk";
+import { users } from "./lib/user-mock-data";
+import { offers as allOffers } from "./lib/offers-mock-data";
 import { BaseModal } from "./BaseModal";
 import { OfferDetailsCard } from "./OfferDetailsCard";
 

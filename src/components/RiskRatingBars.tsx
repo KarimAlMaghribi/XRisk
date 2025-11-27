@@ -1,4 +1,4 @@
-import { getRiskLevel } from "../types/risk";
+import { getRiskLevel } from "./types/risk";
 
 interface RiskRatingBarsProps {
   riskScore: number;

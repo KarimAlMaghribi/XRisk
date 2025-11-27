@@ -13,9 +13,9 @@ import {
   TrendingUp,
   Info as InfoIcon,
 } from "@mui/icons-material";
-import { Risk } from "../types/risk";
+import { Risk } from "./types/risk";
 import { BaseModal } from "./BaseModal";
-import { CURRENT_USER_ID } from "../lib/current-user";
+import { CURRENT_USER_ID } from "./lib/current-user";
 
 interface TakeRiskModalProps {
   open: boolean;

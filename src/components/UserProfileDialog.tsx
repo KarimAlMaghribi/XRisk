@@ -11,11 +11,11 @@ import {
   Star as StarIcon,
   Person as PersonIcon,
 } from "@mui/icons-material";
-import { User, getDisplayName } from "../types/user";
+import { User, getDisplayName } from "./types/user";
 import { VerifiedBadge } from "./VerifiedBadge";
-import { Risk, categoryLabels } from "../types/risk";
-import { communityRisks } from "../lib/community-mock-data";
-import { calculateRiskScore, getRiskLevel } from "../types/risk";
+import { Risk, categoryLabels } from "./types/risk";
+import { communityRisks } from "./lib/community-mock-data";
+import { calculateRiskScore, getRiskLevel } from "./types/risk";
 import { BaseModal } from "./BaseModal";
 
 interface UserProfileDialogProps {

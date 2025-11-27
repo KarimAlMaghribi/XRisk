@@ -18,19 +18,19 @@ import {
   CalendarMonth as CalendarIcon,
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
-import { communityRisks } from "../lib/community-mock-data";
-import { offers as allOffers } from "../lib/offers-mock-data";
+import { communityRisks } from "./lib/community-mock-data";
+import { offers as allOffers } from "./lib/offers-mock-data";
 import {
   categoryLabels,
   Risk,
-} from "../types/risk";
+} from "./types/risk";
 
 import { RiskCard } from "./RiskCard";
 import { CreateRiskCard } from "./CreateRiskCard";
-import { users } from "../lib/user-mock-data";
+import { users } from "./lib/user-mock-data";
 import { DeleteRiskDialog } from "./DeleteRiskDialog";
 import { toast } from "sonner@2.0.3";
-import { CURRENT_USER_ID } from "../lib/current-user";
+import { CURRENT_USER_ID } from "./lib/current-user";
 import { StatusBadge, CustomBadge } from "./StatusBadge";
 
 interface DashboardProps {

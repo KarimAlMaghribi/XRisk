@@ -1,4 +1,4 @@
-import { Risk } from "../types/risk";
+import { Risk } from "./types/risk";
 
 interface StatusBadgeProps {
   status: Risk['status'];

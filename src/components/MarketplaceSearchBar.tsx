@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Box, Typography, InputBase, Paper, ClickAwayListener } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import { Risk, categoryLabels } from "../types/risk";
+import { Risk, categoryLabels } from "./types/risk";
 import svgPaths from "../imports/svg-uh0650197e";
 
 interface MarketplaceSearchBarProps {

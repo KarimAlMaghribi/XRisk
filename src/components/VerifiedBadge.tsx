@@ -1,6 +1,6 @@
 import { Badge, Tooltip, Box } from "@mui/material";
 import { Verified as VerifiedIcon } from "@mui/icons-material";
-import { User, isUserVerified, getProfileCompleteness } from "../types/user";
+import { User, isUserVerified, getProfileCompleteness } from "./types/user";
 import { ReactNode } from "react";
 
 interface VerifiedBadgeProps {

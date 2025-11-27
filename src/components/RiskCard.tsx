@@ -1,7 +1,7 @@
-import { Risk, calculateRiskScore } from "../types/risk";
+import { Risk, calculateRiskScore } from "./types/risk";
 import svgPaths from "../imports/svg-uh0650197e";
-import { getOffersByRisk, getUserById } from "../lib/database";
-import { CURRENT_USER_ID } from "../lib/current-user";
+import { getOffersByRisk, getUserById } from "./lib/database";
+import { CURRENT_USER_ID } from "./lib/current-user";
 import { Skeleton } from "./ui/skeleton";
 
 interface RiskCardProps {

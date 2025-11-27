@@ -16,13 +16,13 @@ import {
   Person as PersonIcon,
   Public as PublicIcon,
 } from "@mui/icons-material";
-import { communityRisks } from "../lib/community-mock-data";
+import { communityRisks } from "./lib/community-mock-data";
 import {
   calculateRiskScore,
   getRiskLevel,
   Risk,
   categoryLabels,
-} from "../types/risk";
+} from "./types/risk";
 import { TakeRiskModal } from "./TakeRiskModal";
 import { RiskCard } from "./RiskCard";
 import { FilterDrawer, FilterState } from "./FilterDrawer";
@@ -30,8 +30,8 @@ import { UserProfileDialog } from "./UserProfileDialog";
 import { RiskDetailDialog } from "./RiskDetailDialog";
 import { MarketplaceSearchBar } from "./MarketplaceSearchBar";
 import { RiskToleranceSelector, RiskToleranceLevel } from "./RiskToleranceSelector";
-import { users } from "../lib/user-mock-data";
-import { CURRENT_USER_ID } from "../lib/current-user";
+import { users } from "./lib/user-mock-data";
+import { CURRENT_USER_ID } from "./lib/current-user";
 
 type MarketplaceFilter = "all" | "own" | "favorites";
 

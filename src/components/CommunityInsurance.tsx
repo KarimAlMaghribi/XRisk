@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { communityRisks } from '../lib/community-mock-data';
+import { communityRisks } from './lib/community-mock-data';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -27,7 +27,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { calculateRiskScore, getRiskLevel, getRiskLevelLabel, getRiskLevelColor, getRiskLevelIconColor } from '../types/risk';
+import { calculateRiskScore, getRiskLevel, getRiskLevelLabel, getRiskLevelColor, getRiskLevelIconColor } from './types/risk';
 
 const statusLabels: Record<string, string> = {
   active: 'Aktiv',

@@ -14,7 +14,7 @@ import {
   Close as CloseIcon,
   FilterList as FilterIcon,
 } from "@mui/icons-material";
-import { RiskLevel, RiskCategory, categoryLabels } from "../types/risk";
+import { RiskLevel, RiskCategory, categoryLabels } from "./types/risk";
 
 export interface FilterState {
   riskLevels: RiskLevel[];

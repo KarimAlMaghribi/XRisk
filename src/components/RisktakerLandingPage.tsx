@@ -7,7 +7,7 @@ import { ProcessSection } from "./landing/ProcessSection";
 import { FAQSection } from "./landing/FAQSection";
 import { CTASection } from "./landing/CTASection";
 import { FooterSection } from "./landing/FooterSection";
-import { communityRisks } from "../lib/community-mock-data";
+import { communityRisks } from "./lib/community-mock-data";
 import { placeholderImage } from "../assests/imgs/placeholder";
 
 interface RisktakerLandingPageProps {

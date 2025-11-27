@@ -7,9 +7,9 @@ import { OfferMessageCard } from "./OfferMessageCard";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { BaseModal } from "./BaseModal";
 import { StatusBadge, CustomBadge } from "./StatusBadge";
-import { Risk, RiskCategory, RiskStatus } from "../types/risk";
-import { Message } from "../types/message";
-import { Offer } from "../types/offer";
+import { Risk, RiskCategory, RiskStatus } from "./types/risk";
+import { Message } from "./types/message";
+import { Offer } from "./types/offer";
 import { Trash2, Send, CheckCircle2, Clock, XCircle, AlertTriangle, Eye } from "lucide-react";
 
 export function DesignSystem() {

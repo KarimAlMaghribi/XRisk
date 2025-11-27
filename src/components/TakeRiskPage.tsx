@@ -1,7 +1,7 @@
 import { Box, Container, Button, Chip, Avatar, Divider } from "@mui/material";
 import { ArrowLeft, Calendar } from "lucide-react";
-import { Risk, calculateRiskScore, getRiskLevel, categoryLabels } from "../types/risk";
-import { users } from "../lib/user-mock-data";
+import { Risk, calculateRiskScore, getRiskLevel, categoryLabels } from "./types/risk";
+import { users } from "./lib/user-mock-data";
 import { VerifiedBadge } from "./VerifiedBadge";
 import { TakeRiskForm } from "./TakeRiskForm";
 
