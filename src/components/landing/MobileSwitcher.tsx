@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import imgSwitcherMarket from "figma:asset/2fb22e12698929d8163c2e846418914dcd3c2d2e.png";
-import imgSwitcherBus from "figma:asset/bd5ef2489f9b4f9b730b2a87634c31cb90a5552a.png";
+import { placeholderImage as imgSwitcherMarket } from "../../assests/imgs/placeholder";
+import { placeholderImage as imgSwitcherBus } from "../../assests/imgs/placeholder";
 
 interface MobileSwitcherProps {
   variant: "market" | "bus";

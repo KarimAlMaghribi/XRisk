@@ -1,4 +1,4 @@
-import imgLogo from "figma:asset/62c15dd4132b6b07480e5845d83ae202650e6625.png";
+import { placeholderImage as imgLogo } from "../../assests/imgs/placeholder";
 import { LandingButton } from "./LandingButton";
 import { LandingNavLink } from "./LandingNavLink";
 import { Menu, X, User } from "lucide-react";

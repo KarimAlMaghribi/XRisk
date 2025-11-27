@@ -1,8 +1,8 @@
 import svgPaths from "./svg-5s5xd3vqjb";
-import imgHeroImage from "figma:asset/4dc3b792d36796fe4af5981ece473a0bf59002d8.png";
-import imgHeroImage1 from "figma:asset/6801e0080f468c28a449cecf6698c2995a9ed561.png";
-import imgHeroImage2 from "figma:asset/013e60f9dba635c7628c40e9ea4fc3f373c327f7.png";
-import img from "figma:asset/62c15dd4132b6b07480e5845d83ae202650e6625.png";
+import { placeholderImage as imgHeroImage } from "../assests/imgs/placeholder";
+import { placeholderImage as imgHeroImage1 } from "../assests/imgs/placeholder";
+import { placeholderImage as imgHeroImage2 } from "../assests/imgs/placeholder";
+import { placeholderImage as img } from "../assests/imgs/placeholder";
 
 function Frame26() {
   return (

@@ -8,9 +8,7 @@ import { FAQSection } from "./landing/FAQSection";
 import { CTASection } from "./landing/CTASection";
 import { FooterSection } from "./landing/FooterSection";
 import { communityRisks } from "../lib/community-mock-data";
-import imgHeroImage from "figma:asset/4dc3b792d36796fe4af5981ece473a0bf59002d8.png";
-import imgHeroImage1 from "figma:asset/6801e0080f468c28a449cecf6698c2995a9ed561.png";
-import imgHeroImage2 from "figma:asset/013e60f9dba635c7628c40e9ea4fc3f373c327f7.png";
+import { placeholderImage } from "../assests/imgs/placeholder";
 
 interface RisktakerLandingPageProps {
   onLogin: () => void;
@@ -23,6 +21,9 @@ export function RisktakerLandingPage({
   isLoggedIn = false,
   onUserTypeChange,
 }: RisktakerLandingPageProps) {
+  const imgHeroImage = placeholderImage;
+  const imgHeroImage1 = placeholderImage;
+  const imgHeroImage2 = placeholderImage;
   const [activeSection, setActiveSection] = useState("hero");
 
   const scrollToSection = (sectionId: string) => {

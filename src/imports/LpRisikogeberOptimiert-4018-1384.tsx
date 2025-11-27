@@ -1,7 +1,7 @@
 import svgPaths from "./svg-zq0suoiof3";
-import imgImage from "figma:asset/fea06be5cea92d665177a3b32ba42a925e4a88c3.png";
-import imgImage1 from "figma:asset/2fb22e12698929d8163c2e846418914dcd3c2d2e.png";
-import imgImage2 from "figma:asset/b4ecfaf9c6e73e8dd6c209458e50397edd6b1743.png";
+import { placeholderImage as imgImage } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImage1 } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImage2 } from "../assests/imgs/placeholder";
 
 function Frame32() {
   return (

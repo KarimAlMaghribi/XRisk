@@ -1,5 +1,5 @@
 import svgPaths from "./svg-uh0650197e";
-import imgEllipse4 from "figma:asset/d16ba8c09db916e04afd07b8a8695019ab55f9ce.png";
+import { placeholderImage as imgEllipse4 } from "../assests/imgs/placeholder";
 
 function Icon() {
   return (

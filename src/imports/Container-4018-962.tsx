@@ -1,6 +1,6 @@
-import imgImage from "figma:asset/fea06be5cea92d665177a3b32ba42a925e4a88c3.png";
-import imgImageMarkt from "figma:asset/2fb22e12698929d8163c2e846418914dcd3c2d2e.png";
-import imgImageBus from "figma:asset/bd5ef2489f9b4f9b730b2a87634c31cb90a5552a.png";
+import { placeholderImage as imgImage } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImageMarkt } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImageBus } from "../assests/imgs/placeholder";
 
 function Image() {
   return (

@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
 import svgPaths from "../imports/svg-81dejan7f8";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import imgHeroMarketDesktop from "figma:asset/fea06be5cea92d665177a3b32ba42a925e4a88c3.png";
-import imgHeroMarketMobile from "figma:asset/412895e557a265b73a1c9424bdab3bdcd8f51774.png";
-import imgHeroBusDesktop from "figma:asset/74503bfc0cde48656b8667a50fffd00beea668cd.png";
-import imgHeroBusMobile from "figma:asset/10ef2e474bb2f91a0a69fac68c53911bfad3385e.png";
-import imgMartin from "figma:asset/b4ecfaf9c6e73e8dd6c209458e50397edd6b1743.png";
-import imgLogo from "figma:asset/62c15dd4132b6b07480e5845d83ae202650e6625.png";
-// Testimonial images
-import imgLena from "figma:asset/2fb22e12698929d8163c2e846418914dcd3c2d2e.png";
-import imgMarco from "figma:asset/bd5ef2489f9b4f9b730b2a87634c31cb90a5552a.png";
+import { placeholderImage } from "../assests/imgs/placeholder";
 import { RiskInputModal } from "./RiskInputModal";
 import { LandingNavbar } from "./landing/LandingNavbar";
 import { FAQSection } from "./landing/FAQSection";
@@ -26,6 +18,16 @@ interface LandingPageProps {
   isLoggedIn?: boolean;
   onNavigate?: (page: string) => void;
 }
+
+const imgHeroMarketDesktop = placeholderImage;
+const imgHeroMarketMobile = placeholderImage;
+const imgHeroBusDesktop = placeholderImage;
+const imgHeroBusMobile = placeholderImage;
+const imgMartin = placeholderImage;
+const imgLogo = placeholderImage;
+// Testimonial images
+const imgLena = placeholderImage;
+const imgMarco = placeholderImage;
 
 export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: LandingPageProps) {
   const [activeSection, setActiveSection] = useState("hero");
