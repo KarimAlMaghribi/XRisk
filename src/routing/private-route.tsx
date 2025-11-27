@@ -12,5 +12,5 @@ export const PrivateRoute = ({ children }: { children: JSX.Element }) => {
         return <CircularProgress />
     }
 
-    return user ? children : <Navigate to={`/${ROUTES.SIGN_IN}`} />;
+    return user ? children : <Navigate to="/" replace />;
 };
