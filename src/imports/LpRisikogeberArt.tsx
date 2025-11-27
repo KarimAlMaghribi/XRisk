@@ -1,8 +1,8 @@
 import svgPaths from "./svg-t9c3p1lid7";
-import imgRectangle33 from "figma:asset/2fb22e12698929d8163c2e846418914dcd3c2d2e.png";
-import imgRectangle34 from "figma:asset/bd5ef2489f9b4f9b730b2a87634c31cb90a5552a.png";
-import imgImage from "figma:asset/fea06be5cea92d665177a3b32ba42a925e4a88c3.png";
-import imgImage1 from "figma:asset/b4ecfaf9c6e73e8dd6c209458e50397edd6b1743.png";
+import { placeholderImage as imgRectangle33 } from "../assests/imgs/placeholder";
+import { placeholderImage as imgRectangle34 } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImage } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImage1 } from "../assests/imgs/placeholder";
 
 function Frame34() {
   return (

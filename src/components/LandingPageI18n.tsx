@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import svgPaths from "../imports/svg-81dejan7f8";
-import imgHero from "figma:asset/8da9f4d8505392858a4876192fdbc43219c9c92b.png";
-import imgThomas from "figma:asset/04bf8ed6670921df0ee3f16a7f4299051621dc9e.png";
-import imgSarah from "figma:asset/ead073ee4b7600bb3e79d185babd7876f5a36394.png";
-import imgLogo from "figma:asset/62c15dd4132b6b07480e5845d83ae202650e6625.png";
+import { placeholderImage } from "../assests/imgs/placeholder";
 import { RiskInputModal } from "./RiskInputModal";
 import { LandingNavbar } from "./landing/LandingNavbar";
 import { FAQSection } from "./landing/FAQSection";
@@ -17,6 +14,10 @@ interface LandingPageProps {
 }
 
 export function LandingPageI18n({ onLogin, isLoggedIn = false, onUserTypeChange }: LandingPageProps) {
+  const imgHero = placeholderImage;
+  const imgThomas = placeholderImage;
+  const imgSarah = placeholderImage;
+  const imgLogo = placeholderImage;
   const { t } = useTranslation('common');
   const [activeSection, setActiveSection] = useState("hero");
   const [riskInput, setRiskInput] = useState("");

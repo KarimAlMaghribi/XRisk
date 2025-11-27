@@ -1,7 +1,7 @@
-import imgImage from "figma:asset/bd5ef2489f9b4f9b730b2a87634c31cb90a5552a.png";
-import imgImage1 from "figma:asset/6dced1441827933a0838781a6f2ab7f608b86595.png";
-import imgLena from "figma:asset/2fb22e12698929d8163c2e846418914dcd3c2d2e.png";
-import imgMartin from "figma:asset/b4ecfaf9c6e73e8dd6c209458e50397edd6b1743.png";
+import { placeholderImage as imgImage } from "../assests/imgs/placeholder";
+import { placeholderImage as imgImage1 } from "../assests/imgs/placeholder";
+import { placeholderImage as imgLena } from "../assests/imgs/placeholder";
+import { placeholderImage as imgMartin } from "../assests/imgs/placeholder";
 
 interface SectionWasIstXriskProps {
   variant?: "market" | "bus";

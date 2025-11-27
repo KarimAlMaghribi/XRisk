@@ -1,9 +1,9 @@
 import svgPaths from "./svg-81dejan7f8";
-import img from "figma:asset/60abebcf92a517fe21afaa6d53fcb562c5ec9d6c.png";
-import img1 from "figma:asset/9cfde93437d2499240bc3c57899533ead025f7ef.png";
-import img2 from "figma:asset/870bc304243a0f11c7972b668bfe78c0aaa9a48c.png";
-import img3 from "figma:asset/f791cb1b4ba0249d8472e8cc22d101eab24c4bb9.png";
-import img4 from "figma:asset/62c15dd4132b6b07480e5845d83ae202650e6625.png";
+import { placeholderImage as img } from "../assests/imgs/placeholder";
+import { placeholderImage as img1 } from "../assests/imgs/placeholder";
+import { placeholderImage as img2 } from "../assests/imgs/placeholder";
+import { placeholderImage as img3 } from "../assests/imgs/placeholder";
+import { placeholderImage as img4 } from "../assests/imgs/placeholder";
 
 function Frame26() {
   return (

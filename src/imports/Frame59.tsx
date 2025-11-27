@@ -1,6 +1,6 @@
 import svgPaths from "./svg-v8z3ieot0b";
-import imgImage1 from "figma:asset/62c15dd4132b6b07480e5845d83ae202650e6625.png";
-import imgEllipse2 from "figma:asset/c687c681b0866dc0a07b4525b90c51d7c0160ab1.png";
+import { placeholderImage as imgImage1 } from "../assests/imgs/placeholder";
+import { placeholderImage as imgEllipse2 } from "../assests/imgs/placeholder";
 
 function Frame100() {
   return (
