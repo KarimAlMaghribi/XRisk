@@ -1,10 +1,10 @@
 import {
   Risk,
   categoryLabels,
-} from "../types/risk";
+} from "./types/risk";
 import svgPaths from "../imports/svg-46hs940qrm";
 import { Box, Typography } from "@mui/material";
-import { getOffersByRisk } from "../lib/database";
+import { getOffersByRisk } from "./lib/database";
 import { StatusBadge, CustomBadge } from "./StatusBadge";
 import { RiskRatingBars } from "./RiskRatingBars";
 import { Star } from "lucide-react";

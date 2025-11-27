@@ -333,7 +333,7 @@ function SectionHeadline3() {
       <Container3 />
       <div className="font-['Roboto:Regular',sans-serif] font-normal leading-[0] relative shrink-0 text-[#e6e5e5] text-[0px] w-full" style={{ fontVariationSettings: "'wdth' 100" }}>
         <p className="leading-[1.3] mb-[16px] text-[16px]">{`Wir verbinden dich mit Menschen, die sich mit deinem Thema auskennen. Du schilderst dein Risiko. `}</p>
-        <ol className="list-decimal mb-[16px]" start="1">
+        <ol className="list-decimal mb-[16px]" start={1}>
           <li className="mb-0 ms-[calc(1.5*1*var(--list-marker-font-size,0))]">
             <span className="leading-[1.3] text-[16px]">{`Die KI Analysiert. `}</span>
           </li>

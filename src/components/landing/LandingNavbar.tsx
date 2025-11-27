@@ -10,6 +10,8 @@ interface LandingNavbarProps {
   scrollToSection: (sectionId: string) => void;
   isLoggedIn?: boolean;
   onLogin: () => void;
+  userType?: string;
+  onUserTypeChange?: (type: "risikogeber" | "risikonehmer") => void;
 }
 
 export function LandingNavbar({
@@ -17,6 +19,8 @@ export function LandingNavbar({
   scrollToSection,
   isLoggedIn = false,
   onLogin,
+  userType: _userType,
+  onUserTypeChange: _onUserTypeChange,
 }: LandingNavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

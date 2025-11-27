@@ -29,7 +29,7 @@ import { RiskCard } from "./RiskCard";
 import { CreateRiskCard } from "./CreateRiskCard";
 import { users } from "./lib/user-mock-data";
 import { DeleteRiskDialog } from "./DeleteRiskDialog";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { CURRENT_USER_ID } from "./lib/current-user";
 import { StatusBadge, CustomBadge } from "./StatusBadge";
 

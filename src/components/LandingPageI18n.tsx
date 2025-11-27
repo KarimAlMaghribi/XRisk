@@ -105,11 +105,13 @@ export function LandingPageI18n({ onLogin, isLoggedIn = false, onUserTypeChange 
 
       {/* Weitere Sections mit t('key.path') ... */}
 
-      <RiskInputModal 
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        initialRiskDescription={riskInput}
-      />
-    </div>
-  );
-}
+        <RiskInputModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          initialRiskDescription={riskInput}
+          isLoggedIn={isLoggedIn}
+          onLogin={onLogin}
+        />
+      </div>
+    );
+  }

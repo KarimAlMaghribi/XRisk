@@ -1,4 +1,4 @@
-import { Box, Avatar, Chip } from "@mui/material";
+import { Box, Avatar, Chip, Button } from "@mui/material";
 import { Offer } from "./types/offer";
 import { getUserById } from "./lib/database";
 import { VerifiedBadge } from "./VerifiedBadge";
@@ -6,9 +6,13 @@ import { Check, X } from "lucide-react";
 
 interface OfferDetailsCardProps {
   offer: Offer;
+  variant?: 'default' | 'compact';
+  onAccept?: (offerId: string) => void;
+  onDecline?: (offerId: string) => void;
+  showActions?: boolean;
 }
 
-export function OfferDetailsCard({ offer }: OfferDetailsCardProps) {
+export function OfferDetailsCard({ offer, onAccept, onDecline, showActions = false }: OfferDetailsCardProps) {
   const user = getUserById(offer.offeredByUserId);
 
   return (
@@ -118,6 +122,26 @@ export function OfferDetailsCard({ offer }: OfferDetailsCardProps) {
           }}
         />
       </Box>
+
+      {showActions && (
+        <Box sx={{ display: "flex", gap: 1.5, mt: 2 }}>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => onAccept?.(offer.id)}
+            sx={{ bgcolor: "#00a63e", '&:hover': { bgcolor: "#008f35" } }}
+          >
+            Annehmen
+          </Button>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => onDecline?.(offer.id)}
+          >
+            Ablehnen
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 }

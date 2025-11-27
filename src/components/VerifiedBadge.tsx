@@ -4,17 +4,43 @@ import { User, isUserVerified, getProfileCompleteness } from "./types/user";
 import { ReactNode } from "react";
 
 interface VerifiedBadgeProps {
-  user: User | undefined;
-  children: ReactNode;
+  user?: User;
+  children?: ReactNode;
   avatarSize?: number;
+  size?: number;
 }
 
-export function VerifiedBadge({ user, children, avatarSize = 48 }: VerifiedBadgeProps) {
-  if (!user || !isUserVerified(user)) {
-    return <>{children}</>;
-  }
+export function VerifiedBadge({ user, children, avatarSize = 48, size }: VerifiedBadgeProps) {
+  const resolvedSize = size ?? avatarSize;
+  const iconSize = resolvedSize < 60 ? "small" : "medium";
 
-  const iconSize = avatarSize < 60 ? "small" : "medium";
+  if (!user || !isUserVerified(user)) {
+    if (children) {
+      return <>{children}</>;
+    }
+
+    return (
+      <Box
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: resolvedSize,
+          height: resolvedSize,
+          borderRadius: "50%",
+          bgcolor: "#ffffff",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+        }}
+      >
+        <VerifiedIcon
+          sx={{
+            color: "#1976d2",
+            fontSize: iconSize === "small" ? 16 : 20,
+          }}
+        />
+      </Box>
+    );
+  }
   const profileCompleteness = getProfileCompleteness(user);
 
   const tooltipContent = (
@@ -61,6 +87,17 @@ export function VerifiedBadge({ user, children, avatarSize = 48 }: VerifiedBadge
         ✓ Bankkonto verknüpft
       </Box>
     </Box>
+  );
+
+  const avatarContent = children ?? (
+    <Box
+      sx={{
+        width: resolvedSize,
+        height: resolvedSize,
+        borderRadius: "50%",
+        bgcolor: "#f5f5f5",
+      }}
+    />
   );
 
   return (
@@ -117,7 +154,7 @@ export function VerifiedBadge({ user, children, avatarSize = 48 }: VerifiedBadge
           </Box>
         }
       >
-        {children}
+        {avatarContent}
       </Badge>
     </Tooltip>
   );

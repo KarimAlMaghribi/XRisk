@@ -26,9 +26,9 @@ import {
   Home as HomeIcon,
   CreditScore as CreditScoreIcon,
 } from "@mui/icons-material";
-import { User, isUserVerified, getProfileCompleteness } from "../types/user";
+import { User, isUserVerified, getProfileCompleteness } from "./types/user";
 import { VerifiedBadge } from "./VerifiedBadge";
-import { currentUser } from "../lib/current-user";
+import { currentUser } from "./lib/current-user";
 
 interface AccountSettingsProps {
   onBack: () => void;

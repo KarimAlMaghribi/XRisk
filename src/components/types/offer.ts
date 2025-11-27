@@ -8,9 +8,16 @@ export interface Offer {
   offeredBy: string;
   offeredByUserId: string;
   premium: number;
+  offeredPremium?: number;
   message: string;
   createdAt: Date;
   status: 'pending' | 'accepted' | 'declined';
+  takerId?: string;
+  takerName?: string;
+  takerAvatar?: string;
+  giverId?: string;
+  giverName?: string;
+  amount?: number;
   coverageTypes: {
     damage: boolean;
     replacement: boolean;

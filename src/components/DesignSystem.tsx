@@ -8,7 +8,7 @@ import { VerifiedBadge } from "./VerifiedBadge";
 import { BaseModal } from "./BaseModal";
 import { StatusBadge, CustomBadge } from "./StatusBadge";
 import { Risk, RiskCategory, RiskStatus } from "./types/risk";
-import { Message } from "./types/message";
+import { Message, OfferMessageData } from "./types/message";
 import { Offer } from "./types/offer";
 import { Trash2, Send, CheckCircle2, Clock, XCircle, AlertTriangle, Eye } from "lucide-react";
 
@@ -49,6 +49,13 @@ export function DesignSystem() {
   const sampleOffer: Offer = {
     id: "1",
     riskId: "1",
+    riskTitle: sampleRisk.title,
+    riskCategory: sampleRisk.category,
+    riskLevel: 3,
+    coverageAmount: sampleRisk.coverageAmount,
+    offeredBy: sampleRisk.createdBy,
+    offeredByUserId: sampleRisk.createdByUserId,
+    premium: sampleRisk.premium,
     takerId: "user2",
     takerName: "Anna Schmidt",
     takerAvatar: undefined,
@@ -58,6 +65,24 @@ export function DesignSystem() {
     message: "Ich habe Erfahrung mit Drohnen und würde das Risiko gerne übernehmen.",
     status: "pending",
     createdAt: new Date(),
+    coverageTypes: {
+      damage: true,
+      replacement: true,
+      lossOrTheft: true,
+    },
+  };
+
+  const sampleOfferMessage: OfferMessageData = {
+    offerId: sampleOffer.id,
+    riskId: sampleOffer.riskId,
+    riskTitle: sampleOffer.riskTitle,
+    riskCategory: sampleOffer.riskCategory,
+    riskLevel: sampleOffer.riskLevel,
+    coverageAmount: sampleOffer.coverageAmount,
+    offeredPremium: sampleOffer.premium,
+    recommendedPriceRange: sampleOffer.recommendedPriceRange,
+    coverageTypes: sampleOffer.coverageTypes,
+    status: sampleOffer.status,
   };
 
   return (
@@ -682,12 +707,10 @@ export function DesignSystem() {
           <Box>
             <Typography className="label" sx={{ mb: 2 }}>Offer Message Card - Pending</Typography>
             <OfferMessageCard
-              offer={sampleOffer}
-              risk={sampleRisk}
-              currentUserId="user1"
+              offer={sampleOfferMessage}
               onAccept={() => {}}
-              onReject={() => {}}
-              onViewDetails={() => {}}
+              onDecline={() => {}}
+              isCurrentUser={false}
             />
           </Box>
 
@@ -696,12 +719,10 @@ export function DesignSystem() {
           <Box>
             <Typography className="label" sx={{ mb: 2 }}>Offer Message Card - Accepted</Typography>
             <OfferMessageCard
-              offer={{ ...sampleOffer, status: "accepted" }}
-              risk={sampleRisk}
-              currentUserId="user1"
+              offer={{ ...sampleOfferMessage, status: "accepted" }}
               onAccept={() => {}}
-              onReject={() => {}}
-              onViewDetails={() => {}}
+              onDecline={() => {}}
+              isCurrentUser={false}
             />
           </Box>
 
@@ -710,12 +731,10 @@ export function DesignSystem() {
           <Box>
             <Typography className="label" sx={{ mb: 2 }}>Offer Message Card - Rejected</Typography>
             <OfferMessageCard
-              offer={{ ...sampleOffer, status: "rejected" }}
-              risk={sampleRisk}
-              currentUserId="user1"
+              offer={{ ...sampleOfferMessage, status: "declined" }}
               onAccept={() => {}}
-              onReject={() => {}}
-              onViewDetails={() => {}}
+              onDecline={() => {}}
+              isCurrentUser={false}
             />
           </Box>
         </Box>
