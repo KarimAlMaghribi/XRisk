@@ -1,21 +1,6 @@
 import React from "react";
-import {Banner} from "../../components/landing/banner";
-import {RiskCarousel} from "../../components/landing/risk-carousel";
-import MarketingStats from "../../components/landing/marketing-stats";
-import {FAQs} from "../../components/landing/faqs";
+import { LandingPage } from "../../components/landing/LandingPage";
 
 export const Landing = () => {
-
-
-    return (
-        <React.Fragment>
-            <Banner/>
-            <RiskCarousel/>
-            <MarketingStats />
-            <div id="faq">
-                <FAQs />
-            </div>
-            <div style={{height: "200px"}}></div>
-        </React.Fragment>
-    )
+    return <LandingPage onLogin={() => {}} />;
 }
