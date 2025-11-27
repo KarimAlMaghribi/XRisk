@@ -1,8 +1,8 @@
 // src/App.tsx
 import React, { useEffect, useState } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
-import { Landing } from "./pages/landing/landing";
+import { LandingPage } from "./components/LandingPage";
 import { SignIn } from "./pages/authentication/sign-in";
 import { SignUp } from "./pages/authentication/sign-up";
 import { ForgotPassword } from "./pages/authentication/forgot-password";
@@ -36,11 +36,14 @@ import type { AppDispatch } from "./store/store";
 import { auth } from "./firebase_config";
 import { fetchUserProfile } from "./store/slices/user-profile/thunks";
 import ChatPage from "./components/chat/chat-page";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
     const [language, setLanguage] = useState(i18n.language);
+    const [user] = useAuthState(auth);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -56,11 +59,21 @@ function App() {
     return (
         <Layout>
             <Routes>
-                <Route path="/" element={<Landing />} />
+                <Route
+                    path="/"
+                    element={(
+                        <LandingPage
+                            onLogin={() => navigate(`/${ROUTES.SIGN_IN}`)}
+                            onNavigate={(path) => navigate(path)}
+                            isLoggedIn={!!user}
+                        />
+                    )}
+                />
                 <Route path={`/${ROUTES.SIGN_IN}`} element={<SignIn />} />
                 <Route path={`/${ROUTES.SIGN_UP}`} element={<SignUp />} />
                 <Route path={`/${ROUTES.FORGOT_PASSWORD}`} element={<ForgotPassword />} />
-                <Route path={`/${ROUTES.ABOUT}`} element={<About />} />
+
+                <Route path={`/${ROUTES.ABOUT}`} element={<PrivateRoute><About /></PrivateRoute>} />
 
                 <Route
                     path={`/${ROUTES.CHAT}`}
@@ -71,22 +84,21 @@ function App() {
                     element={<PrivateRoute><ChatPage /></PrivateRoute>}
                 />
 
-                {/* Rest unverändert */}
-                <Route path={`/${ROUTES.CATALOG}`} element={<Catalog />} />
+                <Route path={`/${ROUTES.CATALOG}`} element={<PrivateRoute><Catalog /></PrivateRoute>} />
                 <Route path={`/${ROUTES.ACCOUNT}`} element={<PrivateRoute><Account /></PrivateRoute>} />
                 <Route path={`/${ROUTES.SETTINGS}`} element={<PrivateRoute><Settings /></PrivateRoute>} />
-                <Route path={`/${ROUTES.INVESTORS}`} element={<Investors />} />
+                <Route path={`/${ROUTES.INVESTORS}`} element={<PrivateRoute><Investors /></PrivateRoute>} />
                 <Route path={`/${ROUTES.RISK_OVERVIEW}`} element={<PrivateRoute><RiskOverview /></PrivateRoute>} />
-                <Route path={`/${ROUTES.LEGAL}`} element={<Legal />} />
-                <Route path={`/${ROUTES.PRIVACY}`} element={<Privacy />} />
-                <Route path={`/${ROUTES.IMPRINT}`} element={<Imprint />} />
-                <Route path={`/${ROUTES.CONTACT}`} element={<Contact />} />
-                <Route path={`/${ROUTES.TERMS}`} element={<TermsPage />} />
-                <Route path={`/${ROUTES.FOOTER_SUPPORT}`} element={<FooterSupportDescriptions />} />
-                <Route path={`/${ROUTES.FOOTER_PRODUCTS}`} element={<FooterProductDescriptions />} />
-                <Route path={`/${ROUTES.FOOTER_SOLUTIONS}`} element={<FooterSolutionDescriptions />} />
-                <Route path={`/${ROUTES.FOOTER_RESOURCES}`} element={<FooterResourceDescriptions />} />
-                <Route path={`/${ROUTES.FOOTER_COMPANY}`} element={<FooterCompanyDescriptions />} />
+                <Route path={`/${ROUTES.LEGAL}`} element={<PrivateRoute><Legal /></PrivateRoute>} />
+                <Route path={`/${ROUTES.PRIVACY}`} element={<PrivateRoute><Privacy /></PrivateRoute>} />
+                <Route path={`/${ROUTES.IMPRINT}`} element={<PrivateRoute><Imprint /></PrivateRoute>} />
+                <Route path={`/${ROUTES.CONTACT}`} element={<PrivateRoute><Contact /></PrivateRoute>} />
+                <Route path={`/${ROUTES.TERMS}`} element={<PrivateRoute><TermsPage /></PrivateRoute>} />
+                <Route path={`/${ROUTES.FOOTER_SUPPORT}`} element={<PrivateRoute><FooterSupportDescriptions /></PrivateRoute>} />
+                <Route path={`/${ROUTES.FOOTER_PRODUCTS}`} element={<PrivateRoute><FooterProductDescriptions /></PrivateRoute>} />
+                <Route path={`/${ROUTES.FOOTER_SOLUTIONS}`} element={<PrivateRoute><FooterSolutionDescriptions /></PrivateRoute>} />
+                <Route path={`/${ROUTES.FOOTER_RESOURCES}`} element={<PrivateRoute><FooterResourceDescriptions /></PrivateRoute>} />
+                <Route path={`/${ROUTES.FOOTER_COMPANY}`} element={<PrivateRoute><FooterCompanyDescriptions /></PrivateRoute>} />
                 <Route path={`/${ROUTES.MY_RISKS}`} element={<PrivateRoute><MyRisks /></PrivateRoute>} />
                 <Route path={`/${ROUTES.MY_BIDS}`} element={<PrivateRoute><MyBids /></PrivateRoute>} />
                 <Route path="*" element={<Navigate to="/" />} />
