@@ -1,17 +1,16 @@
-import React from "react";
-import {Footer} from "./footer";
+import { useLocation } from "react-router-dom";
 import {Header} from "./header";
+import {Footer} from "./footer";
 
-export interface LayoutProps {
-    children: React.ReactNode;
-}
+export const Layout = ({ children }: { children: React.ReactNode }) => {
+  const { pathname } = useLocation();
+  const isLanding = pathname === "/";
 
-export const Layout = (props: LayoutProps) => {
-    return (
-        <React.Fragment>
-            <Header/>
-                {props.children}
-            <Footer />
-        </React.Fragment>
-    )
-}
+  return (
+      <>
+        {!isLanding && <Header />}
+        {children}
+        {!isLanding && <Footer />}
+      </>
+  );
+};

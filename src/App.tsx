@@ -1,6 +1,11 @@
-// src/App.tsx
 import React, { useEffect, useState } from "react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import {
+    Navigate,
+    Route,
+    Routes,
+    useNavigate,
+    Outlet,
+} from "react-router-dom";
 
 import { LandingPage } from "./components/LandingPage";
 import { SignIn } from "./pages/authentication/sign-in";
@@ -15,8 +20,6 @@ import { About } from "./pages/about/about";
 import { Catalog } from "./pages/catalog/catalog";
 import { Account } from "./pages/account/account";
 import { Investors } from "./pages/investors/investors";
-// ❌ Entfernt: altes Chat-Page-Objekt
-// import { Chat } from "./pages/chat/chat";
 import { Settings } from "@mui/icons-material";
 import { ROUTES } from "./routing/routes";
 import { PrivateRoute } from "./routing/private-route";
@@ -38,7 +41,6 @@ import { fetchUserProfile } from "./store/slices/user-profile/thunks";
 import ChatPage from "./components/chat/chat-page";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-
 function App() {
     const dispatch = useDispatch<AppDispatch>();
     const [language, setLanguage] = useState(i18n.language);
@@ -46,7 +48,7 @@ function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) dispatch(fetchUserProfile());
         });
         return () => unsubscribe();
@@ -57,33 +59,27 @@ function App() {
     }, [i18n.language]);
 
     return (
-        <Layout>
-            <Routes>
-                <Route
-                    path="/"
-                    element={(
-                        <LandingPage
-                            onLogin={() => navigate(`/${ROUTES.SIGN_IN}`)}
-                            onNavigate={(path) => navigate(path)}
-                            isLoggedIn={!!user}
-                        />
-                    )}
-                />
+        <Routes>
+            {/* Landing Page ohne Layout */}
+            <Route
+                path="/"
+                element={
+                    <LandingPage
+                        onLogin={() => navigate(`/${ROUTES.SIGN_IN}`)}
+                        onNavigate={(path) => navigate(path)}
+                        isLoggedIn={!!user}
+                    />
+                }
+            />
+
+            {/* Alle anderen Seiten im Layout */}
+            <Route element={<Layout><Outlet /></Layout>}>
                 <Route path={`/${ROUTES.SIGN_IN}`} element={<SignIn />} />
                 <Route path={`/${ROUTES.SIGN_UP}`} element={<SignUp />} />
                 <Route path={`/${ROUTES.FORGOT_PASSWORD}`} element={<ForgotPassword />} />
-
                 <Route path={`/${ROUTES.ABOUT}`} element={<PrivateRoute><About /></PrivateRoute>} />
-
-                <Route
-                    path={`/${ROUTES.CHAT}`}
-                    element={<PrivateRoute><ChatPage /></PrivateRoute>}
-                />
-                <Route
-                    path={`/${ROUTES.CHAT}/:id`}
-                    element={<PrivateRoute><ChatPage /></PrivateRoute>}
-                />
-
+                <Route path={`/${ROUTES.CHAT}`} element={<PrivateRoute><ChatPage /></PrivateRoute>} />
+                <Route path={`/${ROUTES.CHAT}/:id`} element={<PrivateRoute><ChatPage /></PrivateRoute>} />
                 <Route path={`/${ROUTES.CATALOG}`} element={<PrivateRoute><Catalog /></PrivateRoute>} />
                 <Route path={`/${ROUTES.ACCOUNT}`} element={<PrivateRoute><Account /></PrivateRoute>} />
                 <Route path={`/${ROUTES.SETTINGS}`} element={<PrivateRoute><Settings /></PrivateRoute>} />
@@ -101,9 +97,10 @@ function App() {
                 <Route path={`/${ROUTES.FOOTER_COMPANY}`} element={<PrivateRoute><FooterCompanyDescriptions /></PrivateRoute>} />
                 <Route path={`/${ROUTES.MY_RISKS}`} element={<PrivateRoute><MyRisks /></PrivateRoute>} />
                 <Route path={`/${ROUTES.MY_BIDS}`} element={<PrivateRoute><MyBids /></PrivateRoute>} />
-                <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-        </Layout>
+            </Route>
+
+            <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
     );
 }
 
