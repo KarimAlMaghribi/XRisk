@@ -20,7 +20,7 @@ import { About } from "./pages/about/about";
 import { Catalog } from "./pages/catalog/catalog";
 import { Account } from "./pages/account/account";
 import { Investors } from "./pages/investors/investors";
-import { Settings } from "@mui/icons-material";
+import { Settings } from "./pages/settings/settings";
 import { ROUTES } from "./routing/routes";
 import { PrivateRoute } from "./routing/private-route";
 import { MyRisks } from "./pages/my-risks/my-risks";
