@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { LandingButton } from "./LandingButton";
 import { LandingInput } from "./LandingInput";
 
@@ -11,6 +12,7 @@ interface HeroSectionProps {
   onRiskRequest: () => void;
   backgroundImage: string;
   hideInput?: boolean;
+  ctaPrefix?: ReactNode;
 }
 
 export function HeroSection({
@@ -23,6 +25,7 @@ export function HeroSection({
   onRiskRequest,
   backgroundImage,
   hideInput = false,
+  ctaPrefix,
 }: HeroSectionProps) {
   return (
     <section id="hero" className="w-full">
@@ -53,6 +56,7 @@ export function HeroSection({
                       </div>
                     ) : (
                       <div className="flex gap-[16px] items-center">
+                        {ctaPrefix}
                         <LandingInput
                           value={riskInput}
                           onChange={setRiskInput}

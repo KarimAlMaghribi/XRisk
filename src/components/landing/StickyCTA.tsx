@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { LandingButton } from "./LandingButton";
 import { LandingInput } from "./LandingInput";
 
@@ -8,6 +9,7 @@ interface StickyCTAProps {
   onRiskRequest: () => void;
   placeholder: string;
   buttonText: string;
+  prefix?: ReactNode;
 }
 
 export function StickyCTA({
@@ -17,6 +19,7 @@ export function StickyCTA({
   onRiskRequest,
   placeholder,
   buttonText,
+  prefix,
 }: StickyCTAProps) {
   return (
     <div
@@ -26,6 +29,7 @@ export function StickyCTA({
     >
       <div className="container-grid">
         <div className="flex gap-[16px] items-center justify-center w-full">
+          {prefix}
           <LandingInput
             value={riskInput}
             onChange={setRiskInput}

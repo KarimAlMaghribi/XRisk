@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import svgPaths from "../imports/svg-81dejan7f8";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { RiskInputModal } from "./RiskInputModal";
 import { LandingNavbar } from "./landing/LandingNavbar";
 import { FAQSection } from "./landing/FAQSection";
 import { NeuesteRisikenSection } from "./landing/NeuesteRisikenSection";
 import { PersistentCaseSwitcher, DesktopSwitcher } from "./landing/PersistentCaseSwitcher";
+import { HeroSection } from "./landing/HeroSection";
+import { ProcessSection } from "./landing/ProcessSection";
+import { StickyCTA } from "./landing/StickyCTA";
 import SectionWasIstXrisk from "../imports/SectionWasIstXrisk";
 import SectionTestimonial from "../imports/SectionWasIstXrisk-4013-1246";
-import { ArrowRight } from "lucide-react";
 import { LandingButton } from "./landing/LandingButton";
 
 // Landing Page Component
@@ -21,10 +21,7 @@ interface LandingPageProps {
 type VariantType = 'market' | 'bus';
 
 const imgHeroMarketDesktop = "/assets/landing/hero-market-desktop.svg";
-const imgHeroMarketMobile = "/assets/landing/hero-market-mobile.svg";
 const imgHeroBusDesktop = "/assets/landing/hero-bus-desktop.svg";
-const imgHeroBusMobile = "/assets/landing/hero-bus-mobile.svg";
-const imgMartin = "/assets/landing/testimonial-martin.svg";
 const imgLogo = "/assets/landing/logo.svg";
 // Testimonial images
 const imgLena = "/assets/landing/testimonial-lena.svg";
@@ -39,48 +36,78 @@ export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: Landing
   const [currentPage, setCurrentPage] = useState("");
 
   // Variant configurations
-  const variants = {
+  const variants: Record<VariantType, {
+    heroTitle: string;
+    heroSubtitle: string;
+    heroImage: string;
+    testimonialImage: string;
+    testimonialName: string;
+    testimonialQuote: string;
+    processTitle: string;
+    processSubtitle: string;
+    processImage: string;
+    processSteps: { icon: "user" | "sparkles" | "shield"; title: string; description: string }[];
+  }> = {
     market: {
+      heroTitle: "Wenn das Wetter <span class=\"text-brand\">deinen Markttag</span> verhagelt.",
+      heroSubtitle:
+        "Keine Besucher. Keine Verkäufe. Nur Frust. Sichere dich gegen Wetterausfall ab und starte entspannt in den nächsten Markt.",
       heroImage: imgHeroMarketDesktop,
-      heroImageMobile: imgHeroMarketMobile,
-      headline: (
-        <>
-          <span>Wenn das Wetter </span>
-          <span className="text-[#ff671f]">deinen Markttag </span>
-          <span>verhagelt.</span>
-        </>
-      ),
-      subheadline: "Keine Besucher. Keine Verkäufe. Nur Frust. Sichere dich gegen Wetterausfall ab und starte entspannt in den nächsten Markt.",
       testimonialImage: imgLena,
       testimonialName: "Lena, Künstlerin",
       testimonialQuote: "\"Ich brauche Sicherheit, damit ich kreativ sein kann. Ohne Sorgen um Wetterausfall.\"",
       processImage: imgLena,
       processTitle: "Von der Sorge zur Sicherheit in 3 Schritten",
       processSubtitle: "Erzähl dein Anliegen. Finde deinen Experten. Schlaf wieder ruhig",
-      step1Title: "Sag uns, was du absichern möchtest",
-      step1Description: "\"Ich verkaufe Kunst auf Wochenmärkten. Wenn es regnet, bleiben die Leute weg und ich verdiene nichts.\"",
-      step2Title: "Experten machen dir ein Angebot",
-      step2Description: "Martin sieht deine Anfrage: \"Als Landwirt kenne ich Wetter. Für eine angemessene Prämie übernehme ich dein Wetterrisiko.\"",
-      step3Title: "Du wählst und bist abgesichert",
-      step3Description: "Du nimmst Martins Angebot an. Ab sofort weißt du: Falls es regnet, ist Martin für dich da.",
+      processSteps: [
+        {
+          icon: "user",
+          title: "Schritt 1: Sag uns, was du absichern möchtest",
+          description: "\"Ich verkaufe Kunst auf Wochenmärkten. Wenn es regnet, bleiben die Leute weg und ich verdiene nichts.\"",
+        },
+        {
+          icon: "sparkles",
+          title: "Schritt 2: Experten machen dir ein Angebot",
+          description:
+            "Martin sieht deine Anfrage: \"Als Landwirt kenne ich Wetter. Für eine angemessene Prämie übernehme ich dein Wetterrisiko.\"",
+        },
+        {
+          icon: "shield",
+          title: "Schritt 3: Du wählst und bist abgesichert",
+          description: "Du nimmst Martins Angebot an. Ab sofort weißt du: Falls es regnet, ist Martin für dich da.",
+        },
+      ],
     },
     bus: {
+      heroTitle: "Mit dem T3 über die Alpen. Aber was, wenn er's nicht schafft?",
+      heroSubtitle:
+        "Du liebst deinen Bus. Aber er ist alt. Und die Berge sind hoch. Absichern gegen Pannen – damit aus dem Traum kein Albtraum wird.",
       heroImage: imgHeroBusDesktop,
-      heroImageMobile: imgHeroBusMobile,
-      headline: "Mit dem T3 über die Alpen. Aber was, wenn er's nicht schafft?",
-      subheadline: "Du liebst deinen Bus. Aber er ist alt. Und die Berge sind hoch. Absichern gegen Pannen – damit aus dem Traum kein Albtraum wird.",
       testimonialImage: imgMarco,
       testimonialName: "Marco, T3-Besitzer",
-      testimonialQuote: "\"Seit Jahren träume ich von dieser Tour. Aber mit zwei Kindern im Bus? Wenn der Wagen mitten in den Bergen liegen bleibt, wird's teuer und stressig.\"",
+      testimonialQuote:
+        "\"Seit Jahren träume ich von dieser Tour. Aber mit zwei Kindern im Bus? Wenn der Wagen mitten in den Bergen liegen bleibt, wird's teuer und stressig.\"",
       processImage: imgMarco,
       processTitle: "Von der Sorge zur Sicherheit in 3 Schritten",
       processSubtitle: "Erzähl dein Anliegen. Finde deinen Experten. Schlaf wieder ruhig",
-      step1Title: "Sag uns, was du absichern möchtest",
-      step1Description: "\"Ich habe einen T3 Baujahr 1987. Mein Traum: Alpenüberquerung mit der Familie. Aber der Bus ist alt.\"",
-      step2Title: "Experten machen dir ein Angebot",
-      step2Description: "Stefan sieht deine Anfrage: \"T3? Kenn ich in- und auswendig. Für eine angemessene Prämie bin ich dein Experte falls was passiert.\"",
-      step3Title: "Du wählst und bist abgesichert",
-      step3Description: "Du nimmst Stefans Angebot an. Ab sofort weißt du: Falls der Bus liegen bleibt, ist Stefan für dich da.",
+      processSteps: [
+        {
+          icon: "user",
+          title: "Schritt 1: Sag uns, was du absichern möchtest",
+          description: "\"Ich habe einen T3 Baujahr 1987. Mein Traum: Alpenüberquerung mit der Familie. Aber der Bus ist alt.\"",
+        },
+        {
+          icon: "sparkles",
+          title: "Schritt 2: Experten machen dir ein Angebot",
+          description:
+            "Stefan sieht deine Anfrage: \"T3? Kenn ich in- und auswendig. Für eine angemessene Prämie bin ich dein Experte falls was passiert.\"",
+        },
+        {
+          icon: "shield",
+          title: "Schritt 3: Du wählst und bist abgesichert",
+          description: "Du nimmst Stefans Angebot an. Ab sofort weißt du: Falls der Bus liegen bleibt, ist Stefan für dich da.",
+        },
+      ],
     },
   };
 
@@ -164,90 +191,21 @@ export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: Landing
       />
 
       {/* Hero Section - Full Height, starts at 0 (navigation overlays it) */}
-      <div id="hero" className="w-full flex justify-center">
-        <div className="md:h-[788px] h-[80vh] relative w-full container-hero md:p-[0px] p-[0px]">
-          {/* Blurred Background Layer - außerhalb overflow-clip - nur Desktop */}
-          <div className="hidden md:block absolute inset-[-120px] overflow-visible pointer-events-none z-0">
-            {/* Desktop Blur */}
-            <ImageWithFallback 
-              alt="" 
-              className="absolute inset-0 w-full h-full object-cover blur-[60px] opacity-30 md:rounded-bl-[24px] md:rounded-br-[24px]" 
-              src={currentVariant.heroImage} 
-            />
+      <HeroSection
+        title={currentVariant.heroTitle}
+        subtitle={currentVariant.heroSubtitle}
+        placeholder="Was möchtest du absichern?"
+        buttonText="Risiko anfragen"
+        riskInput={riskInput}
+        setRiskInput={setRiskInput}
+        onRiskRequest={handleRiskRequest}
+        backgroundImage={currentVariant.heroImage}
+        ctaPrefix={
+          <div className="md:flex hidden">
+            <DesktopSwitcher variant={variant} onVariantChange={setVariant} />
           </div>
-          
-          <div className="flex flex-col justify-center overflow-clip size-full relative z-10">
-            <div className="box-border content-stretch flex flex-col gap-[10px] md:h-[788px] h-[80vh] items-start justify-center md:pb-[120px] pb-[40px] pt-[0px] relative w-full pr-[0px] pl-[0px] p-[0px]">
-              <div className="basis-0 grow min-h-px min-w-px relative md:rounded-bl-[24px] md:rounded-br-[24px] w-full">
-                <div className="flex flex-col md:justify-center justify-end size-full">
-                  <div className="box-border content-stretch flex flex-col gap-[10px] isolate items-start md:justify-center justify-end md:pb-[40px] pb-[24px] md:pl-[108px] pl-[24px] md:pr-[217px] pr-[24px] pt-[24px] relative size-full">
-                    
-                    {/* Text Content - Desktop: Left aligned, Mobile: Center aligned */}
-                    <div className="content-stretch flex flex-col md:gap-[24px] gap-[16px] items-start justify-center relative shrink-0 md:w-[630px] w-full z-[3]">
-                      <div className="content-stretch flex flex-col gap-[10px] items-start not-italic relative shrink-0 text-[#e6e5e5] w-full">
-                        <p className="[text-shadow:#000000_10px_5px_40px] font-['Inter:Black',sans-serif] font-black leading-[1.3] relative shrink-0 md:text-[52px] text-[32px] w-full transition-all duration-500">
-                          {currentVariant.headline}
-                        </p>
-                        <p className="[text-shadow:#000000_10px_5px_40px] font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full transition-all duration-500">
-                          {currentVariant.subheadline}
-                        </p>
-                      </div>
-                      
-                      {/* CTA Bar - direkt im Hero */}
-                      <div className="md:flex hidden gap-[16px] items-center w-full">
-                        {/* Desktop Switcher im Hero */}
-                        <DesktopSwitcher 
-                          variant={variant}
-                          onVariantChange={setVariant}
-                        />
-                        
-                        <div className="bg-surface-frost backdrop-blur-lg border border-white/20 flex-1 rounded-[100px] shadow-sm">
-                          <input
-                            type="text"
-                            value={riskInput}
-                            onChange={(e) => setRiskInput(e.target.value)}
-                            placeholder="Was möchtest du absichern?"
-                            className="button-text text-primary placeholder:text-[#717182] w-full px-[24px] py-[12px] outline-none rounded-[100px] bg-transparent transition-all duration-300 hover:bg-surface-frost-hover focus:bg-surface-frost-hover focus:border-brand/40"
-                          />
-                        </div>
-                        <LandingButton
-                          onClick={handleRiskRequest}
-                          icon={<ArrowRight className="w-6 h-6" />}
-                          hideTextOnMobile={true}
-                          className="md:px-[24px] px-[16px]"
-                        >
-                          Risiko anfragen
-                        </LandingButton>
-                      </div>
-                    </div>
-
-                    {/* Background Image */}
-                    <div className="absolute inset-0 z-[1] rounded-t-[0px] rounded-b-[24px]">
-                      <div aria-hidden="true" className="absolute inset-0 pointer-events-none md:rounded-bl-[24px] md:rounded-br-[24px]">
-                        <div className="absolute inset-0 overflow-hidden md:rounded-bl-[24px] md:rounded-br-[24px]">
-                          {/* Desktop Image */}
-                          <ImageWithFallback 
-                            alt="" 
-                            className="hidden md:block absolute max-w-none object-cover rounded-bl-[24px] rounded-br-[24px] size-full transition-all duration-500 object-center" 
-                            src={currentVariant.heroImage} 
-                          />
-                          {/* Mobile Image - Person zentriert */}
-                          <ImageWithFallback 
-                            alt="" 
-                            className="block md:hidden absolute max-w-none object-cover size-full transition-all duration-500 object-[center_center]" 
-                            src={currentVariant.heroImageMobile} 
-                          />
-                        </div>
-                        <div className="absolute bg-gradient-to-b md:from-[rgba(0,0,0,0.2)] md:to-[rgba(0,0,0,0.2)] from-[24.519%] from-[rgba(0,0,0,0)] to-[64.423%] to-[rgba(0,0,0,0.5)] inset-0 md:rounded-bl-[24px] md:rounded-br-[24px]" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Testimonial Section - So funktioniert xrisk */}
       <div id="testimonial" className="w-full section-spacing">
@@ -265,109 +223,12 @@ export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: Landing
       </div>
 
       {/* Section 3-Step Anleitung - Grid 6/6 */}
-      <div id="prozess" className="w-full section-spacing relative">
-        <div className="container-grid">
-          <div className="grid-12 relative">
-            
-            {/* Left Column - Text - 6 cols desktop, 12 cols mobile/tablet */}
-            <div className="col-span-6 flex flex-col gap-8 md:py-6 py-4">
-              <div className="flex flex-col gap-4 items-start w-full">
-                <div className="flex flex-col gap-2 items-start w-full">
-                  <h2 className="display-large text-primary">
-                    {currentVariant.processTitle}
-                  </h2>
-                </div>
-                <p className="font-semibold text-primary text-[18px] leading-[1.5]">
-                  {currentVariant.processSubtitle}
-                </p>
-              </div>
-              <div className="flex flex-col gap-6 items-start w-full">
-                <div className="flex gap-4 items-start w-full">
-                  <div className="flex gap-[10px] items-center justify-center shrink-0 w-[31px] h-[31px]">
-                    <div className="shrink-0 w-[24px] h-[24px]">
-                      <svg className="block w-full h-full" fill="none" viewBox="0 0 24 24">
-                        <path d={svgPaths.p1edfde00} stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="basis-0 flex flex-col gap-2 grow min-h-px min-w-px">
-                    <p className="heading-3 text-primary">
-                      <span className="text-brand">Schritt 1:</span> {currentVariant.step1Title}
-                    </p>
-                    <p className="body-base text-primary">
-                      {currentVariant.step1Description}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4 items-start w-full">
-                  <div className="flex gap-[10px] items-center justify-center shrink-0 w-[31px] h-[31px]">
-                    <div className="shrink-0 w-[24px] h-[24px]">
-                      <svg className="block w-full h-full" fill="none" viewBox="0 0 24 24">
-                        <path d={svgPaths.p33705900} stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d={svgPaths.p161d4800} stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d={svgPaths.p2b304d00} stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d={svgPaths.p13e20900} stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="basis-0 flex flex-col gap-2 grow min-h-px min-w-px">
-                    <p className="heading-3 text-primary">
-                      <span className="text-brand">Schritt 2:</span> {currentVariant.step2Title}
-                    </p>
-                    <p className="body-base text-primary">
-                      {currentVariant.step2Description}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4 items-start w-full">
-                  <div className="flex gap-[10px] items-center justify-center shrink-0 w-[31px] h-[31px]">
-                    <div className="shrink-0 w-[24px] h-[24px]">
-                      <svg className="block w-full h-full" fill="none" viewBox="0 0 24 24">
-                        <path d={svgPaths.p2501aa80} stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d="M14 2V8H20" stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d="M16 13H8" stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d="M16 17H8" stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                        <path d="M10 9H9H8" stroke="#FF671F" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="basis-0 flex flex-col gap-2 grow min-h-px min-w-px">
-                    <p className="heading-3 text-primary">
-                      <span className="text-brand">Schritt 3:</span> {currentVariant.step3Title}
-                    </p>
-                    <p className="body-base text-primary">
-                      {currentVariant.step3Description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column - Image - nur Desktop sichtbar */}
-            <div className="hidden md:block col-span-6">
-              <div className="relative rounded-[24px] h-[600px]">
-                {/* Blurred Background Layer - nur Desktop */}
-                <div className="hidden md:block absolute inset-[-120px] overflow-visible pointer-events-none">
-                  <img 
-                    alt="" 
-                    className="absolute inset-0 w-full h-full object-cover blur-[60px] opacity-30" 
-                    src={currentVariant.processImage} 
-                  />
-                </div>
-                
-                {/* Main Image Container with clipping */}
-                <div className="relative w-full h-full rounded-[24px] overflow-hidden bg-[#353131]" id="prozess-testimonial">
-                  <img 
-                    alt={currentVariant.testimonialName} 
-                    className="absolute inset-0 w-full h-full object-cover" 
-                    src={currentVariant.processImage} 
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ProcessSection
+        title={currentVariant.processTitle}
+        subtitle={currentVariant.processSubtitle}
+        steps={currentVariant.processSteps}
+        image={currentVariant.processImage}
+      />
 
       {/* FAQ Section - Grid 6/6 */}
       <FAQSection
@@ -581,37 +442,19 @@ export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: Landing
       </div>
 
       {/* Sticky CTA */}
-      {showStickyCTA && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[rgba(255,103,31,0)] z-50 px-[0px] py-[16px] pt-[16px] pr-[0px] pb-[32px] pl-[0px]">
-          <div className="container-grid">
-            <div className="flex gap-[16px] items-center justify-center w-full p-[0px]">
-              {/* Desktop Switcher - links */}
-              <DesktopSwitcher 
-                variant={variant}
-                onVariantChange={setVariant}
-              />
-              
-              <div className="bg-surface-frost backdrop-blur-lg border border-white/20 flex-1 rounded-[100px] shadow-sm">
-                <input
-                  type="text"
-                  value={riskInput}
-                  onChange={(e) => setRiskInput(e.target.value)}
-                  placeholder="Was möchtest du absichern?"
-                  className="button-text text-primary placeholder:text-[#717182] w-full px-[24px] py-[12px] outline-none rounded-[100px] bg-transparent transition-all duration-300 hover:bg-surface-frost-hover focus:bg-surface-frost-hover focus:border-brand/40"
-                />
-              </div>
-              <LandingButton
-                onClick={handleRiskRequest}
-                icon={<ArrowRight className="w-6 h-6" />}
-                hideTextOnMobile={true}
-                className="md:px-[24px] px-[16px]"
-              >
-                Risiko anfragen
-              </LandingButton>
-            </div>
+      <StickyCTA
+        showStickyCTA={showStickyCTA}
+        riskInput={riskInput}
+        setRiskInput={setRiskInput}
+        onRiskRequest={handleRiskRequest}
+        placeholder="Was möchtest du absichern?"
+        buttonText="Risiko anfragen"
+        prefix={
+          <div className="md:flex hidden">
+            <DesktopSwitcher variant={variant} onVariantChange={setVariant} />
           </div>
-        </div>
-      )}
+        }
+      />
 
       {/* Risk Input Modal */}
       <RiskInputModal 
