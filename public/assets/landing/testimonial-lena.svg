@@ -1,0 +1,19 @@
+<svg width="640" height="640" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>Lena – Künstlerin</title>
+  <desc>Stilisierter Avatar für Lena mit warmem Farbakzent.</desc>
+  <defs>
+    <linearGradient id="bgL" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#3A1E5F" />
+      <stop offset="100%" stop-color="#1B0F33" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="120" fill="url(#bgL)" />
+  <circle cx="320" cy="300" r="160" fill="#FFEDE0" />
+  <path d="M240 380c30-50 90-50 120-10c30-40 90-40 120 10v80c0 32-20 56-44 56H284c-24 0-44-24-44-56z" fill="#FF7C3F" />
+  <circle cx="320" cy="300" r="112" fill="#F9D9C8" />
+  <path d="M230 290c14-78 72-118 140-96c18 6 32 12 50 10c-4 80-48 146-120 146c-40 0-74-28-70-60z" fill="#5A2F7F" />
+  <circle cx="276" cy="302" r="10" fill="#2B1740" />
+  <circle cx="364" cy="302" r="10" fill="#2B1740" />
+  <path d="M292 340c18 20 38 20 56 0" stroke="#2B1740" stroke-width="10" stroke-linecap="round" fill="none" />
+  <text x="320" y="520" text-anchor="middle" fill="#FCE5FF" font-family="Inter, Arial" font-weight="700" font-size="36">Lena</text>
+</svg>

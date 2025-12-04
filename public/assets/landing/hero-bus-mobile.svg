@@ -1,0 +1,36 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>Busfahrt über die Alpen – Mobile</title>
+  <desc>T3-Bus Illustration im Hochformat für mobile Hero-Sektionen.</desc>
+  <defs>
+    <linearGradient id="skyBM" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0D1B2A" />
+      <stop offset="65%" stop-color="#0F2C3F" />
+      <stop offset="100%" stop-color="#0C1F33" />
+    </linearGradient>
+    <linearGradient id="sunsetM" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#FF8A3C" />
+      <stop offset="60%" stop-color="#FF671F" />
+      <stop offset="100%" stop-color="#EB4D1B" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1200" fill="url(#skyBM)" />
+  <circle cx="680" cy="190" r="120" fill="url(#sunsetM)" opacity="0.55" />
+  <g opacity="0.5">
+    <path d="M-40 880C180 780 460 780 720 840C900 884 980 930 980 930V1200H-40V880Z" fill="#0B1524" />
+    <path d="M-40 960C240 890 500 940 760 1000C920 1036 980 1080 980 1080V1200H-40V960Z" fill="#0E1E2F" />
+  </g>
+  <g transform="translate(140 620)">
+    <rect x="0" y="70" width="620" height="240" rx="32" fill="#122C4D" stroke="#2B507A" stroke-width="8" />
+    <rect x="40" y="0" width="540" height="140" rx="26" fill="#1A3C63" stroke="#33608D" stroke-width="6" />
+    <rect x="60" y="28" width="180" height="96" rx="18" fill="#E6F0FF" stroke="#396799" stroke-width="4" />
+    <rect x="260" y="28" width="180" height="96" rx="18" fill="#E6F0FF" stroke="#396799" stroke-width="4" />
+    <rect x="460" y="28" width="80" height="96" rx="16" fill="#122C4D" stroke="#396799" stroke-width="4" />
+    <rect x="90" y="120" width="460" height="100" rx="20" fill="#0D1F34" stroke="#325579" stroke-width="4" />
+    <circle cx="160" cy="260" r="50" fill="#0B1524" stroke="#6B88A7" stroke-width="12" />
+    <circle cx="500" cy="260" r="50" fill="#0B1524" stroke="#6B88A7" stroke-width="12" />
+    <rect x="540" y="170" width="68" height="50" rx="14" fill="#F5C542" />
+    <rect x="-48" y="170" width="68" height="50" rx="14" fill="#F5C542" />
+  </g>
+  <text x="80" y="200" fill="#E6E5E5" font-family="Inter, Arial" font-weight="800" font-size="52">Alpenfahrt mit dem T3</text>
+  <text x="80" y="260" fill="#C9D7F2" font-family="Inter, Arial" font-weight="500" font-size="26">Mobile Visual inspiriert von der Figma-Vorlage</text>
+</svg>

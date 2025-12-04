@@ -1,0 +1,45 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>Markttag Illustration Mobile</title>
+  <desc>Hochformatige Markt-Illustration mit Regenakzenten für Smartphones.</desc>
+  <defs>
+    <linearGradient id="skyM" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1F3F73" />
+      <stop offset="60%" stop-color="#223F6A" />
+      <stop offset="100%" stop-color="#15253F" />
+    </linearGradient>
+    <linearGradient id="awningM" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0%" stop-color="#FF7C3F" />
+      <stop offset="50%" stop-color="#FF671F" />
+      <stop offset="100%" stop-color="#F24E1E" />
+    </linearGradient>
+    <linearGradient id="rainM" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.2)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1200" fill="url(#skyM)" />
+  <g opacity="0.4">
+    <rect x="-40" y="840" width="980" height="380" fill="#0D1828" />
+    <circle cx="160" cy="870" r="180" fill="#122845" />
+    <circle cx="520" cy="880" r="220" fill="#0F223A" />
+    <circle cx="820" cy="860" r="190" fill="#11273F" />
+  </g>
+  <g opacity="0.3" stroke="#B8C7E6" stroke-width="4">
+    <line x1="120" x2="80" y1="0" y2="1200" />
+    <line x1="320" x2="280" y1="0" y2="1200" />
+    <line x1="520" x2="480" y1="0" y2="1200" />
+    <line x1="720" x2="680" y1="0" y2="1200" />
+  </g>
+  <g transform="translate(130 520)">
+    <rect x="0" y="60" width="640" height="320" rx="38" fill="#122741" stroke="#21436C" stroke-width="6" />
+    <rect x="0" y="0" width="640" height="92" rx="34" fill="url(#awningM)" />
+    <rect x="50" y="140" width="200" height="160" rx="18" fill="#0D1D32" stroke="#264B73" stroke-width="4" />
+    <rect x="330" y="140" width="200" height="160" rx="18" fill="#0D1D32" stroke="#264B73" stroke-width="4" />
+    <rect x="210" y="330" width="220" height="52" rx="16" fill="#0F223A" />
+  </g>
+  <g opacity="0.5">
+    <rect x="0" y="0" width="900" height="1200" fill="url(#rainM)" />
+  </g>
+  <text x="80" y="200" fill="#E6E5E5" font-family="Inter, Arial" font-weight="800" font-size="52">Markttag absichern</text>
+  <text x="80" y="260" fill="#C9D7F2" font-family="Inter, Arial" font-weight="500" font-size="26">Mobile Illustration inspiriert von der Figma-Vorlage</text>
+</svg>

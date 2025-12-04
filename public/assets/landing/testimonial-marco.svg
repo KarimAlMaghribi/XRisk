@@ -1,0 +1,19 @@
+<svg width="640" height="640" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title>Marco – T3-Fahrer</title>
+  <desc>Avatar für Marco mit blau-orangen Akzenten passend zum Bus-Case.</desc>
+  <defs>
+    <linearGradient id="bgM" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#163B60" />
+      <stop offset="100%" stop-color="#0A243E" />
+    </linearGradient>
+  </defs>
+  <rect width="640" height="640" rx="120" fill="url(#bgM)" />
+  <circle cx="320" cy="300" r="160" fill="#E7F1FF" />
+  <path d="M232 378c26-48 86-52 120-12c34-40 94-36 120 12v90c0 30-18 54-40 54H272c-22 0-40-24-40-54z" fill="#FF8A3C" />
+  <circle cx="320" cy="300" r="112" fill="#F2D9C2" />
+  <path d="M226 274c24-42 70-70 126-52c22 8 44 10 64 6c-4 72-50 130-122 130c-36 0-70-24-68-84z" fill="#264C73" />
+  <circle cx="276" cy="302" r="10" fill="#1C3556" />
+  <circle cx="364" cy="302" r="10" fill="#1C3556" />
+  <path d="M296 344c16 16 32 16 48 0" stroke="#1C3556" stroke-width="10" stroke-linecap="round" fill="none" />
+  <text x="320" y="520" text-anchor="middle" fill="#E6F0FF" font-family="Inter, Arial" font-weight="700" font-size="36">Marco</text>
+</svg>
