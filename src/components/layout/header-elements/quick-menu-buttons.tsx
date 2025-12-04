@@ -46,6 +46,7 @@ import { selectActiveChatId } from "../../../store/slices/my-bids/selectors";
 import { setActiveChat } from "../../../store/slices/my-bids/reducers";
 import { CreditScoreDialog } from "../../credit_score/credit_score_dialog";
 import {AvatarWithBadge} from "../../profile/avatar-with-badge-count";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 
 export interface AuthenticationButtonsProps {
   isLoggedIn: boolean;
@@ -302,6 +303,17 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
                 <Typography sx={{ textAlign: "center" }}>
                   <Trans i18nKey="header.credit_score"></Trans>
                 </Typography>
+              </MenuItem>,
+              <MenuItem
+                key="settings"
+                onClick={() => {
+                  navigate(ROUTES.SETTINGS);
+                  props.setAnchorElUser();
+                }}>
+                <ListItemIcon>
+                  <SettingsOutlinedIcon />
+                </ListItemIcon>
+                <Typography sx={{ textAlign: "center" }}>Settings</Typography>
               </MenuItem>,
             ]}
           </Menu>
