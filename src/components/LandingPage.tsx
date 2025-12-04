@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import svgPaths from "../imports/svg-81dejan7f8";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { placeholderImage } from "../assests/imgs/placeholder";
 import { RiskInputModal } from "./RiskInputModal";
 import { LandingNavbar } from "./landing/LandingNavbar";
 import { FAQSection } from "./landing/FAQSection";
@@ -21,15 +20,15 @@ interface LandingPageProps {
 
 type VariantType = 'market' | 'bus';
 
-const imgHeroMarketDesktop = placeholderImage;
-const imgHeroMarketMobile = placeholderImage;
-const imgHeroBusDesktop = placeholderImage;
-const imgHeroBusMobile = placeholderImage;
-const imgMartin = placeholderImage;
-const imgLogo = placeholderImage;
+const imgHeroMarketDesktop = "/assets/landing/hero-market-desktop.svg";
+const imgHeroMarketMobile = "/assets/landing/hero-market-mobile.svg";
+const imgHeroBusDesktop = "/assets/landing/hero-bus-desktop.svg";
+const imgHeroBusMobile = "/assets/landing/hero-bus-mobile.svg";
+const imgMartin = "/assets/landing/testimonial-martin.svg";
+const imgLogo = "/assets/landing/logo.svg";
 // Testimonial images
-const imgLena = placeholderImage;
-const imgMarco = placeholderImage;
+const imgLena = "/assets/landing/testimonial-lena.svg";
+const imgMarco = "/assets/landing/testimonial-marco.svg";
 
 export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: LandingPageProps) {
   const [activeSection, setActiveSection] = useState("hero");
