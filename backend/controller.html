@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xrisk API controller</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #555;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #007bff;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .info-box strong {
+            color: #333;
+        }
+
+        .oauth-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .oauth-buttons button {
+            flex: 1;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .event-log {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .event-log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+            padding-left: 10px;
+        }
+
+        .event-log-entry.error {
+            border-left-color: #dc3545;
+        }
+
+        .event-log-entry.success {
+            border-left-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>xrisk API controller</h1>
+
+        <div class="section">
+            <h2>Authentication</h2>
+            
+            <div id="auth-status" class="status info">
+                Status: Nicht eingeloggt
+            </div>
+
+            <div id="login-section">
+                <h3>Login</h3>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>E-Mail:</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Passwort:</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="remember">
+                            Angemeldet bleiben
+                        </label>
+                    </div>
+                    <button type="submit">Anmelden</button>
+                </form>
+
+                <div class="oauth-buttons">
+                    <button onclick="handleGoogleLogin()">Mit Google anmelden</button>
+                    <button onclick="handleMicrosoftLogin()">Mit Microsoft anmelden</button>
+                </div>
+            </div>
+
+            <div id="register-section" style="margin-top: 20px;">
+                <h3>Registrierung</h3>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label>Name:</label>
+                        <input type="text" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label>E-Mail:</label>
+                        <input type="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Passwort:</label>
+                        <input type="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Passwort bestätigen:</label>
+                        <input type="password" name="password_confirm" required>
+                    </div>
+                    <button type="submit">Registrieren</button>
+                </form>
+            </div>
+
+            <div id="user-panel" class="hidden">
+                <h3>Willkommen, <span id="user-name"></span>!</h3>
+                <div class="info-box">
+                    <strong>E-Mail:</strong> <span id="user-email"></span><br>
+                    <strong>User UUID:</strong> <span id="user-uuid"></span>
+                </div>
+                <button onclick="handleLogout()" class="btn-danger">Abmelden</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Risikoanalyse</h2>
+
+            <form id="workflow-form">
+                <div class="form-group">
+                    <label>Risikobeschreibung:</label>
+                    <textarea name="initial_prompt" required placeholder="Beschreiben Sie das Risiko..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Versicherungsstart:</label>
+                    <input type="date" name="start_date" required>
+                </div>
+                <div class="form-group">
+                    <label>Versicherungsende:</label>
+                    <input type="date" name="end_date" required>
+                </div>
+                <div class="form-group">
+                    <label>Versicherungswert (EUR):</label>
+                    <input type="number" name="insurance_value" step="0.01" required placeholder="50000.00">
+                </div>
+                <button type="submit" id="start-workflow-btn">Risikoanalyse starten</button>
+            </form>
+
+            <div id="workflow-status" class="hidden" style="margin-top: 20px;">
+                <div class="info-box">
+                    <strong>Task ID:</strong> <span id="task-id"></span><br>
+                    <strong>Risk UUID:</strong> <span id="risk-uuid"></span><br>
+                    <strong>Status:</strong> <span id="workflow-status-text">-</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progress-bar" style="width: 0%">0%</div>
+                </div>
+                <div id="workflow-message" class="status info" style="margin-top: 10px;"></div>
+            </div>
+
+            <div id="inquiry-section" class="hidden" style="margin-top: 20px;">
+                <h3>Rückfragen</h3>
+                <form id="inquiry-form">
+                    <div id="inquiry-questions"></div>
+                    <button type="submit">Antworten senden</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Workflow Resume</h2>
+            
+            <form id="resume-form">
+                <div class="form-group">
+                    <label>Risk UUID:</label>
+                    <input type="text" name="risk_uuid" required placeholder="z.B. abcdef01-2345-4678-9abc-def012345678">
+                </div>
+                <button type="submit">Status abrufen</button>
+            </form>
+
+            <div id="resume-result" class="hidden" style="margin-top: 20px;">
+                <div class="info-box">
+                    <strong>Status:</strong> <span id="resume-status"></span><br>
+                    <strong>Risk UUID:</strong> <span id="resume-risk-uuid"></span><br>
+                    <strong>User UUID:</strong> <span id="resume-user-uuid"></span><br>
+                    <span id="resume-additional-info"></span>
+                </div>
+                <div id="resume-message" class="status info" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>SSE Events</h2>
+            <div class="event-log" id="event-log">
+                <div class="event-log-entry">Warte auf Events...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const path = window.location.pathname;
+        // Module path - files are now directly in static/, accessible via /static/ or /dist/ (backwards compat)
+        let modulePath;
+        
+        if (path.includes('/dist/') || path.includes('/static/')) {
+            modulePath = './index.js';
+        } else {
+            modulePath = './index.js';  // Default to same directory
+        }
+        
+        const module = await import(modulePath);
+        const { 
+            AuthController, 
+            SSEController, 
+            WorkflowController,
+            WorkflowValidationError 
+        } = module;
+
+        const BASE_URL = window.location.origin;
+
+        const authController = new AuthController(BASE_URL);
+        const sseController = new SSEController({ baseUrl: BASE_URL, autoReconnect: true });
+        const workflowController = new WorkflowController(BASE_URL);
+
+        authController.onAuthStatusChange((status) => {
+            console.log('Auth status changed:', status);
+            const statusDiv = document.getElementById('auth-status');
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            const userPanel = document.getElementById('user-panel');
+
+            if (status.isAuthenticated && status.user) {
+                statusDiv.textContent = `Status: Eingeloggt als ${status.user.email}`;
+                statusDiv.className = 'status success';
+                loginSection.classList.add('hidden');
+                registerSection.classList.add('hidden');
+                userPanel.classList.remove('hidden');
+                
+                const userNameEl = document.getElementById('user-name');
+                const userEmailEl = document.getElementById('user-email');
+                const userUuidEl = document.getElementById('user-uuid');
+                
+                if (userNameEl) userNameEl.textContent = status.user.name || status.user.email || 'Unbekannt';
+                if (userEmailEl) userEmailEl.textContent = status.user.email || 'Keine E-Mail';
+                if (userUuidEl) userUuidEl.textContent = status.user.user_uuid || 'Keine UUID';
+            } else {
+                statusDiv.textContent = 'Status: Nicht eingeloggt';
+                statusDiv.className = 'status info';
+                loginSection.classList.remove('hidden');
+                registerSection.classList.remove('hidden');
+                userPanel.classList.add('hidden');
+            }
+        });
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                await authController.login({
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    remember: formData.get('remember') === 'on'
+                });
+                addEventLog('Login erfolgreich', 'success');
+            } catch (error) {
+                addEventLog(`Login fehlgeschlagen: ${error.message}`, 'error');
+                alert(`Login fehlgeschlagen: ${error.message}`);
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                await authController.register({
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    password_confirm: formData.get('password_confirm'),
+                    name: formData.get('name') || undefined
+                });
+                addEventLog('Registrierung erfolgreich', 'success');
+                alert('Registrierung erfolgreich! Bitte überprüfen Sie Ihre E-Mails zur Verifizierung.');
+            } catch (error) {
+                addEventLog(`Registrierung fehlgeschlagen: ${error.message}`, 'error');
+                alert(`Registriering fehlgeschlagen: ${error.message}`);
+            }
+        });
+
+        window.handleGoogleLogin = () => {
+            authController.startOAuthLogin('google');
+        };
+
+        window.handleMicrosoftLogin = () => {
+            authController.startOAuthLogin('microsoft');
+        };
+
+        window.handleLogout = async () => {
+            try {
+                await authController.logout();
+                addEventLog('Logout erfolgreich', 'success');
+            } catch (error) {
+                addEventLog(`Logout fehlgeschlagen: ${error.message}`, 'error');
+            }
+        };
+
+        let currentTaskId = null;
+        let currentRiskUuid = null;
+        let currentUserUuid = null;
+
+        document.getElementById('workflow-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const startBtn = document.getElementById('start-workflow-btn');
+            
+            startBtn.disabled = true;
+            startBtn.textContent = 'Startet...';
+
+            try {
+                const response = await workflowController.startWorkflow({
+                    initial_prompt: formData.get('initial_prompt'),
+                    start_date: formData.get('start_date'),
+                    end_date: formData.get('end_date'),
+                    insurance_value: parseFloat(formData.get('insurance_value'))
+                });
+
+                currentTaskId = response.task_id;
+                currentRiskUuid = response.risk_uuid;
+                currentUserUuid = response.user_uuid;
+
+                document.getElementById('workflow-status').classList.remove('hidden');
+                document.getElementById('task-id').textContent = response.task_id;
+                document.getElementById('risk-uuid').textContent = response.risk_uuid;
+                document.getElementById('workflow-status-text').textContent = 'Gestartet';
+                document.getElementById('workflow-message').textContent = 'Workflow gestartet, warte auf Updates...';
+                document.getElementById('workflow-message').className = 'status info';
+
+                addEventLog(`Workflow gestartet: ${response.task_id}`, 'success');
+
+                await sseController.connect(response.task_id);
+
+            } catch (error) {
+                if (error instanceof WorkflowValidationError) {
+                    addEventLog(`Validierungsfehler: ${error.reason}`, 'error');
+                    alert(`Risikobeschreibung nicht akzeptiert: ${error.reason}`);
+                } else {
+                    addEventLog(`Fehler beim Starten: ${error.message}`, 'error');
+                    alert(`Fehler: ${error.message}`);
+                }
+            } finally {
+                startBtn.disabled = false;
+                startBtn.textContent = 'Risikoanalyse starten';
+            }
+        });
+
+        sseController.onStatusChange((status) => {
+            addEventLog(`SSE Status: ${status}`, 'info');
+        });
+
+        sseController.onEvent((event) => {
+            // Detailliertes Logging aller SSE-Events
+            let logMessage = `SSE Event: ${event.meta?.status || 'unknown'}`;
+            if (event.meta?.step) {
+                logMessage += ` | Step: ${event.meta.step}`;
+            }
+            if (event.meta?.message) {
+                logMessage += ` | Message: ${event.meta.message}`;
+            }
+            if (event.meta?.progress !== undefined) {
+                logMessage += ` | Progress: ${event.meta.progress}%`;
+            }
+            if (event.meta?.status) {
+                logMessage += ` | Status: ${event.meta.status}`;
+            }
+            if (event.meta?.risk_uuid) {
+                logMessage += ` | Risk UUID: ${event.meta.risk_uuid}`;
+            }
+            if (event.meta?.error_type) {
+                logMessage += ` | Error: ${event.meta.error_type}`;
+            }
+            if (event.meta?.inquiries) {
+                logMessage += ` | Inquiries: ${event.meta.inquiries.length} Frage(n)`;
+            }
+            
+            let logType = 'info';
+            const status = event.meta?.status;
+            if (status === 'completed') {
+                logType = 'success';
+            } else if (status === 'failed') {
+                logType = 'error';
+            } else if (status === 'login_required') {
+                logType = 'warning';
+            }
+            
+            addEventLog(logMessage, logType);
+
+            if (event.meta?.progress !== undefined) {
+                const progressBar = document.getElementById('progress-bar');
+                progressBar.style.width = `${event.meta.progress}%`;
+                progressBar.textContent = `${event.meta.progress}%`;
+            }
+
+            if (event.meta?.step) {
+                document.getElementById('workflow-status-text').textContent = event.meta.step;
+            }
+
+            if (event.meta?.message) {
+                const messageDiv = document.getElementById('workflow-message');
+                messageDiv.textContent = event.meta.message;
+                messageDiv.className = 'status info';
+            }
+
+            // Inquiry Required
+            if ((status === 'inquiry_awaiting_response' || status === 'inquiry_required') && 
+                event.meta?.inquiries) {
+                addEventLog(`Inquiry erforderlich: ${event.meta.inquiries.length} Frage(n)`, 'info');
+                showInquiryForm(event.meta.inquiries);
+            } 
+            // Success/Completed
+            else if (status === 'completed') {
+                document.getElementById('workflow-message').textContent = 'Risikoanalyse erfolgreich abgeschlossen!';
+                document.getElementById('workflow-message').className = 'status success';
+                addEventLog('Workflow erfolgreich abgeschlossen', 'success');
+                loadFinalResult();
+            } 
+            // Failure/Failed
+            else if (status === 'failed') {
+                const errorMsg = `Fehler: ${event.meta?.error_type || 'Unbekannter Fehler'}`;
+                document.getElementById('workflow-message').textContent = errorMsg;
+                document.getElementById('workflow-message').className = 'status error';
+                addEventLog(`Workflow fehlgeschlagen: ${errorMsg}`, 'error');
+            } 
+            // Login Required
+            else if (status === 'login_required') {
+                document.getElementById('workflow-message').textContent = 'Login erforderlich, um fortzufahren';
+                document.getElementById('workflow-message').className = 'status warning';
+                addEventLog('Login erforderlich für Workflow-Fortsetzung', 'warning');
+            }
+        });
+
+        function showInquiryForm(inquiries) {
+            const inquirySection = document.getElementById('inquiry-section');
+            const questionsDiv = document.getElementById('inquiry-questions');
+            
+            questionsDiv.innerHTML = '';
+            
+            inquiries.forEach((question, index) => {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
+                    <label>Frage ${index + 1}: ${question.question || question}</label>
+                    <input type="text" name="answer_${index}" required>
+                `;
+                questionsDiv.appendChild(div);
+            });
+
+            inquirySection.classList.remove('hidden');
+        }
+
+        document.getElementById('inquiry-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentTaskId || !currentRiskUuid || !currentUserUuid) {
+                alert('Fehlende Informationen für Inquiry-Antworten');
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const answers = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const answer = formData.get(`answer_${i}`);
+                if (answer) {
+                    answers.push(answer);
+                } else {
+                    break;
+                }
+            }
+
+            try {
+                const response = await workflowController.submitInquiryResponse({
+                    task_id: currentTaskId,
+                    risk_uuid: currentRiskUuid,
+                    user_uuid: currentUserUuid,
+                    responses: answers
+                });
+
+                addEventLog(`Inquiry-Antworten gesendet, neuer Task: ${response.task_id}`, 'success');
+                
+                currentTaskId = response.task_id;
+                await sseController.connect(response.task_id);
+
+                document.getElementById('inquiry-section').classList.add('hidden');
+            } catch (error) {
+                addEventLog(`Fehler beim Senden der Antworten: ${error.message}`, 'error');
+                alert(`Fehler: ${error.message}`);
+            }
+        });
+
+        function addEventLog(message, type = 'info') {
+            const eventLog = document.getElementById('event-log');
+            const entry = document.createElement('div');
+            entry.className = `event-log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            eventLog.appendChild(entry);
+            eventLog.scrollTop = eventLog.scrollHeight;
+
+            while (eventLog.children.length > 50) {
+                eventLog.removeChild(eventLog.firstChild);
+            }
+        }
+
+        async function loadFinalResult() {
+            if (!currentRiskUuid) return;
+
+            try {
+                const result = await workflowController.getResult(currentRiskUuid, currentUserUuid);
+                addEventLog(`Ergebnis geladen: ${result.status}`, 'success');
+                console.log('Finales Ergebnis:', result);
+            } catch (error) {
+                addEventLog(`Fehler beim Laden des Ergebnisses: ${error.message}`, 'error');
+            }
+        }
+
+        authController.initialize().then(() => {
+            const status = authController.getAuthStatus();
+            addEventLog(`Auth Controller initialisiert - Authentifiziert: ${status.isAuthenticated}`, 'success');
+            
+            if (status.isAuthenticated && status.user) {
+                const statusDiv = document.getElementById('auth-status');
+                const loginSection = document.getElementById('login-section');
+                const registerSection = document.getElementById('register-section');
+                const userPanel = document.getElementById('user-panel');
+                
+                statusDiv.textContent = `Status: Eingeloggt als ${status.user.email}`;
+                statusDiv.className = 'status success';
+                loginSection.classList.add('hidden');
+                registerSection.classList.add('hidden');
+                userPanel.classList.remove('hidden');
+                document.getElementById('user-name').textContent = status.user.name || status.user.email;
+                document.getElementById('user-email').textContent = status.user.email;
+                document.getElementById('user-uuid').textContent = status.user.user_uuid;
+            }
+        }).catch((error) => {
+            addEventLog(`Fehler bei Initialisierung: ${error.message}`, 'error');
+            console.error('Initialize error:', error);
+        });
+
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="start_date"]').value = today;
+        
+        const nextYear = new Date();
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        document.querySelector('input[name="end_date"]').value = nextYear.toISOString().split('T')[0];
+
+        document.getElementById('resume-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const riskUuid = formData.get('risk_uuid').trim();
+            
+            if (!riskUuid) {
+                alert('Bitte geben Sie eine Risk UUID ein');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Lädt...';
+
+            try {
+                const result = await workflowController.resume(riskUuid);
+                
+                document.getElementById('resume-result').classList.remove('hidden');
+                document.getElementById('resume-status').textContent = result.status || 'N/A';
+                document.getElementById('resume-risk-uuid').textContent = result.risk_uuid || 'N/A';
+                document.getElementById('resume-user-uuid').textContent = result.user_uuid || 'N/A';
+                
+                let additionalInfo = '';
+                if (result.processing_since) {
+                    additionalInfo += `<strong>Verarbeitung seit:</strong> ${new Date(result.processing_since).toLocaleString()}<br>`;
+                }
+                if (result.elapsed_seconds !== undefined) {
+                    additionalInfo += `<strong>Verstrichene Zeit:</strong> ${result.elapsed_seconds} Sekunden<br>`;
+                }
+                if (result.task_id) {
+                    additionalInfo += `<strong>Task ID:</strong> ${result.task_id}<br>`;
+                }
+                if (result.inquiries && result.inquiries.length > 0) {
+                    additionalInfo += `<strong>Rückfragen:</strong> ${result.inquiries.length} Frage(n) vorhanden<br>`;
+                }
+                if (result.failed_at) {
+                    additionalInfo += `<strong>Fehlgeschlagen am:</strong> ${new Date(result.failed_at).toLocaleString()}<br>`;
+                }
+                if (result.failed_reason) {
+                    additionalInfo += `<strong>Fehlergrund:</strong> ${result.failed_reason}<br>`;
+                }
+                if (result.retry_count !== undefined) {
+                    additionalInfo += `<strong>Retry Count:</strong> ${result.retry_count}<br>`;
+                }
+                
+                document.getElementById('resume-additional-info').innerHTML = additionalInfo || '';
+                
+                const messageDiv = document.getElementById('resume-message');
+                messageDiv.textContent = `Status erfolgreich abgerufen: ${result.status}`;
+                messageDiv.className = 'status success';
+                
+                addEventLog(`Resume erfolgreich: ${riskUuid} - Status: ${result.status}`, 'success');
+                
+            } catch (error) {
+                const messageDiv = document.getElementById('resume-message');
+                messageDiv.textContent = `Fehler: ${error.message}`;
+                messageDiv.className = 'status error';
+                
+                addEventLog(`Resume fehlgeschlagen: ${error.message}`, 'error');
+                alert(`Fehler beim Abrufen des Status: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Status abrufen';
+            }
+        });
+    </script>
+</body>
+</html>
+

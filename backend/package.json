@@ -1,0 +1,26 @@
+{
+  "name": "xrisk-frontend-auth",
+  "version": "1.0.0",
+  "description": "TypeScript Authentication Controller für xrisk Frontend",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && npm run copy:html && npm run copy:to-static",
+    "build:watch": "tsc --watch",
+    "copy:html": "copyfiles -u 0 controller.html ../static",
+    "copy:to-static": "copyfiles -u 1 dist/**/* ../static",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "authentication",
+    "typescript",
+    "xrisk"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "copyfiles": "^2.4.1"
+  }
+}
+
