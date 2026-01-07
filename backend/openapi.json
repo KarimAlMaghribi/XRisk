@@ -1,0 +1,479 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "xrisk API",
+    "description": "API-Dokumentation für die xrisk Risikobewertungs-API",
+    "version": "1.0.0",
+    "contact": {
+      "name": "xrisk API Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://api.xrisk.info",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Workflow",
+      "description": "Workflow-Management für Risikobewertungen"
+    },
+    {
+      "name": "MCP",
+      "description": "Message Context Protocol - Kontextverwaltung"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentifizierung und Benutzerverwaltung"
+    },
+    {
+      "name": "Health",
+      "description": "System-Status und Health Checks"
+    }
+  ],
+  "paths": {
+    "/workflow/start": {
+      "post": {
+        "summary": "POST /start",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/status/{risk_uuid}": {
+      "get": {
+        "summary": "GET /status/<risk_uuid>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/status/{task_id}": {
+      "get": {
+        "summary": "GET /status/<task_id>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/inquiry-response": {
+      "post": {
+        "summary": "POST /inquiry-response",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/resume/{risk_uuid}": {
+      "get": {
+        "summary": "GET /resume/<risk_uuid>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/resume": {
+      "post": {
+        "summary": "POST /resume",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/cancel/{task_id}": {
+      "post": {
+        "summary": "POST /cancel/<task_id>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/result/{risk_uuid}": {
+      "get": {
+        "summary": "GET /result/<risk_uuid>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/update-user": {
+      "post": {
+        "summary": "POST /update-user",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "summary": "GET /login",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "POST /login",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "POST /register",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/resend-verification": {
+      "post": {
+        "summary": "POST /resend-verification",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "get": {
+        "summary": "GET /forgot-password",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "POST /forgot-password",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/reset-password": {
+      "get": {
+        "summary": "GET /reset-password",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "POST /reset-password",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/info": {
+      "get": {
+        "summary": "GET /info",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/context/{table_name}/store": {
+      "post": {
+        "summary": "POST /context/<table_name>/store",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/context/{context_id}": {
+      "get": {
+        "summary": "GET /context/<table_name>/get/<int:context_id>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/context/{table_name}/list": {
+      "get": {
+        "summary": "GET /context/<table_name>/list",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/context/{table_name}/search": {
+      "post": {
+        "summary": "POST /context/<table_name>/search",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/context/search": {
+      "post": {
+        "summary": "POST /context/search",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/tags": {
+      "get": {
+        "summary": "GET /tags",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "POST /tags",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/context/{table_name}/batch": {
+      "post": {
+        "summary": "POST /context/<table_name>/batch",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/mcp/stats": {
+      "get": {
+        "summary": "GET /stats",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/workflow/stream/{task_id}": {
+      "get": {
+        "summary": "GET /stream/<task_id>",
+        "description": "",
+        "tags": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session",
+        "description": "Session Cookie Authentication"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
