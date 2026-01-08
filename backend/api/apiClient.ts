@@ -90,30 +90,6 @@ export class ApiClient {
   }
 
   /**
-   * POST Request mit Form-Data (für Login/Register/...)
-   */
-  protected async postForm<T>(
-    endpoint: string,
-    data: Record<string, string | boolean>
-  ): Promise<T> {
-    const formData = new URLSearchParams();
-    
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, String(value));
-      }
-    });
-
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString(),
-    });
-  }
-
-  /**
    * POST Request mit JSON
    */
   protected async post<T>(

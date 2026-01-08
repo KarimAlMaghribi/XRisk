@@ -362,15 +362,8 @@
 
     <script type="module">
         const path = window.location.pathname;
-        // Module path - files are now directly in static/, accessible via /static/ or /dist/ (backwards compat)
-        let modulePath;
-        
-        if (path.includes('/dist/') || path.includes('/static/')) {
-            modulePath = './index.js';
-        } else {
-            modulePath = './index.js';  // Default to same directory
-        }
-        
+        let modulePath = './index.js';  // Default to same directory
+
         const module = await import(modulePath);
         const { 
             AuthController, 
@@ -379,11 +372,20 @@
             WorkflowValidationError 
         } = module;
 
+        // BASE_URL für Redirects und OAuth (bleibt auf Hauptdomain)
         const BASE_URL = window.location.origin;
+        
+        // API_BASE_URL für REST API Aufrufe (verwendet API-Subdomain)
+        let API_BASE_URL;
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const domainWithoutPort = hostname.split(':')[0];
+        API_BASE_URL = `https://api.${domainWithoutPort}`;
 
-        const authController = new AuthController(BASE_URL);
-        const sseController = new SSEController({ baseUrl: BASE_URL, autoReconnect: true });
-        const workflowController = new WorkflowController(BASE_URL);
+
+        const authController = new AuthController(API_BASE_URL);
+        const sseController = new SSEController({ baseUrl: API_BASE_URL, autoReconnect: true });
+        const workflowController = new WorkflowController(API_BASE_URL);
 
         authController.onAuthStatusChange((status) => {
             console.log('Auth status changed:', status);
@@ -517,10 +519,14 @@
         });
 
         sseController.onStatusChange((status) => {
+            console.log('[SSE Status Change]', status);
             addEventLog(`SSE Status: ${status}`, 'info');
         });
 
         sseController.onEvent((event) => {
+            // Console logging des vollständigen Events
+            console.log('[SSE Event]', event);
+            
             // Detailliertes Logging aller SSE-Events
             let logMessage = `SSE Event: ${event.meta?.status || 'unknown'}`;
             if (event.meta?.step) {
@@ -544,6 +550,9 @@
             if (event.meta?.inquiries) {
                 logMessage += ` | Inquiries: ${event.meta.inquiries.length} Frage(n)`;
             }
+            
+            // Console logging der formatierten Nachricht
+            console.log('[SSE Event Message]', logMessage);
             
             let logType = 'info';
             const status = event.meta?.status;

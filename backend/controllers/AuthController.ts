@@ -106,8 +106,8 @@ export class AuthController extends ApiClient {
         loginData.remember = credentials.remember;
       }
 
-      // Login-Endpunkt verwendet Form-Data
-      await this.postForm('/login', loginData);
+      // Login-Endpunkt verwendet JSON
+      await this.post('/login', loginData);
 
       // Nach erfolgreichem Login, Benutzer-Daten abrufen
       await this.fetchCurrentUser();
@@ -147,8 +147,8 @@ export class AuthController extends ApiClient {
         registerData.name = data.name;
       }
 
-      // Register-Endpunkt verwendet Form-Data
-      await this.postForm('/register', registerData);
+      // Register-Endpunkt verwendet JSON
+      await this.post('/register', registerData);
 
       try {
         await this.fetchCurrentUser();
@@ -187,7 +187,7 @@ export class AuthController extends ApiClient {
       if (redirectUrl) {
         window.location.href = redirectUrl;
       } else {
-        window.location.href = '/login';
+        window.location.href = '/';
       }
     }
   }
@@ -266,7 +266,7 @@ export class AuthController extends ApiClient {
    */
   async requestPasswordReset(email: string): Promise<void> {
     try {
-      await this.postForm('/forgot-password', { email });
+      await this.post('/forgot-password', { email });
     } catch (error) {
       // Auch bei Fehlern keine E-Mail preisgeben (Security)
       console.error('Password reset request error:', error);
@@ -290,7 +290,7 @@ export class AuthController extends ApiClient {
     try {
       // Token wird als Query-Parameter in der URL übergeben
       const endpoint = `/reset-password?token=${encodeURIComponent(token)}`;
-      await this.postForm(endpoint, {
+      await this.post(endpoint, {
         password,
         password_confirm: passwordConfirm,
       });
@@ -332,7 +332,7 @@ export class AuthController extends ApiClient {
    */
   async resendVerificationEmail(email: string): Promise<void> {
     try {
-      await this.postForm('/resend-verification', { email });
+      await this.post('/resend-verification', { email });
     } catch (error) {
       // Auch bei Fehlern nicht die E-Mail preisgeben (Security)
       console.error('Resend verification email error:', error);

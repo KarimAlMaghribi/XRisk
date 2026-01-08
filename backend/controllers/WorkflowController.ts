@@ -76,7 +76,7 @@ export class WorkflowController extends ApiClient {
   async getStatusByTaskId(taskId: string): Promise<WorkflowStatusResponse> {
     try {
       const response = await this.get<WorkflowStatusResponse>(
-        `/workflow/status/${taskId}`
+        `/workflow/state/task/${taskId}`
       );
       return response;
     } catch (error) {
@@ -97,7 +97,7 @@ export class WorkflowController extends ApiClient {
   async getStatusByRiskUuid(riskUuid: string): Promise<WorkflowStatusByRiskResponse> {
     try {
       const response = await this.get<WorkflowStatusByRiskResponse>(
-        `/workflow/status/${riskUuid}`
+        `/workflow/state/risk/${riskUuid}`
       );
       return response;
     } catch (error) {
