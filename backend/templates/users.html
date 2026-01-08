@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xrisk - Benutzerübersicht</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20250926">
+</head>
+<body class="debug">
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>👥 xrisk - Benutzerübersicht</h1>
+            <p>Übersicht über alle registrierten Benutzer in der Datenbank</p>
+        </div>
+
+        <div class="debug-section">
+            <h2>Aktionen</h2>
+            <div class="action-buttons">
+                <a href="#" id="refreshButton" class="btn btn-primary">Aktualisieren</a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Zur Hauptseite</a>
+                <a href="{{ url_for('debug.risks_page') }}" class="btn btn-info">Risikobewertungen</a>
+                <a href="{{ url_for('debug.context_page') }}" class="btn btn-info">Context-Datenbank</a>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Statistiken</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_users }}</div>
+                    <div class="stat-label">Gesamt Benutzer</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ active_users }}</div>
+                    <div class="stat-label">Aktiv</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ verified_users }}</div>
+                    <div class="stat-label">Verifiziert</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ oauth_users }}</div>
+                    <div class="stat-label">OAuth Benutzer</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Benutzer</h2>
+            {% if users %}
+            <div class="table-container">
+                <table class="debug-table">
+                    <thead>
+                        <tr>
+                            <th>User UUID</th>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>OAuth Provider</th>
+                            <th>Status</th>
+                            <th>Erstellt</th>
+                            <th>Letzter Login</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr data-user-uuid="{{ user.user_uuid }}">
+                            <td><code>{{ user.user_uuid[:12] }}...</code></td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.name if user.name else '-' }}</td>
+                            <td>
+                                {% if user.oauth_provider %}
+                                    {% if user.oauth_provider == 'google' %}
+                                        <span class="badge badge-google">Google</span>
+                                    {% elif user.oauth_provider == 'microsoft' %}
+                                        <span class="badge badge-microsoft">Microsoft</span>
+                                    {% elif user.oauth_provider == 'github' %}
+                                        <span class="badge badge-github">GitHub</span>
+                                    {% else %}
+                                        <span class="badge badge-oauth">{{ user.oauth_provider }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge badge-local">Local</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                    {% if user.is_active %}
+                                        <span class="badge badge-success">Aktiv</span>
+                                    {% else %}
+                                        <span class="badge badge-inactive">Inaktiv</span>
+                                    {% endif %}
+                                    
+                                    {% if user.is_verified %}
+                                        <span class="badge badge-verified">Verifiziert</span>
+                                    {% else %}
+                                        <span class="badge badge-unverified">Nicht verifiziert</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '-' }}</td>
+                            <td>{{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'Nie' }}</td>
+                            <td>
+                                <a href="{{ url_for('debug.user_detail_or_delete', user_uuid=user.user_uuid) }}" 
+                                   class="btn btn-primary">
+                                   Anzeigen
+                                </a>
+                                <button onclick="deleteUser('{{ user.user_uuid }}', '{{ user.email }}')" 
+                                        class="btn btn-danger" 
+                                        style="margin-left:8px;">
+                                   Löschen
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <h3>Keine Benutzer gefunden</h3>
+                <p>Es sind noch keine Benutzer in der Datenbank vorhanden.</p>
+                <p>Registrierung erfolgt über die API. Siehe <a href="/frontend/dist/controller.html">controller.html</a> für ein Beispiel.</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        /* OAuth Provider Badges */
+        .badge-google { background-color: #4285f4; color: white; }
+        .badge-microsoft { background-color: #00a4ef; color: white; }
+        .badge-github { background-color: #333; color: white; }
+        .badge-oauth { background-color: #6c757d; color: white; }
+        .badge-local { background-color: #e9ecef; color: #495057; }
+        
+        /* Status Badges */
+        .badge-success { background-color: #28a745; color: white; }
+        .badge-inactive { background-color: #6c757d; color: white; }
+        .badge-verified { background-color: #17a2b8; color: white; }
+        .badge-unverified { background-color: #ffc107; color: #212529; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh Button
+            const refreshButton = document.getElementById('refreshButton');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.reload();
+                });
+            }
+        });
+
+        // Delete User Function
+        function deleteUser(userUuid, userEmail) {
+            if (!confirm(`Möchten Sie den Benutzer "${userEmail}" wirklich löschen?\n\nDiese Aktion kann nicht rückgängig gemacht werden!`)) {
+                return;
+            }
+
+            fetch(`/users/${userUuid}`, {
+                method: 'DELETE',
+                credentials: 'include', // Wichtig für Session-Cookies
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove row from table
+                    const row = document.querySelector(`tr[data-user-uuid="${userUuid}"]`);
+                    if (row) {
+                        row.style.backgroundColor = '#d4edda';
+                        setTimeout(() => {
+                            row.remove();
+                            // Reload page to update statistics
+                            window.location.reload();
+                        }, 500);
+                    }
+                    alert(data.message || 'Benutzer erfolgreich gelöscht');
+                } else {
+                    alert('Fehler: ' + (data.error || 'Unbekannter Fehler'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Löschen des Benutzers: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>
+

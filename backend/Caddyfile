@@ -1,0 +1,111 @@
+# Caddy Configuration for xrisk
+# Author: Manuel Schott
+# Automatic HTTPS with Let's Encrypt
+
+{
+    # Global options
+    email {$ADMIN_EMAIL}
+    
+    # Storage for certificates and ACME data
+    # Use /app/caddy-data (writable by caddy)
+    storage file_system {
+        root /app/caddy-data
+    }
+}
+
+# HTTP site (for ACME challenges - NO redirect!)
+http://{$DOMAIN_NAME}, http://www.{$DOMAIN_NAME}, http://api.{$DOMAIN_NAME} {
+    # Handle ACME challenges FIRST (Caddy serves these automatically)
+    handle /.well-known/acme-challenge/* {
+        # Caddy handles this internally - do nothing
+    }
+    
+    # Redirect www to non-www (canonical domain)
+    @www {
+        host www.{$DOMAIN_NAME}
+    }
+    handle @www {
+        redir https://{$DOMAIN_NAME}{uri} permanent
+    }
+    
+    # Redirect all other HTTP traffic to HTTPS
+    handle {
+        redir https://{host}{uri} permanent
+    }
+}
+
+# HTTPS site - www redirects to non-www (canonical domain)
+https://www.{$DOMAIN_NAME} {
+    redir https://{$DOMAIN_NAME}{uri} permanent
+}
+
+# HTTPS site (main application - canonical domain without www)
+https://{$DOMAIN_NAME} {
+    reverse_proxy 127.0.0.1:8000 {
+        # Increased timeouts for slow Gunicorn startup
+        transport http {
+            dial_timeout 30s
+            response_header_timeout 2m
+            read_timeout 5m
+            write_timeout 5m
+        }
+    }
+    
+    # Logging
+    log {
+        output stdout
+        format console
+    }
+    
+    # Headers for security
+    header {
+        # Security headers
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        
+        # Remove server info
+        -Server
+    }
+    
+    # Enable compression
+    encode gzip
+}
+
+# HTTPS site (API subdomain - same Flask app, but can be configured differently)
+https://api.{$DOMAIN_NAME} {
+    reverse_proxy 127.0.0.1:8000 {
+        # Increased timeouts for slow Gunicorn startup
+        transport http {
+            dial_timeout 30s
+            response_header_timeout 2m
+            read_timeout 5m
+            write_timeout 5m
+        }
+    }
+    
+    # Logging
+    log {
+        output stdout
+        format console
+    }
+    
+    # Headers for security (API-specific)
+    header {
+        # Security headers
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-XSS-Protection "1; mode=block"
+        
+        # Remove server info
+        -Server
+    }
+    
+    # Enable compression
+    encode gzip
+}
+
+# HTTP to HTTPS redirect (automatic)
+

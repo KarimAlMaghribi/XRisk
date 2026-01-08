@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xrisk Context - Kontextdatenbank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20250926">
+</head>
+<body class="debug">
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>🗄️ xrisk Context - Kontextdatenbank</h1>
+            <p>Übersicht über alle Kontextinformationen aus Recherche-Agenten</p>
+        </div>
+
+        <div class="debug-section">
+            <h2>Aktionen</h2>
+            <div class="action-buttons">
+                <a href="#" id="refreshButton" class="btn btn-primary">Aktualisieren</a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Zur Hauptseite</a>
+                <a href="{{ url_for('debug.risks_page') }}" class="btn btn-info">Risikobewertungen</a>
+                <a href="{{ url_for('debug.users_page') }}" class="btn btn-info">Benutzer</a>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>📊 Statistiken</h2>
+            <div class="stats-grid">
+                {% set total_entries = table_stats.values() | sum %}
+                <div class="stat-card">
+                    <div class="stat-number">{{ total_entries }}</div>
+                    <div class="stat-label">Gesamt Einträge</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ context_tables.keys() | list | length }}</div>
+                    <div class="stat-label">Aktive Tabellen</div>
+                </div>
+                {% for class_key, class_label in classification_display.items() %}
+                <div class="stat-card">
+                    <div class="stat-number">{{ classification_stats.get(class_key, 0) }}</div>
+                    <div class="stat-label">{{ class_label }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>🗂️ Kontexttabellen</h2>
+            {% if table_stats %}
+            <div class="table-container">
+                <table class="debug-table">
+                    <thead>
+                        <tr>
+                            <th>Tabelle</th>
+                            <th>Risikoart</th>
+                            <th>Zeitraum</th>
+                            <th>Einträge</th>
+                            <th>Beschreibung</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for table_name, model in context_tables.items() %}
+                        <tr>
+                            <td><code>{{ table_name }}</code></td>
+                            <td>
+                                {% if table_name.startswith('allgemein') %}
+                                    <span class="badge badge-general">Allgemein</span>
+                                {% elif table_name.startswith('kfz') %}
+                                    <span class="badge badge-kfz">KFZ</span>
+                                {% elif table_name.startswith('gesundheit') %}
+                                    <span class="badge badge-gesundheit">Gesundheit</span>
+                                {% elif table_name.startswith('landwirtschaft') %}
+                                    <span class="badge badge-landwirtschaft">Landwirtschaft</span>
+                                {% elif table_name.startswith('wetter') %}
+                                    <span class="badge badge-wetter">Wetter</span>
+                                {% elif table_name.startswith('sicherheit') %}
+                                    <span class="badge badge-sicherheit">Sicherheit</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if '_current' in table_name %}
+                                    <span class="badge badge-current">Current</span>
+                                {% elif '_historical' in table_name %}
+                                    <span class="badge badge-historical">Historical</span>
+                                {% elif '_regulatory' in table_name %}
+                                    <span class="badge badge-regulatory">Regulatory</span>
+                                {% else %}
+                                    <span class="badge badge-default">Allgemein</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="stat-number">{{ table_stats.get(table_name, 0) }}</span>
+                            </td>
+                            <td>
+                                {% if table_name.startswith('allgemein') %}
+                                    Allgemeine Risikoinformationen
+                                {% elif table_name.startswith('kfz') %}
+                                    KFZ-spezifische Risikoinformationen
+                                {% elif table_name.startswith('gesundheit') %}
+                                    Gesundheits-spezifische Risikoinformationen
+                                {% elif table_name.startswith('landwirtschaft') %}
+                                    Landwirtschafts-spezifische Risikoinformationen
+                                {% elif table_name.startswith('wetter') %}
+                                    Wetter-spezifische Risikoinformationen
+                                {% elif table_name.startswith('sicherheit') %}
+                                    Sicherheits-spezifische Risikoinformationen
+                                {% endif %}
+                                {% if '_current' in table_name %}
+                                    - Aktuelle Marktdaten
+                                {% elif '_historical' in table_name %}
+                                    - Historische Statistiken
+                                {% elif '_regulatory' in table_name %}
+                                    - Rechtliche Rahmenbedingungen
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('debug.context_table_detail', table_name=table_name) }}" 
+                                   class="btn btn-primary">
+                                   👁️ Anzeigen
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <h3>Keine Kontextdaten gefunden</h3>
+                <p>Es sind noch keine Kontextinformationen in der Datenbank vorhanden.</p>
+                <p>Führen Sie Recherchen mit den AI-Agenten durch, um Kontextdaten zu generieren.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Erste Recherche starten</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="debug-section">
+            <h2>🔍 MCP Server Informationen</h2>
+            <div class="info-box">
+                <h4>Verfügbare Endpunkte:</h4>
+                <ul>
+                    <li><code>GET /mcp/info</code> - Server-Informationen</li>
+                    <li><code>POST /mcp/context/{table}/store</code> - Kontext speichern</li>
+                    <li><code>GET /mcp/context/{table}/list</code> - Kontext auflisten</li>
+                    <li><code>POST /mcp/context/search</code> - Kontext durchsuchen</li>
+                    <li><code>GET /mcp/tags</code> - Tags auflisten</li>
+                    <li><code>GET /mcp/stats</code> - Statistiken</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-general { background-color: #e9ecef; color: #495057; }
+        .badge-kfz { background-color: #fff3cd; color: #856404; }
+        .badge-gesundheit { background-color: #d1ecf1; color: #0c5460; }
+        
+        .badge-current { background-color: #d4edda; color: #155724; }
+        .badge-historical { background-color: #f8d7da; color: #721c24; }
+        .badge-regulatory { background-color: #cce5ff; color: #004085; }
+        .badge-default { background-color: #f8f9fa; color: #6c757d; }
+        
+        .info-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .info-box h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .info-box ul {
+            margin-bottom: 0;
+        }
+        
+        .info-box code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh Button
+            const refreshButton = document.getElementById('refreshButton');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xrisk - Benutzer Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20250926">
+</head>
+<body class="debug">
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>👤 Benutzer Details</h1>
+            <p>User UUID: <code>{{ user.user_uuid }}</code></p>
+        </div>
+
+        <div class="debug-section">
+            <h2>Aktionen</h2>
+            <div class="action-buttons">
+                <a href="{{ url_for('debug.users_page') }}" class="btn btn-secondary">Zurück zur Übersicht</a>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Zur Hauptseite</a>
+                <button onclick="deleteUser('{{ user.user_uuid }}', '{{ user.email }}')" 
+                        class="btn btn-danger">
+                   Benutzer Löschen
+                </button>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Grundinformationen</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>User UUID:</strong>
+                    <code>{{ user.user_uuid }}</code>
+                </div>
+                <div class="info-item">
+                    <strong>E-Mail:</strong>
+                    {{ user.email }}
+                </div>
+                <div class="info-item">
+                    <strong>Name:</strong>
+                    {{ user.name if user.name else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>OAuth Provider:</strong>
+                    {% if user.oauth_provider %}
+                        {% if user.oauth_provider == 'google' %}
+                            <span class="badge badge-google">Google</span>
+                        {% elif user.oauth_provider == 'microsoft' %}
+                            <span class="badge badge-microsoft">Microsoft</span>
+                        {% elif user.oauth_provider == 'github' %}
+                            <span class="badge badge-github">GitHub</span>
+                        {% else %}
+                            <span class="badge badge-oauth">{{ user.oauth_provider }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-local">Lokale Registrierung</span>
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>OAuth ID:</strong>
+                    <code>{{ user.oauth_id if user.oauth_id else '-' }}</code>
+                </div>
+                <div class="info-item">
+                    <strong>Status:</strong>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                        {% if user.is_active %}
+                            <span class="badge badge-success">Aktiv</span>
+                        {% else %}
+                            <span class="badge badge-inactive">Inaktiv</span>
+                        {% endif %}
+                        
+                        {% if user.is_verified %}
+                            <span class="badge badge-verified">Verifiziert</span>
+                        {% else %}
+                            <span class="badge badge-unverified">Nicht verifiziert</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <strong>Erstellt:</strong>
+                    {{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>Letzter Login:</strong>
+                    {{ user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else 'Nie' }}
+                </div>
+                <div class="info-item">
+                    <strong>E-Mail verifiziert am:</strong>
+                    {{ user.verified_at.strftime('%Y-%m-%d %H:%M:%S') if user.verified_at else '-' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Zusätzliche Informationen</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Hat Passwort:</strong>
+                    {% if user.password_hash %}
+                        <span class="badge badge-success">Ja</span>
+                    {% else %}
+                        <span class="badge badge-warning">Nein (nur OAuth)</span>
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Passwort-Hash:</strong>
+                    <code style="color: #999;">****** (aus Sicherheitsgründen verborgen)</code>
+                </div>
+                <div class="info-item">
+                    <strong>Verifizierungs-Token:</strong>
+                    {% if user.verification_token %}
+                        <code>{{ user.verification_token[:20] }}...</code>
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Token Ablauf:</strong>
+                    {{ user.verification_token_expires.strftime('%Y-%m-%d %H:%M:%S') if user.verification_token_expires else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>Password-Reset Token:</strong>
+                    {% if user.password_reset_token %}
+                        <code>{{ user.password_reset_token[:20] }}...</code>
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Reset Token Ablauf:</strong>
+                    {{ user.password_reset_expires.strftime('%Y-%m-%d %H:%M:%S') if user.password_reset_expires else '-' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Datenbank-Objekt (JSON)</h2>
+            <pre><code>{{ user_json }}</code></pre>
+        </div>
+
+    </div>
+
+    <style>
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #007bff;
+        }
+        
+        .info-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-size: 0.9em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        /* OAuth Provider Badges */
+        .badge-google { background-color: #4285f4; color: white; }
+        .badge-microsoft { background-color: #00a4ef; color: white; }
+        .badge-github { background-color: #333; color: white; }
+        .badge-oauth { background-color: #6c757d; color: white; }
+        .badge-local { background-color: #e9ecef; color: #495057; }
+        
+        /* Status Badges */
+        .badge-success { background-color: #28a745; color: white; }
+        .badge-inactive { background-color: #6c757d; color: white; }
+        .badge-verified { background-color: #17a2b8; color: white; }
+        .badge-unverified { background-color: #ffc107; color: #212529; }
+        .badge-warning { background-color: #ffc107; color: #212529; }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+    </style>
+
+    <script>
+        // Delete User Function
+        function deleteUser(userUuid, userEmail) {
+            if (!confirm(`Möchten Sie den Benutzer "${userEmail}" wirklich löschen?\n\nDiese Aktion kann nicht rückgängig gemacht werden!`)) {
+                return;
+            }
+
+            fetch(`/users/${userUuid}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message || 'Benutzer erfolgreich gelöscht');
+                    window.location.href = '{{ url_for("debug.users_page") }}';
+                } else {
+                    alert('Fehler: ' + (data.error || 'Unbekannter Fehler'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Fehler beim Löschen des Benutzers: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>
+

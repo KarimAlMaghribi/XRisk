@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xrisk - Risikobewertungen Übersicht</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20250926">
+</head>
+<body class="debug">
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>📋 xrisk - Risikobewertungen</h1>
+            <p>Übersicht über alle Risikobewertungen in der Datenbank</p>
+        </div>
+
+        <div class="debug-section">
+            <h2>Aktionen</h2>
+            <div class="action-buttons">
+                <a href="#" id="refreshButton" class="btn btn-primary">Aktualisieren</a>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Zur Hauptseite</a>
+                <a href="{{ url_for('debug.context_page') }}" class="btn btn-info">Context-Datenbank</a>
+                <a href="{{ url_for('debug.users_page') }}" class="btn btn-info">Benutzer</a>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Statistiken</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ risks | length }}</div>
+                    <div class="stat-label">Gesamt Bewertungen</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ risks | selectattr('status', 'equalto', 'completed') | list | length }}</div>
+                    <div class="stat-label">Abgeschlossen</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ risks | rejectattr('status', 'equalto', 'completed') | list | length }}</div>
+                    <div class="stat-label">In Bearbeitung</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">{{ risk_types | length }}</div>
+                    <div class="stat-label">Risikoarten</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Risikobewertungen</h2>
+            {% if risks %}
+            <div class="table-container">
+                <table class="debug-table">
+                    <thead>
+                        <tr>
+                            <th>Risk UUID</th>
+                            <th>User UUID</th>
+                            <th>Risikoart</th>
+                            <th>Status</th>
+                            <th>Erstellt</th>
+                            <th>Versicherungswert</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for risk in risks %}
+                        <tr>
+                            <td><code title="{{ risk.risk_uuid }}">{{ risk.risk_uuid[:8] }}...</code></td>
+                            <td><code title="{{ risk.user_uuid }}">{{ risk.user_uuid[:12] }}...</code></td>
+                            <td>
+                                {% if risk.risk_type %}
+                                    {% if risk.risk_type == 'allgemein' %}
+                                        <span class="badge badge-general">Allgemein</span>
+                                    {% elif risk.risk_type == 'kfz' %}
+                                        <span class="badge badge-kfz">KFZ</span>
+                                    {% elif risk.risk_type == 'gesundheit' %}
+                                        <span class="badge badge-gesundheit">Gesundheit</span>
+                                    {% elif risk.risk_type == 'landwirtschaft' %}
+                                        <span class="badge badge-landwirtschaft">Landwirtschaft</span>
+                                    {% elif risk.risk_type == 'wetter' %}
+                                        <span class="badge badge-wetter">Wetter</span>
+                                    {% elif risk.risk_type == 'sicherheit' %}
+                                        <span class="badge badge-sicherheit">Sicherheit</span>
+                                    {% else %}
+                                        <span class="badge badge-default">{{ risk.risk_type }}</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="badge badge-default">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if risk.status == 'completed' %}
+                                    <span class="badge badge-success">{{ risk.status }}</span>
+                                {% elif risk.status == 'inquiry_awaiting_response' %}
+                                    <span class="badge badge-warning">{{ risk.status }}</span>
+                                {% elif risk.status == 'inquired' %}
+                                    <span class="badge badge-info">{{ risk.status }}</span>
+                                {% else %}
+                                    <span class="badge badge-default">{{ risk.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ risk.creation_date.strftime('%Y-%m-%d %H:%M') if risk.creation_date else '-' }}</td>
+                            <td>{{ "{:,.2f} EUR".format(risk.insurance_value) if risk.insurance_value else '-' }}</td>
+                            <td>
+                                <a href="{{ url_for('debug.risk_detail', risk_uuid=risk.risk_uuid) }}" 
+                                   class="btn btn-primary">
+                                   Anzeigen
+                                </a>
+                                <a href="/?resume={{ risk.risk_uuid }}"
+                                   class="btn btn-secondary" style="margin-left:8px;">
+                                   Fortsetzen
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <h3>Keine Risikobewertungen gefunden</h3>
+                <p>Es sind noch keine Risikobewertungen in der Datenbank vorhanden.</p>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Erste Bewertung starten</a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <style>
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-general { background-color: #e9ecef; color: #495057; }
+        .badge-kfz { background-color: #fff3cd; color: #856404; }
+        .badge-gesundheit { background-color: #d1ecf1; color: #0c5460; }
+        .badge-landwirtschaft { background-color: #d4edda; color: #155724; }
+        .badge-wetter { background-color: #cce5ff; color: #004085; }
+        .badge-sicherheit { background-color: #f8d7da; color: #721c24; }
+        .badge-default { background-color: #f8f9fa; color: #6c757d; }
+        
+        .badge-success { background-color: #28a745; color: white; }
+        .badge-warning { background-color: #ffc107; color: #212529; }
+        .badge-info { background-color: #17a2b8; color: white; }
+        
+        .badge-current { background-color: #d4edda; color: #155724; }
+        .badge-historical { background-color: #f8d7da; color: #721c24; }
+        .badge-regulatory { background-color: #cce5ff; color: #004085; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh Button
+            const refreshButton = document.getElementById('refreshButton');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

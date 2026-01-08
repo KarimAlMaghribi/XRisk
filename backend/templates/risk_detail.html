@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xrisk - Risikobewertung Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20250926">
+</head>
+<body class="debug">
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>📋 Risikobewertung Details</h1>
+            <p>Risk UUID: <code>{{ risk.risk_uuid }}</code></p>
+        </div>
+
+        <div class="debug-section">
+            <h2>Aktionen</h2>
+            <div class="action-buttons">
+                <a href="{{ url_for('debug.risks_page') }}" class="btn btn-secondary">Zurück zur Übersicht</a>
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Zur Hauptseite</a>
+                <a href="#" id="refreshButton" class="btn btn-info">Aktualisieren</a>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Grundinformationen</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Risk UUID:</strong>
+                    <code>{{ risk.risk_uuid }}</code>
+                </div>
+                <div class="info-item">
+                    <strong>User UUID:</strong>
+                    <code>{{ risk.user_uuid }}</code>
+                </div>
+                <div class="info-item">
+                    <strong>Status:</strong>
+                    {% if risk.status == 'completed' %}
+                        <span class="badge badge-success">{{ risk.status }}</span>
+                    {% elif risk.status == 'inquiry' %}
+                        <span class="badge badge-warning">{{ risk.status }}</span>
+                    {% elif risk.status == 'inquiry_awaiting_response' %}
+                        <span class="badge badge-info">{{ risk.status }}</span>
+                    {% elif risk.status == 'inquired' %}
+                        <span class="badge badge-success">{{ risk.status }}</span>
+                    {% else %}
+                        <span class="badge badge-info">{{ risk.status }}</span>
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Risikoart:</strong>
+                    {% if risk.risk_type %}
+                        <span class="badge badge-kfz">{{ risk.risk_type }}</span>
+                    {% else %}
+                        <span class="badge badge-default">-</span>
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Erstellt:</strong>
+                    {{ risk.creation_date.strftime('%Y-%m-%d %H:%M:%S') if risk.creation_date else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>Aktualisiert:</strong>
+                    {{ risk.last_updated.strftime('%Y-%m-%d %H:%M:%S') if risk.last_updated else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>Versicherungsbeginn:</strong>
+                    {{ risk.start_date.strftime('%Y-%m-%d') if risk.start_date else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>Versicherungsende:</strong>
+                    {{ risk.end_date.strftime('%Y-%m-%d') if risk.end_date else '-' }}
+                </div>
+                <div class="info-item">
+                    <strong>Versicherungswert:</strong>
+                    {{ "{:,.2f} EUR".format(risk.insurance_value) if risk.insurance_value else '-' }}
+                </div>
+                {% if risk.retry_count > 0 %}
+                <div class="info-item">
+                    <strong>Wiederholungen:</strong>
+                    {{ risk.retry_count }}
+                </div>
+                {% endif %}
+                {% if risk.failed_at %}
+                <div class="info-item">
+                    <strong>Fehlgeschlagen am:</strong>
+                    {{ risk.failed_at.strftime('%Y-%m-%d %H:%M:%S') if risk.failed_at else '-' }}
+                </div>
+                {% endif %}
+                {% if risk.failed_reason %}
+                <div class="info-item">
+                    <strong>Fehlergrund:</strong>
+                    <div style="color: #dc3545; margin-top: 5px;">{{ risk.failed_reason }}</div>
+                </div>
+                {% endif %}
+                {% if risk.processing_since %}
+                <div class="info-item">
+                    <strong>Verarbeitung seit:</strong>
+                    {{ risk.processing_since.strftime('%Y-%m-%d %H:%M:%S') if risk.processing_since else '-' }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h2>Risikobeschreibung</h2>
+            {% if risk.analysis and risk.analysis.get('title') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Titel:</strong>
+                <div style="font-size: 1.1em; font-weight: 600; margin-top: 5px;">{{ risk.analysis.get('title') }}</div>
+            </div>
+            {% endif %}
+            {% if risk.analysis and risk.analysis.get('summary') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Zusammenfassung:</strong>
+                <div style="margin-top: 5px;">{{ risk.analysis.get('summary') }}</div>
+            </div>
+            {% endif %}
+            <div class="content-box">
+                <strong>Initiale Beschreibung:</strong><br>
+                {{ risk.initial_prompt }}
+            </div>
+        </div>
+
+        {% if risk.inquiry %}
+        <div class="debug-section">
+            <h2>Rückfragen</h2>
+            {% for inquiry in risk.inquiry %}
+            <div class="content-box" style="margin-bottom: 15px;">
+                <strong>Frage:</strong> {{ inquiry.question }}<br>
+                <strong>Antwort:</strong> {{ inquiry.response if inquiry.response else '(Noch nicht beantwortet)' }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if risk.research_current or risk.research_historical or risk.research_regulatory %}
+        <div class="debug-section">
+            <h2>Recherche-Ergebnisse</h2>
+            
+            {% if risk.research_current %}
+            <h3>Aktuelle Daten</h3>
+            <pre class="json-display">{{ risk.research_current | tojson(indent=2) }}</pre>
+            {% endif %}
+            
+            {% if risk.research_historical %}
+            <h3>Historische Daten</h3>
+            <pre class="json-display">{{ risk.research_historical | tojson(indent=2) }}</pre>
+            {% endif %}
+            
+            {% if risk.research_regulatory %}
+            <h3>Regulatorische Daten</h3>
+            <pre class="json-display">{{ risk.research_regulatory | tojson(indent=2) }}</pre>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if risk.analysis %}
+        <div class="debug-section">
+            <h2>Analyse</h2>
+            {% if risk.analysis.get('title') or risk.analysis.get('summary') %}
+            <div class="info-grid" style="margin-bottom: 20px;">
+                {% if risk.analysis.get('title') %}
+                <div class="info-item">
+                    <strong>Titel:</strong>
+                    <div style="margin-top: 5px;">{{ risk.analysis.get('title') }}</div>
+                </div>
+                {% endif %}
+                {% if risk.analysis.get('summary') %}
+                <div class="info-item">
+                    <strong>Zusammenfassung:</strong>
+                    <div style="margin-top: 5px;">{{ risk.analysis.get('summary') }}</div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if risk.analysis.get('probability') is not none %}
+            <div class="info-grid" style="margin-bottom: 20px;">
+                <div class="info-item">
+                    <strong>Wahrscheinlichkeit:</strong>
+                    <div style="margin-top: 5px;">{{ "%.2f"|format(risk.analysis.get('probability', 0) * 100) }}%</div>
+                </div>
+                {% if risk.analysis.get('damage_range') %}
+                <div class="info-item">
+                    <strong>Schadensbereich:</strong>
+                    <div style="margin-top: 5px;">
+                        {{ "{:,.2f}".format(risk.analysis.get('damage_range', {}).get('min', 0)) }} - 
+                        {{ "{:,.2f}".format(risk.analysis.get('damage_range', {}).get('max', 0)) }} EUR
+                    </div>
+                </div>
+                {% endif %}
+                {% if risk.analysis.get('expected_damage') is not none %}
+                <div class="info-item">
+                    <strong>Erwarteter Schaden:</strong>
+                    <div style="margin-top: 5px;">{{ "{:,.2f}".format(risk.analysis.get('expected_damage', 0)) }} EUR</div>
+                </div>
+                {% endif %}
+                {% if risk.analysis.get('premium_range') %}
+                <div class="info-item">
+                    <strong>Prämienbereich:</strong>
+                    <div style="margin-top: 5px;">
+                        {{ "{:,.2f}".format(risk.analysis.get('premium_range', {}).get('min', 0)) }} - 
+                        {{ "{:,.2f}".format(risk.analysis.get('premium_range', {}).get('max', 0)) }} EUR/Monat
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            <details>
+                <summary style="cursor: pointer; font-weight: bold; margin-bottom: 10px;">Vollständige Analyse-Daten anzeigen (JSON)</summary>
+                <pre class="json-display">{{ risk.analysis | tojson(indent=2) }}</pre>
+            </details>
+        </div>
+        {% endif %}
+
+        {% if risk.report %}
+        <div class="debug-section">
+            <h2>Abschlussbericht</h2>
+            {% if risk.report.get('executive_summary') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Executive Summary:</strong>
+                <div style="margin-top: 5px; white-space: pre-wrap;">{{ risk.report.get('executive_summary') }}</div>
+            </div>
+            {% endif %}
+            {% if risk.report.get('analysis_summary') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Analyse-Zusammenfassung:</strong>
+                <div style="margin-top: 5px; white-space: pre-wrap;">{{ risk.report.get('analysis_summary') }}</div>
+            </div>
+            {% endif %}
+            {% if risk.report.get('recommendations') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Empfehlungen:</strong>
+                <div style="margin-top: 5px; white-space: pre-wrap;">{{ risk.report.get('recommendations') }}</div>
+            </div>
+            {% endif %}
+            {% if risk.report.get('classification') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Klassifikation:</strong>
+                <div style="margin-top: 5px;">{{ risk.report.get('classification') }}</div>
+            </div>
+            {% endif %}
+            {% if risk.report.get('sources') %}
+            <div class="info-item" style="margin-bottom: 15px;">
+                <strong>Quellen:</strong>
+                <div style="margin-top: 5px;">
+                    {% if risk.report.get('sources') is iterable and risk.report.get('sources') is not string %}
+                        <ul style="margin-left: 20px;">
+                            {% for source in risk.report.get('sources') %}
+                            <li>{{ source }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        {{ risk.report.get('sources') }}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            <details>
+                <summary style="cursor: pointer; font-weight: bold; margin-bottom: 10px;">Vollständigen Bericht anzeigen (JSON)</summary>
+                <pre class="json-display">{{ risk.report | tojson(indent=2) }}</pre>
+            </details>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <style>
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .info-item strong {
+            display: block;
+            color: #495057;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .content-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .json-display {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .badge-success { background-color: #28a745; color: white; }
+        .badge-warning { background-color: #ffc107; color: #212529; }
+        .badge-info { background-color: #17a2b8; color: white; }
+        .badge-default { background-color: #f8f9fa; color: #6c757d; }
+        .badge-kfz { background-color: #fff3cd; color: #856404; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Refresh Button
+            const refreshButton = document.getElementById('refreshButton');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

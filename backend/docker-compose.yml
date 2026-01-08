@@ -1,0 +1,179 @@
+# Docker Compose for Production - All-in-One Setup
+# Author: Manuel Schott
+# Runs PostgreSQL, Redis, Flask App, and Celery Worker on a single host
+# Usage: docker-compose -f docker-compose.prod.yml up -d
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: xrisk-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-xrisk}
+      POSTGRES_USER: ${POSTGRES_USER:-xrisk}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - xrisk-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-xrisk}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: xrisk-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --save 60 1
+      --loglevel warning
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - xrisk-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Application (Gunicorn + Caddy)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xrisk-app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      # Database connection
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-xrisk}
+      POSTGRES_USER: ${POSTGRES_USER:-xrisk}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-xrisk}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-xrisk}"
+      
+      # Redis connection
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379/0"
+      
+      # Application settings
+      FLASK_ENV: production
+      FLASK_DEBUG: "False"
+      DEBUG_ENABLED: ${DEBUG_ENABLED:-False}
+      LOG_DIR: /app/logs
+      
+      # OpenAI
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4}
+      OPENAI_SERVICE_TIER: ${OPENAI_SERVICE_TIER:-default}
+      OPENAI_TEMPERATURE: ${OPENAI_TEMPERATURE:-0.7}
+      OPENAI_MAX_TOKENS: ${OPENAI_MAX_TOKENS:-1000}
+      
+      # Domain settings
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      
+      # MCP settings
+      MCP_BASE_URL: http://localhost:8000/mcp
+      MCP_STORE_TIMEOUT: "30"
+    volumes:
+      # Persist logs
+      - ./logs:/app/logs
+      # Persist Caddy data (SSL certificates)
+      - caddy_data:/app/caddy-data
+      # Mount templates and static files for live updates
+      - ./templates:/app/templates:ro
+      - ./static:/app/static:ro
+      - ./server:/app/server:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - xrisk-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  # Celery Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: xrisk-worker
+    restart: unless-stopped
+    environment:
+      # Database connection
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-xrisk}
+      POSTGRES_USER: ${POSTGRES_USER:-xrisk}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-xrisk}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-xrisk}"
+      
+      # Redis connection
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_URL: "redis://:${REDIS_PASSWORD}@redis:6379/0"
+      
+      # Application settings
+      FLASK_ENV: production
+      DEBUG_ENABLED: ${DEBUG_ENABLED:-False}
+      LOG_DIR: /app/logs
+      
+      # OpenAI
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4}
+      OPENAI_SERVICE_TIER: ${OPENAI_SERVICE_TIER:-default}
+      OPENAI_TEMPERATURE: ${OPENAI_TEMPERATURE:-0.7}
+      OPENAI_MAX_TOKENS: ${OPENAI_MAX_TOKENS:-1000}
+      
+      # MCP settings
+      MCP_BASE_URL: http://app:8000/mcp
+      MCP_STORE_TIMEOUT: "30"
+    volumes:
+      # Persist logs
+      - ./logs:/app/logs
+      # Mount server code for live updates
+      - ./server:/app/server:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      app:
+        condition: service_started
+    networks:
+      - xrisk-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  caddy_data:
+    driver: local
+
+networks:
+  xrisk-network:
+    driver: bridge
+
