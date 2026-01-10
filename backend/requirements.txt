@@ -25,3 +25,7 @@ gevent>=24.2.1  # Updated for Python 3.13 compatibility
 flasgger==0.9.7.1
 
 psycopg2>=2.9.0
+
+# Azure Key Vault for secure secret management (optional)
+azure-keyvault-secrets>=4.7.0
+azure-identity>=1.15.0

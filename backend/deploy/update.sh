@@ -8,7 +8,7 @@ set -e
 
 # Determine script directory and project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 SSH_TARGET="${1:-azureuser@xrisk.info}"
 
@@ -33,32 +33,51 @@ HOST=$(echo "$SSH_TARGET" | cut -d'@' -f2)
 echo "1. Syncing Python source code..."
 rsync -avz --progress \
     --exclude '__pycache__/' \
-    "$PROJECT_ROOT/server/" "$SSH_TARGET:~/xrisk/server/"
+    "$PROJECT_ROOT/backend/server/" "$SSH_TARGET:~/xrisk/backend/server/"
 
 echo "✅ Source code synced"
 echo ""
 
-echo "2. Copying controller.html to static directory..."
-if [ -f "$PROJECT_ROOT/frontend/controller.html" ]; then
-    mkdir -p "$PROJECT_ROOT/static"
-    cp "$PROJECT_ROOT/frontend/controller.html" "$PROJECT_ROOT/static/controller.html"
-    echo "✅ controller.html copied to static/"
+echo "2. Building and copying api-connector..."
+cd "$PROJECT_ROOT/api-connector" || { echo "⚠️  api-connector directory not found, skipping build"; }
+if [ -f "package.json" ]; then
+    echo "Building api-connector..."
+    npm run build --silent 2>/dev/null || echo "⚠️  api-connector build failed, continuing..."
+    echo "✅ api-connector built"
 else
-    echo "⚠️  controller.html not found in frontend/, skipping copy"
+    echo "⚠️  No package.json found in api-connector/, skipping build"
+fi
+cd "$PROJECT_ROOT"
+
+echo "2.1. Copying controller.html and built files to static directory..."
+if [ -f "$PROJECT_ROOT/api-connector/controller.html" ]; then
+    mkdir -p "$PROJECT_ROOT/backend/static"
+    cp "$PROJECT_ROOT/api-connector/controller.html" "$PROJECT_ROOT/backend/static/controller.html"
+    echo "✅ controller.html copied to backend/static/"
+else
+    echo "⚠️  controller.html not found in api-connector/, skipping copy"
 fi
 
-echo "2.1. Syncing templates and static files..."
+# Copy built files from api-connector/dist to backend/static if they exist
+if [ -d "$PROJECT_ROOT/api-connector/dist" ]; then
+    mkdir -p "$PROJECT_ROOT/backend/static"
+    cp -r "$PROJECT_ROOT/api-connector/dist/"* "$PROJECT_ROOT/backend/static/" 2>/dev/null || true
+    echo "✅ Built files copied to backend/static/"
+fi
+
+echo "2.2. Syncing templates and static files..."
 rsync -avz --progress \
-    "$PROJECT_ROOT/templates/" "$SSH_TARGET:~/xrisk/templates/"
+    "$PROJECT_ROOT/backend/templates/" "$SSH_TARGET:~/xrisk/backend/templates/"
 rsync -avz --progress \
-    "$PROJECT_ROOT/static/" "$SSH_TARGET:~/xrisk/static/"
+    --exclude '.env.local' \
+    "$PROJECT_ROOT/backend/static/" "$SSH_TARGET:~/xrisk/backend/static/"
 
 echo "✅ Templates and static files synced"
 echo ""
 
 echo "3. Restarting services on VM..."
 ssh "$SSH_TARGET" << 'EOF'
-    cd ~/xrisk
+    cd ~/xrisk/backend
     
     echo "Restarting app and worker containers..."
     sudo docker compose -f docker-compose.yml restart app worker
@@ -81,6 +100,6 @@ echo ""
 echo "Your application is now running with the latest code."
 echo "No Docker images were rebuilt - fastest possible deployment!"
 echo ""
-echo "View logs: ssh $SSH_TARGET 'cd ~/xrisk && docker compose -f docker-compose.yml logs -f app'"
+echo "View logs: ssh $SSH_TARGET 'cd ~/xrisk/backend && sudo docker compose -f docker-compose.yml logs -f app'"
 echo ""
 

@@ -9,6 +9,17 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Load secrets from Azure Key Vault or .env.local FIRST (before loading .env)
+# This ensures secrets are available when config.py reads environment variables
+try:
+    from .secret_loader import load_all_secrets, apply_secrets_to_environment
+    secrets = load_all_secrets()
+    apply_secrets_to_environment(secrets, override_existing=False)
+    print(f"Loaded {len(secrets)} secrets from secure sources (Key Vault/.env.local)")
+except Exception as e:
+    print(f"Warning: Could not load secrets from secure sources: {e}")
+    print("Continuing with .env and environment variables only")
+
 project_root = Path(__file__).parent.parent
 env_default = project_root / '.env'
 env_local = project_root / '.env.local'
@@ -19,6 +30,8 @@ if env_default.exists():
 else:
     print("No .env file found")
 
+# Note: .env.local is already loaded by secret_loader, but we load it again
+# with dotenv to ensure compatibility (dotenv handles quotes and escaping)
 if env_local.exists():
     load_dotenv(env_local, override=True)
     print(f"Loaded secrets from .env.local (overrides .env)")

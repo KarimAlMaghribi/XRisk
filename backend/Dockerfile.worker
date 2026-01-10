@@ -38,5 +38,5 @@ ENV LOG_DIR=/app/logs
 USER appuser
 
 # Run Celery worker
-CMD ["start_celery_worker.sh"]
+CMD ["/app/start_celery_worker.sh"]
 

@@ -397,22 +397,6 @@ def dist_files(filename):
     
     abort(404, description=f"File {filename} not found. Please run 'cd frontend && npm run build'")
 
-@app.route('/ai')
-def ai_workflow():
-    """Main AI workflow page using async Celery/Redis/SSE architecture"""
-    return render_template('workflow.html')
-
-@app.route('/workflow')
-def workflow():
-    """Legacy redirect to /ai"""
-    from flask import redirect
-    return redirect('/ai', code=301)
-
-@app.route('/workflow-demo')
-def workflow_demo():
-    """Minimal technical demo for workflow API integration"""
-    return render_template('workflow_minimal.html')
-
 @app.route('/offer')
 def offer_calculator():
     """Risk premium calculator (temporary page)"""

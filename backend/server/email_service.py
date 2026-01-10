@@ -37,8 +37,8 @@ class EmailService:
             # Add https:// if not present
             self.api_url = f'https://{self.api_url}'
         self.frontend_url = app.config.get('FRONTEND_URL', self.app_url)
-        # Frontend route for workflow resume (default: /ai)
-        self.frontend_resume_route = app.config.get('FRONTEND_RESUME_ROUTE', '/ai')
+        # Frontend route for workflow resume (default: /)
+        self.frontend_resume_route = app.config.get('FRONTEND_RESUME_ROUTE', '/')
         
         # Log configuration status (without sensitive data)
         if self.username and self.password:
