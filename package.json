@@ -94,7 +94,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "cross-env BUILD_PATH=dist react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -119,6 +119,7 @@
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",
     "@types/react-i18next": "^8.1.0",
+    "cross-env": "^7.0.3",
     "typescript": "^5.7.3"
   }
 }

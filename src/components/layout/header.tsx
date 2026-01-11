@@ -18,19 +18,20 @@ import MenuItem from '@mui/material/MenuItem';
 import Logo from "../../assests/imgs/logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Page, pages } from "./pages";
-import { auth } from "../../firebase_config";
 import { theme } from "../../theme";
 import { QuickMenuButtons } from "./header-elements/quick-menu-buttons";
 import { useTranslation, Trans } from "react-i18next";
 import i18n from '../../utils/i18n';
 import { keyframes } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
+import { useSession } from "../../auth/useSession";
 
 export function Header() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const { user } = useSession();
+    const isLoggedIn = Boolean(user);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
     const [anchorElLanguage, setAnchorElLanguage] = useState<null | HTMLElement>(null);
@@ -50,13 +51,6 @@ export function Header() {
         100% {
             transform: translateX(-100vw);
         }`;
-
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
-            setIsLoggedIn(!!user);
-        });
-        return () => unsubscribe();
-    }, []);
 
     useEffect(() => {
         if (location.pathname === "/")

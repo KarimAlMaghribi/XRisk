@@ -109,8 +109,6 @@ export function LandingPageI18n({ onLogin, isLoggedIn = false, onUserTypeChange 
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           initialRiskDescription={riskInput}
-          isLoggedIn={isLoggedIn}
-          onLogin={onLogin}
         />
       </div>
     );

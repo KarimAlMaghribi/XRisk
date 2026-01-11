@@ -12,12 +12,14 @@ import {
 import { UserPlus, LogIn } from "lucide-react";
 
 interface AuthModalProps {
-  onLogin: (email: string, password: string) => void;
-  onRegister: (email: string, password: string, name: string) => void;
+  onLogin: (email: string, password: string) => Promise<void>;
+  onRegister: (email: string, password: string, name: string) => Promise<void>;
 }
 
 export function AuthModal({ onLogin, onRegister }: AuthModalProps) {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,6 +29,7 @@ export function AuthModal({ onLogin, onRegister }: AuthModalProps) {
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: "login" | "register") => {
     setActiveTab(newValue);
+    setErrorMessage(null);
     setFormData({
       email: "",
       password: "",
@@ -35,13 +38,21 @@ export function AuthModal({ onLogin, onRegister }: AuthModalProps) {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (activeTab === "login") {
-      onLogin(formData.email, formData.password);
-    } else {
-      onRegister(formData.email, formData.password, formData.name);
+    setErrorMessage(null);
+    setIsSubmitting(true);
+
+    try {
+      if (activeTab === "login") {
+        await onLogin(formData.email, formData.password);
+      } else {
+        await onRegister(formData.email, formData.password, formData.name);
+      }
+    } catch (error) {
+      setErrorMessage("Anmeldung fehlgeschlagen. Bitte prüfen Sie Ihre Angaben.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -285,11 +296,18 @@ export function AuthModal({ onLogin, onRegister }: AuthModalProps) {
 
           <Divider sx={{ my: 1 }} />
 
+          {errorMessage && (
+            <Typography className="body-sm" sx={{ color: "#b91c1c", textAlign: "center" }}>
+              {errorMessage}
+            </Typography>
+          )}
+
           <Button
             type="submit"
             variant="contained"
             fullWidth
             disabled={
+              isSubmitting ||
               activeTab === "register" &&
               (formData.password !== formData.confirmPassword || !formData.name)
             }

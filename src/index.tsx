@@ -16,6 +16,7 @@ import {ThemeProvider} from "@mui/material";
 import "./index.css";
 import {BrowserRouter} from "react-router-dom";
 import {SnackbarProvider} from "./components/snackbar/custom-snackbar";
+import { SessionProvider } from "./auth/useSession";
 
 
 const root = ReactDOM.createRoot(
@@ -25,12 +26,13 @@ root.render(
     <Provider store={store}>
         <ThemeProvider theme={theme}>
             <BrowserRouter>
-                <SnackbarProvider>
-                    <App/>
-                </SnackbarProvider>
+                <SessionProvider>
+                    <SnackbarProvider>
+                        <App/>
+                    </SnackbarProvider>
+                </SessionProvider>
             </BrowserRouter>
         </ThemeProvider>
     </Provider>
 );
-
 

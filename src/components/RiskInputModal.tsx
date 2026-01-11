@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -13,14 +13,14 @@ import { Wand2, Sparkles, FileText, CheckCircle2, Search, BarChart3, TrendingUp,
 import { Risk } from "./types/risk";
 import { BaseModal } from "./BaseModal";
 import { AuthModal } from "./AuthModal";
+import { createSSE, getRisk, inquiryResponse, startWorkflow, WorkflowStartPayload } from "../api/risks";
+import { useSession } from "../auth/useSession";
 
 interface RiskInputModalProps {
   open: boolean;
   onClose: () => void;
   initialRiskDescription: string;
   onRiskCreated?: (risk: Risk) => void;
-  isLoggedIn: boolean;
-  onLogin: () => void;
 }
 
 // Helper function to extract key items from risk description
@@ -81,21 +81,27 @@ interface LoadingPhase {
   progress: number; // 0-100
 }
 
-export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCreated, isLoggedIn, onLogin }: RiskInputModalProps) {
+export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCreated }: RiskInputModalProps) {
+  const { user, doLogin, doRegister } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [currentPhaseIndex, setCurrentPhaseIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [step, setStep] = useState<"input" | "loading" | "questions" | "auth">("input");
-  const [riskDescription, setRiskDescription] = useState(initialRiskDescription);
   const [detectedItem, setDetectedItem] = useState("Gerät");
   const [completedPhases, setCompletedPhases] = useState<number[]>([]);
+  const [workflowTaskId, setWorkflowTaskId] = useState<string | null>(null);
+  const [workflowRiskUuid, setWorkflowRiskUuid] = useState<string | null>(null);
+  const [questions, setQuestions] = useState<Array<{ id: string; prompt: string }>>([]);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pendingPayload, setPendingPayload] = useState<WorkflowStartPayload | null>(null);
+  const [eventSource, setEventSource] = useState<EventSource | null>(null);
   const [formData, setFormData] = useState({
     description: initialRiskDescription,
     startDate: "",
     endDate: "",
     insuranceValue: "1000",
   });
-  const [pendingRisk, setPendingRisk] = useState<Risk | null>(null);
   
   // Define loading phases - focused on preparing follow-up questions
   const loadingPhases: LoadingPhase[] = [
@@ -137,6 +143,49 @@ export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCr
   const oneYearLater = new Date();
   oneYearLater.setFullYear(oneYearLater.getFullYear() + 1);
   const oneYearLaterStr = oneYearLater.toISOString().split('T')[0];
+
+  const resetWorkflow = () => {
+    eventSource?.close();
+    setEventSource(null);
+    setWorkflowTaskId(null);
+    setWorkflowRiskUuid(null);
+    setQuestions([]);
+    setAnswers({});
+    setPendingPayload(null);
+    setErrorMessage(null);
+    setIsLoading(false);
+    setStep("input");
+  };
+
+  const mapBackendRiskToUi = (payload: Record<string, unknown>): Risk => {
+    const analysis = (payload.analysis as Record<string, unknown>) || {};
+    const startDateValue = (payload.start_date as string) || formData.startDate || today;
+    const endDateValue = (payload.end_date as string) || formData.endDate || oneYearLaterStr;
+    const startDate = new Date(startDateValue);
+    const endDate = new Date(endDateValue);
+    const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    return {
+      id: (payload.risk_uuid as string) || `${Date.now()}`,
+      title: (analysis.title as string) || detectedItem || "Risiko",
+      category: getCategoryFromDescription(
+        ((analysis.title as string) || (payload.initial_prompt as string) || formData.description || "").toString()
+      ),
+      description: (analysis.summary as string) || (payload.initial_prompt as string) || formData.description,
+      coverageAmount: Number(payload.insurance_value || formData.insuranceValue || 0),
+      premium: 0,
+      duration: Number.isFinite(duration) ? duration : 1,
+      status: ((payload.status as string) || "completed") as Risk["status"],
+      createdBy: "Sie",
+      createdByUserId: "session-user",
+      createdAt: new Date(),
+      expiresAt: endDate,
+      userRole: "giver",
+      riskScore: Number(analysis.acceptance_risk_percentage || 0),
+      views: 0,
+      favorites: 0,
+    };
+  };
 
   // Manage loading phases
   useEffect(() => {
@@ -195,6 +244,112 @@ export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCr
     };
   }, [isLoading, step]);
 
+  useEffect(() => {
+    return () => {
+      eventSource?.close();
+    };
+  }, [eventSource]);
+
+  const extractQuestions = (payload: Record<string, unknown>): Array<{ id: string; prompt: string }> => {
+    const candidate =
+      (payload.questions as unknown[]) ??
+      ((payload.inquiry as { questions?: unknown[] } | undefined)?.questions) ??
+      (payload.inquiry_questions as unknown[]);
+
+    if (!Array.isArray(candidate)) return [];
+
+    return candidate.map((item, index) => {
+      if (typeof item === "string") {
+        return { id: `q-${index}`, prompt: item };
+      }
+      const question = item as { id?: string; prompt?: string; question?: string; text?: string };
+      return {
+        id: question.id || `q-${index}`,
+        prompt: question.prompt || question.question || question.text || `Frage ${index + 1}`,
+      };
+    });
+  };
+
+  const handleWorkflowEvent = async (payload: Record<string, unknown>) => {
+    const status =
+      (payload.status as string | undefined) ||
+      (payload.state as string | undefined) ||
+      (payload.phase as string | undefined);
+
+    if (!status) return;
+
+    if (status === "inquiry_awaiting_response") {
+      const nextQuestions = extractQuestions(payload);
+      setQuestions(nextQuestions);
+      setAnswers((prev) => {
+        const next = { ...prev };
+        nextQuestions.forEach((question) => {
+          if (!next[question.id]) {
+            next[question.id] = "";
+          }
+        });
+        return next;
+      });
+      setIsLoading(false);
+      setStep("questions");
+    }
+
+    if (status === "completed" && workflowRiskUuid) {
+      setIsLoading(false);
+      try {
+        const riskResponse = (await getRisk(workflowRiskUuid)) as Record<string, unknown>;
+        const risk = mapBackendRiskToUi(riskResponse);
+        if (onRiskCreated) {
+          onRiskCreated(risk);
+        }
+        resetWorkflow();
+        onClose();
+      } catch (error) {
+        setErrorMessage("Die Risikoauswertung konnte nicht geladen werden.");
+      }
+    }
+
+    if (status === "failed") {
+      setIsLoading(false);
+      setErrorMessage("Die Risikoanalyse ist fehlgeschlagen. Bitte versuchen Sie es erneut.");
+    }
+  };
+
+  const beginWorkflow = async (payload: WorkflowStartPayload) => {
+    setErrorMessage(null);
+    setIsLoading(true);
+    setStep("loading");
+    setCurrentPhaseIndex(0);
+    setProgress(0);
+    setCompletedPhases([]);
+
+    try {
+      const response = await startWorkflow(payload);
+      const taskId = response.task_id;
+      const riskUuid = response.risk_uuid;
+      setPendingPayload(null);
+      setWorkflowTaskId(taskId);
+      setWorkflowRiskUuid(riskUuid);
+
+      const sse = createSSE(taskId);
+      sse.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data) as Record<string, unknown>;
+          handleWorkflowEvent(payload);
+        } catch (error) {
+          setErrorMessage("Unerwartetes Datenformat im Workflow-Stream.");
+        }
+      };
+      sse.onerror = () => {
+        setErrorMessage("Die Verbindung zum Workflow-Stream wurde unterbrochen.");
+      };
+      setEventSource(sse);
+    } catch (error) {
+      setIsLoading(false);
+      setErrorMessage("Workflow konnte nicht gestartet werden. Bitte erneut versuchen.");
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -205,106 +360,72 @@ export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCr
     const endDate = (form.elements.namedItem("end-date") as HTMLInputElement)?.value || oneYearLaterStr;
     const insuranceValue = (form.elements.namedItem("insurance-value") as HTMLInputElement)?.value || "1000";
     
+    const payload: WorkflowStartPayload = {
+      initial_prompt: description,
+      start_date: startDate,
+      end_date: endDate,
+      insurance_value: Number(insuranceValue),
+    };
+
     setFormData({
       description,
       startDate,
       endDate,
       insuranceValue,
     });
-    setRiskDescription(description);
-    
-    // Detect item from description
     const item = getItemFromDescription(description);
     setDetectedItem(item);
-    
+
+    if (!user) {
+      setPendingPayload(payload);
+      setStep("auth");
+      return;
+    }
+
+    void beginWorkflow(payload);
+  };
+
+  const handleQuestionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!workflowTaskId || !workflowRiskUuid) {
+      setErrorMessage("Die Workflow-Session fehlt. Bitte erneut starten.");
+      return;
+    }
+
     setIsLoading(true);
     setStep("loading");
-    setCurrentPhaseIndex(0);
-    setProgress(0);
-    setCompletedPhases([]);
-  };
 
-  const handleQuestionSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Create the new risk object
-    const startDate = new Date(formData.startDate);
-    const endDate = new Date(formData.endDate);
-    const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    const newRisk: Risk = {
-      id: `r-${Date.now()}`,
-      title: detectedItem,
-      category: getCategoryFromDescription(formData.description),
-      description: formData.description,
-      coverageAmount: parseInt(formData.insuranceValue),
-      premium: 0, // Will be calculated
-      duration: duration,
-      status: "evaluating",
-      createdBy: "Sie",
-      createdByUserId: "u5",
-      createdAt: new Date(),
-      expiresAt: endDate,
-      userRole: "giver",
-      riskScore: 0,
-      views: 0,
-      favorites: 0,
-    };
-    
-    // Check if user is logged in
-    if (!isLoggedIn) {
-      // Store the risk and show auth modal
-      setPendingRisk(newRisk);
-      setStep("auth");
-    } else {
-      // Call the callback immediately
-      if (onRiskCreated) {
-        onRiskCreated(newRisk);
-      }
-      
-      // Close modal and reset
+    try {
+      await inquiryResponse({
+        task_id: workflowTaskId,
+        risk_uuid: workflowRiskUuid,
+        answers,
+      });
+    } catch (error) {
       setIsLoading(false);
-      setStep("input");
-      onClose();
+      setErrorMessage("Antworten konnten nicht gesendet werden.");
     }
   };
 
-  const handleAuthLogin = (_email: string, _password: string) => {
-    // Simulate login
-    onLogin();
-    
-    // Now create the risk
-    if (pendingRisk && onRiskCreated) {
-      onRiskCreated(pendingRisk);
+  const handleAuthLogin = async (email: string, password: string) => {
+    await doLogin(email, password);
+    if (pendingPayload) {
+      setStep("loading");
+      await beginWorkflow(pendingPayload);
     }
-    
-    // Close modal and reset
-    setIsLoading(false);
-    setStep("input");
-    setPendingRisk(null);
-    onClose();
   };
 
-  const handleAuthRegister = (_email: string, _password: string, _name: string) => {
-    // Simulate registration and login
-    onLogin();
-    
-    // Now create the risk
-    if (pendingRisk && onRiskCreated) {
-      onRiskCreated(pendingRisk);
+  const handleAuthRegister = async (email: string, password: string, name: string) => {
+    await doRegister(email, password, name);
+    if (pendingPayload) {
+      setStep("loading");
+      await beginWorkflow(pendingPayload);
     }
-    
-    // Close modal and reset
-    setIsLoading(false);
-    setStep("input");
-    setPendingRisk(null);
-    onClose();
   };
 
   const handleClose = () => {
     if (!isLoading) {
-      setStep("input");
-      setIsLoading(false);
+      resetWorkflow();
       onClose();
     }
   };
@@ -686,87 +807,57 @@ export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCr
           </Box>
         </Box>
 
-        {/* Question 1 */}
-        <Box>
-          <Typography className="body-base-medium text-primary" sx={{ mb: 1 }}>
-            Welche Marke, welches Modell und welches Baujahr hat {detectedItem === "Gerät" ? "das Gerät" : `die ${detectedItem}`}?
+        {questions.length === 0 ? (
+          <Typography className="body-sm text-secondary">
+            Bitte warten, Fragen werden geladen...
           </Typography>
-          <TextField
-            name="model-info"
-            placeholder="z.B. DeLonghi Magnifica S, Baujahr 2020"
-            fullWidth
-            multiline
-            rows={3}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                bgcolor: "#f3f2f2",
-                borderRadius: 1,
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "16px",
-                color: "#353131",
-                "& fieldset": {
-                  borderColor: "#e6e5e5",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#ff671f",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#ff671f",
-                  borderWidth: "2px",
-                },
-              },
-              "& .MuiOutlinedInput-input": {
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "16px",
-                "&::placeholder": {
-                  color: "#4f4a4a",
-                  opacity: 1,
-                },
-              },
-            }}
-          />
-        </Box>
-
-        {/* Question 2 */}
-        <Box>
-          <Typography className="body-base-medium text-primary" sx={{ mb: 1 }}>
-            Wo wird {detectedItem === "Gerät" ? "es" : "sie"} während der Leihdauer genutzt/aufbewahrt (privat oder gewerblich, Standort) und welche Sicherheitsvorkehrungen inkl. Transport/Verpackung sind vorhanden?
-          </Typography>
-          <TextField
-            name="storage-security"
-            placeholder="z.B. Privat in Küche, Originalverpackung vorhanden, Transport im Auto"
-            fullWidth
-            multiline
-            rows={4}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                bgcolor: "#f3f2f2",
-                borderRadius: 1,
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "16px",
-                color: "#353131",
-                "& fieldset": {
-                  borderColor: "#e6e5e5",
-                },
-                "&:hover fieldset": {
-                  borderColor: "#ff671f",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#ff671f",
-                  borderWidth: "2px",
-                },
-              },
-              "& .MuiOutlinedInput-input": {
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "16px",
-                "&::placeholder": {
-                  color: "#4f4a4a",
-                  opacity: 1,
-                },
-              },
-            }}
-          />
-        </Box>
+        ) : (
+          questions.map((question, index) => (
+            <Box key={question.id}>
+              <Typography className="body-base-medium text-primary" sx={{ mb: 1 }}>
+                {question.prompt}
+              </Typography>
+              <TextField
+                name={`question-${question.id}`}
+                placeholder={`Antwort ${index + 1}`}
+                fullWidth
+                multiline
+                rows={3}
+                value={answers[question.id] || ""}
+                onChange={(event) =>
+                  setAnswers((prev) => ({ ...prev, [question.id]: event.target.value }))
+                }
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "#f3f2f2",
+                    borderRadius: 1,
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: "16px",
+                    color: "#353131",
+                    "& fieldset": {
+                      borderColor: "#e6e5e5",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#ff671f",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#ff671f",
+                      borderWidth: "2px",
+                    },
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: "16px",
+                    "&::placeholder": {
+                      color: "#4f4a4a",
+                      opacity: 1,
+                    },
+                  },
+                }}
+              />
+            </Box>
+          ))
+        )}
       </Box>
     </form>
   );
@@ -860,6 +951,11 @@ export function RiskInputModal({ open, onClose, initialRiskDescription, onRiskCr
       actions={actions}
       maxWidth="md"
     >
+      {errorMessage && (
+        <Typography className="body-sm" sx={{ color: "#b91c1c", mb: 2 }}>
+          {errorMessage}
+        </Typography>
+      )}
       {step === "input" && renderInputForm()}
       {step === "loading" && renderLoading()}
       {step === "questions" && renderQuestions()}

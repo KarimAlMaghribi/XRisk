@@ -6,7 +6,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Badge from "@mui/material/Badge";
-import { signOutUser } from "../../../firebase/firebase-service";
 import West from "@mui/icons-material/West";
 import Grid from "@mui/material/Grid2";
 import { ROUTES } from "../../../routing/routes";
@@ -47,6 +46,7 @@ import { setActiveChat } from "../../../store/slices/my-bids/reducers";
 import { CreditScoreDialog } from "../../credit_score/credit_score_dialog";
 import {AvatarWithBadge} from "../../profile/avatar-with-badge-count";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import { useSession } from "../../../auth/useSession";
 
 export interface AuthenticationButtonsProps {
   isLoggedIn: boolean;
@@ -59,8 +59,11 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
   const dispatch: AppDispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, doLogout } = useSession();
   const userName: string = useSelector(selectName);
   const imagePath: string | undefined = useSelector(selectImagePath);
+  const displayName = user?.name || userName || "Nutzer";
+  const displayEmail = user?.email || auth.currentUser?.email || "";
   const [showProfileDialog, setShowProfileDialog] =
     React.useState<boolean>(false);
   const [showCreditScoreDialog, setShowCreditScoreDialog] =
@@ -138,8 +141,8 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
     );
   };
 
-  const handleLogout = () => {
-    signOutUser()
+  const handleLogout = async () => {
+    await doLogout();
     dispatch(resetStore());
     localStorage.clear();
     sessionStorage.clear();
@@ -281,10 +284,10 @@ export const QuickMenuButtons = (props: AuthenticationButtonsProps) => {
             {[
               <Box sx={{ px: 2, py: 1 }} key="first_box">
                 <Typography variant="body1" fontWeight="bold">
-                  {userName}
+                  {displayName}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {auth.currentUser?.email}
+                  {displayEmail}
                 </Typography>
               </Box>,
               <Divider key="divider" />,
