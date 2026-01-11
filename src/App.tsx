@@ -6,6 +6,7 @@ import {
     useNavigate,
     Outlet,
 } from "react-router-dom";
+import { CircularProgress, Box } from "@mui/material";
 
 import { LandingPage } from "./components/LandingPage";
 import { SignIn } from "./pages/authentication/sign-in";
@@ -34,29 +35,29 @@ import FooterSupportDescriptions from "./pages/formalities/support";
 import FooterCompanyDescriptions from "./pages/formalities/company";
 
 import i18n from "./utils/i18n";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "./store/store";
-import { auth } from "./firebase_config";
-import { fetchUserProfile } from "./store/slices/user-profile/thunks";
 import ChatPage from "./components/chat/chat-page";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { useSession } from "./auth/useSession";
 
 function App() {
-    const dispatch = useDispatch<AppDispatch>();
     const [language, setLanguage] = useState(i18n.language);
-    const [user] = useAuthState(auth);
+    const { user, loading, refresh } = useSession();
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged((user) => {
-            if (user) dispatch(fetchUserProfile());
-        });
-        return () => unsubscribe();
-    }, [dispatch]);
+        refresh();
+    }, [refresh]);
 
     useEffect(() => {
         i18n.on("languageChanged", (lng) => setLanguage(lng));
     }, [i18n.language]);
+
+    if (loading) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Routes>
@@ -64,11 +65,15 @@ function App() {
             <Route
                 path="/"
                 element={
-                    <LandingPage
-                        onLogin={() => navigate(`/${ROUTES.SIGN_IN}`)}
-                        onNavigate={(path) => navigate(path)}
-                        isLoggedIn={!!user}
-                    />
+                    user ? (
+                        <Navigate to={`/${ROUTES.MY_RISKS}`} replace />
+                    ) : (
+                        <LandingPage
+                            onLogin={() => navigate(`/${ROUTES.SIGN_IN}`)}
+                            onNavigate={(path) => navigate(path)}
+                            isLoggedIn={!!user}
+                        />
+                    )
                 }
             />
 

@@ -461,8 +461,6 @@ export function LandingPage({ onLogin, isLoggedIn = false, onNavigate }: Landing
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialRiskDescription={riskInput}
-        isLoggedIn={isLoggedIn}
-        onLogin={onLogin}
       />
     </div>
   );
