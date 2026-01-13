@@ -57,6 +57,61 @@ echo ""
 echo "Initializing database..."
 cd /app/server || { echo "❌ Error: Cannot cd to /app/server"; exit 1; }
 
+# Test database connection before initialization
+echo "Testing database connection..."
+python3 << 'PYTHON_EOF'
+import os
+import sys
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv('/app/.env')
+load_dotenv('../.env')
+load_dotenv('.env')
+
+# Get database URL and password
+database_url = os.environ.get('DATABASE_URL', '').strip()
+postgres_password = os.environ.get('POSTGRES_PASSWORD', '').strip()
+
+print(f"DEBUG: DATABASE_URL present: {bool(database_url)}")
+if database_url:
+    print(f"DEBUG: DATABASE_URL length: {len(database_url)}")
+    # Extract password from URL
+    if '@' in database_url and '://' in database_url:
+        auth_part = database_url.split('://')[1].split('@')[0]
+        if ':' in auth_part:
+            username, password = auth_part.split(':', 1)
+            print(f"DEBUG: DATABASE_URL user: {username}")
+            if password:
+                print(f"DEBUG: DATABASE_URL password length: {len(password)}")
+            else:
+                print("DEBUG: DATABASE_URL password is empty!")
+
+print(f"DEBUG: POSTGRES_PASSWORD env var present: {bool(postgres_password)}")
+if postgres_password:
+    print(f"DEBUG: POSTGRES_PASSWORD length: {len(postgres_password)}")
+else:
+    print("DEBUG: POSTGRES_PASSWORD environment variable is empty!")
+
+# Try to connect
+try:
+    from sqlalchemy import create_engine, text
+    engine = create_engine(database_url, connect_args={'connect_timeout': 5})
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT 1"))
+        result.fetchone()
+    print("✅ Database connection test successful")
+    sys.exit(0)
+except Exception as e:
+    print(f"❌ Database connection test FAILED: {e}")
+    sys.exit(1)
+PYTHON_EOF
+
+CONNECTION_TEST_RESULT=$?
+if [ $CONNECTION_TEST_RESULT -ne 0 ]; then
+    echo "⚠️  Database connection test failed, but continuing with initialization..."
+fi
+
 python database_setup.py
 if [ $? -ne 0 ]; then
     echo "⚠️  Database initialization failed, continuing anyway..."

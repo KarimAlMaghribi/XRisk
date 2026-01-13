@@ -57,8 +57,59 @@ class Config:
     logger.info(f"Environment check - DATABASE_URL present: {bool(_db_url)}")
     
     if _db_url:
+        # Fix: Remove quotes from password in DATABASE_URL if present
+        # This happens when .env file has POSTGRES_PASSWORD="password" with quotes
+        try:
+            # Parse DATABASE_URL: postgresql://user:password@host:port/dbname
+            if '@' in _db_url and '://' in _db_url:
+                # Extract the part between :// and @
+                scheme = _db_url.split('://')[0] + '://'
+                rest = _db_url.split('://')[1]
+                auth_part = rest.split('@')[0]
+                host_part = '@' + rest.split('@')[1] if '@' in rest else ''
+                
+                if ':' in auth_part:
+                    username, password = auth_part.split(':', 1)
+                    # Remove surrounding quotes if present
+                    original_password = password
+                    if password.startswith('"') and password.endswith('"'):
+                        password = password[1:-1]
+                        logger.warning("DEBUG: Removed quotes from password in DATABASE_URL")
+                    elif password.startswith("'") and password.endswith("'"):
+                        password = password[1:-1]
+                        logger.warning(f"DEBUG: Removed single quotes from password in DATABASE_URL")
+                    
+                    # Reconstruct DATABASE_URL without quotes
+                    if password != original_password:
+                        _db_url = f"{scheme}{username}:{password}{host_part}"
+                        logger.info(f"DEBUG: Fixed DATABASE_URL by removing quotes from password")
+                    
+                    # Log password details (without characters)
+                    if password:
+                        logger.info(f"DEBUG: POSTGRES_PASSWORD (after fix) - length: {len(password)}")
+                    else:
+                        logger.warning("DEBUG: POSTGRES_PASSWORD appears to be empty in DATABASE_URL")
+        except Exception as e:
+            logger.warning(f"DEBUG: Could not parse/fix password in DATABASE_URL: {e}")
+        
         SQLALCHEMY_DATABASE_URI = _db_url
         logger.info(f"Database Config: Using DATABASE_URL (length: {len(_db_url)} chars)")
+        
+        # Also check POSTGRES_PASSWORD environment variable directly and remove quotes
+        postgres_password_env = os.environ.get('POSTGRES_PASSWORD', '').strip()
+        if postgres_password_env:
+            # Remove surrounding quotes if present
+            if postgres_password_env.startswith('"') and postgres_password_env.endswith('"'):
+                postgres_password_env = postgres_password_env[1:-1]
+                logger.warning("DEBUG: Removed quotes from POSTGRES_PASSWORD environment variable")
+            elif postgres_password_env.startswith("'") and postgres_password_env.endswith("'"):
+                postgres_password_env = postgres_password_env[1:-1]
+                logger.warning("DEBUG: Removed single quotes from POSTGRES_PASSWORD environment variable")
+            
+            if postgres_password_env:
+                logger.info(f"DEBUG: POSTGRES_PASSWORD from env (after fix) - length: {len(postgres_password_env)}")
+        else:
+            logger.warning("DEBUG: POSTGRES_PASSWORD environment variable is empty or not set")
     else:
         logger.error("CRITICAL: No database connection string found!")
         logger.error("Set DATABASE_URL environment variable")
@@ -94,7 +145,58 @@ class Config:
     
     MCP_BASE_URL = os.environ.get('MCP_BASE_URL', 'http://127.0.0.1:8000/mcp')
     MCP_STORE_TIMEOUT = int(os.environ.get('MCP_STORE_TIMEOUT', '10'))
-    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    
+    # Redis URL construction - handle password correctly
+    # Redis MUST run with password - REDIS_PASSWORD is required
+    redis_url_from_env = os.environ.get('REDIS_URL')
+    redis_host = os.environ.get('REDIS_HOST', 'localhost')
+    redis_port = os.environ.get('REDIS_PORT', '6379')
+    redis_password = os.environ.get('REDIS_PASSWORD', '').strip()  # Strip whitespace
+    redis_db = os.environ.get('REDIS_DB', '0')
+    
+    # Validate that REDIS_PASSWORD is set (required for security)
+    if not redis_password:
+        logger.error("❌ CRITICAL: REDIS_PASSWORD is not set!")
+        logger.error("   Redis must run with password authentication for security.")
+        logger.error("   Please ensure REDIS_PASSWORD is set in Azure Key Vault or .env file.")
+        raise ValueError("REDIS_PASSWORD is required but not set. Redis must run with password authentication.")
+    
+    # Log Redis configuration for debugging
+    logger.info(f"Redis configuration - Host: {redis_host}, Port: {redis_port}, DB: {redis_db}")
+    logger.info(f"Redis password configured: Yes (length: {len(redis_password)})")
+    
+    if redis_url_from_env:
+        # Check if URL has empty password (redis://:@host:port/db) - this should not happen
+        if redis_url_from_env.startswith('redis://:@') or redis_url_from_env.startswith('rediss://:@'):
+            # Empty password in URL - reconstruct with password (password is required)
+            if redis_url_from_env.startswith('rediss://'):
+                REDIS_URL = f'rediss://:{redis_password}@{redis_host}:{redis_port}/{redis_db}'
+            else:
+                REDIS_URL = f'redis://:{redis_password}@{redis_host}:{redis_port}/{redis_db}'
+            logger.warning("Redis URL had empty password - reconstructed with password")
+        else:
+            # URL looks correct, but verify password is present
+            has_password_in_url = '@' in redis_url_from_env.split('://')[1] if '://' in redis_url_from_env else False
+            if not has_password_in_url:
+                # URL has no password - add it (password is required)
+                if redis_url_from_env.startswith('rediss://'):
+                    REDIS_URL = f'rediss://:{redis_password}@{redis_host}:{redis_port}/{redis_db}'
+                else:
+                    REDIS_URL = f'redis://:{redis_password}@{redis_host}:{redis_port}/{redis_db}'
+                logger.warning("Redis URL had no password - added password to URL")
+            else:
+                # URL has password, use it as-is (but verify it matches our password)
+                REDIS_URL = redis_url_from_env
+                logger.info("Using Redis URL as-is from environment (password present)")
+    else:
+        # REDIS_URL not set, construct it from components with password (required)
+        # Default to redis:// (not rediss://) unless explicitly configured
+        REDIS_URL = f'redis://:{redis_password}@{redis_host}:{redis_port}/{redis_db}'
+        logger.info("Constructed Redis URL with password from components")
+    
+    # Log final Redis URL (masked for security)
+    masked_url = REDIS_URL.split('@')[0] + '@***' if '@' in REDIS_URL else REDIS_URL
+    logger.info(f"Final Redis URL: {masked_url}")
     
     # Celery Configuration
     CELERY_BROKER_URL = REDIS_URL
@@ -298,4 +400,18 @@ class Config:
     # Comma-separated list of allowed origins
     # Example: "https://xrisk.info,https://www.xrisk.info"
     _cors_origins_str = os.environ.get('CORS_ORIGINS', '*')
-    CORS_ORIGINS = [origin.strip() for origin in _cors_origins_str.split(',')] if _cors_origins_str != '*' else ['*']
+    logger.info(f"CORS_ORIGINS from environment: '{_cors_origins_str}' (type: {type(_cors_origins_str)})")
+    
+    if _cors_origins_str == '*' or not _cors_origins_str:
+        CORS_ORIGINS = ['*']
+        logger.info("CORS Origins set to '*' (allow all)")
+    else:
+        # Parse comma-separated origins and ensure they're properly formatted
+        CORS_ORIGINS = [origin.strip() for origin in _cors_origins_str.split(',') if origin.strip()]
+        # Log CORS origins for debugging
+        logger.info(f"CORS Origins configured: {CORS_ORIGINS} (count: {len(CORS_ORIGINS)})")
+        
+        # Validate that we have at least one origin
+        if not CORS_ORIGINS:
+            logger.warning("CORS_ORIGINS was set but parsed to empty list, falling back to '*'")
+            CORS_ORIGINS = ['*']

@@ -10,10 +10,37 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from dotenv import load_dotenv
 
-load_dotenv()
+def find_env_file(filename='.env'):
+    """Find .env file in common locations (current dir, parent dir, /app, or based on script location)"""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)  # /app if script is in /app/server
+    
+    env_paths = [
+        filename,  # Current directory
+        f'../{filename}',  # Parent directory
+        f'/app/{filename}',  # Absolute path in Docker container
+        os.path.join(project_root, filename)  # Based on script location
+    ]
+    
+    for path in env_paths:
+        abs_path = os.path.abspath(path)
+        if os.path.exists(abs_path):
+            return abs_path
+    return None
 
-if os.path.exists('.env.local'):
-    load_dotenv('.env.local')
+# Load .env file from current directory or parent directory
+# (when running from /app/server, .env is in /app)
+env_file = find_env_file('.env')
+if env_file:
+    load_dotenv(env_file)
+else:
+    # Fallback: try default load_dotenv() behavior (searches upward from current dir)
+    load_dotenv()
+
+# Load .env.local if it exists
+local_env_file = find_env_file('.env.local')
+if local_env_file:
+    load_dotenv(local_env_file, override=False)  # Don't override existing values
 
 def create_database():
     """Create the database if it doesn't exist"""
@@ -257,14 +284,20 @@ def main():
     print("xrisk Database Setup")
     print("===================")
     
-    if not os.path.exists('.env'):
+    # Check for .env file using the same logic as at module load time
+    env_file = find_env_file('.env')
+    
+    if env_file:
+        print(f"✅ Found .env file at: {env_file}")
+    else:
         print("Warning: .env file not found")
         print("Please create a .env file with your database configuration")
         print("Example:")
         print("DATABASE_URL=postgresql://username:password@localhost:5432/xrisk_db")
         print("OPENAI_API_KEY=your_openai_api_key_here")
         print("SECRET_KEY=your_secret_key_here")
-        return
+        # Don't return - continue anyway since environment variables might be set via Docker
+        print("Continuing anyway - environment variables may be set via Docker...")
     
     print("\n1. Creating database...")
     if not create_database():

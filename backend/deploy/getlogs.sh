@@ -7,7 +7,7 @@
 set -e
 
 SSH_TARGET="${1:-azureuser@xrisk.info}"
-REMOTE_DIR="~/xrisk"
+REMOTE_DIR="~/xrisk/backend"
 
 echo "=========================================="
 echo "  xrisk VM Logs Downloader"

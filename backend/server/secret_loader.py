@@ -62,6 +62,17 @@ def load_secrets_from_keyvault(keyvault_url: Optional[str] = None) -> Dict[str, 
             try:
                 secret_name = secret_property.name
                 secret_value = client.get_secret(secret_name).value
+                
+                # Remove surrounding quotes if present (some Key Vaults store values with quotes)
+                if secret_value:
+                    secret_value = secret_value.strip()
+                    if secret_value.startswith('"') and secret_value.endswith('"'):
+                        secret_value = secret_value[1:-1]
+                        logger.debug(f"Removed quotes from secret {secret_name}")
+                    elif secret_value.startswith("'") and secret_value.endswith("'"):
+                        secret_value = secret_value[1:-1]
+                        logger.debug(f"Removed single quotes from secret {secret_name}")
+                
                 # Convert secret name to environment variable format (uppercase, replace hyphens with underscores)
                 env_var_name = secret_name.upper().replace('-', '_')
                 secrets[env_var_name] = secret_value

@@ -102,10 +102,77 @@ from rest import rest_bp
 if Config.DEBUG_ENABLED:
     from debug import debug_bp
 
-CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
+# Configure CORS with explicit settings
+app_logger.info(f"Configuring CORS with origins: {Config.CORS_ORIGINS}")
+CORS(app, 
+     origins=Config.CORS_ORIGINS, 
+     supports_credentials=True,
+     allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
+     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+     expose_headers=['Content-Type', 'Authorization'],
+     always_send=True)  # Always send CORS headers, even for non-CORS requests
+app_logger.info("CORS configured successfully")
 
 app_logger.info("Database initializing...")
 db.init_app(app)
+
+# Test database connection with detailed error logging
+try:
+    with app.app_context():
+        # Try to connect to the database
+        from sqlalchemy import text
+        app_logger.info("Testing database connection...")
+        
+        # Extract connection details for logging
+        db_url = app.config['SQLALCHEMY_DATABASE_URI']
+        if '@' in db_url and '://' in db_url:
+            auth_part = db_url.split('://')[1].split('@')[0]
+            if ':' in auth_part:
+                username, password = auth_part.split(':', 1)
+                # Remove surrounding quotes if present
+                if password.startswith('"') and password.endswith('"'):
+                    password = password[1:-1]
+                    app_logger.warning("DEBUG: Removed quotes from password in connection test")
+                elif password.startswith("'") and password.endswith("'"):
+                    password = password[1:-1]
+                    app_logger.warning("DEBUG: Removed single quotes from password in connection test")
+                
+                app_logger.info(f"DEBUG: Attempting connection with user: {username}")
+                if password:
+                    app_logger.info(f"DEBUG: Password length: {len(password)}")
+                else:
+                    app_logger.warning("DEBUG: Password is empty!")
+        
+        # Try a simple query
+        result = db.session.execute(text("SELECT 1"))
+        result.fetchone()
+        app_logger.info("✅ Database connection test successful")
+except Exception as e:
+    error_msg = str(e)
+    app_logger.error(f"❌ Database connection test FAILED: {error_msg}")
+    
+    # Log detailed error information
+    if "password authentication failed" in error_msg.lower():
+        app_logger.error("Password authentication failed - checking password configuration...")
+        postgres_password = os.environ.get('POSTGRES_PASSWORD', '').strip()
+        if postgres_password:
+            app_logger.info(f"DEBUG: POSTGRES_PASSWORD env var exists, length: {len(postgres_password)}")
+        else:
+            app_logger.error("DEBUG: POSTGRES_PASSWORD environment variable is empty or not set!")
+        
+        # Check DATABASE_URL
+        db_url = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+        if '@' in db_url and '://' in db_url:
+            auth_part = db_url.split('://')[1].split('@')[0]
+            if ':' in auth_part:
+                username, password = auth_part.split(':', 1)
+                app_logger.info(f"DEBUG: DATABASE_URL contains user: {username}, password length: {len(password)}")
+                if not password:
+                    app_logger.error("DEBUG: DATABASE_URL password is empty!")
+    
+    # Don't raise - let the app continue so we can see more logs
+    app_logger.warning("Continuing despite connection test failure - error may occur later")
+
 app_logger.info("Database initialized")
 
 login_manager = LoginManager()
@@ -143,8 +210,19 @@ def configure_session():
         pass
 
 @app.before_request
+def log_cors_info():
+    """Log CORS information for debugging"""
+    if request.method == 'OPTIONS' or request.headers.get('Origin'):
+        origin = request.headers.get('Origin', 'No Origin header')
+        app_logger.info(f"CORS Request - Method: {request.method}, Origin: {origin}, Path: {request.path}, Host: {request.host}")
+
+@app.before_request
 def enforce_api_subdomain():
     """Enforce that REST API routes are only accessible via api.xrisk.info subdomain"""
+    # Allow OPTIONS requests for CORS preflight - these must always pass through
+    if request.method == 'OPTIONS':
+        return None
+    
     if request.path.startswith('/debug'):
         return None
     
@@ -170,9 +248,21 @@ def enforce_api_subdomain():
         host_without_port = host.split(':')[0]
         expected_api_host = Config.API_DOMAIN.lower().split(':')[0]
         
+        # Allow localhost for development
         if 'localhost' in host_without_port or '127.0.0.1' in host_without_port:
             return None
         
+        # Check if request is coming from allowed origin (CORS request)
+        origin = request.headers.get('Origin', '')
+        if origin:
+            # Extract domain from origin (e.g., "https://xrisk.info" -> "xrisk.info")
+            origin_domain = origin.replace('https://', '').replace('http://', '').split(':')[0]
+            # Allow if origin is in CORS_ORIGINS list
+            if any(origin_domain in allowed_origin.replace('https://', '').replace('http://', '') for allowed_origin in Config.CORS_ORIGINS):
+                app_logger.debug(f"Allowing CORS request from {origin} to API route {request.path}")
+                return None
+        
+        # Enforce API subdomain for direct requests (non-CORS)
         if not (host_without_port.startswith('api.') or host_without_port == expected_api_host):
             app_logger.warning(f"API route '{request.path}' accessed via wrong domain: {host} (expected: {expected_api_host} or api.*)")
             return jsonify({
@@ -225,6 +315,32 @@ def cleanup_old_session_cookie(response):
             cleanup_cookie_variants(response, 'session')
     except Exception:
         pass
+    
+    # Ensure CORS headers are set even for error responses and preflight requests
+    # Flask-CORS should handle this, but we ensure it's done
+    origin = request.headers.get('Origin')
+    if origin:
+        # Check if origin is in allowed origins (support wildcard)
+        origin_allowed = False
+        if '*' in Config.CORS_ORIGINS:
+            origin_allowed = True
+        elif origin in Config.CORS_ORIGINS:
+            origin_allowed = True
+        elif any(origin_domain in origin.replace('https://', '').replace('http://', '') for origin_domain in [o.replace('https://', '').replace('http://', '') for o in Config.CORS_ORIGINS]):
+            origin_allowed = True
+        
+        if origin_allowed:
+            if 'Access-Control-Allow-Origin' not in response.headers:
+                response.headers['Access-Control-Allow-Origin'] = origin
+            if 'Access-Control-Allow-Credentials' not in response.headers:
+                response.headers['Access-Control-Allow-Credentials'] = 'true'
+            # Ensure Access-Control-Allow-Headers is set for preflight requests
+            # Include both capitalized and lowercase versions to handle browser differences
+            if 'Access-Control-Allow-Headers' not in response.headers:
+                response.headers['Access-Control-Allow-Headers'] = 'Content-Type, content-type, Authorization, authorization, X-Requested-With, x-requested-with'
+            # Ensure Access-Control-Allow-Methods is set for preflight requests
+            if 'Access-Control-Allow-Methods' not in response.headers:
+                response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, PATCH'
     
     return response
 
@@ -421,6 +537,49 @@ def create_app():
     app_logger.info("create_app() called - initializing database tables...")
     
     with app.app_context():
+        # Test database connection before creating tables
+        try:
+            from sqlalchemy import text
+            app_logger.info("Testing database connection in create_app()...")
+            
+            # Extract and log password details
+            db_url = app.config['SQLALCHEMY_DATABASE_URI']
+            if '@' in db_url and '://' in db_url:
+                auth_part = db_url.split('://')[1].split('@')[0]
+                if ':' in auth_part:
+                    username, password = auth_part.split(':', 1)
+                    # Remove surrounding quotes if present
+                    if password.startswith('"') and password.endswith('"'):
+                        password = password[1:-1]
+                        app_logger.warning("DEBUG create_app: Removed quotes from password")
+                    elif password.startswith("'") and password.endswith("'"):
+                        password = password[1:-1]
+                        app_logger.warning("DEBUG create_app: Removed single quotes from password")
+                    
+                    app_logger.info(f"DEBUG create_app: Connecting with user: {username}")
+                    if password:
+                        app_logger.info(f"DEBUG create_app: Password length: {len(password)}")
+                    else:
+                        app_logger.error("DEBUG create_app: Password is empty in DATABASE_URL!")
+            
+            # Test connection
+            result = db.session.execute(text("SELECT 1"))
+            result.fetchone()
+            app_logger.info("✅ Database connection test successful in create_app()")
+        except Exception as e:
+            error_msg = str(e)
+            app_logger.error(f"❌ Database connection test FAILED in create_app(): {error_msg}")
+            
+            # Log password details for debugging
+            postgres_password = os.environ.get('POSTGRES_PASSWORD', '').strip()
+            if postgres_password:
+                app_logger.info(f"DEBUG create_app: POSTGRES_PASSWORD env var - length: {len(postgres_password)}")
+            else:
+                app_logger.error("DEBUG create_app: POSTGRES_PASSWORD environment variable is empty!")
+            
+            # Re-raise the exception so we can see the full error
+            raise
+        
         db.create_all()
         app_logger.info("Database tables created/verified")
         

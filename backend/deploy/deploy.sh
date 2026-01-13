@@ -317,12 +317,18 @@ try:
         critical_secrets = ['POSTGRES_PASSWORD', 'REDIS_PASSWORD', 'OPENAI_API_KEY']
         missing_critical = [s for s in critical_secrets if s not in secrets]
         if missing_critical:
-            print("⚠️  WARNING: Some critical secrets are missing:")
+            print("⚠️  WARNING: Some critical secrets are missing from Key Vault:")
             for secret in missing_critical:
                 print(f"   - {secret}")
             print("   These may be loaded from .env file or need to be added to Key Vault")
         else:
-            print("✅ All critical secrets (POSTGRES_PASSWORD, REDIS_PASSWORD, OPENAI_API_KEY) are present")
+            print("✅ All critical secrets (POSTGRES_PASSWORD, REDIS_PASSWORD, OPENAI_API_KEY) are present in Key Vault")
+        
+        # Explicitly verify REDIS_PASSWORD is loaded
+        if 'REDIS_PASSWORD' in secrets and secrets['REDIS_PASSWORD']:
+            print(f"✅ REDIS_PASSWORD loaded from Key Vault (length: {len(secrets['REDIS_PASSWORD'])})")
+        else:
+            print("⚠️  REDIS_PASSWORD not found in Key Vault - will check .env file")
         print("")
         
         # Append secrets to .env file
@@ -330,9 +336,22 @@ try:
         with open('.env', 'a') as f:
             f.write('\n# Secrets loaded from Azure Key Vault\n')
             for key, value in secrets.items():
-                # Escape special characters in value
-                value_escaped = value.replace('\\', '\\\\').replace('$', '\\$').replace('"', '\\"')
-                f.write(f'{key}="{value_escaped}"\n')
+                # Remove surrounding quotes if present (from Key Vault or previous writes)
+                value_clean = value.strip()
+                if value_clean.startswith('"') and value_clean.endswith('"'):
+                    value_clean = value_clean[1:-1]
+                    print(f"  Removed quotes from {key}")
+                elif value_clean.startswith("'") and value_clean.endswith("'"):
+                    value_clean = value_clean[1:-1]
+                    print(f"  Removed single quotes from {key}")
+                
+                # Escape special characters in value, but don't wrap in quotes
+                # Quotes cause issues when loading the .env file - they become part of the value
+                value_escaped = value_clean.replace('\\', '\\\\').replace('$', '\\$')
+                # Only escape quotes if they're in the middle of the value
+                value_escaped = value_escaped.replace('"', '\\"')
+                # Write without surrounding quotes - dotenv handles special characters
+                f.write(f'{key}={value_escaped}\n')
         print("✅ Secrets appended to .env file")
         
         # Verify .env file was updated
@@ -406,6 +425,18 @@ PYTHON_EOF
     else
         echo "⚠️  Azure Key Vault libraries not available, skipping Key Vault secrets"
         echo "   Note: Secrets must be in .env file if Key Vault is not available"
+        echo ""
+        echo "   Checking if REDIS_PASSWORD exists in .env file..."
+        if grep -q "^REDIS_PASSWORD=" .env 2>/dev/null; then
+            REDIS_PASSWORD_FROM_ENV=$(grep "^REDIS_PASSWORD=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//")
+            if [ -n "$REDIS_PASSWORD_FROM_ENV" ]; then
+                echo "   ✅ REDIS_PASSWORD found in .env file"
+            else
+                echo "   ⚠️  REDIS_PASSWORD exists in .env but is empty"
+            fi
+        else
+            echo "   ⚠️  REDIS_PASSWORD not found in .env file"
+        fi
     fi
     
     # Export environment variables from .env file for docker-compose
@@ -418,8 +449,25 @@ PYTHON_EOF
             # Skip comments and empty lines
             [[ "$line" =~ ^[[:space:]]*# ]] && continue
             [[ -z "${line// }" ]] && continue
-            # Export the variable
-            export "$line" 2>/dev/null || true
+            
+            # Remove surrounding quotes from values if present
+            # Handle both KEY="value" and KEY='value' formats
+            if [[ "$line" =~ ^([^=]+)=\"(.+)\"$ ]]; then
+                # Double quotes: KEY="value"
+                key="${BASH_REMATCH[1]}"
+                value="${BASH_REMATCH[2]}"
+                # Unescape quotes in value
+                value="${value//\\\"/\"}"
+                export "$key=$value" 2>/dev/null || true
+            elif [[ "$line" =~ ^([^=]+)=\'(.+)\'$ ]]; then
+                # Single quotes: KEY='value'
+                key="${BASH_REMATCH[1]}"
+                value="${BASH_REMATCH[2]}"
+                export "$key=$value" 2>/dev/null || true
+            else
+                # No quotes or unquoted value
+                export "$line" 2>/dev/null || true
+            fi
         done < .env
         set +a  # Stop automatically exporting
         echo "✅ Environment variables loaded from .env"
@@ -448,11 +496,80 @@ PYTHON_EOF
             echo "   Deployment aborted!"
             exit 1
         fi
+        
+        # Explicitly verify REDIS_PASSWORD is set and not empty
+        echo "Verifying REDIS_PASSWORD is set..."
+        if [ -z "$REDIS_PASSWORD" ]; then
+            echo ""
+            echo "❌ CRITICAL ERROR: REDIS_PASSWORD is not set!"
+            echo "   Redis requires password authentication for security."
+            echo "   Please ensure REDIS_PASSWORD is:"
+            echo "   1. Set in Azure Key Vault (preferred), OR"
+            echo "   2. Set in .env file"
+            echo ""
+            echo "   Deployment aborted!"
+            exit 1
+        else
+            REDIS_PASSWORD_LEN=${#REDIS_PASSWORD}
+            echo "✅ REDIS_PASSWORD is set (length: $REDIS_PASSWORD_LEN characters)"
+            echo "   Redis will start with password authentication enabled"
+        fi
+        
+        # Collect environment variables to pass to sudo docker compose
+        # Docker Compose will automatically load .env file, but we also need to pass
+        # critical variables explicitly to ensure they're available
+        echo "Preparing environment variables for docker-compose..."
+        ENV_VARS=""
+        # Collect all environment variables that start with POSTGRES_, REDIS_, OPENAI_, etc.
+        while IFS= read -r line || [ -n "$line" ]; do
+            # Skip comments and empty lines
+            [[ "$line" =~ ^[[:space:]]*# ]] && continue
+            [[ -z "${line// }" ]] && continue
+            # Extract variable name
+            var_name=$(echo "$line" | cut -d'=' -f1 | tr -d '[:space:]')
+            var_value=$(echo "$line" | cut -d'=' -f2- | sed 's/^"//;s/"$//' | sed "s/^'//;s/'$//")
+            # Add to ENV_VARS string for passing to docker-compose
+            if [[ "$var_name" =~ ^(POSTGRES_|REDIS_|OPENAI_|MAIL_|SMTP_|GOOGLE_|MICROSOFT_|AZURE_KEYVAULT) ]]; then
+                ENV_VARS="${ENV_VARS}${var_name}=\"${var_value}\" "
+            fi
+        done < .env
+        
+        echo "✅ Environment variables prepared"
     else
         echo "❌ ERROR: .env file not found!"
         echo "   Deployment aborted!"
         exit 1
     fi
+    
+    # Final verification: Ensure REDIS_PASSWORD is set before starting containers
+    echo ""
+    echo "=========================================="
+    echo "  Final Pre-Deployment Verification"
+    echo "=========================================="
+    echo ""
+    echo "Verifying REDIS_PASSWORD is available for container startup..."
+    if [ -z "$REDIS_PASSWORD" ]; then
+        echo ""
+        echo "❌ CRITICAL ERROR: REDIS_PASSWORD is not set!"
+        echo "   Cannot start Redis container without password."
+        echo ""
+        echo "   This should not happen if:"
+        echo "   1. Secrets were loaded from Azure Key Vault, OR"
+        echo "   2. REDIS_PASSWORD was in .env file"
+        echo ""
+        echo "   Please check:"
+        echo "   - Azure Key Vault contains REDIS_PASSWORD secret"
+        echo "   - .env file contains REDIS_PASSWORD"
+        echo "   - Deployment script successfully loaded secrets"
+        echo ""
+        echo "   Deployment aborted!"
+        exit 1
+    else
+        REDIS_PASSWORD_LEN=${#REDIS_PASSWORD}
+        echo "✅ REDIS_PASSWORD verified: Set (length: $REDIS_PASSWORD_LEN characters)"
+        echo "   Redis container will start with password authentication"
+    fi
+    echo ""
     
     # Fix log directory permissions before starting containers
     echo "Fixing log directory permissions..."
@@ -464,33 +581,99 @@ PYTHON_EOF
     
     # Stop and remove old containers if running
     echo "Stopping and removing old containers..."
-    sudo docker compose -f docker-compose.yml down --remove-orphans 2>/dev/null || true
+    # Use sudo -E to preserve environment variables, and docker-compose will also load .env file
+    sudo -E docker compose -f docker-compose.yml --env-file .env down --remove-orphans 2>/dev/null || true
     # Also remove containers by name in case docker-compose didn't work
     sudo docker rm -f xrisk-app xrisk-worker xrisk-postgres xrisk-redis 2>/dev/null || true
     
     # Build images (explicitly rebuild worker to ensure Dockerfile.worker changes are applied)
     echo "Building Docker images..."
     echo "Building worker image with updated Dockerfile.worker..."
-    sudo docker compose -f docker-compose.yml build worker
+    # Use sudo -E to preserve environment variables, and docker-compose will also load .env file
+    sudo -E docker compose -f docker-compose.yml --env-file .env build worker
     echo "Building other images (if needed)..."
-    sudo docker compose -f docker-compose.yml build
+    sudo -E docker compose -f docker-compose.yml --env-file .env build
     
     # Start containers
     echo "Starting containers..."
-    sudo docker compose -f docker-compose.yml up -d
+    # Use sudo -E to preserve environment variables, and docker-compose will also load .env file
+    # This ensures REDIS_PASSWORD and other secrets are available when containers start
+    sudo -E docker compose -f docker-compose.yml --env-file .env up -d
     
     # Wait for services to be healthy
     echo "Waiting for services to start..."
     sleep 10
     
-    # Show status
+    # Debug PostgreSQL password issue
     echo ""
+    echo "=========================================="
+    echo "  Debugging PostgreSQL Connection"
+    echo "=========================================="
+    echo ""
+    
+    if sudo docker ps | grep -q xrisk-postgres; then
+        echo "✅ PostgreSQL container is running"
+        
+        # Check if PostgreSQL is ready
+        if sudo docker exec xrisk-postgres pg_isready -U "${POSTGRES_USER:-xrisk}" >/dev/null 2>&1; then
+            echo "✅ PostgreSQL is ready"
+            
+            # Try to connect with current password
+            echo "Testing connection with POSTGRES_PASSWORD from environment..."
+            if sudo docker exec -e PGPASSWORD="$POSTGRES_PASSWORD" xrisk-postgres psql -U "${POSTGRES_USER:-xrisk}" -d "${POSTGRES_DB:-xrisk}" -c "SELECT 1;" >/dev/null 2>&1; then
+                echo "✅ Connection successful with POSTGRES_PASSWORD"
+            else
+                echo "❌ Connection FAILED with POSTGRES_PASSWORD"
+                echo ""
+                echo "Password mismatch detected. Attempting to update password automatically..."
+                
+                # Try to update password as postgres superuser
+                # First, try without password (if postgres user has no password set)
+                echo "Attempting to update password..."
+                UPDATE_OUTPUT=$(sudo docker exec xrisk-postgres psql -U postgres -d postgres -c "ALTER USER \"${POSTGRES_USER:-xrisk}\" WITH PASSWORD '${POSTGRES_PASSWORD}';" 2>&1)
+                UPDATE_EXIT_CODE=$?
+                
+                if [ $UPDATE_EXIT_CODE -eq 0 ]; then
+                    echo "✅ Password updated successfully"
+                    
+                    # Verify the update worked
+                    sleep 2
+                    if sudo docker exec -e PGPASSWORD="$POSTGRES_PASSWORD" xrisk-postgres psql -U "${POSTGRES_USER:-xrisk}" -d "${POSTGRES_DB:-xrisk}" -c "SELECT 1;" >/dev/null 2>&1; then
+                        echo "✅ Password verification successful - connection works now"
+                        echo "Restarting app container to apply changes..."
+                        sudo docker restart xrisk-app || echo "⚠️  Could not restart app container automatically"
+                    else
+                        echo "⚠️  Password updated but verification failed"
+                        echo "   Update output: $UPDATE_OUTPUT"
+                    fi
+                else
+                    echo "⚠️  Could not update password automatically"
+                    echo "   Error: $UPDATE_OUTPUT"
+                    echo ""
+                    echo "Manual fix required:"
+                    echo "   sudo docker exec -it xrisk-postgres psql -U postgres -c \"ALTER USER ${POSTGRES_USER:-xrisk} WITH PASSWORD '${POSTGRES_PASSWORD}';\""
+                    echo ""
+                    echo "Then restart the app container:"
+                    echo "   sudo docker restart xrisk-app"
+                fi
+            fi
+        else
+            echo "⚠️  PostgreSQL is not ready yet"
+        fi
+    else
+        echo "❌ PostgreSQL container is not running"
+        echo "Checking PostgreSQL logs..."
+        sudo docker logs xrisk-postgres --tail=20 2>&1 || echo "Could not get PostgreSQL logs"
+    fi
+    echo ""
+    
+    # Show status
     echo "Container Status:"
-    sudo docker compose -f docker-compose.yml ps
+    sudo -E docker compose -f docker-compose.yml --env-file .env ps
     
     echo ""
     echo "Logs (last 20 lines):"
-    sudo docker compose -f docker-compose.yml logs --tail=20
+    sudo -E docker compose -f docker-compose.yml --env-file .env logs --tail=20
 EOF
 
 echo ""
