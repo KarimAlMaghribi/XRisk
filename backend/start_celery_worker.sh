@@ -31,15 +31,9 @@ mkdir -p "$LOG_DIR" || {
 # Start Celery worker
 echo "Starting Celery worker..."
 
-# Check environment to determine queue name
-# In development, use celery_local queue to avoid conflicts with Azure workers
-if [ "$FLASK_ENV" = "development" ]; then
-    QUEUE_NAME="celery_local"
-    echo "Using local development queue: $QUEUE_NAME"
-else
-    QUEUE_NAME="celery"
-    echo "Using production queue: $QUEUE_NAME"
-fi
+# Use celery queue
+QUEUE_NAME="celery"
+echo "Using queue: $QUEUE_NAME"
 
 # Use logfile only if LOG_DIR is writable, otherwise use stdout/stderr (Docker best practice)
 if [ -n "$LOG_DIR" ] && [ -w "$LOG_DIR" ]; then

@@ -147,12 +147,11 @@ def make_celery():
         broker_use_ssl=broker_use_ssl if broker_use_ssl else None,
         redis_backend_use_ssl=backend_use_ssl if backend_use_ssl else None,
         broker_connection_retry_on_startup=True,
-        # Use separate queue for local development to avoid conflicts with Azure workers
-        task_default_queue='celery_local' if os.environ.get('FLASK_ENV') == 'development' else 'celery',
+        task_default_queue='celery',
         task_routes={
-            'workflow.execute_risk_workflow': {'queue': 'celery_local' if os.environ.get('FLASK_ENV') == 'development' else 'celery'},
-            'workflow.resume_after_inquiry': {'queue': 'celery_local' if os.environ.get('FLASK_ENV') == 'development' else 'celery'},
-            'workflow.retry_failed_workflows': {'queue': 'celery_local' if os.environ.get('FLASK_ENV') == 'development' else 'celery'},
+            'workflow.execute_risk_workflow': {'queue': 'celery'},
+            'workflow.resume_after_inquiry': {'queue': 'celery'},
+            'workflow.retry_failed_workflows': {'queue': 'celery'},
         },
         # Celery Beat Schedule (periodic tasks)
         beat_schedule={

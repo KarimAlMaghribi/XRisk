@@ -34,19 +34,17 @@ def retry_failed_workflows():
     
     try:
         with app.app_context():
-            # 1) Resume stalled workflows that should auto-continue (researched/analyzed, not processing, not failed)
+            # 1) Resume stalled workflows that should auto-continue (inquired/researched/analyzed, not processing, not failed)
             from models import RiskAssessment
             stalled_risks = RiskAssessment.query.filter(
-                RiskAssessment.status.in_(['researched', 'analyzed']),
+                RiskAssessment.status.in_(['inquired', 'researched', 'analyzed']),
                 RiskAssessment.processing_since.is_(None),
                 RiskAssessment.failed_at.is_(None)
             ).all()
             if stalled_risks:
                 logger.info(f"[Retry Task] Found {len(stalled_risks)} stalled workflows to auto-continue")
                 from workflow_task import resume_from_current_status
-                import os
-                flask_env = os.environ.get('FLASK_ENV')
-                queue_name = 'celery_local' if flask_env == 'development' else 'celery'
+                queue_name = 'celery'
                 for risk in stalled_risks:
                     logger.info(f"[Retry Task] Auto-continuing stalled workflow {risk.risk_uuid} from {risk.status}")
                     task = resume_from_current_status.apply_async(
@@ -65,9 +63,7 @@ def retry_failed_workflows():
             if validated_risks:
                 logger.info(f"[Retry Task] Found {len(validated_risks)} validated risks to start")
                 from workflow_task import execute_risk_workflow
-                import os
-                flask_env = os.environ.get('FLASK_ENV')
-                queue_name = 'celery_local' if flask_env == 'development' else 'celery'
+                queue_name = 'celery'
                 for risk in validated_risks:
                     logger.info(f"[Retry Task] Starting workflow for validated risk {risk.risk_uuid}")
                     task = execute_risk_workflow.apply_async(
@@ -119,8 +115,7 @@ def retry_failed_workflows():
                 risk.increment_retry()
                 
                 # Determine queue
-                flask_env = os.environ.get('FLASK_ENV')
-                queue_name = 'celery_local' if flask_env == 'development' else 'celery'
+                queue_name = 'celery'
                 
                 # Restart workflow from current status
                 logger.info(f"[Retry Task] Restarting workflow for {risk.risk_uuid} from status {risk.status}")

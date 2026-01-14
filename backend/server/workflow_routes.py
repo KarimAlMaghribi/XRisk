@@ -173,12 +173,10 @@ def start_workflow():
             logger.info(f"Risk assessment created: {risk.risk_uuid}")
             
             from workflow_task import execute_risk_workflow
-            import os
             
-            flask_env = os.environ.get('FLASK_ENV')
-            queue_name = 'celery_local' if flask_env == 'development' else 'celery'
+            queue_name = 'celery'
             
-            logger.info(f"Starting workflow task - FLASK_ENV={flask_env}, queue={queue_name}")
+            logger.info(f"Starting workflow task - queue={queue_name}")
             
             task = execute_risk_workflow.apply_async(
                 args=[risk.risk_uuid, risk.user_uuid],
@@ -568,10 +566,9 @@ def submit_inquiry_response():
             old_task = AsyncResult(data['task_id'], app=celery_app)
             old_task.revoke()
             
-            flask_env = os.environ.get('FLASK_ENV')
-            queue_name = 'celery_local' if flask_env == 'development' else 'celery'
+            queue_name = 'celery'
             
-            logger.info(f"Resuming workflow - FLASK_ENV={flask_env}, queue={queue_name}")
+            logger.info(f"Resuming workflow - queue={queue_name}")
             
             task = resume_workflow_after_inquiry.apply_async(
                 args=[risk_uuid, user_uuid, data['responses']],
@@ -660,6 +657,16 @@ def resume_workflow_get(risk_uuid):
                     if are_all_inquiries_answered(risk):
                         risk.update_status('inquired')
                         logger.info(f"Updated status from 'inquiry_awaiting_response' to 'inquired' for risk {risk.risk_uuid} (all inquiries answered)")
+                        
+                        # Automatically continue workflow after inquiry responses
+                        from workflow_task import resume_from_current_status
+                        queue_name = 'celery'
+                        task = resume_from_current_status.apply_async(
+                            args=[risk.risk_uuid, current_user.user_uuid],
+                            task_id=f"workflow_resume_{risk.risk_uuid}",
+                            queue=queue_name
+                        )
+                        logger.info(f"Auto-continued workflow after inquiry responses: {task.id} on queue {queue_name}")
                 
                 db.session.commit()
                 logger.info(f"Auto-assigned risk {risk.risk_uuid} from anonymous user to logged-in user {current_user.user_uuid}")
@@ -821,6 +828,16 @@ def resume_workflow():
                     if are_all_inquiries_answered(risk):
                         risk.update_status('inquired')
                         logger.info(f"Updated status from 'inquiry_awaiting_response' to 'inquired' for risk {risk.risk_uuid} (all inquiries answered)")
+                        
+                        # Automatically continue workflow after inquiry responses
+                        from workflow_task import resume_from_current_status
+                        queue_name = 'celery'
+                        task = resume_from_current_status.apply_async(
+                            args=[risk.risk_uuid, current_user.user_uuid],
+                            task_id=f"workflow_resume_{risk.risk_uuid}",
+                            queue=queue_name
+                        )
+                        logger.info(f"Auto-continued workflow after inquiry responses: {task.id} on queue {queue_name}")
                 
                 db.session.commit()
                 logger.info(f"Auto-assigned risk {risk.risk_uuid} from anonymous user to logged-in user {current_user.user_uuid}")
@@ -1158,10 +1175,8 @@ def update_risk_user():
                 from workflow_task import resume_from_current_status
                 from celery.result import AsyncResult
                 from celery_app import celery_app
-                import os
                 
-                flask_env = os.environ.get('FLASK_ENV')
-                queue_name = 'celery_local' if flask_env == 'development' else 'celery'
+                queue_name = 'celery'
                 
                 old_task_ids = [
                     f"workflow_{risk_uuid}",
