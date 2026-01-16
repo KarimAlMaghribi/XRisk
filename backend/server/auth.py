@@ -561,7 +561,7 @@ def google_callback():
             response = redirect(next_url)
         else:
             flash('Erfolgreich mit Google angemeldet!', 'success')
-            response = redirect(url_for('index'))
+            response = redirect(Config.FRONTEND_URL)
         
         cleanup_cookie_variants(response)
         return response
@@ -679,7 +679,7 @@ def microsoft_callback():
             response = redirect(next_url)
         else:
             flash('Erfolgreich mit Microsoft angemeldet!', 'success')
-            response = redirect(url_for('index'))
+            response = redirect(Config.FRONTEND_URL)
         
         # Clean up all cookie variants with different SameSite values
         cleanup_cookie_variants(response)
